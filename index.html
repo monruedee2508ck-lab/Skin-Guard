@@ -2250,12 +2250,23 @@ function liveDraw(){const ov=$("liveOv");if(!ov.width)return;const g=ov.getConte
   for(let i=0;i<=len*10;i++){const x=rx+i*p/10,t=i%10===0?18:i%5===0?12:7;if(p/10<2.2&&i%5)continue;g.fillRect(x-.5,ry-30,1,t);if(i%10===0)g.fillText(String(i/10),x,ry-2)}
   g.textAlign="left";g.fillText("cm",rx+rw+10>W-20?rx:rx+rw-14,ry-34<10?ry+16:ry-34);
   // measure lines
-  const seg=(a,b,c,lab)=>{g.strokeStyle=c;g.lineWidth=3;g.setLineDash([]);g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);g.stroke();
-    [a,b].forEach(q=>{g.beginPath();g.arc(q[0],q[1],11,0,7);g.fillStyle="rgba(255,255,255,.9)";g.fill();g.lineWidth=3;g.strokeStyle=c;g.stroke()});
-    const d=Math.hypot(b[0]-a[0],b[1]-a[1])/p;let mx=(a[0]+b[0])/2,my=(a[1]+b[1])/2;if(lab==="กว้าง"){mx+=60;my+=34}else{my-=4}g.font="700 14px system-ui,sans-serif";const tx=`${lab} ${d.toFixed(1)} cm`,tw=g.measureText(tx).width;
-    g.fillStyle="rgba(0,0,0,.65)";g.fillRect(mx-tw/2-6,my-28,tw+12,20);g.fillStyle="#fff";g.textAlign="center";g.fillText(tx,mx,my-13);return d};
+  const seg=(a,b,c,lab)=>{const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len,cap=8;
+    g.setLineDash([]);g.lineCap="round";
+    g.strokeStyle="rgba(0,0,0,.55)";g.lineWidth=4;g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);[a,b].forEach(q=>{g.moveTo(q[0]-nx*cap,q[1]-ny*cap);g.lineTo(q[0]+nx*cap,q[1]+ny*cap)});g.stroke();
+    g.strokeStyle=c;g.lineWidth=2;g.beginPath();g.moveTo(a[0],a[1]);g.lineTo(b[0],b[1]);[a,b].forEach(q=>{g.moveTo(q[0]-nx*cap,q[1]-ny*cap);g.lineTo(q[0]+nx*cap,q[1]+ny*cap)});g.stroke();
+    [a,b].forEach(q=>{g.beginPath();g.arc(q[0],q[1],2.2,0,7);g.fillStyle="#fff";g.fill()});
+    return len/p};
   const L=seg(live.h[0],live.h[1],"#ff5d8f","ยาว"),Wd=seg(live.h[2],live.h[3],"#3fb8ff","กว้าง");
-  $("liveL").textContent=L.toFixed(1);$("liveW").textContent=Wd.toFixed(1);live.L=L;live.W=Wd}
+  $("liveL").textContent=L.toFixed(1);$("liveW").textContent=Wd.toFixed(1);live.L=L;live.W=Wd;
+  if(live.drag&&live.drag.k==="h")liveLoupe(g,W,H,live.h[live.drag.i],live.drag.i<2?"#ff5d8f":"#3fb8ff")}
+function liveLoupe(g,W,H,q,c){const st=live.still,src=st?$("liveImg"):$("liveVid"),sw=st?src.naturalWidth:src.videoWidth,sh=st?src.naturalHeight:src.videoHeight;if(!sw)return;
+  const k=st?Math.min(W/sw,H/sh):Math.max(W/sw,H/sh),ox=(W-sw*k)/2,oy=(H-sh*k)/2,Z=3,R=58;
+  let cx=q[0],cy=q[1]-R-46;if(cy-R<8)cy=q[1]+R+46;cx=Math.min(W-R-6,Math.max(R+6,cx));
+  const sx=(q[0]-ox)/k,sy=(q[1]-oy)/k,rs=R/(k*Z);
+  g.save();g.beginPath();g.arc(cx,cy,R,0,7);g.closePath();g.fillStyle="#000";g.fill();g.clip();
+  try{g.drawImage(src,sx-rs,sy-rs,rs*2,rs*2,cx-R,cy-R,R*2,R*2)}catch(e){}
+  g.strokeStyle=c;g.lineWidth=1.5;g.beginPath();g.moveTo(cx-14,cy);g.lineTo(cx-3,cy);g.moveTo(cx+3,cy);g.lineTo(cx+14,cy);g.moveTo(cx,cy-14);g.lineTo(cx,cy-3);g.moveTo(cx,cy+3);g.lineTo(cx,cy+14);g.stroke();
+  g.restore();g.beginPath();g.arc(cx,cy,R,0,7);g.lineWidth=3;g.strokeStyle="#fff";g.stroke();g.lineWidth=1.5;g.strokeStyle=c;g.stroke()}
 function livePt(e){const r=$("liveOv").getBoundingClientRect();return [e.clientX-r.left,e.clientY-r.top]}
 async function liveOpen(){
   const md=navigator.mediaDevices;
@@ -2303,11 +2314,11 @@ $("liveShot").onclick=()=>{const f=liveFrame();if(!f)return;const {c,k,ox,oy}=f,
       cal=[[x0,y0],[x0+p*5,y0]];$("calcm").value=5;setMode("seed");measure();
       setStatus(`ปรับเทียบจากไม้บรรทัดบนจอแล้ว (1 cm = ${p.toFixed(0)} px) แตะกลางแผลเพื่อตรวจจับขอบอัตโนมัติ`)})};
   if(f.file)go(f.file);else c.toBlob(b=>{if(b)go(new File([b],"wound.jpg",{type:"image/jpeg"}))},"image/jpeg",.92)};
-$("liveOv").addEventListener("pointerdown",e=>{const q=livePt(e);let best=-1,bd=30;live.h.forEach((h,i)=>{const d=Math.hypot(h[0]-q[0],h[1]-q[1]);if(d<bd){bd=d;best=i}});
+$("liveOv").addEventListener("pointerdown",e=>{const q=livePt(e);let best=-1,bd=34;live.h.forEach((h,i)=>{const d=Math.hypot(h[0]-q[0],h[1]-q[1]);if(d<bd){bd=d;best=i}});
   if(best>=0)live.drag={k:"h",i:best};else if(Math.abs(q[1]-(live.ruler.y-12))<26&&q[0]>live.ruler.x-12)live.drag={k:"r",dx:q[0]-live.ruler.x,dy:q[1]-live.ruler.y};else return;
-  $("liveOv").setPointerCapture(e.pointerId);e.preventDefault()});
+  $("liveOv").setPointerCapture(e.pointerId);e.preventDefault();liveDraw()});
 $("liveOv").addEventListener("pointermove",e=>{if(!live.drag)return;const q=livePt(e);if(live.drag.k==="h")live.h[live.drag.i]=q;else live.ruler={x:q[0]-live.drag.dx,y:q[1]-live.drag.dy};liveDraw()});
-["pointerup","pointercancel"].forEach(t=>$("liveOv").addEventListener(t,()=>{live.drag=null}));
+["pointerup","pointercancel"].forEach(t=>$("liveOv").addEventListener(t,()=>{live.drag=null;liveDraw()}));
 window.addEventListener("resize",()=>{if(!$("liveCam").hidden)liveLayout()});
 
 const imgFrom=list=>{for(const it of list||[]){const f=it.getAsFile?(it.kind==="file"?it.getAsFile():null):it;if(f&&/^image\//.test(f.type))return f}return null};
