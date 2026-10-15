@@ -944,11 +944,31 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
 .lc-l{box-shadow:inset 0 0 0 2px #ff5d8f}.lc-w{box-shadow:inset 0 0 0 2px #3fb8ff}
 .lc-bot{position:absolute;left:0;right:0;bottom:0;padding:10px 14px calc(14px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,rgba(0,0,0,.75) 30%);display:flex;flex-direction:column;gap:8px;color:#fff}
 .lc-tip{margin:0;font-size:.8rem;line-height:1.45;opacity:.9}
-.lc-scale{display:flex;align-items:center;gap:10px;font-size:.85rem;color:#fff}
-.lc-scale input{flex:1;accent-color:#ffd166}
+.lc-scale,.livecam label.lc-scale{display:flex;flex-direction:row;align-items:center;gap:10px;font-size:.85rem;color:#fff;margin:0}
+.lc-scale input{flex:1;min-width:0;accent-color:#ffd166;margin:0}
 .lc-scale b{font-weight:600;font-size:.78rem;min-width:84px;text-align:right}
 .lc-btns{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
-.lc-btns .btn{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35)}
+.lc-btns .btn,.lc-avg .btn{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35)}
+.lc-lvl{margin-left:auto;display:flex;align-items:center;gap:8px;background:rgba(0,0,0,.62);color:#fff;border:0;border-radius:99px;padding:5px 12px 5px 6px;font:inherit;cursor:pointer;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35);flex:none}
+.lv-ring{width:30px;height:30px;border-radius:50%;border:2px solid currentColor;position:relative;display:block;flex:none}
+.lv-ring::before{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;border:1px dashed currentColor;opacity:.75}
+.lv-ring i{position:absolute;left:50%;top:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:currentColor;transition:transform .08s linear}
+.lv-t{display:flex;flex-direction:column;line-height:1.1;text-align:left}
+.lv-t b{font-family:var(--font-num);font-size:1.02rem}
+.lv-t small{font-size:.68rem;opacity:.9;white-space:nowrap}
+.lc-lvl.ok{color:#5ee08a;box-shadow:inset 0 0 0 2px #5ee08a}
+.lc-lvl.warn{color:#ffd166;box-shadow:inset 0 0 0 2px #ffd166}
+.lc-lvl.bad{color:#ff7b7b;box-shadow:inset 0 0 0 2px #ff7b7b}
+.lc-lvl.ask{color:#fff}
+.lc-read.flash span{animation:lcFlash .5s}
+@keyframes lcFlash{0%{background:#5ee08a;color:#10261a}100%{background:rgba(0,0,0,.6)}}
+.lc-warn{margin:0;background:#ffd166;color:#1b2a44;border-radius:10px;padding:6px 10px;font-size:.82rem;font-weight:600;line-height:1.4}
+.lc-avg{display:flex;align-items:center;gap:10px;min-height:40px}
+.lc-avg .btn{flex:none}
+.lc-samp{flex:1;min-width:0;font-size:.8rem;line-height:1.35}
+.lc-samp b{font-family:var(--font-num)}
+.lc-samp .hi{color:#ffd166}
+.lc-clr{flex:none;background:none;border:0;color:#fff;opacity:.8;text-decoration:underline;font:inherit;font-size:.8rem;cursor:pointer;padding:6px}
 .lc-btns .btn[aria-pressed=true]{background:#ffd166;color:#1b2a44;border-color:#ffd166}
 .lc-shot{width:68px;height:68px;border-radius:50%;border:4px solid #fff;background:transparent;display:grid;place-items:center;cursor:pointer}
 .lc-shot i{width:52px;height:52px;border-radius:50%;background:#fff;display:block}
@@ -1678,10 +1698,17 @@ html body{background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--
     <div class="lc-top">
       <button type="button" class="lc-x" id="liveClose" aria-label="ปิดกล้อง">✕</button>
       <div class="lc-read" id="liveRead"><span class="lc-l">ยาว <b id="liveL">–</b> cm</span><span class="lc-w">กว้าง <b id="liveW">–</b> cm</span></div>
+      <button type="button" class="lc-lvl" id="liveLvl" hidden aria-label="ระดับความตั้งฉากของกล้อง แตะเพื่อตั้ง 0 องศาจากระนาบผิว"><span class="lv-ring" aria-hidden="true"><i id="liveLvlDot"></i></span><span class="lv-t"><b id="liveLvlDeg">–</b><small id="liveLvlMode">แนวราบ</small></span></button>
     </div>
     <div class="lc-bot">
-      <p class="lc-tip" id="liveTip">วางไม้บรรทัดวัดแผลของจริงไว้ข้างแผล แล้วเลื่อนแถบ "ปรับสเกล" จนขีดบนจอตรงกับขีดเซนติเมตรของไม้บรรทัดจริง จากนั้นลากจุดสีชมพู (ยาว) และสีฟ้า (กว้าง) ไปที่ขอบแผล</p>
+      <p class="lc-tip" id="liveTip">① วางไม้บรรทัดจริงชิดขอบแผล ② ถือกล้องตั้งฉากจนระดับน้ำเป็นสีเขียว ③ เลื่อน "ปรับสเกล" ให้ขีดบนจอตรงขีด cm ของไม้บรรทัดจริง ④ ลากจุดชมพู (ยาว) ฟ้า (กว้าง) ไปที่ขอบแผล แล้วกด "เก็บค่า" 2–3 ครั้ง</p>
+      <p class="lc-warn" id="liveWarn" hidden role="status"></p>
       <label class="lc-scale" for="liveScale"><span>ปรับสเกล</span><input id="liveScale" type="range" min="12" max="160" step="0.5" value="45"><b id="liveScaleV">1 cm</b></label>
+      <div class="lc-avg">
+        <button type="button" class="btn" id="liveRec">เก็บค่าครั้งที่ 1</button>
+        <span class="lc-samp" id="liveSamp">วัดซ้ำ 2–3 ครั้งแล้วใช้ค่าเฉลี่ย</span>
+        <button type="button" class="lc-clr" id="liveClr" hidden>ล้าง</button>
+      </div>
       <div class="lc-btns">
         <button type="button" class="btn" id="liveGrid" aria-pressed="false">ตาราง 1 cm</button>
         <button type="button" class="lc-shot" id="liveShot" aria-label="ถ่ายภาพ"><i></i></button>
@@ -2438,7 +2465,39 @@ function loadPhoto(f,after){
 function photoErr(m){const e=$("photoErr");e.textContent=m;e.hidden=false}
 ["photo","photoLib"].forEach(id=>$(id).addEventListener("change",e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f)return;if(live.pend||$("rulerOn").checked){live.pend=false;liveOpenStill(f)}else loadPhoto(f)}));
 /* ---------- Live camera with on-screen ruler ---------- */
-var live={stream:null,still:null,pend:false,ppc:45,grid:false,ruler:{x:40,y:0},h:null,drag:null,raf:0};
+var live={stream:null,still:null,pend:false,ppc:45,grid:false,ruler:{x:40,y:0},h:null,drag:null,raf:0,samp:[],scaled:false,arm:{}};
+/* level (camera perpendicular to skin) */
+var lvl={u:null,ref:null,t:0,need:false};
+function lvlVec(b,g){b*=Math.PI/180;g*=Math.PI/180;return [-Math.cos(b)*Math.sin(g),Math.sin(b),Math.cos(b)*Math.cos(g)]}
+function lvlOn(e){if(e.beta==null)return;lvl.t=Date.now();lvl.u=lvlVec(+e.beta,+(e.gamma||0));if(lvl.need){lvl.need=false}lvlPaint()}
+function lvlCalc(){const u=lvl.u;if(!u||Date.now()-lvl.t>2000)return null;let dev,mode,d;const cl=x=>Math.max(-1,Math.min(1,x)),deg=r=>r*180/Math.PI;
+  if(lvl.ref){const r=lvl.ref;dev=deg(Math.acos(cl(u[0]*r[0]+u[1]*r[1]+u[2]*r[2])));mode="อ้างอิงผิว";d=[u[0]-r[0],u[1]-r[1]]}
+  else{const tilt=deg(Math.acos(cl(u[2])));if(tilt<=50){dev=tilt;mode="แนวราบ";d=[u[0],u[1]]}else{dev=Math.abs(90-tilt);mode="แนวตั้ง";d=[0,u[2]]}}
+  return {dev,mode,d}}
+function lvlPaint(){const b=$("liveLvl");if(!b||$("liveCam").hidden||live.still)return;
+  if(lvl.need&&!lvl.u){b.hidden=false;b.className="lc-lvl ask";$("liveLvlDeg").textContent="ระดับน้ำ";$("liveLvlMode").textContent="แตะเพื่อเปิด";$("liveLvlDot").style.transform="";return}
+  const c=lvlCalc();if(!c){b.hidden=true;return}
+  b.hidden=false;b.className="lc-lvl "+(c.dev<=5?"ok":c.dev<=10?"warn":"bad");
+  $("liveLvlDeg").textContent=c.dev<1?"ตั้งฉาก":`เอียง ${c.dev.toFixed(0)}°`;$("liveLvlMode").textContent=c.mode+(lvl.ref?" · แตะ=อัตโนมัติ":" · แตะ=ตั้ง 0°");
+  const k=11/Math.sin(15*Math.PI/180);let x=c.d[0]*k,y=-c.d[1]*k;const m=Math.hypot(x,y);if(m>11){x*=11/m;y*=11/m}
+  $("liveLvlDot").style.transform=`translate(${x.toFixed(1)}px,${y.toFixed(1)}px)`}
+function lvlStart(){lvl.u=null;lvl.t=0;lvl.ref=null;const D=window.DeviceOrientationEvent;$("liveLvl").hidden=true;if(!D)return;
+  lvl.need=typeof D.requestPermission==="function";window.addEventListener("deviceorientation",lvlOn);
+  if(lvl.need)setTimeout(lvlPaint,700)}
+function lvlStop(){window.removeEventListener("deviceorientation",lvlOn);lvl.u=null;lvl.ref=null}
+function liveTilt(){const c=lvlCalc();return c?Math.round(c.dev):null}
+/* repeated measurements */
+function liveAvg(){const s=live.samp;if(!s.length)return null;const m=k=>s.reduce((a,x)=>a+x[k],0)/s.length,rg=k=>Math.max(...s.map(x=>x[k]))-Math.min(...s.map(x=>x[k]));
+  const ts=s.map(x=>x.tilt).filter(x=>x!=null);return {L:m("L"),W:m("W"),n:s.length,rL:rg("L"),rW:rg("W"),tilt:ts.length?Math.max(...ts):null}}
+function liveSampPaint(){const s=live.samp,n=s.length,a=liveAvg();
+  $("liveRec").textContent=n>=5?"ครบ 5 ครั้ง":`เก็บค่าครั้งที่ ${n+1}`;$("liveRec").disabled=n>=5;$("liveClr").hidden=!n;
+  $("liveUse").textContent=n?`ใช้ค่าเฉลี่ย (${n})`:"ใช้ค่าวัด";
+  if(!n){$("liveSamp").textContent="วัดซ้ำ 2–3 ครั้งแล้วใช้ค่าเฉลี่ย";return}
+  const big=a.rL>Math.max(.3,a.L*.1)||a.rW>Math.max(.3,a.W*.1);
+  $("liveSamp").innerHTML=s.map(x=>`${x.L.toFixed(1)}×${x.W.toFixed(1)}`).join(" · ")+`<br>เฉลี่ย <b>${a.L.toFixed(1)} × ${a.W.toFixed(1)}</b> cm`+(big?' <span class="hi">· ค่าต่างกันมาก วัดซ้ำอีกครั้ง</span>':n<2?' <span class="hi">· ควรวัดอีก 1–2 ครั้ง</span>':"")}
+function liveWarn(m){const w=$("liveWarn");w.textContent=m;w.hidden=false;clearTimeout(live.wt);live.wt=setTimeout(()=>{w.hidden=true},4000)}
+function liveGuard(key,m){if(live.scaled)return true;if(live.arm[key]){live.arm[key]=0;return true}live.arm[key]=1;setTimeout(()=>{live.arm[key]=0},4000);liveWarn(m);return false}
+function liveResetMeas(){$("liveTip").hidden=false;live.samp=[];live.scaled=false;live.arm={};$("liveWarn").hidden=true;liveSampPaint()}
 function liveLayout(){const ov=$("liveOv"),r=ov.getBoundingClientRect(),dpr=window.devicePixelRatio||1;ov.width=Math.round(r.width*dpr);ov.height=Math.round(r.height*dpr);
   if(!live.h){const cx=r.width/2,cy=r.height*0.42,d=Math.min(r.width,r.height)*0.18;live.h=[[cx-d,cy],[cx+d,cy],[cx,cy-d*0.6],[cx,cy+d*0.6]];live.ruler={x:24,y:r.height*0.42+Math.min(r.width,r.height)*0.18+40}}
   liveDraw()}
@@ -2478,6 +2537,7 @@ async function liveOpen(){
   let err=null;for(const c of tries){try{live.stream=await md.getUserMedia(c);err=null;break}catch(e){err=e;if(e&&(e.name==="NotAllowedError"||e.name==="SecurityError"))break}}
   if(!live.stream){liveFallback(err&&(err.name==="NotAllowedError"||err.name==="SecurityError")?"หน้านี้ไม่ได้รับอนุญาตให้เปิดกล้องสด":"เปิดกล้องสดในหน้านี้ไม่ได้",err&&err.name);return}
   const v=$("liveVid");v.srcObject=live.stream;$("liveCam").hidden=false;document.body.classList.add("noscroll");
+  $("liveTip").textContent='① วางไม้บรรทัดจริงชิดขอบแผล ② ถือกล้องตั้งฉากจนระดับน้ำเป็นสีเขียว ③ เลื่อน "ปรับสเกล" ให้ขีดบนจอตรงขีด cm ของไม้บรรทัดจริง ④ ลากจุดชมพู (ยาว) ฟ้า (กว้าง) ไปที่ขอบแผล แล้วกด "เก็บค่า" 2–3 ครั้ง';liveResetMeas();try{lvlStart()}catch(e){}
   try{const sv=+localStorage.getItem("pi-live-ppc");if(sv>0){live.ppc=sv;$("liveScale").value=sv}}catch(e){}
   $("liveScaleV").textContent=`${(+live.ppc).toFixed(0)} px = 1 cm`;
   try{await v.play()}catch(e){}
@@ -2488,28 +2548,39 @@ function liveFallback(why,code){const f=$("liveFail");f.hidden=false;live.pend=t
   f.scrollIntoView({behavior:"smooth",block:"center"})}
 function liveOpenStill(f){if(!f)return;if(f.type&&!/^image\//.test(f.type)){photoErr("ไฟล์นี้ไม่ใช่รูปภาพ");return}
   const url=URL.createObjectURL(f),im=$("liveImg");live.still={f,url};im.onload=()=>setTimeout(liveLayout,30);im.onerror=()=>{liveClose();loadPhoto(f)};im.src=url;im.hidden=false;$("liveVid").hidden=true;
-  $("liveTip").textContent="เลื่อนแถบ \"ปรับสเกล\" และลากไม้บรรทัดบนจอไปทับไม้บรรทัดในภาพ ให้ขีดเซนติเมตรตรงกัน จากนั้นลากจุดสีชมพู (ยาว) และสีฟ้า (กว้าง) ไปที่ขอบแผล แล้วกดปุ่มวงกลมเพื่อใช้ภาพนี้";
+  $("liveTip").textContent='① เลื่อน "ปรับสเกล" และลากไม้บรรทัดบนจอไปทับไม้บรรทัดในภาพให้ขีด cm ตรงกัน ② ลากจุดชมพู (ยาว) ฟ้า (กว้าง) ไปที่ขอบแผล แล้วกด "เก็บค่า" 2–3 ครั้ง ③ กดปุ่มวงกลมเพื่อใช้ภาพนี้';liveResetMeas();$("liveLvl").hidden=true;
   $("liveShot").setAttribute("aria-label","ใช้ภาพนี้");
   $("liveCam").hidden=false;document.body.classList.add("noscroll");
   try{const sv=+localStorage.getItem("pi-live-ppc");if(sv>0){live.ppc=sv;$("liveScale").value=sv}}catch(e){}
   $("liveScaleV").textContent=`${(+live.ppc).toFixed(0)} px = 1 cm`}
-function liveClose(){if(live.stream){live.stream.getTracks().forEach(t=>t.stop());live.stream=null}$("liveVid").srcObject=null;$("liveCam").hidden=true;
+function liveClose(){try{lvlStop()}catch(e){}if(live.stream){live.stream.getTracks().forEach(t=>t.stop());live.stream=null}$("liveVid").srcObject=null;$("liveCam").hidden=true;
   if(live.still){const u=live.still.url;setTimeout(()=>URL.revokeObjectURL(u),2000);live.still=null}$("liveImg").hidden=true;$("liveImg").removeAttribute("src");$("liveVid").hidden=false;$("liveShot").setAttribute("aria-label","ถ่ายภาพ");
   if(!$("stepModal")||$("stepModal").hidden)document.body.classList.remove("noscroll")}
 function liveFrame(){if(live.still){const im=$("liveImg"),iw=im.naturalWidth,ih=im.naturalHeight;if(!iw)return null;const r=im.getBoundingClientRect(),k=Math.min(r.width/iw,r.height/ih);return {file:live.still.f,k,ox:(r.width-iw*k)/2,oy:(r.height-ih*k)/2}}
   const v=$("liveVid"),vw=v.videoWidth,vh=v.videoHeight;if(!vw)return null;const r=v.getBoundingClientRect(),k=Math.max(r.width/vw,r.height/vh),ox=(r.width-vw*k)/2,oy=(r.height-vh*k)/2;
   const c=document.createElement("canvas");c.width=vw;c.height=vh;c.getContext("2d").drawImage(v,0,0,vw,vh);return {c,k,ox,oy}}
-function liveApplySize(){if(live.L>0)$("len").value=live.L.toFixed(1);if(live.W>0)$("wid").value=live.W.toFixed(1);const w=curW();if(w){w.L=$("len").value;w.W=$("wid").value}update();camMark()}
+function liveApplySize(){const a=liveAvg(),L=a?a.L:live.L,W=a?a.W:live.W,tilt=a?a.tilt:liveTilt();if(L>0)$("len").value=L.toFixed(1);if(W>0)$("wid").value=W.toFixed(1);
+  const w=curW();if(w){w.L=$("len").value;w.W=$("wid").value;w.camInfo={n:a?a.n:1,tilt,scaled:!!live.scaled}}update();camMark();return {L,W,n:a?a.n:1,tilt}}
 function camMark(){const w=curW();if(w){w.sizeSrc="cam";if(!(parseFloat($("dep").value)>0))$("dep").value=0}update();camPaint()}
 function camPaint(){const w=curW(),box=$("camSize");if(!box)return;const on=!!(w&&w.sizeSrc==="cam"&&parseFloat(w.L)>0&&parseFloat(w.W)>0);box.hidden=!on;if(!on)return;
-  const L=parseFloat(w.L),W=parseFloat(w.W);$("camSizeTxt").textContent=`ยาว ${L} × กว้าง ${W} cm · พื้นที่ ${(L*W).toFixed(1)} cm²`;
+  const L=parseFloat(w.L),W=parseFloat(w.W);const ci=w.camInfo||{};$("camSizeTxt").textContent=`ยาว ${L} × กว้าง ${W} cm · พื้นที่ ${(L*W).toFixed(1)} cm²`+(ci.n>1?` · เฉลี่ย ${ci.n} ครั้ง`:"")+(ci.tilt!=null?` · กล้องเอียง ${ci.tilt}°`:"");
   if(document.activeElement!==$("camDep"))$("camDep").value=parseFloat(w.D)>0?w.D:"";if(document.activeElement!==$("camUnd"))$("camUnd").value=parseFloat(w.U)>0?w.U:""}
 [["camDep","dep"],["camUnd","und"]].forEach(([a,b])=>$(a).addEventListener("input",()=>{$(b).value=$(a).value===""?(b==="dep"?0:""):$(a).value;$(b).dispatchEvent(new Event("input",{bubbles:true}))}));
 $("liveOpen").onclick=liveOpen;$("liveClose").onclick=liveClose;
-$("liveScale").addEventListener("input",()=>{live.ppc=+$("liveScale").value;$("liveScaleV").textContent=`${live.ppc.toFixed(0)} px = 1 cm`;try{localStorage.setItem("pi-live-ppc",String(live.ppc))}catch(e){}liveDraw()});
+$("liveScale").addEventListener("input",()=>{live.ppc=+$("liveScale").value;live.scaled=true;$("liveTip").hidden=true;$("liveScaleV").textContent=`${live.ppc.toFixed(0)} px = 1 cm`;try{localStorage.setItem("pi-live-ppc",String(live.ppc))}catch(e){}liveDraw()});
 $("liveGrid").onclick=()=>{live.grid=!live.grid;$("liveGrid").setAttribute("aria-pressed",live.grid);liveDraw()};
-$("liveUse").onclick=()=>{liveApplySize();advise("ใส่ขนาดจากกล้องแล้ว",`ยาว ${live.L.toFixed(1)} × กว้าง ${live.W.toFixed(1)} cm ในข้อ 3 ความลึกให้วัดด้วยไม้พันสำลีปลอดเชื้อ`);};
-$("liveShot").onclick=()=>{const f=liveFrame();if(!f)return;const {c,k,ox,oy}=f,ppcImg=live.ppc/k,toImg=q=>[(q[0]-ox)/k,(q[1]-oy)/k];
+$("liveUse").onclick=()=>{if(!liveGuard("use","ยังไม่ได้เทียบสเกลกับไม้บรรทัดจริงในภาพนี้ ถ้าระยะถ่ายเปลี่ยน ค่าจะคลาดเคลื่อน · กดอีกครั้งเพื่อใช้สเกลเดิม"))return;const r=liveApplySize();
+  advise("ใส่ขนาดจากกล้องแล้ว",`ยาว ${r.L.toFixed(1)} × กว้าง ${r.W.toFixed(1)} cm`+(r.n>1?` (เฉลี่ย ${r.n} ครั้ง)`:"")+" ความลึกให้วัดด้วยไม้พันสำลีปลอดเชื้อ");};
+$("liveRec").onclick=()=>{if(!(live.L>0&&live.W>0))return;if(live.samp.length>=5)return;const t=liveTilt();live.samp.push({L:live.L,W:live.W,tilt:t});liveSampPaint();
+  const r=$("liveRead");r.classList.remove("flash");void r.offsetWidth;r.classList.add("flash");
+  if(t!=null&&t>10)liveWarn(`กล้องเอียง ${t}° ค่าที่วัดอาจสั้นกว่าจริง ถือให้ตั้งฉากแล้ววัดใหม่`);
+  else if(!live.scaled)liveWarn("อย่าลืมเทียบสเกลกับไม้บรรทัดจริงในภาพนี้ด้วย");
+  else if(live.samp.length<3)liveWarn(`เก็บค่าครั้งที่ ${live.samp.length} แล้ว ลากจุดวัดใหม่ที่ขอบแผลแล้วกดเก็บค่าอีกครั้ง`)};
+$("liveClr").onclick=()=>{live.samp=[];liveSampPaint()};
+$("liveLvl").onclick=async()=>{const D=window.DeviceOrientationEvent;
+  if(lvl.need&&!lvl.u&&D&&typeof D.requestPermission==="function"){try{const r=await D.requestPermission();if(r!=="granted"){liveWarn("ไม่ได้รับอนุญาตให้ใช้เซนเซอร์ระดับน้ำ ใช้การถือกล้องตั้งฉากด้วยสายตาแทน");$("liveLvl").hidden=true;lvl.need=false}}catch(e){liveWarn("เปิดเซนเซอร์ระดับน้ำไม่ได้");$("liveLvl").hidden=true;lvl.need=false}return}
+  if(!lvl.u)return;if(lvl.ref){lvl.ref=null;liveWarn("กลับเป็นระดับน้ำอัตโนมัติ (แนวราบ/แนวตั้ง)")}else{lvl.ref=lvl.u.slice();liveWarn("ตั้ง 0° แล้ว ใช้เมื่อแผลอยู่บนผิวที่เอียง: ถือโทรศัพท์ขนานกับผิวก่อนแตะ")}lvlPaint()};
+$("liveShot").onclick=()=>{if(!liveGuard("shot","ยังไม่ได้เทียบสเกลกับไม้บรรทัดจริงในภาพนี้ · กดปุ่มวงกลมอีกครั้งเพื่อใช้สเกลเดิม"))return;const f=liveFrame();if(!f)return;const {c,k,ox,oy}=f,ppcImg=live.ppc/k,toImg=q=>[(q[0]-ox)/k,(q[1]-oy)/k];
   const r0=toImg([live.ruler.x,live.ruler.y-14]);
   const go=fileObj=>{liveApplySize();liveClose();
     loadPhoto(fileObj,sc=>{const p=ppcImg*sc,x0=Math.min(cv.width-p*5-4,Math.max(4,r0[0]*sc)),y0=Math.min(cv.height-6,Math.max(6,r0[1]*sc));
@@ -2519,7 +2590,7 @@ $("liveShot").onclick=()=>{const f=liveFrame();if(!f)return;const {c,k,ox,oy}=f,
 $("liveOv").addEventListener("pointerdown",e=>{const q=livePt(e);let best=-1,bd=34;live.h.forEach((h,i)=>{const d=Math.hypot(h[0]-q[0],h[1]-q[1]);if(d<bd){bd=d;best=i}});
   if(best>=0)live.drag={k:"h",i:best};else if(Math.abs(q[1]-(live.ruler.y-12))<26&&q[0]>live.ruler.x-12)live.drag={k:"r",dx:q[0]-live.ruler.x,dy:q[1]-live.ruler.y};else return;
   $("liveOv").setPointerCapture(e.pointerId);e.preventDefault();liveDraw()});
-$("liveOv").addEventListener("pointermove",e=>{if(!live.drag)return;const q=livePt(e);if(live.drag.k==="h")live.h[live.drag.i]=q;else live.ruler={x:q[0]-live.drag.dx,y:q[1]-live.drag.dy};liveDraw()});
+$("liveOv").addEventListener("pointermove",e=>{if(!live.drag)return;const q=livePt(e);if(live.drag.k==="h")live.h[live.drag.i]=q;else{live.ruler={x:q[0]-live.drag.dx,y:q[1]-live.drag.dy};live.scaled=true;$("liveTip").hidden=true}liveDraw()});
 ["pointerup","pointercancel"].forEach(t=>$("liveOv").addEventListener(t,()=>{live.drag=null;liveDraw()}));
 window.addEventListener("resize",()=>{if(!$("liveCam").hidden)liveLayout()});
 
