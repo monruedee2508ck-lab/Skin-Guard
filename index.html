@@ -1728,7 +1728,8 @@ function renderBraden(){
       const h=document.createElement("button");h.type="button";h.className="bq-h";h.setAttribute("aria-expanded","false");
       h.innerHTML=`<span class="bq-t"><span></span><small></small></span><span class="bq-v" id="bs_${k}"></span>`;
       h.querySelector(".bq-t span").textContent=th;h.querySelector(".bq-t small").textContent=en?en.replace(")",""):"";
-      h.onclick=()=>bwOpen(BRADEN.findIndex(b=>b[0]===k),false);
+      h.onclick=()=>{const idx=BRADEN.findIndex(b=>b[0]===k),first=BRADEN.findIndex(([kk])=>!st.braden[kk]);
+        if(first<0)bwOpen(idx,false);else{bwOpen(st.braden[k]?Math.min(idx,first):first,true);if(!st.braden[k]&&idx>first)advise("ประเมินตามลำดับ",`ต้องตอบข้อ ${first+1} ก่อน แล้วจะไปข้อถัดไปตามลำดับ`)}};
       const list=document.createElement("div");list.className="bq-opts";
       opts.forEach((o,i)=>{const b=document.createElement("button");b.type="button";b.dataset.k=k;b.dataset.v=i+1;
         b.innerHTML=`<i>${i+1}</i><span></span>`;b.lastChild.textContent=o;
@@ -1762,9 +1763,9 @@ function bwShow(){const [k,t,opts]=BRADEN[bw.i],[th,en]=t.split(" (");
   $("bwBack").disabled=bw.i===0;$("bwModal").querySelector(".rm-body").scrollTop=0}
 function bwPick(k,v){st.braden[k]=v;renderBraden();update();
   $("bwOpts").querySelectorAll("button").forEach((b,j)=>b.setAttribute("aria-pressed",j+1===v));
-  setTimeout(()=>{const next=BRADEN.findIndex(([kk],j)=>j>bw.i&&!st.braden[kk]),anyLeft=BRADEN.findIndex(([kk])=>!st.braden[kk]);
-    if(bw.flow){if(next>=0){bw.i=next;bwShow()}else if(anyLeft>=0){bw.i=anyLeft;bwShow()}else{bwClose();bradenAdvice(k,v,true)}}
-    else{if(anyLeft>=0){bw.i=anyLeft;bwShow()}else{bwClose();advise("ปรับคะแนน Braden แล้ว",`คะแนนรวม ${bradenTotal()} (${bradenRisk(bradenTotal())})`)}}},260)}
+  setTimeout(()=>{const first=BRADEN.findIndex(([kk])=>!st.braden[kk]);
+    if(bw.flow){if(bw.i+1<BRADEN.length){bw.i++;bwShow()}else if(first>=0){bw.i=first;bwShow()}else{bwClose();bradenAdvice(k,v,true)}}
+    else{if(first>=0){bw.flow=true;bw.i=first;bwShow()}else{bwClose();advise("ปรับคะแนน Braden แล้ว",`คะแนนรวม ${bradenTotal()} (${bradenRisk(bradenTotal())})`)}}},260)}
 $("bwBack").onclick=()=>{if(bw.i>0){bw.i--;bwShow()}};
 $("bwClose").onclick=bwClose;
 $("bwModal").addEventListener("click",e=>{if(e.target.id==="bwModal")bwClose()});
