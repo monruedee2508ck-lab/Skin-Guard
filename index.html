@@ -1025,6 +1025,12 @@ body.locked{overflow:hidden}
 .ot-chip[hidden]{display:none!important}
 .hero h1{margin-right:230px}
 @media (max-width:480px){.ot-chip{top:54px;right:14px}.hero h1{margin-right:96px}.hero{padding-bottom:34px!important}}
+
+.sync-st{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font:inherit;font-size:.78rem;font-weight:600;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:99px;padding:4px 10px;cursor:pointer;position:relative;z-index:2}
+.sync-st[hidden]{display:none!important}
+.sync-st.err{background:rgba(217,83,79,.85);border-color:transparent}.sync-st.off,.sync-st.wait{background:rgba(224,122,46,.8);border-color:transparent}
+#syncCard label{display:flex;flex-direction:column;gap:5px;font-size:.86rem;color:var(--muted)}
+.sync-msg{margin:0;font-size:.86rem;color:var(--ink);min-height:1.2em}
 </style>
 </head>
 <body>
@@ -1047,6 +1053,7 @@ body.locked{overflow:hidden}
     <button type="button" class="ot-chip" id="otChip" hidden></button>
     <svg class="art" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#fff" stroke-width="6"/><path d="M50 22v28l18 12" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <h1>Skin Guard</h1>
+    <button type="button" class="sync-st" id="syncSt" hidden></button>
   </header>
 
   <section class="card patient">
@@ -1431,6 +1438,15 @@ body.locked{overflow:hidden}
   </div>
 
   <div class="page" id="page-ward" hidden>
+  <section class="card" id="syncCard">
+    <h2>ระบบกลาง (Google Sheets)</h2>
+    <p class="note" style="margin:0">เก็บข้อมูลผู้ป่วย ประวัติ การพลิกตัว และภาพถ่ายไว้ที่ Google Sheets/Drive ของหน่วยงาน ใช้จากเครื่องไหนก็ได้ ตั้งค่าครั้งเดียวต่อเครื่อง</p>
+    <label for="syncUrl">Web app URL<input id="syncUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></label>
+    <label for="syncKey">รหัสลับ (KEY)<input id="syncKey" type="password" placeholder="รหัสเดียวกับใน Apps Script" autocomplete="off"></label>
+    <div class="row"><button class="btn primary" id="syncSave" type="button">บันทึกและเชื่อมต่อ</button><button class="btn" id="syncNow" type="button">ซิงก์ตอนนี้</button></div>
+    <div class="row"><button class="btn ghost" id="syncLink" type="button">คัดลอกลิงก์ตั้งค่าให้เครื่องอื่น</button><button class="btn ghost" id="syncOff" type="button">ยกเลิกการเชื่อมต่อ</button></div>
+    <p class="sync-msg" id="syncMsg" aria-live="polite"></p>
+  </section>
   <section class="card" id="wardCard">
     <h2>ภาพรวมหอผู้ป่วย <span class="steps-n" id="wardTime"></span></h2>
     <div class="kpis" id="wardKpis"></div>
@@ -1600,6 +1616,8 @@ body.locked{overflow:hidden}
 </div>
 
 <script>
+(function(){try{const m=(location.hash||"").match(/^#sync=([^&]+)/);if(m){const cfg=JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(m[1])))));if(cfg&&cfg.url&&cfg.key){localStorage.setItem("pi-sync",JSON.stringify({url:cfg.url,key:cfg.key,on:true}));localStorage.setItem("pi-sync-new","1")}history.replaceState(null,"",location.pathname)}}catch(e){}})();
+
 const STAGES={
   s1:{name:"ระยะที่ 1 (Stage 1)",c:"--s1",d:"ผิวหนังยังไม่ฉีกขาด มีรอยแดงที่กดแล้วไม่จางหาย"},
   s2:{name:"ระยะที่ 2 (Stage 2)",c:"--s2",d:"สูญเสียผิวหนังบางส่วน ถึงชั้นหนังแท้ พื้นแผลสีชมพู/แดง ชุ่มชื้น หรือเป็นตุ่มน้ำใส ยังไม่เห็นไขมัน"},
@@ -2042,7 +2060,7 @@ function renderTurn(){
   if(due&&audioCtx&&beepedFor!==s.slot){beepedFor=s.slot;try{[0,.35,.7].forEach(o=>{const g=audioCtx.createGain(),osc=audioCtx.createOscillator();osc.frequency.value=880;g.gain.value=.15;osc.connect(g).connect(audioCtx.destination);osc.start(audioCtx.currentTime+o);osc.stop(audioCtx.currentTime+o+.2)})}catch(e){}}
 }
 $("turnBtn").onclick=()=>{
-  try{localStorage.setItem(turnKey(),String(Date.now()))}catch(e){}
+  try{const t=Date.now();localStorage.setItem(turnKey(),String(t));syncEnq("turn",$("hn").value.trim(),{t})}catch(e){}
   try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}
   renderTurn();renderAlerts();
   {const s2=turnState();advise("บันทึกการพลิกตัวแล้ว",[`ท่าปัจจุบัน: ${s2.pos}`,`รอบถัดไป ${hhmm(s2.next)} น. พลิกเป็นท่า${s2.nextPos}`],"--teal","✓")}
@@ -2094,7 +2112,7 @@ function update(){
 }
 /* History */
 function loadHist(){try{return JSON.parse(localStorage.getItem("pi-hist")||"[]")}catch(e){return[]}}
-function saveHist(h){try{localStorage.setItem("pi-hist",JSON.stringify(h));return true}catch(e){return false}}
+function saveHist(h){try{localStorage.setItem("pi-hist",JSON.stringify(h))}catch(e){return false}try{syncHistNew(h)}catch(e){}return true}
 let hist=loadHist();
 const SAMPLE=!hist.length;
 if(SAMPLE){const S="กระดูกก้นกบ (Sacrum/Coccyx)",H="ส้นเท้า (Heel)";hist=[
@@ -2116,7 +2134,7 @@ function renderHist(){
     <td>${s?`<span class="pill" style="--c:var(${s.c})">${s.name.split(" (")[0]}</span>`:"-"}</td>
     <td class="num">${r.braden??"-"}</td><td class="num">${r.a?(+r.a).toFixed(1):"-"}</td><td class="num">${r.push}</td><td class="who">${r.nurse?esc(r.nurse)+`<small>${r.recDate?thDateLong(r.recDate):""} ${r.recTime?r.recTime+" น.":""}</small>`:"-"}</td><td class="acts">${r.noteText?`<button class="del view" data-id="${r.id}">ดู</button>`:""}<button class="del" data-id="${r.id}">ลบ</button></td></tr>`}).join("")}</tbody></table>`;
   box.querySelectorAll(".view").forEach(b=>b.onclick=()=>viewNote(b.dataset.id));
-  box.querySelectorAll(".del:not(.view)").forEach(b=>b.onclick=()=>{hist=hist.filter(h=>h.id!=b.dataset.id);if(!hist.some(h=>h.ex))saveHist(hist);renderHist()});
+  box.querySelectorAll(".del:not(.view)").forEach(b=>b.onclick=()=>{try{syncEnq("delhist",String(b.dataset.id),null)}catch(e){}hist=hist.filter(h=>h.id!=b.dataset.id);if(!hist.some(h=>h.ex))saveHist(hist);renderHist()});
   // chart of PUSH over time (oldest→newest)
   let pts=[...hist].sort((a,b)=>a.date<b.date?-1:1);
   {const cw=wounds&&wounds[wActive],hn=$("hn").value.trim();if(cw){const f=pts.filter(p=>p.site===cw.site&&(p.side||"")===(cw.side||"")&&(p.hn||"")===hn&&p.stage);if(f.length>=2)pts=f}}
@@ -2150,7 +2168,7 @@ $("save").onclick=()=>{const c=current();
   if(!$("recDate").value||!$("recTime").value)recNow();
   hist=hist.filter(h=>!h.ex);{const sig={braden:bt,nurse:$("nurseName").value.trim(),ot:(otGet()||{}).ot||"",role:$("nurseRole").value,recDate:$("recDate").value,recTime:$("recTime").value,noteText:fullNote()},base=Date.now();
     const ws=(wounds||[]).filter(w=>w.stage);
-    if(ws.length)ws.forEach((w,i)=>{const x=woundCalc(w);hist.push({...c,...x,...sig,woundNo:wounds.indexOf(w)+1,woundCount:wounds.length,id:base+i});if(w.photo)wpPut({id:String(base+i),hn:c.hn,site:w.site,side:w.side||"",date:c.date,img:w.photo,push:x.push,a:x.a})});
+    if(ws.length)ws.forEach((w,i)=>{const x=woundCalc(w);hist.push({...c,...x,...sig,woundNo:wounds.indexOf(w)+1,woundCount:wounds.length,id:base+i});if(w.photo){wpPut({id:String(base+i),hn:c.hn,site:w.site,side:w.side||"",date:c.date,img:w.photo,push:x.push,a:x.a}).then(()=>{try{syncEnq("photo",String(base+i),{store:"wound"})}catch(e){}})}});
     else hist.push({...c,...sig,id:base})}
   toast(saveHist(hist)?"บันทึกแล้ว":"บันทึกไม่ได้ เบราว์เซอร์นี้ปิดการเก็บข้อมูล");renderHist()};
 
@@ -2503,7 +2521,7 @@ function skRender(){
       f.querySelectorAll(".r")[1].firstChild.textContent=r.note||"";
       f.querySelector(".th").onclick=()=>skView(r.id);
       const del=f.querySelector(".del");del.onclick=async()=>{
-        if(del.dataset.armed){await skDel(r.id);skinCache=skinCache.filter(x=>x.id!==r.id);skRender();update()}
+        if(del.dataset.armed){await skDel(r.id);try{syncEnq("delphoto",r.id,{store:"skin"})}catch(e){}skinCache=skinCache.filter(x=>x.id!==r.id);skRender();update()}
         else{del.dataset.armed="1";del.textContent="ยืนยันลบ";del.style.color="var(--s1)";setTimeout(()=>{if(del.isConnected){delete del.dataset.armed;del.textContent="ลบ";del.style.color=""}},3000)}};
       grid.append(f)});
     sec.append(h,grid);g.append(sec)});
@@ -2537,7 +2555,7 @@ async function skSave(){
     time:String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0"),
     kind:skKindNow(),site:skinSite,status:skinSel,note:$("skinNote").value.trim(),img:skinDraft.url,
     ai:skinDraftAI?{status:skinDraftAI.status,finding:skinDraftAI.finding}:null};
-  const ok=await skPut(rec);skinCache.push(rec);
+  const ok=await skPut(rec);skinCache.push(rec);try{syncEnq("photo",rec.id,{store:"skin"})}catch(e){}
   const S=skSt(rec.status),file=skinDraft.file,site=skSite(rec.site);
   skinDraft=null;$("skinDraft").hidden=true;
   if(!S.go){const d=skDay(),done=new Set(skinCache.filter(r=>r.date===d).map(r=>r.site)),nx=SK_SITES.find(x=>x[4]&&!done.has(x[0]));if(nx)skinSite=nx[0]}
@@ -2729,6 +2747,89 @@ $("lgForm").addEventListener("submit",e=>{e.preventDefault();const ot=$("lgOT").
   $("lgErr").textContent="";otPaint();try{update()}catch(e){}});
 $("otChip").onclick=()=>{if(!confirm("ออกจากระบบ?"))return;otUser=null;try{sessionStorage.removeItem("pi-ot")}catch(e){}try{setAdmin(false)}catch(e){}go("prevent");otPaint()};
 otPaint();
+
+/* ---------- Central sync: Google Sheets via Apps Script ---------- */
+var SYNC={busy:false,timer:0,again:false,status:"",err:""};
+function syncCfg(){try{const c=JSON.parse(localStorage.getItem("pi-sync")||"null");return c&&c.on&&c.url&&c.key?c:null}catch(e){return null}}
+function syncQ(){try{return JSON.parse(localStorage.getItem("pi-sync-q")||"[]")}catch(e){return[]}}
+function syncQSet(q){try{localStorage.setItem("pi-sync-q",JSON.stringify(q))}catch(e){}}
+function syncSkipHN(hn){return !hn||hn==="ตัวอย่าง"||hn==="_"}
+function syncEnq(type,key,data){if(!syncCfg())return;key=String(key);
+  if((type==="patient"||type==="delpatient"||type==="turn")&&syncSkipHN(key))return;
+  const q=syncQ().filter(x=>!(x.key===key&&(x.type===type||(type.startsWith("del")&&x.type===type.slice(3))||(x.type.startsWith("del")&&type===x.type.slice(3)))));
+  q.push({type,key,data,ot:(typeof otGet==="function"&&otGet()||{}).ot||"",at:Date.now()});syncQSet(q);syncPaint();syncSoon(1500)}
+function syncHistNew(h){if(!syncCfg())return;let ids;try{ids=new Set(JSON.parse(localStorage.getItem("pi-sync-hids")||"[]"))}catch(e){ids=new Set()}
+  (h||[]).forEach(e=>{if(!e||e.ex||syncSkipHN(e.hn))return;const id=String(e.id);if(!ids.has(id)){syncEnq("hist",id,e);ids.add(id)}});
+  try{localStorage.setItem("pi-sync-hids",JSON.stringify([...ids]))}catch(e){}}
+function syncSoon(ms){clearTimeout(SYNC.timer);SYNC.timer=setTimeout(syncRun,ms||800)}
+async function syncCall(req){const c=syncCfg();if(!c)throw new Error("not_configured");
+  const r=await fetch(c.url,{method:"POST",body:JSON.stringify(Object.assign({key:c.key},req)),redirect:"follow"});
+  const j=await r.json();if(!j.ok)throw new Error(j.error||"error");return j}
+function idbGet(store,id){return new Promise(async res=>{try{let db;if(store==="skin"){if(!skinTried){skinTried=true;skinDB=await skOpen()}db=skinDB}else db=await wpReady();
+  if(!db)return res(null);const q=db.transaction("p").objectStore("p").get(id);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)}catch(e){res(null)}})}
+async function syncPush(){let q=syncQ();if(!q.length)return 0;let sent=0;
+  const plain=q.filter(x=>x.type!=="photo");
+  if(plain.length){await syncCall({action:"push",items:plain});const doneK=new Set(plain.map(x=>x.type+"|"+x.key+"|"+x.at));q=syncQ().filter(x=>!doneK.has(x.type+"|"+x.key+"|"+x.at));syncQSet(q);sent+=plain.length}
+  for(const it of syncQ().filter(x=>x.type==="photo")){const rec=await idbGet(it.data&&it.data.store,it.key);
+    if(rec)await syncCall({action:"push",items:[{type:"photo",key:it.key,store:it.data.store,ot:it.ot,data:rec}]});
+    syncQSet(syncQ().filter(x=>!(x.type==="photo"&&x.key===it.key&&x.at===it.at)));sent++}
+  return sent}
+async function syncPull(){const since=+localStorage.getItem("pi-sync-last")||0,j=await syncCall({action:"pull",since});
+  const pend=new Set(syncQ().map(x=>x.type.replace(/^del/,"")+"|"+x.key));let curChanged=false,histChanged=false;
+  (j.patients||[]).forEach(r=>{const hn=String(r.hn);if(pend.has("patient|"+hn))return;
+    if(r.deleted==="y"){try{localStorage.removeItem(PT+hn)}catch(e){}return}
+    let rec;try{rec=JSON.parse(r.json)}catch(e){return}const old=loadPatientRec(hn),sig=o=>{if(!o)return"";const {updated,...x}=o;return JSON.stringify(x)};
+    if(sig(old)===sig(rec))return;try{localStorage.setItem(PT+hn,JSON.stringify(rec))}catch(e){}if(hn===curHN)curChanged=true});
+  if((j.history||[]).length){let ids;try{ids=new Set(JSON.parse(localStorage.getItem("pi-sync-hids")||"[]"))}catch(e){ids=new Set()}
+    (j.history||[]).forEach(r=>{const id=String(r.id);if(pend.has("hist|"+id))return;
+      if(r.deleted==="y"){const n=hist.length;hist=hist.filter(h=>String(h.id)!==id);if(hist.length!==n)histChanged=true;return}
+      let e;try{e=JSON.parse(r.json)}catch(x){return}ids.add(id);const i=hist.findIndex(h=>String(h.id)===id);if(i>=0){if(JSON.stringify(hist[i])!==JSON.stringify(e)){hist[i]=e;histChanged=true}}else{hist.push(e);histChanged=true}});
+    try{localStorage.setItem("pi-sync-hids",JSON.stringify([...ids]))}catch(e){}
+    if(histChanged){hist=hist.filter(h=>!h.ex);try{localStorage.setItem("pi-hist",JSON.stringify(hist))}catch(e){}}}
+  (j.turns||[]).forEach(r=>{const hn=String(r.hn),t=+r.t||0,k="pi-turn-"+hn;if(pend.has("turn|"+hn))return;if(t>(+localStorage.getItem(k)||0))try{localStorage.setItem(k,String(t))}catch(e){}});
+  let gotPhoto=false;
+  for(const r of (j.photos||[])){const id=String(r.id),store=String(r.store||"");if(pend.has("photo|"+id))continue;
+    if(r.deleted==="y"){if(store==="skin"){await skDel(id);gotPhoto=true}continue}
+    if(await idbGet(store,id))continue;
+    try{const g=await syncCall({action:"photo",id});if(g.rec&&g.rec.img){if(g.store==="skin")await skPut(g.rec);else await wpPut(g.rec);gotPhoto=true}}catch(e){}}
+  try{localStorage.setItem("pi-sync-last",String(j.time||Date.now()))}catch(e){}
+  // refresh UI
+  const busyUI=!$("bwModal").hidden||!$("stepModal").hidden||!$("riskModal").hidden||!$("liveCam").hidden;
+  if(curChanged&&!busyUI){const h=curHN;ptReady=false;curHN=null;try{changePatient(h)}finally{ptReady=true}}
+  if(histChanged){try{renderHist()}catch(e){}}
+  if(gotPhoto){try{skinCache=await skAll(skHN());skRender()}catch(e){}}
+  try{update()}catch(e){}try{if(document.body.dataset.page==="ward")renderWard()}catch(e){}
+  return (j.patients||[]).length+(j.history||[]).length}
+async function syncRun(){if(!syncCfg())return syncPaint();if(SYNC.busy){SYNC.again=true;return}if(!navigator.onLine){SYNC.status="offline";return syncPaint()}
+  SYNC.busy=true;SYNC.status="busy";syncPaint();
+  try{await syncPush();await syncPull();SYNC.status="ok";SYNC.err="";try{localStorage.setItem("pi-sync-ok",String(Date.now()))}catch(e){}}
+  catch(e){SYNC.status="err";SYNC.err=String(e&&e.message||e)}
+  SYNC.busy=false;syncPaint();if(SYNC.again){SYNC.again=false;syncSoon(500)}}
+function syncPaint(){const b=$("syncSt");if(!b)return;const c=syncCfg();b.hidden=!c;if(!c)return;const n=syncQ().length,ok=+localStorage.getItem("pi-sync-ok")||0;
+  b.className="sync-st "+(SYNC.status==="err"?"err":SYNC.status==="offline"?"off":n?"wait":"ok");
+  b.textContent=SYNC.status==="busy"?"☁ กำลังซิงก์…":SYNC.status==="err"?"☁ ซิงก์ไม่สำเร็จ · แตะเพื่อลองใหม่":SYNC.status==="offline"?`☁ ออฟไลน์ · รอส่ง ${n}`:n?`☁ รอส่ง ${n} รายการ`:ok?`☁ ซิงก์แล้ว ${hhmm(ok)} น.`:"☁ ระบบกลาง";
+  const m=$("syncMsg");if(m&&SYNC.status==="err")m.textContent="เชื่อมต่อไม่สำเร็จ: "+SYNC.err}
+function syncFill(){let c=null;try{c=JSON.parse(localStorage.getItem("pi-sync")||"null")}catch(e){}$("syncUrl").value=c&&c.url||"";$("syncKey").value=c&&c.key||""}
+$("syncSt").onclick=()=>syncSoon(10);
+$("syncSave").onclick=async()=>{const url=$("syncUrl").value.trim(),key=$("syncKey").value.trim(),m=$("syncMsg");
+  if(!/^https:\/\/script\.google(usercontent)?\.com\//.test(url)&&!/^https?:\/\/(localhost|127\.0\.0\.1)/.test(url)){m.textContent="URL ต้องขึ้นต้นด้วย https://script.google.com/…";return}
+  if(key.length<8){m.textContent="รหัสลับต้องยาวอย่างน้อย 8 ตัว";return}
+  try{localStorage.setItem("pi-sync",JSON.stringify({url,key,on:true}))}catch(e){}m.textContent="กำลังทดสอบการเชื่อมต่อ…";
+  try{await syncCall({action:"ping"});m.textContent="เชื่อมต่อสำเร็จ กำลังส่งข้อมูลที่มีในเครื่องขึ้นระบบกลาง…";syncSeedAll();await syncRun();m.textContent="เชื่อมต่อสำเร็จ ข้อมูลจะซิงก์อัตโนมัติทุกครั้งที่บันทึก และทุก 1 นาที"}
+  catch(e){m.textContent="เชื่อมต่อไม่สำเร็จ: "+(e.message||e)+" — ตรวจ URL, KEY และการ Deploy (Who has access: Anyone)"}};
+$("syncNow").onclick=()=>{$("syncMsg").textContent="";syncRun()};
+$("syncOff").onclick=()=>{if(!confirm("ยกเลิกการเชื่อมต่อระบบกลางในเครื่องนี้? ข้อมูลในเครื่องยังอยู่"))return;try{localStorage.removeItem("pi-sync");localStorage.removeItem("pi-sync-q");localStorage.removeItem("pi-sync-last")}catch(e){}syncFill();syncPaint();$("syncMsg").textContent="ยกเลิกแล้ว"};
+$("syncLink").onclick=async()=>{const c=syncCfg();if(!c){$("syncMsg").textContent="ต้องเชื่อมต่อในเครื่องนี้ก่อน";return}
+  const enc=encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({url:c.url,key:c.key}))))),link=location.origin+location.pathname+"#sync="+enc;
+  try{if(navigator.share){await navigator.share({title:"ตั้งค่า Skin Guard ระบบกลาง",url:link});return}}catch(e){}
+  try{await navigator.clipboard.writeText(link);$("syncMsg").textContent="คัดลอกลิงก์แล้ว ส่งให้เครื่องอื่นเปิดครั้งเดียวเพื่อเชื่อมต่อ (ลิงก์มีรหัสลับ ส่งเฉพาะในกลุ่มหน่วยงาน)"}catch(e){prompt("คัดลอกลิงก์นี้",link)}};
+function syncSeedAll(){allPatients().forEach(p=>{if(!syncSkipHN(p.hn))syncEnq("patient",p.hn,p)});syncHistNew(hist);
+  allPatients().forEach(p=>{const t=+localStorage.getItem("pi-turn-"+p.hn)||0;if(t)syncEnq("turn",p.hn,{t})})}
+window.addEventListener("online",()=>syncSoon(500));
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)syncSoon(300)});
+setInterval(()=>{if(syncCfg())syncRun()},60000);
+syncFill();syncPaint();
+if(syncCfg()){if(localStorage.getItem("pi-sync-new")){try{localStorage.removeItem("pi-sync-new")}catch(e){}setTimeout(()=>advise("เชื่อมต่อระบบกลางแล้ว","เครื่องนี้จะดึงข้อมูลผู้ป่วยจากระบบกลางและซิงก์อัตโนมัติ"),1200)}setTimeout(syncRun,1500)}
 function recNow(){const n=new Date();$("recDate").value=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;$("recTime").value=`${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}`}
 function fullNote(){
   const extra=$("noteExtra").value.trim(),name=$("nurseName").value.trim();
@@ -3781,7 +3882,10 @@ function savePatient(){
   if(!ptReady||!curHN)return;
   const rec={hn:curHN,bed:$("bed").value.trim(),braden:st.braden||{},sepsis:$("sepsis").checked,cr:st.cr||{},wActive:wActive||0,
     wounds:(wounds||[]).map(w=>{const {photo,...r}=w;return r}),noteExtra:$("noteExtra").value,updated:Date.now()};
+  const old=loadPatientRec(curHN),sig=o=>{if(!o)return"";const {updated,...r}=o;return JSON.stringify(r)};
+  if(old&&sig(old)===sig(rec))return;
   try{localStorage.setItem(PT+curHN,JSON.stringify(rec))}catch(e){}
+  try{syncEnq("patient",curHN,rec)}catch(e){}
 }
 function loadPatientRec(hn){try{return JSON.parse(localStorage.getItem(PT+hn)||"null")}catch(e){return null}}
 function changePatient(nh,bed){
@@ -3823,7 +3927,7 @@ function renderWard(){
   tlist.forEach(x=>{const d=document.createElement("div");d.className="wrow";
     d.innerHTML=`<span class="wbed"></span><span class="wtx"><b></b><small>${x.t.lt?"พลิกล่าสุด "+hhmm(x.t.lt)+" น.":"ยังไม่เคยบันทึก"} · ท่าที่ต้องพลิก: ${x.t.pos}</small></span>${riskPill(x.r,x.c)}<button type="button" class="btn sm primary">พลิกแล้ว</button>`;
     d.querySelector(".wbed").textContent=x.p.bed||"–";d.querySelector("b").textContent=x.p.hn;
-    d.querySelector("button").onclick=()=>{try{localStorage.setItem("pi-turn-"+x.p.hn,String(Date.now()))}catch(e){}renderWard();renderTurn();renderAlerts()};tb.append(d)});
+    d.querySelector("button").onclick=()=>{try{const t=Date.now();localStorage.setItem("pi-turn-"+x.p.hn,String(t));syncEnq("turn",x.p.hn,{t})}catch(e){}renderWard();renderTurn();renderAlerts()};tb.append(d)});
   // dressing due today / overdue
   const dl=[];pts.forEach(p=>(p.wounds||[]).forEach((w,i)=>{const S=dressStatus(w);if(S.d&&(S.cls==="over"||S.cls==="soon"))dl.push({p,w,i,S})}));
   dl.sort((a,b)=>a.S.d.t-b.S.d.t);
@@ -3845,7 +3949,7 @@ function renderWard(){
     c.querySelector(".wtx small").textContent=ws.length?ws.map(w=>`${siteLabel(w)} ${stageName(w.stage).split(" (")[0]}`).join(" · "):"ไม่มีแผลกดทับ";
     c.querySelector(".wc-main").onclick=()=>{changePatient(p.hn);go("prevent")};
     const dis=c.querySelector(".dis");dis.onclick=()=>{if(!dis.dataset.arm){dis.dataset.arm=1;dis.textContent="ยืนยันจำหน่าย";dis.style.color="var(--s1)";setTimeout(()=>{if(dis.isConnected){delete dis.dataset.arm;dis.textContent="จำหน่าย";dis.style.color=""}},3000);return}
-      try{localStorage.removeItem(PT+p.hn)}catch(e){}if(p.hn===curHN){curHN=null}renderWard()};
+      try{localStorage.removeItem(PT+p.hn)}catch(e){}try{syncEnq("delpatient",p.hn,null)}catch(e){}if(p.hn===curHN){curHN=null}renderWard()};
     wl.append(c)});
 }
 $("admBtn").onclick=()=>{const hn=$("admHN").value.trim(),bed=$("admBed").value.trim();if(!hn){$("admHN").focus();return}
