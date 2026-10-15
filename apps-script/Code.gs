@@ -12,7 +12,8 @@ const SHEETS = {
   history:  ['id', 'hn', 'date', 'updated', 'ot', 'deleted', 'json'],
   turns:    ['hn', 'updated', 'ot', 't'],
   photos:   ['id', 'store', 'hn', 'date', 'site', 'updated', 'ot', 'deleted', 'fileId', 'meta'],
-  log:      ['time', 'ot', 'action', 'key']
+  log:      ['time', 'ot', 'action', 'key'],
+  admins:   ['email', 'name', 'salt', 'hash', 'status', 'created', 'approvedBy', 'token', 'tokenExp']
 };
 
 function doGet() { return out({ ok: true, app: 'SkinGuard', time: Date.now() }); }
@@ -28,6 +29,10 @@ function doPost(e) {
     if (req.action === 'push') return out(push(req));
     if (req.action === 'pull') return out(pull(req));
     if (req.action === 'photo') return out(getPhoto(req.id));
+    if (req.action === 'adminRegister') return out(adminRegister(req));
+    if (req.action === 'adminLogin') return out(adminLogin(req));
+    if (req.action === 'adminList') return out(adminList(req));
+    if (req.action === 'adminSet') return out(adminSet(req));
     return out({ ok: false, error: 'unknown_action' });
   } catch (err) {
     return out({ ok: false, error: String(err) });
@@ -126,4 +131,57 @@ function getPhoto(id) {
   const meta = JSON.parse(row[9] || '{}');
   meta.img = 'data:' + blob.getContentType() + ';base64,' + Utilities.base64Encode(blob.getBytes());
   return { ok: true, store: row[1], rec: meta };
+}
+
+/* ---------- Admin accounts ---------- */
+function sha(s) {
+  return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, s, Utilities.Charset.UTF_8)
+    .map(b => ((b + 256) % 256).toString(16).padStart(2, '0')).join('');
+}
+function admins() {
+  const sh = sheet('admins'), last = sh.getLastRow();
+  if (last < 2) return { sh, rows: [] };
+  const rows = sh.getRange(2, 1, last - 1, 9).getValues().map((r, i) => ({
+    row: i + 2, email: String(r[0]).toLowerCase(), name: r[1], salt: r[2], hash: r[3], status: r[4], token: r[7], tokenExp: Number(r[8]) || 0 }));
+  return { sh, rows };
+}
+function adminRegister(req) {
+  const email = String(req.email || '').trim().toLowerCase(), name = String(req.name || '').trim(), pass = String(req.pass || '');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || name.length < 2 || pass.length < 6) return { ok: false, error: 'invalid_input' };
+  const A = admins();
+  if (A.rows.some(r => r.email === email)) return { ok: false, error: 'exists' };
+  const salt = Utilities.getUuid(), first = !A.rows.some(r => r.status === 'approved');
+  const status = first ? 'approved' : 'pending';
+  A.sh.appendRow([email, name, salt, sha('skin-guard|' + salt + '|' + pass), status, new Date(), first ? 'first-account' : '', '', '']);
+  sheet('log').appendRow([new Date(), email, 'adminRegister', status]);
+  return { ok: true, status };
+}
+function adminLogin(req) {
+  const email = String(req.email || '').trim().toLowerCase(), pass = String(req.pass || '');
+  const A = admins(), u = A.rows.find(r => r.email === email);
+  if (!u || sha('skin-guard|' + u.salt + '|' + pass) !== u.hash) return { ok: false, error: 'invalid' };
+  if (u.status !== 'approved') return { ok: false, error: 'pending' };
+  const token = Utilities.getUuid(), exp = Date.now() + 12 * 3600 * 1000;
+  A.sh.getRange(u.row, 8, 1, 2).setValues([[token, exp]]);
+  sheet('log').appendRow([new Date(), email, 'adminLogin', '']);
+  return { ok: true, name: u.name, email, token };
+}
+function adminAuth(token) {
+  if (!token) return null;
+  const A = admins(), u = A.rows.find(r => r.token === token && r.tokenExp > Date.now() && r.status === 'approved');
+  return u ? { A, u } : null;
+}
+function adminList(req) {
+  const a = adminAuth(req.token); if (!a) return { ok: false, error: 'session_expired' };
+  return { ok: true, admins: a.A.rows.map(r => ({ email: r.email, name: r.name, status: r.status })) };
+}
+function adminSet(req) {
+  const a = adminAuth(req.token); if (!a) return { ok: false, error: 'session_expired' };
+  const email = String(req.email || '').toLowerCase(), t = a.A.rows.find(r => r.email === email);
+  if (!t) return { ok: false, error: 'not_found' };
+  if (req.op === 'approve') { a.A.sh.getRange(t.row, 5).setValue('approved'); a.A.sh.getRange(t.row, 7).setValue(a.u.email); }
+  else if (req.op === 'remove') { if (email === a.u.email) return { ok: false, error: 'self' }; a.A.sh.deleteRow(t.row); }
+  else return { ok: false, error: 'bad_op' };
+  sheet('log').appendRow([new Date(), a.u.email, 'admin:' + req.op, email]);
+  return { ok: true };
 }

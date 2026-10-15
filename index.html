@@ -1031,6 +1031,18 @@ body.locked{overflow:hidden}
 .sync-st.err{background:rgba(217,83,79,.85);border-color:transparent}.sync-st.off,.sync-st.wait{background:rgba(224,122,46,.8);border-color:transparent}
 #syncCard label{display:flex;flex-direction:column;gap:5px;font-size:.86rem;color:var(--muted)}
 .sync-msg{margin:0;font-size:.86rem;color:var(--ink);min-height:1.2em}
+
+.adm-sheet label{display:flex;flex-direction:column;gap:5px;font-size:.88rem;color:var(--muted);margin-bottom:8px}
+.adm-sheet input{font-size:1.05rem;padding:11px;letter-spacing:normal;text-align:left}
+.adm-tabs{display:grid;grid-template-columns:1fr 1fr}
+#admPaneIn[hidden],#admPaneReg[hidden]{display:none!important}
+.adm-err.ok{color:var(--ok)}
+.adm-mode{font-size:.8rem}
+.adm-list{display:flex;flex-direction:column;gap:8px}
+.adm-row{display:flex;align-items:center;gap:8px;background:var(--bg);border-radius:12px;padding:10px 12px;flex-wrap:wrap}
+.ar-t{flex:1;min-width:150px;display:flex;flex-direction:column}.ar-t b{color:var(--ink);font-size:.95rem}.ar-t small{color:var(--muted);font-size:.8rem}
+.adm-row .tpill{font-size:.74rem;font-weight:600;border-radius:99px;padding:2px 9px}
+.adm-row .tpill.ok{background:color-mix(in srgb,var(--ok) 16%,var(--surface));color:var(--ok)}.adm-row .tpill.wait{background:color-mix(in srgb,var(--s2) 18%,var(--surface));color:var(--s2)}
 </style>
 </head>
 <body>
@@ -1447,6 +1459,11 @@ body.locked{overflow:hidden}
     <div class="row"><button class="btn ghost" id="syncLink" type="button">คัดลอกลิงก์ตั้งค่าให้เครื่องอื่น</button><button class="btn ghost" id="syncOff" type="button">ยกเลิกการเชื่อมต่อ</button></div>
     <p class="sync-msg" id="syncMsg" aria-live="polite"></p>
   </section>
+  <section class="card" id="admCard">
+    <h2>บัญชีผู้ดูแล (Admin)</h2>
+    <p class="note" style="margin:0">ผู้ที่ลงทะเบียนใหม่ต้องได้รับอนุมัติจากผู้ดูแลก่อนจึงเข้าหน้าแนวโน้มและหอผู้ป่วยได้</p>
+    <div class="adm-list" id="admList"></div>
+  </section>
   <section class="card" id="wardCard">
     <h2>ภาพรวมหอผู้ป่วย <span class="steps-n" id="wardTime"></span></h2>
     <div class="kpis" id="wardKpis"></div>
@@ -1538,16 +1555,24 @@ body.locked{overflow:hidden}
     </div>
    </div>
   </div>
-  <div class="modal" id="admModal" hidden role="dialog" aria-modal="true" aria-label="เข้าสู่โหมดผู้ดูแล">
-    <div class="sheet adm-sheet">
-      <div class="rm-kick">โหมดผู้ดูแล · Admin</div>
-      <h3 id="admTitle">ใส่รหัส Admin</h3>
-      <p class="note" id="admText" style="margin:0">หน้าแนวโน้มและข้อมูลหอผู้ป่วย เปิดดูได้เฉพาะผู้ดูแล</p>
-      <input id="admPin" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="รหัส 4–12 หลัก" aria-label="รหัส Admin">
-      <input id="admPin2" type="password" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="ยืนยันรหัสอีกครั้ง" aria-label="ยืนยันรหัส Admin" hidden>
+  <div class="modal" id="admModal" hidden role="dialog" aria-modal="true" aria-label="เข้าสู่ระบบผู้ดูแล">
+    <form class="sheet adm-sheet" id="admForm" autocomplete="on">
+      <div class="rm-kick">ผู้ดูแลระบบ · Admin</div>
+      <div class="seg2 adm-tabs" role="tablist"><button type="button" id="admTabIn" aria-pressed="true">เข้าสู่ระบบ</button><button type="button" id="admTabReg" aria-pressed="false">ลงทะเบียน</button></div>
+      <div id="admPaneIn">
+        <label for="admEmail">อีเมล<input id="admEmail" type="email" autocomplete="username" placeholder="name@example.com"></label>
+        <label for="admPass">รหัสผ่าน<input id="admPass" type="password" autocomplete="current-password" placeholder="รหัสผ่าน"></label>
+      </div>
+      <div id="admPaneReg" hidden>
+        <label for="regName">ชื่อ-สกุล<input id="regName" type="text" autocomplete="name" placeholder="เช่น พว.มลฤดี แสงศรีจันทร์"></label>
+        <label for="regEmail">อีเมล<input id="regEmail" type="email" autocomplete="email" placeholder="name@example.com"></label>
+        <label for="regPass">ตั้งรหัสผ่าน (อย่างน้อย 6 ตัว)<input id="regPass" type="password" autocomplete="new-password"></label>
+        <label for="regPass2">ยืนยันรหัสผ่าน<input id="regPass2" type="password" autocomplete="new-password"></label>
+      </div>
       <p class="adm-err" id="admErr" aria-live="polite"></p>
-      <div class="rm-foot"><button class="btn" id="admCancel" type="button">ยกเลิก</button><button class="btn primary" id="admOk" type="button">เข้าสู่โหมด Admin</button></div>
-    </div>
+      <p class="note adm-mode" id="admMode" style="margin:0"></p>
+      <div class="rm-foot"><button class="btn" id="admCancel" type="button">ยกเลิก</button><button class="btn primary" id="admOk" type="submit">เข้าสู่ระบบ</button></div>
+    </form>
   </div>
   <div class="livecam" id="liveCam" hidden role="dialog" aria-modal="true" aria-label="กล้องวัดแผลพร้อมไม้บรรทัด">
     <video id="liveVid" playsinline autoplay muted></video>
@@ -1984,27 +2009,61 @@ function renderRisk(t){
 /* Pages */
 const PAGES=["prevent","wound","trend","record","ward"];
 var ADMIN_PAGES=["trend","ward"],admNext=null,bootDone=false;
-function admHash(x){let h=2166136261;const t="skin-guard|"+x;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h.toString(36)}
-function admPinSet(){try{return localStorage.getItem("pi-admin-pin")}catch(e){return null}}
-var admMem=false;
-function isAdmin(){if(admMem)return true;try{return sessionStorage.getItem("pi-admin")==="1"}catch(e){return false}}
-function setAdmin(on){admMem=on;try{if(on)sessionStorage.setItem("pi-admin","1");else sessionStorage.removeItem("pi-admin")}catch(e){}admPaint()}
-function admPaint(){const on=isAdmin();ADMIN_PAGES.forEach(x=>{const t=$("tab-"+x);if(t)t.hidden=!on});
+var admMem=null,admRegMode=false;
+function admGet(){if(admMem)return admMem;try{const v=sessionStorage.getItem("pi-admin");if(v&&v[0]==="{")return JSON.parse(v)}catch(e){}return null}
+function isAdmin(){return !!admGet()}
+function setAdmin(on){admMem=on&&typeof on==="object"?on:null;try{if(admMem)sessionStorage.setItem("pi-admin",JSON.stringify(admMem));else sessionStorage.removeItem("pi-admin")}catch(e){}admPaint();try{admListRender()}catch(e){}}
+function admPaint(){const u=admGet(),on=!!u;ADMIN_PAGES.forEach(x=>{const t=$("tab-"+x);if(t)t.hidden=!on});
   const nav=document.querySelector(".pagetabs");if(nav)nav.classList.toggle("u3",!on);
-  const b=$("admLock");if(b){b.classList.toggle("on",on);$("admLbl").textContent=on?"Admin · ออก":"Admin";$("admShackle").setAttribute("d",on?"M8 11V7a4 4 0 0 1 7.5-2":"M8 11V7a4 4 0 0 1 8 0v4")}}
-function askAdmin(next){admNext=next||null;const first=!admPinSet();
-  $("admTitle").textContent=first?"ตั้งรหัส Admin ครั้งแรก":"ใส่รหัส Admin";
-  $("admText").textContent=first?"ตั้งรหัสสำหรับหัวหน้าเวร/ผู้ดูแล เพื่อเปิดหน้าแนวโน้มและข้อมูลหอผู้ป่วย รหัสนี้เก็บในเครื่องนี้เท่านั้น":"หน้าแนวโน้มและข้อมูลหอผู้ป่วย เปิดดูได้เฉพาะผู้ดูแล";
-  $("admPin2").hidden=!first;$("admPin").value="";$("admPin2").value="";$("admErr").textContent="";
-  $("admOk").textContent=first?"ตั้งรหัสและเข้าสู่โหมด Admin":"เข้าสู่โหมด Admin";
-  $("admModal").hidden=false;document.body.classList.add("noscroll");setTimeout(()=>$("admPin").focus(),60)}
+  const b=$("admLock");if(b){b.classList.toggle("on",on);$("admLbl").textContent=on?`Admin: ${(u.name||u.email).split(" ")[0]} · ออก`:"Admin";$("admShackle").setAttribute("d",on?"M8 11V7a4 4 0 0 1 7.5-2":"M8 11V7a4 4 0 0 1 8 0v4")}}
+async function admHash(salt,pass){const t="skin-guard|"+salt+"|"+pass;try{if(crypto&&crypto.subtle){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}}catch(e){}
+  let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return "f"+h.toString(16)}
+function admLocal(){try{return JSON.parse(localStorage.getItem("pi-admins")||"[]")}catch(e){return[]}}
+function admLocalSet(a){try{localStorage.setItem("pi-admins",JSON.stringify(a))}catch(e){}}
+function admServer(){return typeof syncCfg==="function"&&!!syncCfg()}
+function admTab(reg){admRegMode=reg;$("admPaneIn").hidden=reg;$("admPaneReg").hidden=!reg;$("admTabIn").setAttribute("aria-pressed",!reg);$("admTabReg").setAttribute("aria-pressed",reg);
+  $("admOk").textContent=reg?"ลงทะเบียน":"เข้าสู่ระบบ";$("admErr").textContent="";$("admErr").classList.remove("ok");setTimeout(()=>{try{(reg?$("regName"):$("admEmail")).focus()}catch(e){}},60)}
+function askAdmin(next){admNext=next||null;const none=!admServer()&&!admLocal().length;
+  $("admMode").textContent=admServer()?"บัญชีเก็บในระบบกลาง ใช้เข้าสู่ระบบได้จากทุกเครื่อง":"ยังไม่ได้เชื่อมระบบกลาง บัญชีจะเก็บในเครื่องนี้เท่านั้น"+(none?" · ยังไม่มีบัญชี ให้ลงทะเบียนก่อน (บัญชีแรกได้รับอนุมัติทันที)":"");
+  $("admPass").value="";$("regPass").value="";$("regPass2").value="";
+  try{const l=localStorage.getItem("pi-admin-last");if(l)$("admEmail").value=l}catch(e){}
+  $("admModal").hidden=false;document.body.classList.add("noscroll");admTab(none)}
 function admClose(){$("admModal").hidden=true;document.body.classList.remove("noscroll");admNext=null}
+function admMsg(t,ok){const e=$("admErr");e.textContent=t;e.classList.toggle("ok",!!ok)}
+async function admSubmit(){const em=s=>String(s||"").trim().toLowerCase(),okEmail=s=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+  if(admRegMode){const name=$("regName").value.trim(),email=em($("regEmail").value),p1=$("regPass").value,p2=$("regPass2").value;
+    if(name.length<4)return admMsg("ใส่ชื่อ-สกุล");if(!okEmail(email))return admMsg("อีเมลไม่ถูกต้อง");if(p1.length<6)return admMsg("รหัสผ่านอย่างน้อย 6 ตัว");if(p1!==p2)return admMsg("รหัสผ่านทั้งสองช่องไม่ตรงกัน");
+    if(admServer()){admMsg("กำลังลงทะเบียน…",true);try{const r=await syncCall({action:"adminRegister",email,name,pass:p1});
+        if(r.status==="approved"){const l=await syncCall({action:"adminLogin",email,pass:p1});admDone({email,name:l.name,token:l.token,mode:"server"})}
+        else{admTab(false);$("admEmail").value=email;admMsg("ลงทะเบียนแล้ว รอผู้ดูแลที่มีอยู่อนุมัติก่อนจึงเข้าสู่ระบบได้",true)}}
+      catch(e){admMsg(e.message==="exists"?"อีเมลนี้ลงทะเบียนแล้ว":"ลงทะเบียนไม่สำเร็จ: "+e.message)}return}
+    const a=admLocal();if(a.some(x=>x.email===email))return admMsg("อีเมลนี้ลงทะเบียนแล้ว");
+    const salt=Math.random().toString(36).slice(2)+Date.now().toString(36),first=!a.some(x=>x.status==="approved");
+    a.push({email,name,salt,hash:await admHash(salt,p1),status:first?"approved":"pending",created:Date.now()});admLocalSet(a);
+    if(first)return admDone({email,name,mode:"local"});admTab(false);$("admEmail").value=email;return admMsg("ลงทะเบียนแล้ว รอผู้ดูแลในเครื่องนี้อนุมัติ",true)}
+  const email=em($("admEmail").value),pass=$("admPass").value;if(!okEmail(email))return admMsg("ใส่อีเมล");if(!pass)return admMsg("ใส่รหัสผ่าน");
+  if(admServer()){admMsg("กำลังตรวจสอบ…",true);try{const r=await syncCall({action:"adminLogin",email,pass});admDone({email,name:r.name,token:r.token,mode:"server"})}
+    catch(e){admMsg(e.message==="pending"?"บัญชียังไม่ได้รับอนุมัติ":e.message==="invalid"?"อีเมลหรือรหัสผ่านไม่ถูกต้อง":"เข้าสู่ระบบไม่สำเร็จ: "+e.message)}return}
+  const u=admLocal().find(x=>x.email===email);if(!u||u.hash!==await admHash(u.salt,pass))return admMsg("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+  if(u.status!=="approved")return admMsg("บัญชียังไม่ได้รับอนุมัติ");admDone({email,name:u.name,mode:"local"})}
+function admDone(u){try{localStorage.setItem("pi-admin-last",u.email)}catch(e){}const nx=admNext;admClose();setAdmin(u);
+  if(nx)nx();else advise("เข้าสู่ระบบผู้ดูแลแล้ว",`${u.name} · เปิดหน้าแนวโน้มและหอผู้ป่วยได้`)}
+async function admListRender(){const box=$("admList");if(!box)return;const u=admGet();if(!u){box.innerHTML="";return}
+  let list=[];try{if(u.mode==="server"&&admServer()){list=(await syncCall({action:"adminList",token:u.token})).admins||[]}else list=admLocal()}catch(e){box.innerHTML=`<p class="note" style="margin:0">โหลดรายชื่อไม่ได้: ${esc(e.message||String(e))}</p>`;return}
+  box.innerHTML="";list.forEach(a=>{const r=document.createElement("div");r.className="adm-row";const me=a.email===u.email;
+    r.innerHTML=`<div class="ar-t"><b></b><small></small></div><span class="tpill ${a.status==="approved"?"ok":"wait"}">${a.status==="approved"?"อนุมัติแล้ว":"รออนุมัติ"}</span>`+(a.status!=="approved"?'<button type="button" class="btn sm primary" data-op="approve">อนุมัติ</button>':"")+(me?"":'<button type="button" class="btn sm ghost" data-op="remove">ลบ</button>');
+    r.querySelector("b").textContent=a.name+(me?" (คุณ)":"");r.querySelector("small").textContent=a.email;
+    r.querySelectorAll("[data-op]").forEach(b=>b.onclick=async()=>{const op=b.dataset.op;if(op==="remove"&&!confirm(`ลบบัญชี ${a.email}?`))return;
+      try{if(u.mode==="server"&&admServer())await syncCall({action:"adminSet",token:u.token,email:a.email,op});
+        else{let L=admLocal();if(op==="remove")L=L.filter(x=>x.email!==a.email);else L.forEach(x=>{if(x.email===a.email)x.status="approved"});admLocalSet(L)}}catch(e){alert("ทำรายการไม่สำเร็จ: "+(e.message||e))}admListRender()});
+    box.append(r)});
+  if(!list.length)box.innerHTML='<p class="note" style="margin:0">ยังไม่มีบัญชี</p>'}
 function go(pg,scroll){
   if(!PAGES.includes(pg))pg="prevent";
   if(ADMIN_PAGES.includes(pg)&&!isAdmin()){if(bootDone){askAdmin(()=>go(pg,scroll));return}pg="prevent"}
   document.body.dataset.page=pg;
   if(pg==="record"||pg==="trend")setTimeout(renderDash,0);
-  if(pg==="ward")setTimeout(renderWard,0);
+  if(pg==="ward"){setTimeout(renderWard,0);setTimeout(()=>{try{admListRender()}catch(e){}},0)}
   PAGES.forEach(x=>{$("page-"+x).hidden=x!==pg;$("tab-"+x).setAttribute("aria-selected",x===pg)});
   try{localStorage.setItem("pi-page",pg)}catch(e){}
   try{history.replaceState(null,"","#"+pg)}catch(e){}
@@ -2014,15 +2073,12 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b
 $("alerts").addEventListener("click",e=>{const a=e.target.closest(".alert");if(a&&!a.dataset.go){go("prevent");if(a.querySelector(".crit-al"))setTimeout(openRisk,60);
   else if(/ภาพผิวหนัง/.test(a.textContent))setTimeout(()=>openRisk(true,"skin"),60);
   else if(/พลิกตัว/.test(a.textContent))setTimeout(()=>openRisk(true,"turn"),60)}});
-$("admLock").onclick=()=>{if(isAdmin()){setAdmin(false);if(ADMIN_PAGES.includes(document.body.dataset.page))go("prevent");advise("ออกจากโหมด Admin แล้ว","หน้าแนวโน้มและข้อมูลหอผู้ป่วยถูกซ่อน")}else askAdmin(null)};
+$("admLock").onclick=()=>{if(isAdmin()){setAdmin(false);if(ADMIN_PAGES.includes(document.body.dataset.page))go("prevent");advise("ออกจากระบบผู้ดูแลแล้ว","หน้าแนวโน้มและข้อมูลหอผู้ป่วยถูกซ่อน")}else askAdmin(null)};
 $("admCancel").onclick=admClose;
+$("admTabIn").onclick=()=>admTab(false);$("admTabReg").onclick=()=>admTab(true);
 $("admModal").addEventListener("click",e=>{if(e.target.id==="admModal")admClose()});
-$("admModal").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();$("admOk").click()}else if(e.key==="Escape")admClose()});
-$("admOk").onclick=()=>{const a=$("admPin").value.trim(),first=!admPinSet(),err=$("admErr");
-  if(!/^\d{4,12}$/.test(a)){err.textContent="รหัสต้องเป็นตัวเลข 4–12 หลัก";return}
-  if(first){if(a!==$("admPin2").value.trim()){err.textContent="รหัสทั้งสองช่องไม่ตรงกัน";return}try{localStorage.setItem("pi-admin-pin",admHash(a))}catch(e){err.textContent="บันทึกรหัสในเครื่องนี้ไม่ได้";return}}
-  else if(admHash(a)!==admPinSet()){err.textContent="รหัสไม่ถูกต้อง";$("admPin").value="";$("admPin").focus();return}
-  const nx=admNext;admClose();setAdmin(true);if(nx)nx();else advise("เข้าสู่โหมด Admin แล้ว","เปิดดูหน้าแนวโน้มและข้อมูลหอผู้ป่วยได้ จนกว่าจะปิดแอปหรือกดออก")};
+$("admModal").addEventListener("keydown",e=>{if(e.key==="Escape")admClose()});
+$("admForm").addEventListener("submit",e=>{e.preventDefault();admSubmit()});
 $("alerts").addEventListener("keydown",e=>{const a=e.target.closest(".alert[data-go]");if(a&&(e.key==="Enter"||e.key===" ")){e.preventDefault();go(a.dataset.go)}});
 /* Turning clock (นาฬิกาเตือนการพลิกตะแคงตัว ของหอผู้ป่วย): odd hours, fixed positions */
 const POS={1:"ซ้าย",3:"หงาย",5:"ขวา",7:"หงาย",9:"ซ้าย",11:"หงาย"};
