@@ -443,6 +443,17 @@ section.card.cta{background:linear-gradient(135deg,var(--gold-t),var(--surface))
 .sitechips button.on::before{color:var(--surface)}
 @media (prefers-reduced-motion:reduce){.pop,.advice.show,.advice.out{animation:none}}
 
+/* discharge */
+.dccard .dc-pt{font-size:.95rem}
+.dccard .dc-pt b{font-family:var(--font-display);font-weight:600}
+.dc-k{display:flex;flex-direction:column;gap:6px}
+.dc-k .lbl{font-size:.85rem;color:var(--muted)}
+.dc-g{grid-template-columns:repeat(2,minmax(0,1fr))}
+.dc-sum{display:flex;flex-direction:column;gap:3px;border-radius:12px;padding:10px 12px;background:var(--bg);font-size:.88rem}
+.dc-sum span{color:var(--muted)}
+#dcNote{min-height:64px}
+.dc-btn{text-align:center;font-weight:600;color:var(--s1);border-color:color-mix(in srgb,var(--s1) 45%,var(--line));background:color-mix(in srgb,var(--s1) 8%,var(--surface))}
+.dc-btn:disabled{color:var(--muted);border-color:var(--line);background:var(--surface)}
 /* dressing-due pop-up */
 .ddm-hd{margin:8px 14px 0;border-radius:14px;padding:14px 16px;background:var(--c,var(--s2));color:var(--surface);display:flex;gap:12px;align-items:center}
 .ddm-ic{flex:none;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center}
@@ -1680,6 +1691,30 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
     </div>
     <div class="toast" id="toast"></div>
   </section>
+  <section class="card dccard" id="dcCard">
+    <h2>จำหน่ายผู้ป่วย (Discharge)</h2>
+    <div class="dc-pt" id="dcPt"></div>
+    <div class="dc-k">
+      <span class="lbl">ประเภทการจำหน่าย</span>
+      <div class="advchips" id="dcKinds" role="group" aria-label="ประเภทการจำหน่าย">
+        <button type="button" data-k="home" aria-pressed="true">กลับบ้าน</button>
+        <button type="button" data-k="transfer" aria-pressed="false">ย้ายหอผู้ป่วย</button>
+        <button type="button" data-k="refer" aria-pressed="false">ส่งต่อโรงพยาบาลอื่น</button>
+        <button type="button" data-k="dead" aria-pressed="false">เสียชีวิต</button>
+        <button type="button" data-k="other" aria-pressed="false">อื่น ๆ</button>
+      </div>
+    </div>
+    <div class="grid dc-g">
+      <label for="dcDate">วันที่จำหน่าย<input id="dcDate" type="date"></label>
+      <label for="dcTime">เวลา<input id="dcTime" type="time"></label>
+    </div>
+    <div class="dc-sum" id="dcSum"></div>
+    <label for="dcNote">หมายเหตุ
+      <textarea id="dcNote" rows="2" placeholder="เช่น ย้ายไปหอศัลยกรรมชาย 2 ส่งต่อแผนการดูแลแผลให้หอปลายทางแล้ว"></textarea>
+    </label>
+    <button class="btn dc-btn" id="dcBtn" type="button"><span>จำหน่ายผู้ป่วย</span></button>
+    <p class="note" style="margin:0">ผลประเมินและบันทึกที่ลงชื่อแล้วยังเก็บอยู่ในประวัติ ผู้ป่วยจะถูกนำออกจากรายชื่อผู้ป่วยในหอ และหน้าจอจะว่างพร้อมรับผู้ป่วยรายถัดไป</p>
+  </section>
   <section class="card fold" id="histCard">
    <details id="histFold">
     <summary><span class="fs-t">ประวัติการประเมิน</span><span class="fs-m" id="histSum">กดเพื่อดู</span></summary>
@@ -2240,6 +2275,7 @@ function go(pg,scroll){
   if(!PAGES.includes(pg))pg="prevent";
   if(ADMIN_PAGES.includes(pg)&&!isAdmin()){if(bootDone){askAdmin(()=>go(pg,scroll));return}pg="prevent"}
   document.body.dataset.page=pg;
+  if(pg==="record"){setTimeout(()=>{try{dcPaint()}catch(e){}},0)}
   if(pg==="record"||pg==="trend")setTimeout(renderDash,0);
   if(pg==="ward"){setTimeout(renderWard,0);setTimeout(()=>{try{admListRender()}catch(e){}},0)}
   PAGES.forEach(x=>{$("page-"+x).hidden=x!==pg;$("tab-"+x).setAttribute("aria-selected",x===pg)});
@@ -2364,12 +2400,12 @@ function renderHist(){
   const rows=[...hist].sort((a,b)=>a.date<b.date?1:-1);
   box.innerHTML=`<table><thead><tr><th>วันที่</th><th>ผู้ป่วย</th><th>ระดับ</th><th style="text-align:right">Braden</th><th style="text-align:right">พื้นที่ cm²</th><th style="text-align:right">PUSH</th><th>ผู้บันทึก</th><th></th></tr></thead><tbody>${
     rows.map(r=>{const s=STAGES[r.stage];return `<tr><td>${r.date||"-"}</td><td>${(r.hn||"-").replace(/</g,"&lt;")}${r.ex?" <span class='note'>(ตัวอย่าง)</span>":""}${r.woundCount>1?`<small class='wsite'>แผลที่ ${r.woundNo} · ${esc(siteShort(r.site))}${r.side?" "+esc(r.side):""}</small>`:""}</td>
-    <td>${s?`<span class="pill" style="--c:var(${s.c})">${s.name.split(" (")[0]}</span>`:"-"}</td>
-    <td class="num">${r.braden??"-"}</td><td class="num">${r.a?(+r.a).toFixed(1):"-"}</td><td class="num">${r.push}</td><td class="who">${r.nurse?esc(r.nurse)+`<small>${r.recDate?thDateLong(r.recDate):""} ${r.recTime?r.recTime+" น.":""}</small>`:"-"}</td><td class="acts">${r.noteText?`<button class="del view" data-id="${r.id}">ดู</button>`:""}<button class="del" data-id="${r.id}">ลบ</button></td></tr>`}).join("")}</tbody></table>`;
+    <td>${r.type==="discharge"?`<span class="pill" style="--c:var(--indigo)">จำหน่าย · ${esc(r.dc&&r.dc.label||"")}</span>`:s?`<span class="pill" style="--c:var(${s.c})">${s.name.split(" (")[0]}</span>`:"-"}</td>
+    <td class="num">${r.braden??"-"}</td><td class="num">${r.a?(+r.a).toFixed(1):"-"}</td><td class="num">${r.push??"-"}</td><td class="who">${r.nurse?esc(r.nurse)+`<small>${r.recDate?thDateLong(r.recDate):""} ${r.recTime?r.recTime+" น.":""}</small>`:"-"}</td><td class="acts">${r.noteText?`<button class="del view" data-id="${r.id}">ดู</button>`:""}<button class="del" data-id="${r.id}">ลบ</button></td></tr>`}).join("")}</tbody></table>`;
   box.querySelectorAll(".view").forEach(b=>b.onclick=()=>viewNote(b.dataset.id));
   box.querySelectorAll(".del:not(.view)").forEach(b=>b.onclick=()=>{try{syncEnq("delhist",String(b.dataset.id),null)}catch(e){}hist=hist.filter(h=>h.id!=b.dataset.id);if(!hist.some(h=>h.ex))saveHist(hist);renderHist()});
   // chart of PUSH over time (oldest→newest)
-  let pts=[...hist].sort((a,b)=>a.date<b.date?-1:1);
+  let pts=[...hist].filter(p=>p.type!=="discharge"&&p.push!=null).sort((a,b)=>a.date<b.date?-1:1);
   {const cw=wounds&&wounds[wActive],hn=$("hn").value.trim();if(cw){const f=pts.filter(p=>p.site===cw.site&&(p.side||"")===(cw.side||"")&&(p.hn||"")===hn&&p.stage);if(f.length>=2)pts=f}}
   if(pts.length<2){ch.innerHTML="";return}
   const Wd=640,H=170,l=30,r=14,t=14,b=26,n=pts.length;
@@ -3882,9 +3918,11 @@ $("expXlsx").onclick=async()=>{
       .concat(reg.map(r=>[r.hn,siteShort(r.site),r.side,r.origin==="hapi"?"HAPI":r.origin==="poa"?"POA":"ไม่ระบุ",r.found||r.first,stageShort(r.stage),stageShort(r.last.stage),r.last.push,r.device?"ใช่":"",r.device?devText(r.last):"",r.origin==="poa"?poaText(r):""]));
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(s2),"ทะเบียนแผล");
     const s3=[["วันที่ประเมิน","HN/ผู้ป่วย","แผลที่","ตำแหน่ง","ด้าน","ระดับ","ยาว","กว้าง","ลึก","พื้นที่ cm²","สิ่งคัดหลั่ง","เนื้อเยื่อ","PUSH","Braden","ขอบแผล","ผิวรอบแผล","สัญญาณติดเชื้อ","แหล่งที่เกิด","ผู้บันทึก","ตำแหน่งผู้บันทึก","วันที่บันทึก","เวลา","MDRPI อุปกรณ์","วัสดุที่ใช้"]]
-      .concat(hist.filter(h=>!h.ex).map(h=>[h.date,h.hn,h.woundNo||1,siteShort(h.site),h.side||"",stageShort(h.stage),h.L,h.W,h.D,h.a,(EXU.find(e=>e[1]===h.exu)||[""])[0],(TIS.find(e=>e[1]===h.tis)||[""])[0],h.push,h.braden??"",
+      .concat(hist.filter(h=>!h.ex&&h.type!=="discharge").map(h=>[h.date,h.hn,h.woundNo||1,siteShort(h.site),h.side||"",stageShort(h.stage),h.L,h.W,h.D,h.a,(EXU.find(e=>e[1]===h.exu)||[""])[0],(TIS.find(e=>e[1]===h.tis)||[""])[0],h.push,h.braden??"",
         (h.edge||[]).map(k=>labelOf(EDGE,k)).join(", "),(h.peri||[]).map(k=>labelOf(PERI,k)).join(", "),(h.inf||[]).map(k=>labelOf(INF,k)).join(", "),h.origin==="hapi"?"HAPI":h.origin==="poa"?"POA":"",h.nurse||"",h.role||"",h.recDate||"",h.recTime||"",h.device?devText(h):"",(h.dressings||[]).join(", ")]));
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(s3),"การประเมินทั้งหมด");
+    {const s4=[["วันที่จำหน่าย","เวลา","HN","ชื่อผู้ป่วย","ประเภท","Braden ล่าสุด","จำนวนแผลกดทับ","รายละเอียดแผล","หมายเหตุ","ผู้บันทึก","OT"]].concat(hist.filter(h=>!h.ex&&h.type==="discharge").map(h=>{const d=h.dc||{};return [h.date,d.time||"",h.hn,h.name||"",d.label||"",d.braden??"",(d.wounds||[]).length,(d.wounds||[]).map(w=>`แผลที่ ${w.no} ${w.site} ${stageShort(w.stage)}`).join("; "),d.note||"",h.nurse||"",h.ot||""]}));
+    if(s4.length>1)XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(s4),"การจำหน่าย")}
     const buf=XLSX.write(wb,{type:"array",bookType:"xlsx"});
     await saveFile(`รายงานแผลกดทับ_${month}.xlsx`,new Blob([buf]));
   }catch(e){expMsg("สร้างไฟล์ Excel ไม่สำเร็จ ตรวจสอบการเชื่อมต่ออินเทอร์เน็ต",true)}
@@ -4290,7 +4328,7 @@ function changePatient(nh,bed){
   }else{curHN=nh;if(bed)$("bed").value=bed;$("ptName").value=""}
   try{skReload()}catch(e){}
   savePatient();update();
-  setTimeout(()=>ddPop(),400);
+  setTimeout(()=>ddPop(),400);try{dcPaint()}catch(e){}
 }
 $("hn").addEventListener("change",()=>changePatient($("hn").value));
 /* pop-up when a dressing change is due (after login, once HN is loaded) */
@@ -4318,6 +4356,38 @@ function ddPop(tries){try{
 $("ddLater").onclick=()=>{$("ddModal").hidden=true;document.body.classList.remove("noscroll")};
 $("ddModal").addEventListener("click",e=>{if(e.target===$("ddModal"))$("ddLater").onclick()});
 setTimeout(()=>ddPop(),1200);
+/* discharge (all users) */
+var dcKind="home";
+var DCK={home:"กลับบ้าน",transfer:"ย้ายหอผู้ป่วย",refer:"ส่งต่อโรงพยาบาลอื่น",dead:"เสียชีวิต",other:"อื่น ๆ"};
+function dcWounds(){return (wounds||[]).filter(w=>w.stage&&w.stage!=="none").map(w=>{let push=null;try{push=woundCalc(w).push}catch(e){}return {no:wounds.indexOf(w)+1,site:siteLabel(w)+(w.side?" "+w.side:""),stage:w.stage,push,origin:w.origin||""}})}
+function dcNow(){const d=new Date(Date.now()+7*3600e3).toISOString();$("dcDate").value=d.slice(0,10);$("dcTime").value=d.slice(11,16)}
+function dcPaint(){if(!$("dcCard"))return;const hn=$("hn").value.trim(),nm=$("ptName").value.trim();
+  $("dcPt").innerHTML=hn?`ผู้ป่วย <b>HN ${esc(hn)}</b>${nm?" · "+esc(nm):""}`:'<span class="note">ยังไม่ได้เลือกผู้ป่วย ใส่ HN ที่ด้านบนก่อน</span>';
+  const ws=dcWounds();$("dcSum").innerHTML=ws.length?`<b>แผลกดทับขณะจำหน่าย ${ws.length} แผล</b>`+ws.map(w=>`<span>แผลที่ ${w.no} · ${esc(w.site)} · ${esc(stageShort(w.stage))}${w.push!=null?` · PUSH ${w.push}`:""}</span>`).join(""):"<b>ไม่มีแผลกดทับขณะจำหน่าย</b>";
+  $("dcBtn").disabled=!hn;document.querySelectorAll("#dcKinds button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.k===dcKind)));
+  if(!$("dcDate").value)dcNow()}
+document.querySelectorAll("#dcKinds button").forEach(b=>b.onclick=()=>{dcKind=b.dataset.k;dcPaint()});
+["hn","ptName"].forEach(id=>$(id).addEventListener("input",()=>{try{dcPaint()}catch(e){}}));
+function blankPatientForm(){ptReady=false;try{curHN=null;$("hn").value="";$("ptName").value="";$("bed").value="";st.braden={};$("sepsis").checked=false;st.cr={};try{crLoad()}catch(e){}
+  wounds=[blankWound()];$("noteExtra").value="";noteEdited=false;chkShiftSel=null;dashKey="";renderBraden();loadWound(0)}finally{ptReady=true}
+  try{skReload()}catch(e){}update()}
+$("dcBtn").onclick=()=>{const hn=$("hn").value.trim();if(!hn)return;
+  const nurse=$("nurseName").value.trim();if(!nurse){advise("ใส่ชื่อผู้บันทึกก่อน","ใส่ชื่อ-สกุลพยาบาลในช่องลงชื่อผู้บันทึกด้านบน","--s2","!");$("nurseName").focus();return}
+  if(!twoTap($("dcBtn"),`แตะอีกครั้งเพื่อยืนยันจำหน่าย HN ${hn}`))return;
+  if(!$("dcDate").value||!$("dcTime").value)dcNow();
+  const d=$("dcDate").value,t=$("dcTime").value,nm=$("ptName").value.trim(),note=$("dcNote").value.trim(),ot=(otGet()||{}).ot||"",role=$("nurseRole").value,kind=dcKind,ws=dcWounds(),bt=bradenTotal();
+  const text=`จำหน่ายผู้ป่วย (${DCK[kind]})\nวันที่ ${thDateLong(d)} เวลา ${t} น. · HN ${hn}${nm?" · "+nm:""}\nBraden ล่าสุด ${bt??"-"}\n`+
+    (ws.length?`แผลกดทับขณะจำหน่าย ${ws.length} แผล: `+ws.map(w=>`แผลที่ ${w.no} ${w.site} ${stageShort(w.stage)}${w.push!=null?" PUSH "+w.push:""}`).join("; "):"ไม่มีแผลกดทับขณะจำหน่าย")+
+    (note?`\nหมายเหตุ: ${note}`:"")+`\n\nผู้บันทึก: ${nurse} (${role})${ot?" OT "+ot:""}`;
+  hist=hist.filter(h=>!h.ex);
+  hist.push({id:Date.now(),type:"discharge",hn,name:nm,date:d,dc:{kind,label:DCK[kind],time:t,note,wounds:ws,braden:bt},nurse,ot,role,recDate:d,recTime:t,noteText:text});
+  saveHist(hist);
+  try{localStorage.removeItem(PT+hn);localStorage.removeItem("pi-turn-"+hn)}catch(e){}
+  try{syncEnq("delpatient",hn,null)}catch(e){}
+  blankPatientForm();$("dcNote").value="";dcKind="home";$("dcDate").value="";$("dcTime").value="";
+  renderHist();try{if(isAdmin())renderWard()}catch(e){}dcPaint();
+  go("prevent");window.scrollTo(0,0);setTimeout(()=>{try{$("hn").focus()}catch(e){}},250);
+  advise("จำหน่ายผู้ป่วยแล้ว",`HN ${hn} · ${DCK[kind]} · บันทึกไว้ในประวัติการประเมิน`,"--ok","✓")};
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
