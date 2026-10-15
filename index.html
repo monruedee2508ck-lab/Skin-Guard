@@ -1052,7 +1052,7 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
       <p class="rule">เกณฑ์: Albumin &lt; 3.5 g/dL · Hypoxia = SpO₂ &lt; 90% หรือ PaO₂ &lt; 60 mmHg · ได้รับ Vasopressor ใดๆ<br>Critical Risk = Braden ≤ 12 ร่วมกับปัจจัยอย่างน้อย 1 ข้อ หรือ Braden ≤ 18 ร่วมกับปัจจัยตั้งแต่ 2 ข้อขึ้นไป</p>
       </div>
     </details>
-    <button class="btn riskopen" id="riskOpen" type="button" hidden>ดูผลประเมิน · ภาพถ่ายผิวหนัง · ท่านอนตอนนี้ · การพยาบาล</button>
+    <button class="btn riskopen" id="riskOpen" type="button" hidden>ดูผลประเมิน · ภาพถ่ายผิวหนัง · การพยาบาล · ท่านอนตอนนี้</button>
   </section>
   <section class="card fold" id="skinCard" hidden>
    <details id="skinFold">
@@ -2607,7 +2607,7 @@ function rmShow(i){rmIdx=i;const k=rmFlow[i],pn=$("rmPane");
   $("rmOk").textContent=last?"รับทราบ":`ถัดไป · ${RM_SHORT[rmFlow[i+1]]}`;
   $("rmNote").hidden=!last;
 }
-function openRisk(flow,start){advClose();rmFlow=flow===true?["risk","skin","turn","care"]:["risk"];const m=$("riskModal");m.hidden=false;document.body.classList.add("noscroll");rmShow(Math.max(0,rmFlow.indexOf(start)));$("rmOk").focus()}
+function openRisk(flow,start){advClose();rmFlow=flow===true?["risk","skin","care","turn"]:["risk"];const m=$("riskModal");m.hidden=false;document.body.classList.add("noscroll");rmShow(Math.max(0,rmFlow.indexOf(start)));$("rmOk").focus()}
 function closeRisk(){rmRestore();$("rmPane").innerHTML="";$("riskModal").hidden=true;document.body.classList.remove("noscroll");try{update()}catch(e){}}
 $("rmOk").onclick=()=>{if(rmIdx<rmFlow.length-1)rmShow(rmIdx+1);else closeRisk()};
 $("rmBack").onclick=()=>{if(rmIdx>0)rmShow(rmIdx-1)};
