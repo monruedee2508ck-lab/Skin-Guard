@@ -1007,13 +1007,44 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
 .cs-h{display:flex;gap:10px;align-items:center}.cs-h div{display:flex;flex-direction:column}
 .cs-h b{color:var(--ok)}.cs-h small{color:var(--ink);font-size:.9rem}
 .cs-ok{width:28px;height:28px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+
+.login-gate{position:fixed;inset:0;z-index:500;display:grid;place-items:center;padding:20px;background:linear-gradient(160deg,var(--navy,#122b52),color-mix(in srgb,var(--accent) 55%,var(--navy,#122b52)))}
+.login-gate[hidden]{display:none!important}
+body.locked{overflow:hidden}
+.lg-card{width:100%;max-width:380px;background:var(--surface);border-radius:22px;padding:26px 22px;display:flex;flex-direction:column;gap:12px;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.lg-logo{width:60px;height:60px;border-radius:18px;display:grid;place-items:center;margin:0 auto;background:var(--accent);color:#fff}
+.lg-card h1{margin:0;text-align:center;font-family:var(--font-display);font-size:1.6rem;color:var(--ink)}
+.lg-sub{margin:-6px 0 4px;text-align:center;color:var(--muted);font-size:.92rem}
+.lg-card label{display:flex;flex-direction:column;gap:5px;font-size:.88rem;color:var(--muted)}
+.lg-card input{font-size:1.1rem;padding:12px}
+#lgOT{letter-spacing:.12em;font-family:var(--font-num)}
+.lg-err{margin:0;min-height:1.1em;color:var(--s1);font-size:.85rem;font-weight:600}
+.lg-card .btn{width:100%;justify-content:center;font-size:1.05rem;padding:13px}
+.lg-note{margin:0;text-align:center;color:var(--muted);font-size:.76rem}
+.ot-chip{position:absolute;top:14px;right:118px;z-index:2;font:inherit;font-size:.8rem;font-weight:600;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:6px 12px;cursor:pointer}
+.ot-chip[hidden]{display:none!important}
+.hero h1{margin-right:230px}
+@media (max-width:480px){.ot-chip{top:54px;right:14px}.hero h1{margin-right:96px}.hero{padding-bottom:34px!important}}
 </style>
 </head>
 <body>
 
 <div class="wrap">
+  <div class="login-gate" id="loginGate" role="dialog" aria-modal="true" aria-labelledby="lgTitle">
+    <form class="lg-card" id="lgForm" autocomplete="off">
+      <div class="lg-logo" aria-hidden="true"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <h1 id="lgTitle">Skin Guard</h1>
+      <p class="lg-sub">เข้าสู่ระบบด้วยเลข OT ก่อนใช้งาน</p>
+      <label for="lgOT">เลข OT<input id="lgOT" type="text" inputmode="numeric" autocomplete="username" maxlength="12" placeholder="เช่น 12345" required></label>
+      <label for="lgName">ชื่อ-สกุล<input id="lgName" type="text" autocomplete="name" placeholder="เช่น พว.มลฤดี แสงศรีจันทร์"></label>
+      <p class="lg-err" id="lgErr" aria-live="polite"></p>
+      <button class="btn primary" type="submit">เข้าสู่ระบบ</button>
+      <p class="lg-note">เลข OT ใช้ระบุผู้ประเมินและผู้บันทึก ข้อมูลเก็บในเครื่องนี้เท่านั้น</p>
+    </form>
+  </div>
   <header class="hero">
     <button type="button" class="adm-lock" id="admLock" aria-label="โหมดผู้ดูแล (Admin)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path id="admShackle" d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span id="admLbl">Admin</span></button>
+    <button type="button" class="ot-chip" id="otChip" hidden></button>
     <svg class="art" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#fff" stroke-width="6"/><path d="M50 22v28l18 12" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <h1>Skin Guard</h1>
   </header>
@@ -2117,7 +2148,7 @@ $("save").onclick=()=>{const c=current();
   if(!c.stage&&bt==null){toast("ประเมิน Braden หรือระดับแผลก่อนบันทึก");return}
   if(!$("nurseName").value.trim()){toast("ใส่ชื่อพยาบาลผู้บันทึกก่อนบันทึก");$("nurseName").focus();return}
   if(!$("recDate").value||!$("recTime").value)recNow();
-  hist=hist.filter(h=>!h.ex);{const sig={braden:bt,nurse:$("nurseName").value.trim(),role:$("nurseRole").value,recDate:$("recDate").value,recTime:$("recTime").value,noteText:fullNote()},base=Date.now();
+  hist=hist.filter(h=>!h.ex);{const sig={braden:bt,nurse:$("nurseName").value.trim(),ot:(otGet()||{}).ot||"",role:$("nurseRole").value,recDate:$("recDate").value,recTime:$("recTime").value,noteText:fullNote()},base=Date.now();
     const ws=(wounds||[]).filter(w=>w.stage);
     if(ws.length)ws.forEach((w,i)=>{const x=woundCalc(w);hist.push({...c,...x,...sig,woundNo:wounds.indexOf(w)+1,woundCount:wounds.length,id:base+i});if(w.photo)wpPut({id:String(base+i),hn:c.hn,site:w.site,side:w.side||"",date:c.date,img:w.photo,push:x.push,a:x.a})});
     else hist.push({...c,...sig,id:base})}
@@ -2684,12 +2715,26 @@ document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("careModal").hid
 var noteEdited,lastAutoNote;
 function esc(t){return String(t).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]))}
 function thDateLong(d){try{return new Date(d+"T00:00:00").toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"})}catch(e){return d}}
+
+/* ---------- OT login gate ---------- */
+var otUser=null;
+function otGet(){if(otUser)return otUser;try{const v=sessionStorage.getItem("pi-ot");if(v)return JSON.parse(v)}catch(e){}return null}
+function otPaint(){const u=otGet(),gate=$("loginGate"),chip=$("otChip");gate.hidden=!!u;document.body.classList.toggle("locked",!u);
+  chip.hidden=!u;if(u){chip.textContent=`OT ${u.ot} · ออก`;if(u.name&&!$("nurseName").value.trim()){$("nurseName").value=u.name}}
+  else{try{const l=JSON.parse(localStorage.getItem("pi-ot-last")||"null");if(l){$("lgOT").value=l.ot||"";$("lgName").value=l.name||""}}catch(e){}setTimeout(()=>{try{($("lgOT").value?$("lgName"):$("lgOT")).focus()}catch(e){}},80)}}
+$("lgForm").addEventListener("submit",e=>{e.preventDefault();const ot=$("lgOT").value.trim().replace(/\s+/g,""),name=$("lgName").value.trim();
+  if(!/^[0-9A-Za-z\-]{3,12}$/.test(ot)){$("lgErr").textContent="ใส่เลข OT 3–12 หลัก (ตัวเลขหรือตัวอักษร)";$("lgOT").focus();return}
+  otUser={ot,name,at:Date.now()};try{sessionStorage.setItem("pi-ot",JSON.stringify(otUser));localStorage.setItem("pi-ot-last",JSON.stringify({ot,name}))}catch(e){}
+  if(name){$("nurseName").value=name;try{localStorage.setItem("pi-nurse",name)}catch(e){}}
+  $("lgErr").textContent="";otPaint();try{update()}catch(e){}});
+$("otChip").onclick=()=>{if(!confirm("ออกจากระบบ?"))return;otUser=null;try{sessionStorage.removeItem("pi-ot")}catch(e){}try{setAdmin(false)}catch(e){}go("prevent");otPaint()};
+otPaint();
 function recNow(){const n=new Date();$("recDate").value=`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,"0")}-${String(n.getDate()).padStart(2,"0")}`;$("recTime").value=`${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}`}
 function fullNote(){
   const extra=$("noteExtra").value.trim(),name=$("nurseName").value.trim();
   const d=$("recDate").value,t=$("recTime").value;
   return $("note").value.trim()+(extra?`\n\nบันทึกเพิ่มเติม:\n${extra}`:"")+
-    `\n\nผู้บันทึก: ${name||"................................"} (${$("nurseRole").value})\nวันที่ ${d?thDateLong(d):"..........."} เวลา ${t||"......"} น.`;
+    `\n\nผู้บันทึก: ${name||"................................"} (${$("nurseRole").value})${(otGet()||{}).ot?" OT "+otGet().ot:""}\nวันที่ ${d?thDateLong(d):"..........."} เวลา ${t||"......"} น.`;
 }
 $("note").addEventListener("input",()=>{if($("note").value!==lastAutoNote){noteEdited=true;$("noteState").textContent="แก้ไขข้อความแล้ว ผลประเมินที่เปลี่ยนภายหลังจะไม่ทับข้อความนี้";$("noteRegen").hidden=false}});
 $("noteRegen").onclick=()=>{noteEdited=false;$("note").value=lastAutoNote;$("noteRegen").hidden=true;$("noteState").textContent="ข้อความสร้างจากผลประเมินอัตโนมัติ แก้ไขหรือพิมพ์เพิ่มได้"};
