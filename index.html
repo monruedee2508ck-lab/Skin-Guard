@@ -1021,7 +1021,7 @@ body.locked{overflow:hidden}
 .lg-err{margin:0;min-height:1.1em;color:var(--s1);font-size:.85rem;font-weight:600}
 .lg-card .btn{width:100%;justify-content:center;font-size:1.05rem;padding:13px}
 .lg-note{margin:0;text-align:center;color:var(--muted);font-size:.76rem}
-.ot-chip{position:absolute;top:14px;right:118px;z-index:2;font:inherit;font-size:.8rem;font-weight:600;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:6px 12px;cursor:pointer}
+.ot-chip{max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;position:absolute;top:14px;right:118px;z-index:2;font:inherit;font-size:.8rem;font-weight:600;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:6px 12px;cursor:pointer}
 .ot-chip[hidden]{display:none!important}
 .hero h1{margin-right:230px}
 @media (max-width:480px){.ot-chip{top:54px;right:14px}.hero h1{margin-right:96px}.hero{padding-bottom:34px!important}}
@@ -1054,7 +1054,7 @@ body.locked{overflow:hidden}
       <h1 id="lgTitle">Skin Guard</h1>
       <p class="lg-sub">เข้าสู่ระบบด้วยเลข OT ก่อนใช้งาน</p>
       <label for="lgOT">เลข OT<input id="lgOT" type="text" inputmode="numeric" autocomplete="username" maxlength="12" placeholder="เช่น 12345" required></label>
-      <label for="lgName">ชื่อ-สกุล<input id="lgName" type="text" autocomplete="name" placeholder="เช่น พว.มลฤดี แสงศรีจันทร์"></label>
+      <label for="lgName">ชื่อ-สกุล<input id="lgName" type="text" autocomplete="name" placeholder="เช่น พว.มลฤดี แสงศรีจันทร์" required></label>
       <p class="lg-err" id="lgErr" aria-live="polite"></p>
       <button class="btn primary" type="submit">เข้าสู่ระบบ</button>
       <p class="lg-note">เลข OT ใช้ระบุผู้ประเมินและผู้บันทึก ข้อมูลเก็บในเครื่องนี้เท่านั้น</p>
@@ -2790,10 +2790,11 @@ function thDateLong(d){try{return new Date(d+"T00:00:00").toLocaleDateString("th
 var otUser=null;
 function otGet(){if(otUser)return otUser;try{const v=sessionStorage.getItem("pi-ot");if(v)return JSON.parse(v)}catch(e){}return null}
 function otPaint(){const u=otGet(),gate=$("loginGate"),chip=$("otChip");gate.hidden=!!u;document.body.classList.toggle("locked",!u);
-  chip.hidden=!u;if(u){chip.textContent=`OT ${u.ot} · ออก`;if(u.name&&!$("nurseName").value.trim()){$("nurseName").value=u.name}}
+  chip.hidden=!u;if(u){chip.textContent=`${u.name||("OT "+u.ot)} · ออก`;chip.title=`OT ${u.ot}`;if(u.name&&!$("nurseName").value.trim()){$("nurseName").value=u.name}}
   else{try{const l=JSON.parse(localStorage.getItem("pi-ot-last")||"null");if(l){$("lgOT").value=l.ot||"";$("lgName").value=l.name||""}}catch(e){}setTimeout(()=>{try{($("lgOT").value?$("lgName"):$("lgOT")).focus()}catch(e){}},80)}}
 $("lgForm").addEventListener("submit",e=>{e.preventDefault();const ot=$("lgOT").value.trim().replace(/\s+/g,""),name=$("lgName").value.trim();
   if(!/^[0-9A-Za-z\-]{3,12}$/.test(ot)){$("lgErr").textContent="ใส่เลข OT 3–12 หลัก (ตัวเลขหรือตัวอักษร)";$("lgOT").focus();return}
+  if(name.length<2){$("lgErr").textContent="ใส่ชื่อ-สกุล";$("lgName").focus();return}
   otUser={ot,name,at:Date.now()};try{sessionStorage.setItem("pi-ot",JSON.stringify(otUser));localStorage.setItem("pi-ot-last",JSON.stringify({ot,name}))}catch(e){}
   if(name){$("nurseName").value=name;try{localStorage.setItem("pi-nurse",name)}catch(e){}}
   $("lgErr").textContent="";otPaint();try{update()}catch(e){}});
