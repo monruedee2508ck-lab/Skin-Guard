@@ -1079,22 +1079,57 @@ header.hero.topbar h1{margin:0!important;font-size:1.45rem;line-height:1.1;lette
 .um-item.danger{color:var(--s1)}.um-item.danger svg{color:var(--s1)}
 header.hero.topbar h1{white-space:nowrap}
 @media (max-width:480px){.tb-right .sync-st{width:34px;height:34px;padding:0;justify-content:center}.tb-right .sync-st .ss-t{display:none}.tb-right .sync-st .ss-i{font-style:normal;font-size:15px}header.hero.topbar{padding:14px 14px 16px!important}.user-btn .un{display:none}.user-btn{padding:3px 8px 3px 3px}.brand-t small{letter-spacing:.08em}header.hero.topbar h1{font-size:1.3rem}.logo{width:40px;height:40px}}
+
+/* ===== login splash ===== */
+.login-gate{display:block!important;overflow:auto;padding:0!important;background:radial-gradient(90% 70% at 50% 35%,#13324a 0%,#0b2033 45%,#071624 100%)!important}
+.login-gate[hidden]{display:none!important}
+.lg-art{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+.lg-col{position:relative;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:26px;padding:calc(36px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px))}
+.lg-hero{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:30px 0 6px}
+.lg-shield{position:absolute;left:50%;top:50%;width:min(270px,62vw);height:auto;transform:translate(-50%,-56%);opacity:.75;filter:drop-shadow(0 0 18px rgba(80,220,190,.18))}
+.lg-hero h1{position:relative;margin:0;font-family:var(--font-display);font-weight:700;font-size:clamp(2.6rem,9vw,4.2rem);line-height:1.05;letter-spacing:.01em;color:#fff;
+  text-shadow:0 0 6px rgba(140,255,230,.55),0 0 22px rgba(80,220,190,.55),0 0 48px rgba(60,200,170,.35)}
+.lg-tag{position:relative;margin:10px 0 0;color:rgba(235,245,250,.92);font-size:clamp(1rem,3.4vw,1.35rem);line-height:1.35;font-weight:500}
+.lg-card{width:100%;max-width:380px!important;background:rgba(255,255,255,.06)!important;border:1px solid rgba(120,230,210,.22);border-radius:20px!important;padding:20px 18px!important;gap:10px!important;
+  box-shadow:0 20px 50px -20px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)!important;backdrop-filter:blur(10px)}
+.lg-card label{color:rgba(220,235,240,.8)!important}
+.lg-card input{background:rgba(5,20,32,.65)!important;border:1px solid rgba(120,230,210,.25)!important;color:#fff!important;border-radius:12px}
+.lg-card input::placeholder{color:rgba(200,220,228,.45)}
+.lg-card input:focus{outline:none;border-color:#5ee0c6!important;box-shadow:0 0 0 3px rgba(94,224,198,.2)}
+.lg-btn{font:inherit;font-weight:700;font-size:1.05rem;color:#06212b;border:0;border-radius:14px;padding:13px;cursor:pointer;background:linear-gradient(135deg,#7ff5dd,#3fc4b0);box-shadow:0 8px 24px -8px rgba(80,220,190,.7)}
+.lg-btn:active{transform:translateY(1px)}
+.lg-card .lg-err{color:#ff9a9a}
+.lg-card .lg-note{color:rgba(200,220,228,.6)!important}
+.lg-foot{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;margin-top:4px}
+.lg-foot span{color:rgba(235,245,250,.85);font-size:.88rem}
+.lg-foot small{color:rgba(200,220,228,.5);font-size:.8rem}
 </style>
 </head>
 <body>
 
 <div class="wrap">
   <div class="login-gate" id="loginGate" role="dialog" aria-modal="true" aria-labelledby="lgTitle">
-    <form class="lg-card" id="lgForm" autocomplete="off">
-      <div class="lg-logo" aria-hidden="true"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
-      <h1 id="lgTitle">Skin Guard</h1>
-      <p class="lg-sub">เข้าสู่ระบบด้วยเลข OT ก่อนใช้งาน</p>
-      <label for="lgOT">เลข OT<input id="lgOT" type="text" inputmode="numeric" autocomplete="username" maxlength="12" placeholder="เช่น 12345" required></label>
-      <label for="lgName">ชื่อ-สกุล<input id="lgName" type="text" autocomplete="name" placeholder="เช่น พว.มลฤดี แสงศรีจันทร์" required></label>
-      <p class="lg-err" id="lgErr" aria-live="polite"></p>
-      <button class="btn primary" type="submit">เข้าสู่ระบบ</button>
-      <p class="lg-note">เลข OT ใช้ระบุผู้ประเมินและผู้บันทึก ข้อมูลเก็บในเครื่องนี้เท่านั้น</p>
-    </form>
+    <svg class="lg-art" id="lgArt" aria-hidden="true" preserveAspectRatio="none"></svg>
+    <div class="lg-col">
+      <div class="lg-hero">
+        <svg class="lg-shield" viewBox="0 0 200 230" aria-hidden="true">
+          <defs><linearGradient id="lgSh" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5ee0c6" stop-opacity=".55"/><stop offset="1" stop-color="#1b6f73" stop-opacity=".25"/></linearGradient></defs>
+          <path d="M100 8 L184 40 V108 C184 160 148 198 100 222 C52 198 16 160 16 108 V40 Z" fill="rgba(46,120,130,.10)" stroke="url(#lgSh)" stroke-width="5"/>
+          <path d="M100 28 L166 53 V108 C166 150 138 182 100 202 C62 182 34 150 34 108 V53 Z" fill="none" stroke="url(#lgSh)" stroke-width="2" opacity=".7"/>
+          <path d="M40 120 H78 L88 98 L100 146 L112 84 L124 120 H160" fill="none" stroke="#6ff0d6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".55"/>
+        </svg>
+        <h1 id="lgTitle">Skin Guard</h1>
+        <p class="lg-tag">Smart Pressure Injury Assessment<br>&amp; Clinical Care</p>
+      </div>
+      <form class="lg-card" id="lgForm" autocomplete="off">
+        <label for="lgOT">เลข OT<input id="lgOT" type="text" inputmode="numeric" autocomplete="username" maxlength="12" placeholder="เช่น 12345" required></label>
+        <label for="lgName">ชื่อ-สกุล<input id="lgName" type="text" autocomplete="name" placeholder="เช่น พว.มลฤดี แสงศรีจันทร์" required></label>
+        <p class="lg-err" id="lgErr" aria-live="polite"></p>
+        <button class="lg-btn" type="submit">เข้าสู่ระบบ</button>
+        <p class="lg-note">เลข OT ใช้ระบุผู้ประเมินและผู้บันทึก</p>
+      </form>
+      <div class="lg-foot"><span>Supported by Braden Scale • NPIAP • PUSH 3.0 Standard</span><small>v2.0 Clinical Edition</small></div>
+    </div>
   </div>
   <header class="hero topbar">
     <svg class="art" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#fff" stroke-width="6"/><path d="M50 22v28l18 12" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -2836,6 +2871,16 @@ var noteEdited,lastAutoNote;
 function esc(t){return String(t).replace(/[&<>"]/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch]))}
 function thDateLong(d){try{return new Date(d+"T00:00:00").toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"})}catch(e){return d}}
 
+
+/* login background art: mesh waves + light streaks */
+(function lgArtDraw(){const svg=$("lgArt");if(!svg)return;const W=1000,H=1000;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);let g="";
+  const mesh=(ox,oy,sx,sy,flip)=>{for(let i=0;i<22;i++){const t=i/21;let d="";for(let k=0;k<=24;k++){const u=k/24,x=ox+sx*u,y=oy+sy*(t*0.9+0.08*Math.sin(u*Math.PI*1.6+t*3)+0.25*u*u*(flip?-1:1)*t);d+=(k?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)}
+      g+=`<path d="${d}" fill="none" stroke="#4fd1b8" stroke-opacity="${(0.08+0.22*(1-t)).toFixed(2)}" stroke-width="1"/>`}
+    for(let k=0;k<=16;k++){const u=k/16;let d="";for(let i=0;i<=21;i++){const t=i/21,x=ox+sx*u,y=oy+sy*(t*0.9+0.08*Math.sin(u*Math.PI*1.6+t*3)+0.25*u*u*(flip?-1:1)*t);d+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)}
+      g+=`<path d="${d}" fill="none" stroke="#4fd1b8" stroke-opacity="0.07" stroke-width="1"/>`}};
+  mesh(-40,640,520,380,false);mesh(1040,-40,-460,420,true);
+  [[60,380,180],[110,620,120],[890,250,160],[940,520,110],[820,120,70]].forEach(([x,y,h])=>{g+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+h}" stroke="url(#lgStreak)" stroke-width="2"/>`});
+  svg.innerHTML=`<defs><linearGradient id="lgStreak" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ff5dd" stop-opacity="0"/><stop offset=".5" stop-color="#7ff5dd" stop-opacity=".7"/><stop offset="1" stop-color="#7ff5dd" stop-opacity="0"/></linearGradient></defs>`+g})();
 /* ---------- OT login gate ---------- */
 var otUser=null;
 function otGet(){if(otUser)return otUser;try{const v=sessionStorage.getItem("pi-ot");if(v)return JSON.parse(v)}catch(e){}return null}
