@@ -3065,9 +3065,14 @@ function syncHistNew(h){if(!syncCfg())return;let ids;try{ids=new Set(JSON.parse(
   (h||[]).forEach(e=>{if(!e||e.ex||syncSkipHN(e.hn))return;const id=String(e.id);if(!ids.has(id)){syncEnq("hist",id,e);ids.add(id)}});
   try{localStorage.setItem("pi-sync-hids",JSON.stringify([...ids]))}catch(e){}}
 function syncSoon(ms){clearTimeout(SYNC.timer);SYNC.timer=setTimeout(syncRun,ms||800)}
-async function syncCall(req){const c=syncCfg();if(!c)throw new Error("not_configured");
-  const r=await fetch(c.url,{method:"POST",body:JSON.stringify(Object.assign({key:c.key},req)),redirect:"follow"});
-  const j=await r.json();if(!j.ok)throw new Error(j.error||"error");return j}
+async function syncCall(req,_try){const c=syncCfg();if(!c)throw new Error("not_configured");
+  let r,txt;try{r=await fetch(c.url,{method:"POST",body:JSON.stringify(Object.assign({key:c.key},req)),redirect:"follow"});txt=await r.text()}
+  catch(e){if(!_try){await new Promise(z=>setTimeout(z,1500));return syncCall(req,1)}throw new Error("เชื่อมต่อเครือข่ายไม่ได้ ตรวจอินเทอร์เน็ต")}
+  let j=null;try{j=JSON.parse(txt)}catch(e){}
+  if(!j){if(!_try){await new Promise(z=>setTimeout(z,2000));return syncCall(req,1)}
+    let msg="";try{const d=new DOMParser().parseFromString(txt,"text/html");msg=(d.body&&d.body.textContent||"").replace(/\s+/g," ").trim().slice(0,160)}catch(e){}
+    throw new Error("ระบบกลางตอบกลับผิดรูปแบบ (HTTP "+(r&&r.status)+")"+(msg?" · "+msg:""))}
+  if(!j.ok)throw new Error(j.error||"error");return j}
 function idbGet(store,id){return new Promise(async res=>{try{let db;if(store==="skin"){if(!skinTried){skinTried=true;skinDB=await skOpen()}db=skinDB}else db=await wpReady();
   if(!db)return res(null);const q=db.transaction("p").objectStore("p").get(id);q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)}catch(e){res(null)}})}
 async function syncPush(){let q=syncQ();if(!q.length)return 0;let sent=0;

@@ -62,7 +62,7 @@ function doPost(e) {
   if (KEY.indexOf('CHANGE-ME') === 0) return out({ ok: false, error: 'key_not_set' });
   if (!req || req.key !== KEY) return out({ ok: false, error: 'unauthorized' });
   const lock = LockService.getScriptLock();
-  lock.waitLock(25000);
+  if (!lock.tryLock(25000)) return out({ ok: false, error: 'busy' });
   try {
     if (req.action === 'ping') return out({ ok: true, time: Date.now() });
     if (req.action === 'push') return out(push(req));
