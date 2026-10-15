@@ -967,6 +967,24 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
 .pr-t small{color:var(--muted);font-size:.8rem;line-height:1.4}
 .pr-s{flex:none}
 @media (max-width:420px){.pr-s{display:none}}
+
+.livefail{border:1px solid var(--s1);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px;background:color-mix(in srgb,var(--s1) 7%,var(--surface))}
+.livefail[hidden]{display:none!important}
+.livefail b{color:var(--s1)}.livefail p{margin:0;font-size:.86rem;color:var(--ink)}
+.bw-start{width:100%;justify-content:center;text-align:center;display:flex}
+.bw-sheet .rm-body{padding:12px 16px}
+.bw-t{margin:4px 0 0;font-size:1.25rem;color:var(--ink)}
+.bw-en{margin:0 0 12px;color:var(--muted);font-size:.86rem}
+.bw-opts{display:flex;flex-direction:column;gap:10px}
+.bw-opts button{font:inherit;text-align:left;cursor:pointer;display:flex;gap:12px;align-items:flex-start;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;transition:border-color .15s,background .15s}
+.bw-opts button i{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:700;font-family:var(--font-num);background:var(--surface);border:1.5px solid var(--line);color:var(--ink)}
+.bw-opts button span{display:flex;flex-direction:column;gap:3px;min-width:0}
+.bw-opts button b{font-size:1rem}.bw-opts button small{font-size:.84rem;color:var(--muted);line-height:1.5}
+.bw-opts button[aria-pressed=true]{border-color:var(--pc);background:var(--pt)}
+.bw-opts button[aria-pressed=true] i{background:var(--pc);border-color:var(--pc);color:#fff}
+.bw-sum{align-self:center;font-weight:600;color:var(--muted);font-size:.86rem;flex:1;text-align:center}
+#bwModal .rm-foot .btn{flex:0 0 auto;min-width:96px}
+.bq .bq-opts{display:none!important}
 </style>
 </head>
 <body>
@@ -1007,6 +1025,7 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
   <section class="card">
     <h2><span class="n">1</span>ประเมินความเสี่ยง Braden Scale</h2>
     <p class="note" style="margin:0">แบบประเมินความเสี่ยงต่อการเกิดแผลกดทับของบราเดน ประเมินผู้ป่วยแรกรับทุกราย และประเมินต่อเนื่องทุกวัน วันละ 1 ครั้ง</p>
+    <button class="btn primary bw-start" id="bwStart" type="button">เริ่มประเมิน Braden ทีละข้อ</button>
     <div class="bwrap" id="braden"></div>
     <div class="calc"><span>คะแนนรวม <b id="bTotal">–</b> /23</span><small id="bRisk">เลือกให้ครบ 6 ข้อ</small></div>
     <label class="chk" for="sepsis"><input id="sepsis" type="checkbox">มีภาวะ sepsis / บวม / มีรอยแดง</label>
@@ -1193,6 +1212,15 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
     <h2><span class="n">2</span>ถ่ายภาพแผล</h2>
     <p class="note" style="margin:0">วางไม้บรรทัดหรือแถบวัดแผลที่มีขีดเซนติเมตรชัด ๆ ไว้ข้างแผลในระนาบเดียวกับผิว ถือกล้องตั้งฉากกับแผล แสงสว่างพอ ไม่ให้เห็นใบหน้าหรือชื่อผู้ป่วยในภาพ ถ่ายเสร็จแอปจะหาไม้บรรทัดและขอบแผล แล้วคำนวณพื้นที่ให้อัตโนมัติ</p>
     <button class="btn primary livebtn" id="liveOpen" type="button"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M8 7l1.5-3h5L16 7"/><path d="M5 17h14M7 17v-2M10 17v-1.5M13 17v-2M16 17v-1.5"/></svg>เปิดกล้องพร้อมไม้บรรทัดวัดแผล</button>
+    <div class="livefail" id="liveFail" hidden>
+      <b>เปิดกล้องสดไม่ได้</b>
+      <p id="liveFailMsg"></p>
+      <div class="row photo-btns">
+        <label class="btn primary filebtn" for="photo">ถ่ายภาพ แล้ววัดด้วยไม้บรรทัดบนจอ</label>
+        <label class="btn filebtn alt" for="photoLib">เลือกจากคลังภาพ</label>
+      </div>
+      <p class="note" id="liveFailTip" style="margin:0" hidden>ในแอป Claude หน้าเว็บอาจเปิดกล้องสดไม่ได้ เปิดแอปจากลิงก์ GitHub ใน Safari จะใช้กล้องสดพร้อมไม้บรรทัดได้ ถ้ากล้องขึ้นจอดำ ให้ไปที่ การตั้งค่า → Claude → เปิด "กล้อง"</p>
+    </div>
     <label class="chk" for="rulerOn"><input id="rulerOn" type="checkbox" checked>เปิดไม้บรรทัดบนจอทับภาพหลังถ่ายหรือเลือกภาพ</label>
     <div class="row photo-btns">
       <label class="btn filebtn alt" for="photo">ถ่ายภาพ (กล้องปกติ)<input id="photo" class="vh" type="file" accept="image/*" capture="environment"></label>
@@ -1401,11 +1429,15 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
     </div>
     <div class="toast" id="toast"></div>
   </section>
-  <section class="card">
-    <h2>ประวัติการประเมิน</h2>
+  <section class="card fold" id="histCard">
+   <details id="histFold">
+    <summary><span class="fs-t">ประวัติการประเมิน</span><span class="fs-m" id="histSum">กดเพื่อดู</span></summary>
+    <div class="fold-body">
     <div id="chart"></div>
     <div class="tablebox" id="hist"></div>
     <p class="note" style="margin:0">ประวัติเก็บไว้ในเบราว์เซอร์ของเครื่องนี้เท่านั้น ไม่ส่งไปที่อื่น ถ้าล้างข้อมูลเบราว์เซอร์ประวัติจะหายไป</p>
+    </div>
+   </details>
   </section>
   </div>
   <div id="pdfReport" aria-hidden="true"></div>
@@ -1457,6 +1489,21 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
         <button type="button" class="btn" id="liveGrid" aria-pressed="false">ตาราง 1 cm</button>
         <button type="button" class="lc-shot" id="liveShot" aria-label="ถ่ายภาพ"><i></i></button>
         <button type="button" class="btn" id="liveUse">ใช้ค่าวัด</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="bwModal" hidden role="dialog" aria-modal="true" aria-label="ประเมิน Braden ทีละข้อ">
+    <div class="sheet bw-sheet">
+      <div class="rm-top"><div class="rm-kick" id="bwKick">Braden Scale</div><div class="rm-dots" id="bwDots"></div></div>
+      <div class="rm-body">
+        <h3 class="bw-t" id="bwTitle"></h3>
+        <p class="bw-en" id="bwEn"></p>
+        <div class="bw-opts" id="bwOpts"></div>
+      </div>
+      <div class="rm-foot">
+        <button class="btn" id="bwBack" type="button">ย้อนกลับ</button>
+        <span class="bw-sum" id="bwSum"></span>
+        <button class="btn" id="bwClose" type="button">ปิด</button>
       </div>
     </div>
   </div>
@@ -1673,7 +1720,7 @@ function renderBraden(){
       const h=document.createElement("button");h.type="button";h.className="bq-h";h.setAttribute("aria-expanded","false");
       h.innerHTML=`<span class="bq-t"><span></span><small></small></span><span class="bq-v" id="bs_${k}"></span>`;
       h.querySelector(".bq-t span").textContent=th;h.querySelector(".bq-t small").textContent=en?en.replace(")",""):"";
-      h.onclick=()=>{bOpen=bOpen===k?null:k;renderBraden()};
+      h.onclick=()=>bwOpen(BRADEN.findIndex(b=>b[0]===k),false);
       const list=document.createElement("div");list.className="bq-opts";
       opts.forEach((o,i)=>{const b=document.createElement("button");b.type="button";b.dataset.k=k;b.dataset.v=i+1;
         b.innerHTML=`<i>${i+1}</i><span></span>`;b.lastChild.textContent=o;
@@ -1686,8 +1733,35 @@ function renderBraden(){
   box.querySelectorAll(".bq-opts button").forEach(b=>b.setAttribute("aria-pressed",st.braden[b.dataset.k]===+b.dataset.v));
   BRADEN.forEach(([k])=>{const v=st.braden[k],el=$("bs_"+k),g=$("bq_"+k);
     el.innerHTML=v?`<b>${v}</b><span></span>`:`<span class="pick">เลือก</span>`;if(v)el.lastChild.textContent=SHORT[k][v-1];
-    g.classList.toggle("open",bOpen===k);g.classList.toggle("done",!!v);g.querySelector(".bq-h").setAttribute("aria-expanded",bOpen===k)});
+    g.classList.toggle("open",false);g.classList.toggle("done",!!v);g.querySelector(".bq-h").setAttribute("aria-expanded","false")});
+  try{bwBtnPaint()}catch(e){}
 }
+
+/* ---------- Braden wizard: one item per pop-up ---------- */
+var bw={i:0,flow:false};
+function bwOpen(i,flow){bw.i=Math.max(0,i);bw.flow=flow!==false&&bradenTotal()==null;advClose();$("bwModal").hidden=false;document.body.classList.add("noscroll");bwShow()}
+function bwClose(){$("bwModal").hidden=true;if($("riskModal").hidden&&$("stepModal").hidden)document.body.classList.remove("noscroll")}
+function bwShow(){const [k,t,opts]=BRADEN[bw.i],[th,en]=t.split(" (");
+  $("bwKick").textContent=`Braden Scale · ข้อ ${bw.i+1}/${BRADEN.length}`;
+  $("bwDots").innerHTML=BRADEN.map(([kk],j)=>`<i class="${j===bw.i?"on":st.braden[kk]?"done":""}"></i>`).join("");
+  $("bwTitle").textContent=th;$("bwEn").textContent=en?en.replace(")",""):"";
+  const box=$("bwOpts");box.innerHTML="";
+  opts.forEach((o,j)=>{const b=document.createElement("button");b.type="button";b.setAttribute("aria-pressed",st.braden[k]===j+1);
+    b.innerHTML=`<i>${j+1}</i><span><b></b><small></small></span>`;b.querySelector("b").textContent=(SHORT[k]&&SHORT[k][j])||"";b.querySelector("small").textContent=o;
+    b.onclick=()=>bwPick(k,j+1);box.append(b)});
+  const done=BRADEN.filter(([kk])=>st.braden[kk]>0).length,tot=bradenTotal();
+  $("bwSum").textContent=tot!=null?`รวม ${tot} คะแนน`:`ตอบแล้ว ${done}/6`;
+  $("bwBack").disabled=bw.i===0;$("bwModal").querySelector(".rm-body").scrollTop=0}
+function bwPick(k,v){st.braden[k]=v;renderBraden();update();
+  $("bwOpts").querySelectorAll("button").forEach((b,j)=>b.setAttribute("aria-pressed",j+1===v));
+  setTimeout(()=>{const next=BRADEN.findIndex(([kk],j)=>j>bw.i&&!st.braden[kk]),anyLeft=BRADEN.findIndex(([kk])=>!st.braden[kk]);
+    if(bw.flow){if(next>=0){bw.i=next;bwShow()}else if(anyLeft>=0){bw.i=anyLeft;bwShow()}else{bwClose();bradenAdvice(k,v,true)}}
+    else{if(anyLeft>=0){bw.i=anyLeft;bwShow()}else{bwClose();advise("ปรับคะแนน Braden แล้ว",`คะแนนรวม ${bradenTotal()} (${bradenRisk(bradenTotal())})`)}}},260)}
+$("bwBack").onclick=()=>{if(bw.i>0){bw.i--;bwShow()}};
+$("bwClose").onclick=bwClose;
+$("bwModal").addEventListener("click",e=>{if(e.target.id==="bwModal")bwClose()});
+$("bwStart").onclick=()=>{const first=BRADEN.findIndex(([kk])=>!st.braden[kk]);if(first<0){st.braden={};renderBraden();update();bwOpen(0,true)}else bwOpen(first,true)};
+function bwBtnPaint(){const b=$("bwStart");if(!b)return;const done=BRADEN.filter(([kk])=>st.braden[kk]>0).length;b.textContent=done===6?"ประเมิน Braden ใหม่ทั้งหมด":done?`ประเมิน Braden ต่อ (ตอบแล้ว ${done}/6)`:"เริ่มประเมิน Braden ทีละข้อ";b.classList.toggle("ghost",done===6);b.classList.toggle("primary",done<6)}
 function careLines(c){
   const L=[],k=c.stage,t=bradenTotal();
   if(k==="s1"||k==="s2"||k==="iad"||k==="dt")CARE[k].groups[0].items.forEach(i=>L.push(i));
@@ -1971,6 +2045,7 @@ if(SAMPLE){const S="กระดูกก้นกบ (Sacrum/Coccyx)",H="ส้
 function renderHist(){
   setTimeout(renderDash,0);
   const box=$("hist"),ch=$("chart");
+  {const hs=$("histSum");if(hs)hs.textContent=hist.length?`${hist.length} รายการ · กดเพื่อดู`:"ยังไม่มีประวัติ"}
   if(!hist.length){box.innerHTML='<p class="empty">ยังไม่มีประวัติ กด "บันทึกลงประวัติ" เพื่อเริ่มติดตาม</p>';ch.innerHTML="";return}
   const rows=[...hist].sort((a,b)=>a.date<b.date?1:-1);
   box.innerHTML=`<table><thead><tr><th>วันที่</th><th>ผู้ป่วย</th><th>ระดับ</th><th style="text-align:right">Braden</th><th style="text-align:right">พื้นที่ cm²</th><th style="text-align:right">PUSH</th><th>ผู้บันทึก</th><th></th></tr></thead><tbody>${
@@ -2153,14 +2228,19 @@ function livePt(e){const r=$("liveOv").getBoundingClientRect();return [e.clientX
 async function liveOpen(){
   const md=navigator.mediaDevices;
   if(!md||!md.getUserMedia){liveFallback("เบราว์เซอร์นี้เปิดกล้องสดไม่ได้");return}
-  try{live.stream=await md.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1080}},audio:false})}
-  catch(e){liveFallback(e&&e.name==="NotAllowedError"?"ไม่ได้รับอนุญาตให้ใช้กล้อง":"เปิดกล้องสดในหน้านี้ไม่ได้");return}
+  $("liveFail").hidden=true;
+  const tries=[{video:{facingMode:{ideal:"environment"},width:{ideal:1920},height:{ideal:1080}},audio:false},{video:{facingMode:"environment"},audio:false},{video:true,audio:false}];
+  let err=null;for(const c of tries){try{live.stream=await md.getUserMedia(c);err=null;break}catch(e){err=e;if(e&&(e.name==="NotAllowedError"||e.name==="SecurityError"))break}}
+  if(!live.stream){liveFallback(err&&(err.name==="NotAllowedError"||err.name==="SecurityError")?"หน้านี้ไม่ได้รับอนุญาตให้เปิดกล้องสด":"เปิดกล้องสดในหน้านี้ไม่ได้",err&&err.name);return}
   const v=$("liveVid");v.srcObject=live.stream;$("liveCam").hidden=false;document.body.classList.add("noscroll");
   try{const sv=+localStorage.getItem("pi-live-ppc");if(sv>0){live.ppc=sv;$("liveScale").value=sv}}catch(e){}
   $("liveScaleV").textContent=`${(+live.ppc).toFixed(0)} px = 1 cm`;
   try{await v.play()}catch(e){}
   setTimeout(liveLayout,60)}
-function liveFallback(why){advise("ใช้กล้องปกติ แล้ววัดด้วยไม้บรรทัดบนภาพ",why+" ถ่ายภาพโดยวางไม้บรรทัดจริงไว้ข้างแผล แล้วจะเปิดไม้บรรทัดบนจอทับภาพให้วัดต่อ");live.pend=true;setTimeout(()=>$("photo").click(),50)}
+function liveFallback(why,code){const f=$("liveFail");f.hidden=false;live.pend=true;
+  $("liveFailMsg").textContent=why+(code?` (${code})`:"")+" — ใช้วิธีถ่ายภาพแทนได้ ภาพที่ได้จะเปิดไม้บรรทัดบนจอทับให้วัดต่อทันที";
+  $("liveFailTip").hidden=!/claude\.ai|claudeusercontent|anthropic/.test(location.hostname+document.referrer);
+  f.scrollIntoView({behavior:"smooth",block:"center"})}
 function liveOpenStill(f){if(!f)return;if(f.type&&!/^image\//.test(f.type)){photoErr("ไฟล์นี้ไม่ใช่รูปภาพ");return}
   const url=URL.createObjectURL(f),im=$("liveImg");live.still={f,url};im.onload=()=>setTimeout(liveLayout,30);im.onerror=()=>{liveClose();loadPhoto(f)};im.src=url;im.hidden=false;$("liveVid").hidden=true;
   $("liveTip").textContent="เลื่อนแถบ \"ปรับสเกล\" และลากไม้บรรทัดบนจอไปทับไม้บรรทัดในภาพ ให้ขีดเซนติเมตรตรงกัน จากนั้นลากจุดสีชมพู (ยาว) และสีฟ้า (กว้าง) ไปที่ขอบแผล แล้วกดปุ่มวงกลมเพื่อใช้ภาพนี้";
