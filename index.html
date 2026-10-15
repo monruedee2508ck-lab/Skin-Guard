@@ -3413,7 +3413,7 @@ function dressingInto(box,c){
 const FX=100,BX=330;
 const BM2={front:[["nose","สันจมูก/ใต้อุปกรณ์","",FX,42],["earR","ใบหู (Ear)","ขวา",FX-21,38],["earL","ใบหู (Ear)","ซ้าย",FX+21,38],
   ["maR","ตาตุ่ม (Malleolus)","ขวา",FX-25,398],["maL","ตาตุ่ม (Malleolus)","ซ้าย",FX+25,398]],
- back:[["occ","ท้ายทอย (Occiput)","",BX,24],["scaL","กระดูกสะบัก (Scapula)","ซ้าย",BX-22,108],["scaR","กระดูกสะบัก (Scapula)","ขวา",BX+22,108],
+ back:[["occ","ท้ายทอย (Occiput)","",BX,40],["scaL","กระดูกสะบัก (Scapula)","ซ้าย",BX-22,108],["scaR","กระดูกสะบัก (Scapula)","ขวา",BX+22,108],
   ["elbL","ข้อศอก (Elbow)","ซ้าย",BX-57,172],["elbR","ข้อศอก (Elbow)","ขวา",BX+57,172],["sac","กระดูกก้นกบ (Sacrum/Coccyx)","",BX,214],
   ["troL","ปุ่มกระดูกสะโพก (Greater trochanter)","ซ้าย",BX-38,232],["troR","ปุ่มกระดูกสะโพก (Greater trochanter)","ขวา",BX+38,232],
   ["isL","ปุ่มกระดูกก้น (Ischial tuberosity)","ซ้าย",BX-14,248],["isR","ปุ่มกระดูกก้น (Ischial tuberosity)","ขวา",BX+14,248],
@@ -3538,7 +3538,7 @@ function bodyFigure(cx,view,px){
   return g;
 }
 function pinFor(w){
-  if(w.pin){const p=w.pin;if(!p.k){const q={v:p.v,x:p.v==="back"?p.x+220:p.x-10,y:p.y,k:2};w.pin=q;return q}return p}
+  if(w.pin){const p=w.pin;if(p.k&&p.v==="back"&&p.x===BX&&p.y===24)p.y=40;if(!p.k){const q={v:p.v,x:p.v==="back"?p.x+220:p.x-10,y:p.y,k:2};w.pin=q;return q}return p}
   for(const v of ["back","front"]){const p=BM2[v].find(x=>x[1]===w.site&&x[2]===(w.side||""));if(p)return {v,x:p[3],y:p[4],k:2}}
   return null;
 }
