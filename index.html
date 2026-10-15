@@ -443,6 +443,19 @@ section.card.cta{background:linear-gradient(135deg,var(--gold-t),var(--surface))
 .sitechips button.on::before{color:var(--surface)}
 @media (prefers-reduced-motion:reduce){.pop,.advice.show,.advice.out{animation:none}}
 
+/* dressing-due pop-up */
+.ddm-hd{margin:8px 14px 0;border-radius:14px;padding:14px 16px;background:var(--c,var(--s2));color:var(--surface);display:flex;gap:12px;align-items:center}
+.ddm-ic{flex:none;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center}
+.ddm-hd>div{min-width:0;display:flex;flex-direction:column;gap:2px}
+.ddm-hd b{font-family:var(--font-display);font-size:1.12rem;font-weight:600;line-height:1.3}
+.ddm-hd small{font-size:.85rem;opacity:.92}
+.ddm-list{display:flex;flex-direction:column;gap:8px;padding:6px 0 4px}
+.ddm-row{display:flex;gap:10px;align-items:center;background:var(--bg);border-radius:14px;padding:10px 12px;box-shadow:inset 4px 0 0 var(--c)}
+.ddm-row .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;line-height:1.4}
+.ddm-row .tx b{font-size:.95rem}
+.ddm-row .tx small{font-size:.8rem;color:var(--muted)}
+.ddm-pill{align-self:flex-start;font-size:.74rem;font-weight:600;border-radius:99px;padding:1px 10px;background:var(--c);color:var(--surface)}
+.ddm-row .btn{flex:none}
 /* risk advice modal */
 body.noscroll{overflow:hidden}
 .riskopen{text-align:center;font-weight:600;color:var(--pc);border-color:color-mix(in srgb,var(--pc) 40%,var(--line))}
@@ -1755,6 +1768,17 @@ html body{background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--
       </div>
     </div>
   </div>
+  <div class="modal" id="ddModal" hidden role="dialog" aria-modal="true" aria-labelledby="ddTitle">
+    <div class="sheet">
+      <div class="rm-kick">แจ้งเตือนการทำแผล</div>
+      <div class="ddm-hd" id="ddHd"><span class="ddm-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6M12 2v3"/></svg></span><div><b id="ddTitle">ถึงกำหนดเปลี่ยนวัสดุปิดแผล</b><small id="ddPt"></small></div></div>
+      <div class="rm-body"><div class="ddm-list" id="ddList"></div></div>
+      <div class="rm-foot">
+        <button class="btn" id="ddLater" type="button">รับทราบ</button>
+        <button class="btn primary" id="ddGo" type="button">ไปทำแผล</button>
+      </div>
+    </div>
+  </div>
   <div class="advice" id="advice" role="status" aria-live="polite" hidden>
     <span class="adv-i" aria-hidden="true">i</span>
     <div class="adv-c"><div class="adv-k">คำแนะนำ</div><b class="adv-t"></b><div class="adv-b"></div></div>
@@ -2983,14 +3007,14 @@ $("lgForm").addEventListener("submit",e=>{e.preventDefault();const ot=$("lgOT").
   if(name.length<2){$("lgErr").textContent="ใส่ชื่อ-สกุล";$("lgName").focus();return}
   otUser={ot,name,at:Date.now()};try{sessionStorage.setItem("pi-ot",JSON.stringify(otUser));localStorage.setItem("pi-ot-last",JSON.stringify({ot,name}))}catch(e){}
   if(name){$("nurseName").value=name;try{localStorage.setItem("pi-nurse",name)}catch(e){}}
-  $("lgErr").textContent="";otPaint();try{update()}catch(e){}});
+  $("lgErr").textContent="";try{sessionStorage.removeItem("pi-dd-seen")}catch(e){}otPaint();try{update()}catch(e){}setTimeout(()=>ddPop(),500)});
 function userMenu(open){const m=$("userMenu"),b=$("userBtn");if(!m)return;m.hidden=!open;if(b)b.setAttribute("aria-expanded",open)}
 $("userBtn").onclick=e=>{e.stopPropagation();userMenu($("userMenu").hidden)};
 document.addEventListener("click",e=>{if(!e.target.closest("#userMenu")&&!e.target.closest("#userBtn"))userMenu(false)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")userMenu(false)});
 function twoTap(btn,msg){if(btn.dataset.arm){delete btn.dataset.arm;return true}const sp=btn.querySelector("span")||btn,old=sp.textContent;btn.dataset.arm="1";sp.textContent=msg;btn.classList.add("armed");
   setTimeout(()=>{if(btn.dataset.arm){delete btn.dataset.arm;sp.textContent=old;btn.classList.remove("armed")}},3000);return false}
-function doLogout(){userMenu(false);otUser=null;try{sessionStorage.removeItem("pi-ot")}catch(e){}try{setAdmin(false)}catch(e){}
+function doLogout(){userMenu(false);otUser=null;try{sessionStorage.removeItem("pi-ot");sessionStorage.removeItem("pi-dd-seen")}catch(e){}try{setAdmin(false)}catch(e){}
   document.querySelectorAll(".modal").forEach(m=>m.hidden=true);try{liveClose()}catch(e){}document.body.classList.remove("noscroll");
   go("prevent",false);window.scrollTo(0,0);otPaint();try{$("lgOT").value="";$("lgName").value="";$("lgErr").textContent="";setTimeout(()=>$("lgOT").focus(),100)}catch(e){}try{const g=$("loginGate");g.scrollTop=0;g.classList.remove("fade");void g.offsetWidth;g.classList.add("fade")}catch(e){}
   try{history.replaceState(null,"",location.pathname+"#login")}catch(e){}}
@@ -4150,8 +4174,34 @@ function changePatient(nh,bed){
   }else{curHN=nh;if(bed)$("bed").value=bed;$("ptName").value=""}
   try{skReload()}catch(e){}
   savePatient();update();
+  setTimeout(()=>ddPop(),400);
 }
 $("hn").addEventListener("change",()=>changePatient($("hn").value));
+/* pop-up when a dressing change is due (after login, once HN is loaded) */
+function ddDue(){return (wounds||[]).map((w,i)=>{let S;try{S=dressStatus(w)}catch(e){S={}}return {w,i,S}}).filter(x=>x.S&&x.S.d&&(x.S.cls==="over"||x.S.cls==="soon"))}
+function ddSeen(){try{return JSON.parse(sessionStorage.getItem("pi-dd-seen")||"[]")}catch(e){return []}}
+function ddGoTo(i){$("ddModal").hidden=true;document.body.classList.remove("noscroll");go("wound");if(i!==wActive)switchWound(i);setTimeout(()=>{try{openStep(7)}catch(e){}},300)}
+function ddPop(tries){try{
+  if(!otGet()||!curHN||!$("loginGate").hidden)return;const list=ddDue();if(!list.length)return;
+  const sig=curHN+"|"+list.map(x=>(x.w.id||x.i)+":"+x.S.d.t).join(","),seen=ddSeen();if(seen.includes(sig))return;
+  if(document.querySelector(".modal:not([hidden])")||!$("liveCam").hidden){if((tries||0)<40)setTimeout(()=>ddPop((tries||0)+1),1500);return}
+  const over=list.some(x=>x.S.cls==="over");$("ddHd").style.setProperty("--c",`var(${over?"--s1":"--s2"})`);
+  $("ddTitle").textContent=over?"เลยกำหนดเปลี่ยนวัสดุปิดแผล":"ถึงกำหนดเปลี่ยนวัสดุปิดแผลวันนี้";
+  const nm=$("ptName").value.trim();$("ddPt").textContent=`HN ${curHN}`+(nm?` · ${nm}`:"")+` · ${list.length} แผล`;
+  const box=$("ddList");box.innerHTML="";
+  list.forEach(x=>{const d=document.createElement("div");d.className="ddm-row";d.style.setProperty("--c",`var(${x.S.cls==="over"?"--s1":"--s2"})`);
+    d.innerHTML=`<span class="tx"><span class="ddm-pill"></span><b></b><small></small></span><button type="button" class="btn sm">ทำแผลนี้</button>`;
+    d.querySelector(".ddm-pill").textContent=x.S.cls==="over"?"⚠ เลยกำหนด":"ครบวันนี้";
+    d.querySelector("b").textContent=`แผลที่ ${x.i+1} · ${siteLabel(x.w)}${x.w.side?" "+x.w.side:""}`;
+    d.querySelector("small").textContent=`${x.S.d.name} · ครบกำหนด ${fmtDT(x.S.d.t)} · ${x.S.cls==="over"?x.S.txt:"อีก "+leftTxt(x.S.left)}`;
+    d.querySelector("button").onclick=()=>ddGoTo(x.i);box.append(d)});
+  $("ddGo").onclick=()=>ddGoTo(list[0].i);
+  try{sessionStorage.setItem("pi-dd-seen",JSON.stringify(seen.concat([sig]).slice(-50)))}catch(e){}
+  $("ddModal").hidden=false;document.body.classList.add("noscroll");setTimeout(()=>{try{$("ddGo").focus()}catch(e){}},60)
+}catch(e){}}
+$("ddLater").onclick=()=>{$("ddModal").hidden=true;document.body.classList.remove("noscroll")};
+$("ddModal").addEventListener("click",e=>{if(e.target===$("ddModal"))$("ddLater").onclick()});
+setTimeout(()=>ddPop(),1200);
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
