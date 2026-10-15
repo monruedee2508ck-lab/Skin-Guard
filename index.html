@@ -2252,7 +2252,6 @@ function renderAlerts(){
   const t=bradenTotal(),hn=$("hn").value.trim();
   const CRa=compoundRisk(t,crData());
   if(CRa.crit)add("--crit",`<span class="crit-al"><b>Critical Risk · ปัจจัยเสี่ยงร่วมทางคลินิก</b> ${CRa.rule} ต้องป้องกันเชิงรุกทันที</span><span class="alert-go">ดูแนวทางป้องกันเชิงรุก ›</span>`);
-  else if(t!=null&&t<=12)add(t<=9?"--s4":"--s1",`<span><b>${bradenRisk(t)} (Braden ${t})</b> ใช้วัสดุ Soft Silicone/Foam ป้องกันที่ Coccyx และตำแหน่งเสี่ยง ร่วมกับ Routine Care</span>`);
   else if($("sepsis").checked)add("--s2",`<span><b>มีภาวะ sepsis/บวม/รอยแดง</b> ใช้วัสดุ Soft Silicone/Foam ป้องกันทุกราย ไม่ว่าคะแนน Braden เท่าใด</span>`);
   const s=turnState();
   if(s.started&&!s.done)add("--s1",`<span><b>ถึงเวลาพลิกตัวเป็นท่า${s.pos}</b> รอบ ${hhmm(s.slot)} น. เลยมา ${mins(s.late)} กด "พลิกเป็นท่า${s.pos}แล้ว" ในหน้าประเมินความเสี่ยง</span>`);
