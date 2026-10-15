@@ -996,6 +996,9 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
 .posnow span{font-size:.92rem;color:var(--ink)}
 .posnow .btn{margin-top:10px;min-width:220px}
 .posnow.due{background:color-mix(in srgb,var(--s1) 9%,var(--surface));border-color:var(--s1)}.posnow.due b{color:var(--s1)}
+
+#braden{display:none!important}
+#bwEdit[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -1033,7 +1036,8 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
   <section class="card">
     <h2><span class="n">1</span>ประเมินความเสี่ยง Braden Scale</h2>
     <p class="note" style="margin:0">แบบประเมินความเสี่ยงต่อการเกิดแผลกดทับของบราเดน ประเมินผู้ป่วยแรกรับทุกราย และประเมินต่อเนื่องทุกวัน วันละ 1 ครั้ง</p>
-    <button class="btn primary bw-start" id="bwStart" type="button">เริ่มประเมิน Braden ทีละข้อ</button>
+    <button class="btn primary bw-start" id="bwStart" type="button">เริ่มประเมิน Braden</button>
+    <button class="btn ghost bw-start" id="bwEdit" type="button" hidden>แก้ไขคะแนน Braden</button>
     <div class="bwrap" id="braden"></div>
     <div class="calc"><span>คะแนนรวม <b id="bTotal">–</b> /23</span><small id="bRisk">เลือกให้ครบ 6 ข้อ</small></div>
     <label class="chk" for="sepsis"><input id="sepsis" type="checkbox">มีภาวะ sepsis / บวม / มีรอยแดง</label>
@@ -1729,7 +1733,7 @@ function renderBraden(){
       h.innerHTML=`<span class="bq-t"><span></span><small></small></span><span class="bq-v" id="bs_${k}"></span>`;
       h.querySelector(".bq-t span").textContent=th;h.querySelector(".bq-t small").textContent=en?en.replace(")",""):"";
       h.onclick=()=>{const idx=BRADEN.findIndex(b=>b[0]===k),first=BRADEN.findIndex(([kk])=>!st.braden[kk]);
-        if(first<0)bwOpen(idx,false);else{bwOpen(st.braden[k]?Math.min(idx,first):first,true);if(!st.braden[k]&&idx>first)advise("ประเมินตามลำดับ",`ต้องตอบข้อ ${first+1} ก่อน แล้วจะไปข้อถัดไปตามลำดับ`)}};
+        if(first<0)bwOpen(idx,false);else{bwOpen(st.braden[k]?Math.min(idx,first):first,true);}};
       const list=document.createElement("div");list.className="bq-opts";
       opts.forEach((o,i)=>{const b=document.createElement("button");b.type="button";b.dataset.k=k;b.dataset.v=i+1;
         b.innerHTML=`<i>${i+1}</i><span></span>`;b.lastChild.textContent=o;
@@ -1748,7 +1752,7 @@ function renderBraden(){
 
 /* ---------- Braden wizard: one item per pop-up ---------- */
 var bw={i:0,flow:false};
-function bwOpen(i,flow){bw.i=Math.max(0,i);bw.flow=flow!==false&&bradenTotal()==null;advClose();$("bwModal").hidden=false;document.body.classList.add("noscroll");bwShow()}
+function bwOpen(i,flow){bw.i=Math.max(0,i);bw.edit=flow==="edit";bw.flow=!bw.edit&&flow!==false&&bradenTotal()==null;advClose();$("bwModal").hidden=false;document.body.classList.add("noscroll");bwShow()}
 function bwClose(){$("bwModal").hidden=true;if($("riskModal").hidden&&$("stepModal").hidden)document.body.classList.remove("noscroll")}
 function bwShow(){const [k,t,opts]=BRADEN[bw.i],[th,en]=t.split(" (");
   $("bwKick").textContent=`Braden Scale · ข้อ ${bw.i+1}/${BRADEN.length}`;
@@ -1764,13 +1768,15 @@ function bwShow(){const [k,t,opts]=BRADEN[bw.i],[th,en]=t.split(" (");
 function bwPick(k,v){st.braden[k]=v;renderBraden();update();
   $("bwOpts").querySelectorAll("button").forEach((b,j)=>b.setAttribute("aria-pressed",j+1===v));
   setTimeout(()=>{const first=BRADEN.findIndex(([kk])=>!st.braden[kk]);
+    if(bw.edit){if(bw.i+1<BRADEN.length){bw.i++;bwShow()}else bwClose();return}
     if(bw.flow){if(bw.i+1<BRADEN.length){bw.i++;bwShow()}else if(first>=0){bw.i=first;bwShow()}else{bwClose();bradenAdvice(k,v,true)}}
-    else{if(first>=0){bw.flow=true;bw.i=first;bwShow()}else{bwClose();advise("ปรับคะแนน Braden แล้ว",`คะแนนรวม ${bradenTotal()} (${bradenRisk(bradenTotal())})`)}}},260)}
+    else{if(first>=0){bw.flow=true;bw.i=first;bwShow()}else{bwClose()}}},260)}
 $("bwBack").onclick=()=>{if(bw.i>0){bw.i--;bwShow()}};
 $("bwClose").onclick=bwClose;
 $("bwModal").addEventListener("click",e=>{if(e.target.id==="bwModal")bwClose()});
+$("bwEdit").onclick=()=>bwOpen(0,"edit");
 $("bwStart").onclick=()=>{const first=BRADEN.findIndex(([kk])=>!st.braden[kk]);if(first<0){st.braden={};renderBraden();update();bwOpen(0,true)}else bwOpen(first,true)};
-function bwBtnPaint(){const b=$("bwStart");if(!b)return;const done=BRADEN.filter(([kk])=>st.braden[kk]>0).length;b.textContent=done===6?"ประเมิน Braden ใหม่ทั้งหมด":done?`ประเมิน Braden ต่อ (ตอบแล้ว ${done}/6)`:"เริ่มประเมิน Braden ทีละข้อ";b.classList.toggle("ghost",done===6);b.classList.toggle("primary",done<6)}
+function bwBtnPaint(){const b=$("bwStart");if(!b)return;const done=BRADEN.filter(([kk])=>st.braden[kk]>0).length;b.textContent=done===6?"เริ่มประเมิน Braden ใหม่":done?`ประเมิน Braden ต่อ (ข้อ ${done+1}/6)`:"เริ่มประเมิน Braden";{const e=$("bwEdit");if(e)e.hidden=done<6}b.classList.toggle("ghost",done===6);b.classList.toggle("primary",done<6)}
 function careLines(c){
   const L=[],k=c.stage,t=bradenTotal();
   if(k==="s1"||k==="s2"||k==="iad"||k==="dt")CARE[k].groups[0].items.forEach(i=>L.push(i));
