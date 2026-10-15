@@ -2491,8 +2491,7 @@ $("viewer").addEventListener("click",e=>{if(e.target===$("viewer"))skClose()});
 function skAlert(add){
   if(!skinCache||!$("hn").value.trim())return;
   const d=skDay(),todays=skinCache.filter(r=>r.date===d);
-  if(!skinCache.length)add("--accent",`<span><b>ยังไม่ได้ถ่ายภาพผิวหนังแรกรับ</b> ถ่ายภาพบริเวณปุ่มกระดูกภายใน 1 ชั่วโมงหลังรับผู้ป่วย</span>`);
-  else if(!todays.length){const last=skinCache.slice().sort((a,b)=>skKey(b).localeCompare(skKey(a)))[0];
+  if(skinCache.length&&!todays.length){const last=skinCache.slice().sort((a,b)=>skKey(b).localeCompare(skKey(a)))[0];
     add("--s2",`<span><b>ยังไม่ได้ถ่ายภาพผิวหนังประจำวัน</b> ภาพล่าสุด ${thDate(last.date)} ${last.time} น.</span>`)}
   const bad=todays.filter(r=>skSt(r.status).go);
   if(bad.length)add("--s1",`<span><b>พบรอยแดงที่กดแล้วไม่จาง หรือมีแผลเกิดขึ้นแล้ว</b> ${bad.map(r=>skSite(r.site)[1]+" ("+skSt(r.status).t+")").join(", ")} ถ่ายภาพ วัดขนาด และประเมินระดับแผลต่อ</span>`,"wound");
