@@ -989,6 +989,13 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
 .pagetabs button small{display:none!important}
 .hero{padding-bottom:18px!important}
 .hero h1{margin-right:110px}
+
+.posnow{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:26px 16px;border-radius:18px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));border:1.5px solid color-mix(in srgb,var(--accent) 40%,transparent)}
+.posnow small{font-size:.9rem;color:var(--muted)}
+.posnow b{font-family:var(--font-display);font-size:2.6rem;line-height:1.15;color:var(--accent)}
+.posnow span{font-size:.92rem;color:var(--ink)}
+.posnow .btn{margin-top:10px;min-width:220px}
+.posnow.due{background:color-mix(in srgb,var(--s1) 9%,var(--surface));border-color:var(--s1)}.posnow.due b{color:var(--s1)}
 </style>
 </head>
 <body>
@@ -1045,7 +1052,7 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
       <p class="rule">เกณฑ์: Albumin &lt; 3.5 g/dL · Hypoxia = SpO₂ &lt; 90% หรือ PaO₂ &lt; 60 mmHg · ได้รับ Vasopressor ใดๆ<br>Critical Risk = Braden ≤ 12 ร่วมกับปัจจัยอย่างน้อย 1 ข้อ หรือ Braden ≤ 18 ร่วมกับปัจจัยตั้งแต่ 2 ข้อขึ้นไป</p>
       </div>
     </details>
-    <button class="btn riskopen" id="riskOpen" type="button" hidden>ดูผลประเมิน · ภาพถ่ายผิวหนัง · นาฬิกาพลิกตัว · การพยาบาล</button>
+    <button class="btn riskopen" id="riskOpen" type="button" hidden>ดูผลประเมิน · ภาพถ่ายผิวหนัง · ท่านอนตอนนี้ · การพยาบาล</button>
   </section>
   <section class="card fold" id="skinCard" hidden>
    <details id="skinFold">
@@ -2573,9 +2580,16 @@ function stageAdvice(){
 $("sepsis").addEventListener("change",()=>{if($("sepsis").checked&&bradenTotal()!=null){openRisk();return}if($("sepsis").checked)advise("มีภาวะ sepsis / บวม / รอยแดง","ใช้วัสดุ Soft Silicone/Foam ป้องกันที่ Coccyx และตำแหน่งเสี่ยงทุกราย ไม่ว่าคะแนน Braden เท่าใด","--s2","!")});
 
 /* Risk advice modal */
+
+function posNowEl(){const s=turnState(),due=s.started&&!s.done,d=document.createElement("div");d.className="posnow"+(due?" due":"");
+  const pos=s.done?s.nextPos:s.pos;
+  d.innerHTML=`<small>${due?"ถึงเวลาพลิกตัวแล้ว · ตอนนี้ควรนอน":s.done?"พลิกรอบนี้แล้ว · รอบถัดไปพลิกเป็น":"ตอนนี้ควรนอน"}</small><b>ท่า${s.done?s.nextPos:s.pos}</b>
+    <span>${s.done?`เวลา ${hhmm(s.next)} น.`:`รอบ ${hhmm(s.slot)} น. · รอบถัดไป ${hhmm(s.next)} น. ท่า${s.nextPos}`}</span>
+    <button type="button" class="btn ${s.done?"":"primary"}" ${s.done?"disabled":""}>${s.done?"บันทึกรอบนี้แล้ว":`พลิกเป็นท่า${s.pos}แล้ว`}</button>`;
+  d.querySelector("button").onclick=()=>{$("turnBtn").click();d.replaceWith(posNowEl())};return d}
 var rmFlow=["risk"],rmIdx=0,rmMoved=null;
-var RM_STEPS={risk:"ผลการประเมิน Braden Scale",skin:"ถ่ายภาพผิวหนังแรกรับ / ประจำวัน",turn:"นาฬิกาเตือนการพลิกตะแคงตัว",care:"กิจกรรมการพยาบาลประจำเวร · แจ้งให้ทราบ"};
-var RM_SHORT={risk:"ผลประเมิน",skin:"ภาพถ่ายผิวหนัง",turn:"นาฬิกาพลิกตัว",care:"การพยาบาลประจำเวร"};
+var RM_STEPS={risk:"ผลการประเมิน Braden Scale",skin:"ถ่ายภาพผิวหนังแรกรับ / ประจำวัน",turn:"ท่านอนตอนนี้",care:"กิจกรรมการพยาบาลประจำเวร · แจ้งให้ทราบ"};
+var RM_SHORT={risk:"ผลประเมิน",skin:"ภาพถ่ายผิวหนัง",turn:"ท่านอนตอนนี้",care:"การพยาบาลประจำเวร"};
 function rmRestore(){if(!rmMoved)return;const {node,parent,next}=rmMoved;if(next&&next.parentNode===parent)parent.insertBefore(node,next);else parent.append(node);rmMoved=null}
 function rmMove(node){rmRestore();rmMoved={node,parent:node.parentNode,next:node.nextSibling};const pn=$("rmPane");pn.innerHTML="";pn.append(node)}
 function rmShow(i){rmIdx=i;const k=rmFlow[i],pn=$("rmPane");
@@ -2584,7 +2598,7 @@ function rmShow(i){rmIdx=i;const k=rmFlow[i],pn=$("rmPane");
   if(k==="risk"){rmRestore();pn.innerHTML="";pn.hidden=true;$("riskAlert").hidden=false;renderRisk(bradenTotal())}
   else{$("riskAlert").hidden=true;pn.hidden=false;
     if(k==="skin"){rmMove(document.querySelector("#skinFold>.fold-body"));try{skRender&&skRender()}catch(e){}}
-    else if(k==="turn"){rmMove($("turn"));renderTurn()}
+    else if(k==="turn"){rmRestore();pn.innerHTML="";pn.append(posNowEl())}
     else if(k==="care"){rmRestore();pn.innerHTML="";const items=chkItems();
       const h=document.createElement("div");h.className="rm-care-h";h.innerHTML=`<b>${SHIFTS[shiftNow()]} · ${items.length} รายการ</b><small>ปรับตามคะแนน Braden และคะแนนย่อยที่ได้ 1–2 คะแนน ไม่ต้องติ๊ก ใช้เป็นแนวทางปฏิบัติในเวร</small>`;
       pn.append(h,chkInfoEl(items))}}
