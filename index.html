@@ -835,8 +835,8 @@ figure.one{margin:0}figure.one img{width:100%;border-radius:14px}figure.one figc
 .pagetabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
 .pagetabs button{font-size:.78rem;padding:7px 1px}
 .pagetabs button small{font-size:.6rem}
-.patient .grid{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
-@media (max-width:420px){.patient .grid{grid-template-columns:1fr}}
+.patient .grid{grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr) minmax(0,1fr)}
+@media (max-width:560px){.patient .grid{grid-template-columns:1fr 1fr}.patient .grid .pt-name{grid-column:1/-1;order:2}.patient .grid label[for=date]{order:1}}
 .wlist{display:flex;flex-direction:column;gap:6px}
 .wrow{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:12px;padding:8px 10px;flex-wrap:wrap}
 .wbtn{font:inherit;color:var(--ink);text-align:left;border:0;cursor:pointer;width:100%;box-shadow:inset 4px 0 0 var(--c,var(--s2));--c:var(--s2)}
@@ -856,7 +856,7 @@ figure.one{margin:0}figure.one img{width:100%;border-radius:14px}figure.one figc
 .flag-chip.warn{background:color-mix(in srgb,var(--s2) 15%,var(--surface));color:var(--s2)}
 .flag-chip.bad{background:color-mix(in srgb,var(--s1) 15%,var(--surface));color:var(--s1)}
 .flag-chip.cur{background:var(--pc);color:var(--surface)}
-.admit{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:end}
+.admit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr) auto;gap:8px;align-items:end}
 @media (max-width:420px){.admit{grid-template-columns:1fr}}
 
 /* compound risk */
@@ -1166,7 +1166,8 @@ html body{background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--
   <section class="card patient">
     <div class="grid">
       <input id="bed" type="hidden">
-      <label for="hn">HN / ชื่อผู้ป่วย<input id="hn" type="text" placeholder="เช่น 6701234"></label>
+      <label for="hn">HN<input id="hn" type="text" inputmode="numeric" placeholder="เช่น 6701234"></label>
+      <label for="ptName" class="pt-name">ชื่อ-สกุลผู้ป่วย<input id="ptName" type="text" autocomplete="off" placeholder="เช่น นายสมชาย ใจดี"></label>
       <label for="date">วันที่ประเมิน<input id="date" type="date"></label>
     </div>
   </section>
@@ -1571,7 +1572,8 @@ html body{background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--
     <h2>ผู้ป่วยทั้งหมด</h2>
     <div class="admit">
       <input id="admBed" type="hidden">
-      <label for="admHN">HN ผู้ป่วยใหม่<input id="admHN" type="text" placeholder="เช่น 6701234"></label>
+      <label for="admHN">HN ผู้ป่วยใหม่<input id="admHN" type="text" inputmode="numeric" placeholder="เช่น 6701234"></label>
+      <label for="admName">ชื่อ-สกุลผู้ป่วย<input id="admName" type="text" autocomplete="off" placeholder="เช่น นายสมชาย ใจดี"></label>
       <button class="btn primary" id="admBtn" type="button">รับผู้ป่วยใหม่</button>
     </div>
     <div class="wgrid" id="wardList"></div>
@@ -3131,7 +3133,7 @@ function buildNote(c){
   const t=bradenTotal(),hn=$("hn").value.trim();
   const list=((wounds&&wounds.length)?wounds.map(woundCalc):[c]).filter(x=>x.stage&&x.stage!=="none");
   const L=[];
-  L.push(`วันที่ ${noteDate($("date").value)}${hn?" · HN "+hn:""}`);
+  L.push(`วันที่ ${noteDate($("date").value)}${hn?" · HN "+hn:""}${$("ptName").value.trim()?" · "+$("ptName").value.trim():""}`);
   // risk
   let risk=t!=null?`Braden ${t} (${bradenRisk(t)})`:"Braden ยังประเมินไม่ครบ";
   try{const CR=compoundRisk(t,crData());if(CR.f.length)risk+=` · ${CR.f.map(x=>x.val).join(", ")}`;if(CR.crit)risk+=" → Critical Risk"}catch(e){}
@@ -4047,7 +4049,7 @@ const PT="pi-pt:";
 function riskOf(b){const v=BRADEN.map(x=>b&&b[x[0]]);return v.every(x=>x>0)?v.reduce((a,c)=>a+c,0):null}
 function savePatient(){
   if(!ptReady||!curHN)return;
-  const rec={hn:curHN,bed:$("bed").value.trim(),braden:st.braden||{},sepsis:$("sepsis").checked,cr:st.cr||{},wActive:wActive||0,
+  const rec={hn:curHN,name:$("ptName").value.trim(),bed:$("bed").value.trim(),braden:st.braden||{},sepsis:$("sepsis").checked,cr:st.cr||{},wActive:wActive||0,
     wounds:(wounds||[]).map(w=>{const {photo,...r}=w;return r}),noteExtra:$("noteExtra").value,updated:Date.now()};
   const old=loadPatientRec(curHN),sig=o=>{if(!o)return"";const {updated,...r}=o;return JSON.stringify(r)};
   if(old&&sig(old)===sig(rec))return;
@@ -4060,12 +4062,12 @@ function changePatient(nh,bed){
   savePatient();
   const rec=loadPatientRec(nh);
   if(curHN||rec){
-    st.braden=rec?rec.braden||{}:{};$("sepsis").checked=!!(rec&&rec.sepsis);st.cr=rec?rec.cr||{}:{};crLoad();$("bed").value=rec?rec.bed||"":"";
+    $("ptName").value=rec&&rec.name||"";st.braden=rec?rec.braden||{}:{};$("sepsis").checked=!!(rec&&rec.sepsis);st.cr=rec?rec.cr||{}:{};crLoad();$("bed").value=rec?rec.bed||"":"";
     wounds=rec&&rec.wounds&&rec.wounds.length?rec.wounds:[blankWound()];$("noteExtra").value=rec?rec.noteExtra||"":"";
     noteEdited=false;chkShiftSel=null;dashKey="";
     curHN=nh;$("hn").value=nh;if(bed!=null&&bed!=="")$("bed").value=bed;
     renderBraden();loadWound(Math.min(rec?rec.wActive||0:0,wounds.length-1));
-  }else{curHN=nh;if(bed)$("bed").value=bed}
+  }else{curHN=nh;if(bed)$("bed").value=bed;$("ptName").value=""}
   try{skReload()}catch(e){}
   savePatient();update();
 }
@@ -4093,7 +4095,7 @@ function renderWard(){
   const tb=$("wardTurn");tb.innerHTML=tlist.length?"":'<p class="empty" style="margin:0">พลิกตัวครบทุกเตียงในรอบนี้แล้ว</p>';
   tlist.forEach(x=>{const d=document.createElement("div");d.className="wrow";
     d.innerHTML=`<span class="wbed"></span><span class="wtx"><b></b><small>${x.t.lt?"พลิกล่าสุด "+hhmm(x.t.lt)+" น.":"ยังไม่เคยบันทึก"} · ท่าที่ต้องพลิก: ${x.t.pos}</small></span>${riskPill(x.r,x.c)}<button type="button" class="btn sm primary">พลิกแล้ว</button>`;
-    d.querySelector(".wbed").textContent=x.p.bed||"–";d.querySelector("b").textContent=x.p.hn;
+    d.querySelector(".wbed").textContent=x.p.bed||"–";d.querySelector("b").textContent=x.p.hn+(x.p.name?" · "+x.p.name:"");
     d.querySelector("button").onclick=()=>{try{const t=Date.now();localStorage.setItem("pi-turn-"+x.p.hn,String(t));syncEnq("turn",x.p.hn,{t})}catch(e){}renderWard();renderTurn();renderAlerts()};tb.append(d)});
   // dressing due today / overdue
   const dl=[];pts.forEach(p=>(p.wounds||[]).forEach((w,i)=>{const S=dressStatus(w);if(S.d&&(S.cls==="over"||S.cls==="soon"))dl.push({p,w,i,S})}));
@@ -4101,7 +4103,7 @@ function renderWard(){
   const db=$("wardDress");db.innerHTML=dl.length?"":'<p class="empty" style="margin:0">วันนี้ไม่มีแผลที่ถึงกำหนดเปลี่ยนวัสดุ</p>';
   dl.forEach(x=>{const d=document.createElement("button");d.type="button";d.className="wrow wbtn "+x.S.cls;
     d.innerHTML=`<span class="wbed"></span><span class="wtx"><b></b><small></small></span><span class="dd-pill">${x.S.cls==="over"?"⚠ เลยกำหนด":"ครบวันนี้"}</span>`;
-    d.querySelector(".wbed").textContent=x.p.bed||"–";d.querySelector("b").textContent=`${x.p.hn} · แผลที่ ${x.i+1} ${siteLabel(x.w)}${x.w.side?" "+x.w.side:""}`;
+    d.querySelector(".wbed").textContent=x.p.bed||"–";d.querySelector("b").textContent=`${x.p.hn}${x.p.name?" "+x.p.name:""} · แผลที่ ${x.i+1} ${siteLabel(x.w)}${x.w.side?" "+x.w.side:""}`;
     d.querySelector("small").textContent=`${x.S.d.name} · ครบ ${fmtDT(x.S.d.t)} · ${x.S.txt}`;
     d.onclick=()=>{changePatient(x.p.hn);go("wound");if(x.i!==wActive)switchWound(x.i);setTimeout(()=>openStep(7),300)};db.append(d)});
   // all patients
@@ -4112,17 +4114,18 @@ function renderWard(){
     c.innerHTML=`<button type="button" class="wc-main"><span class="wbed"></span><span class="wtx"><b></b><small></small></span>${riskPill(t,isCrit(p))}</button>
       <div class="wc-flags">${ws.length?`<span class="flag-chip">แผล ${ws.length} ตำแหน่ง</span>`:""}${!tf.done?'<span class="flag-chip warn">ถึงเวลาพลิกตัว</span>':""}${over?'<span class="flag-chip bad">เลยกำหนดเปลี่ยนแผล</span>':""}${p.sepsis?'<span class="flag-chip warn">sepsis/บวม</span>':""}${on?'<span class="flag-chip cur">กำลังเปิดอยู่</span>':""}
       <button type="button" class="del dis">จำหน่าย</button></div>`;
-    c.querySelector(".wbed").textContent=p.bed||"–";c.querySelector(".wtx b").textContent=p.hn;
+    c.querySelector(".wbed").textContent=p.bed||"–";c.querySelector(".wtx b").textContent=p.hn+(p.name?" · "+p.name:"");
     c.querySelector(".wtx small").textContent=ws.length?ws.map(w=>`${siteLabel(w)} ${stageName(w.stage).split(" (")[0]}`).join(" · "):"ไม่มีแผลกดทับ";
     c.querySelector(".wc-main").onclick=()=>{changePatient(p.hn);go("prevent")};
     const dis=c.querySelector(".dis");dis.onclick=()=>{if(!dis.dataset.arm){dis.dataset.arm=1;dis.textContent="ยืนยันจำหน่าย";dis.style.color="var(--s1)";setTimeout(()=>{if(dis.isConnected){delete dis.dataset.arm;dis.textContent="จำหน่าย";dis.style.color=""}},3000);return}
       try{localStorage.removeItem(PT+p.hn)}catch(e){}try{syncEnq("delpatient",p.hn,null)}catch(e){}if(p.hn===curHN){curHN=null}renderWard()};
     wl.append(c)});
 }
-$("admBtn").onclick=()=>{const hn=$("admHN").value.trim(),bed=$("admBed").value.trim();if(!hn){$("admHN").focus();return}
+$("admBtn").onclick=()=>{const hn=$("admHN").value.trim(),bed=$("admBed").value.trim(),nm=$("admName").value.trim();if(!hn){$("admHN").focus();return}
   if(loadPatientRec(hn)){advise("มี HN นี้อยู่แล้ว","เปิดข้อมูลผู้ป่วยรายเดิม","--s2","!")}
-  changePatient(hn,bed);if(bed)$("bed").value=bed;savePatient();$("admHN").value="";$("admBed").value="";go("prevent");
-  advise("รับผู้ป่วยใหม่แล้ว",`HN ${hn} ประเมิน Braden และผิวหนังภายใน 1 ชั่วโมง`,"--ok","✓")};
+  changePatient(hn,bed);if(bed)$("bed").value=bed;if(nm)$("ptName").value=nm;savePatient();$("admHN").value="";$("admBed").value="";$("admName").value="";go("prevent");
+  advise("รับผู้ป่วยใหม่แล้ว",`HN ${hn}${nm?" "+nm:""} ประเมิน Braden และผิวหนังภายใน 1 ชั่วโมง`,"--ok","✓")};
+$("ptName").addEventListener("change",()=>{savePatient();try{update()}catch(e){}if(document.body.dataset.page==="ward")renderWard()});
 
 /* ================= CSV export ================= */
 $("expCsv").onclick=async()=>{
