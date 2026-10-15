@@ -637,7 +637,8 @@ section.card.fold{padding:0;gap:0}
 #bmSvg{max-width:440px}
 #bmSvg .bm-view{font-size:13px;font-weight:600;fill:var(--ink);font-family:var(--font-display)}
 #bmSvg .bm-side{font-size:11px;font-weight:600;fill:var(--muted)}
-#bmSvg .bm-dot{fill:#fff;stroke:#5a2a1f;stroke-width:1.4;opacity:.9}
+.bmsvg .bm-dot{fill:#fff;stroke:#4a160d;stroke-width:1.3;opacity:.95}
+.bmsvg .bm-pin circle{filter:drop-shadow(0 1px 2px rgba(0,0,0,.45))}
 #bmSvg .bm-pin{cursor:pointer}
 .bm-legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.74rem;color:var(--muted);justify-content:center}
 .bm-legend span{display:inline-flex;align-items:center;gap:5px}
@@ -3421,39 +3422,119 @@ var bmNewMode=false;
 function crPath(p){const n=p.length;let d=`M${p[0][0]},${p[0][1]}`;for(let i=0;i<n;i++){const p0=p[(i-1+n)%n],p1=p[i],p2=p[(i+1)%n],p3=p[(i+2)%n];
   d+=`C${(p1[0]+(p2[0]-p0[0])/6).toFixed(1)},${(p1[1]+(p2[1]-p0[1])/6).toFixed(1)} ${(p2[0]-(p3[0]-p1[0])/6).toFixed(1)},${(p2[1]-(p3[1]-p1[1])/6).toFixed(1)} ${p2[0]},${p2[1]}`}return d+"Z"}
 const HALF=[[8,58],[10,70],[24,76],[40,82],[50,90],[55,104],[57,124],[58,148],[60,170],[63,192],[66,214],[68,232],[72,242],[73,256],[68,266],[61,264],[58,250],
-  [57,236],[54,214],[50,190],[46,168],[43,146],[41,128],[39,150],[36,176],[35,196],[38,216],[40,236],[39,262],[36,292],[32,318],[32,340],[30,362],[26,384],[24,398],
+  [57,236],[54,214],[50,190],[46,168],[43,146],[41,128],[39,150],[36,176],[35,196],[38,216],[40,236],[39,262],[36,292],[32,318],[31.5,330],[33.5,346],[31,366],[26,384],[24,398],
   [30,408],[26,414],[12,414],[8,404],[8,388],[9,360],[10,334],[9,306],[7,276],[4,256],[0,250]];
 function bodyOutline(cx){const r=HALF.map(([x,y])=>[cx+x,y]),l=HALF.slice(0,-1).reverse().map(([x,y])=>[cx-x,y]);return crPath(r.concat(l))}
-function bodyFigure(cx,view){
-  const P="#f3e6d2",D="#8f3b2a",m=(d,w,o,c)=>`<path d="${d}" fill="none" stroke="${c||D}" stroke-width="${w}" stroke-linecap="round" opacity="${o}"/>`,both=f=>f(-1)+f(1);
-  let g=`<path d="${bodyOutline(cx)}" fill="url(#mus)" stroke="#9c4632" stroke-width="1.2"/>`;
-  g+=`<ellipse cx="${cx}" cy="36" rx="20" ry="25" fill="url(#mus)" stroke="#9c4632" stroke-width="1.2"/>`;
-  g+=both(k=>`<ellipse cx="${cx+k*20}" cy="39" rx="3.5" ry="7" fill="#c8664c"/>`);
-  if(view==="front"){
-    g+=both(k=>`<circle cx="${cx+k*7}" cy="33" r="2" fill="${P}"/>`)+m(`M${cx-4} 48 Q${cx} 51 ${cx+4} 48`,1.4,.8,P);
-    g+=both(k=>m(`M${cx+k*34} 80 Q${cx+k*16} 73 ${cx+k*2} 80`,2.6,.95,P));
-    g+=m(`M${cx} 82 V212`,3,.9,P);
-    g+=both(k=>m(`M${cx+k*2} 88 Q${cx+k*28} 84 ${cx+k*40} 104 Q${cx+k*26} 124 ${cx+k*3} 118`,1.6,.55));
-    g+=both(k=>m(`M${cx+k*42} 96 Q${cx+k*52} 112 ${cx+k*50} 128`,1.4,.45));
-    [134,154,176].forEach(y=>{g+=m(`M${cx-15} ${y} H${cx+15}`,2,.85,P)});
-    g+=both(k=>m(`M${cx+k*17} 124 Q${cx+k*19} 165 ${cx+k*15} 204`,2,.8,P));
-    g+=m(`M${cx-36} 214 Q${cx-16} 236 ${cx} 250 Q${cx+16} 236 ${cx+36} 214`,2.6,.9,P);
-    g+=both(k=>m(`M${cx+k*24} 258 Q${cx+k*27} 296 ${cx+k*20} 320`,1.5,.5)+m(`M${cx+k*12} 262 Q${cx+k*14} 300 ${cx+k*16} 318`,1.3,.4));
-    g+=both(k=>`<ellipse cx="${cx+k*20}" cy="328" rx="7" ry="9" fill="${P}" opacity=".85"/>`+m(`M${cx+k*21} 342 L${cx+k*18} 392`,3,.8,P));
-    g+=both(k=>m(`M${cx+k*60} 228 L${cx+k*70} 236`,3,.85,P)+m(`M${cx+k*14} 400 L${cx+k*26} 400`,3,.8,P));
-    g+=both(k=>m(`M${cx+k*48} 128 Q${cx+k*50} 150 ${cx+k*56} 166`,1.4,.45));
-  }else{
-    g+=`<path d="M${cx-20} 34 Q${cx-20} 11 ${cx} 11 Q${cx+20} 11 ${cx+20} 34 Q${cx} 26 ${cx-20} 34Z" fill="${P}" opacity=".9"/>`;
-    g+=m(`M${cx} 62 V214`,3,.9,P);for(let y=74;y<=206;y+=9)g+=`<circle cx="${cx}" cy="${y}" r="1.8" fill="#d9c4a6"/>`;
-    g+=both(k=>`<path d="M${cx+k*9} 92 L${cx+k*36} 90 L${cx+k*22} 130 Z" fill="${P}" opacity=".55"/>`);
-    g+=both(k=>m(`M${cx+k*6} 70 Q${cx+k*30} 74 ${cx+k*50} 92`,1.6,.5)+m(`M${cx+k*8} 132 Q${cx+k*30} 150 ${cx+k*38} 190`,1.5,.45));
-    g+=`<path d="M${cx} 170 L${cx-20} 204 L${cx} 218 L${cx+20} 204Z" fill="${P}" opacity=".7"/>`;
-    g+=m(`M${cx} 216 V254`,1.8,.6)+both(k=>m(`M${cx+k*2} 256 Q${cx+k*22} 262 ${cx+k*38} 246`,1.8,.55));
-    g+=both(k=>`<ellipse cx="${cx+k*19}" cy="234" rx="17" ry="20" fill="#b44f39" opacity=".35"/>`);
-    g+=both(k=>m(`M${cx+k*20} 266 Q${cx+k*22} 296 ${cx+k*20} 320`,1.5,.5)+m(`M${cx+k*30} 270 Q${cx+k*32} 300 ${cx+k*28} 322`,1.3,.4));
-    g+=both(k=>`<ellipse cx="${cx+k*20}" cy="350" rx="10" ry="20" fill="#b44f39" opacity=".35"/>`+m(`M${cx+k*17} 372 L${cx+k*18} 402`,3,.85,P));
-    g+=both(k=>m(`M${cx+k*58} 160 L${cx+k*61} 180`,2.4,.8,P)+m(`M${cx+k*60} 228 L${cx+k*70} 236`,3,.85,P));
-  }
+function crOpen(p){let d=`M${p[0][0]},${p[0][1]}`;for(let i=0;i<p.length-1;i++){const p0=p[Math.max(0,i-1)],p1=p[i],p2=p[i+1],p3=p[Math.min(p.length-1,i+2)];
+  d+=`C${(p1[0]+(p2[0]-p0[0])/6).toFixed(1)},${(p1[1]+(p2[1]-p0[1])/6).toFixed(1)} ${(p2[0]-(p3[0]-p1[0])/6).toFixed(1)},${(p2[1]-(p3[1]-p1[1])/6).toFixed(1)} ${p2[0]},${p2[1]}`}return d}
+/* Original anatomical figure: muscle shapes [points (screen-right side), type m=muscle t=tendon, fibre angle, c=centred/no mirror] */
+var ANAT={
+ head:[[0,11],[10,12.5],[17,19],[20,30],[19.5,40],[16,49],[10,57],[4,60.5],[0,61],[-4,60.5],[-10,57],[-16,49],[-19.5,40],[-20,30],[-17,19],[-10,12.5]],
+ front:[
+  {p:[[-15,17],[-8,12.5],[0,11],[8,12.5],[15,17],[17,24],[8,23],[0,24],[-8,23],[-17,24]],t:"t",c:1},
+  {p:[[13,21],[18,25],[19.5,35],[16,38],[13.5,30]],a:75},
+  {p:[[3,25],[15,24],[16,30],[10,28],[3,29]],a:90},
+  {p:[[9.5,41],[16,39],[17.5,49],[12,55],[9,49]],a:80},
+  {p:[[-2.5,33],[0,31],[2.5,33],[3.6,43],[0,45.5],[-3.6,43]],a:90,c:1},
+  {p:[[-6.5,47],[0,45.5],[6.5,47],[7.5,51],[0,54],[-7.5,51]],a:0,c:1},
+  {p:[[0,54.5],[5,55],[3,59.5],[0,60.5],[-3,59.5],[-5,55]],a:90,c:1},
+  {p:[[12,48],[15.5,52],[8,78],[3,81],[3,77],[10,55]],a:107},
+  {p:[[8.5,60],[12,64],[28,74],[36,80],[22,80],[12,76],[9,70]],a:20},
+  {p:[[-4.5,60],[4.5,60],[4,77],[-4,77]],a:90,c:1},
+  {p:[[33,80],[44,82],[52,91],[56,106],[54,122],[49,130],[45,118],[41,100],[35,89]],a:72},
+  {p:[[3,84],[18,82],[32,84],[39,93],[44,106],[41,115],[30,121],[16,123],[6,119],[3,104]],a:-12},
+  {p:[[-3,82],[3,82],[3,121],[0,125],[-3,121]],t:"t",c:1},
+  {p:[[33,119],[39,121],[38.5,127],[32,126]],a:-20},{p:[[32,129],[38.5,131],[38,137],[31,136]],a:-20},{p:[[31,139],[38,141],[37.5,147],[30,146]],a:-20},
+  {p:[[20,126],[30,123],[37.5,130],[37,152],[35,176],[36,196],[31,212],[22,206],[19,180],[18,150]],a:122},
+  {p:[[2,124],[15,124],[17,150],[16,180],[13,206],[8,230],[3,240],[2,200]],a:90},
+  {p:[[-2,122],[2,122],[2,240],[0,246],[-2,240]],t:"t",c:1},
+  {p:[[33,216],[39,222],[39,240],[35,240]],a:100},
+  {p:[[30,218],[35,221],[21,268],[13,316],[9,320],[10,306],[22,256]],a:115},
+  {p:[[4,252],[12,242],[20,254],[15,282],[10,296],[7,274]],a:62},
+  {p:[[19,238],[26,240],[29,268],[26,298],[21,312],[17,298],[16,268]],a:90},
+  {p:[[29,242],[38,246],[39,268],[36,294],[32,314],[26,312],[29,284],[30,262]],a:100},
+  {p:[[13,284],[19,290],[20,310],[14,320],[10,314],[10,298]],a:60},
+  {p:[[37,248],[39.5,254],[35,314],[32,316],[34.5,280]],t:"t"},
+  {p:[[15,315],[22,314],[24.5,323],[19.5,331],[14.5,326]],t:"t"},
+  {p:[[16.5,330],[22,330],[20.5,339],[18,339]],t:"t"},
+  {p:[[9,334],[14,336],[15,356],[11,372],[8,356]],a:95},
+  {p:[[20,333],[27,335],[29,350],[25,372],[21,390],[18,388],[19,360]],a:95},
+  {p:[[28,338],[32.5,342],[30.5,362],[26.5,384],[23.5,382],[26,358]],a:95},
+  {p:[[13,334],[17,336],[18,386],[15,388]],t:"t"},
+  {p:[[9.5,388],[25,386],[27,398],[9,398]],t:"t"},
+  {p:[[9,398],[25,398],[30,407],[27,414],[12,414],[8,406]],t:"h"},
+  {p:[[42,128],[48,124],[54,132],[56,148],[53,162],[48,166],[44,156],[42,142]],a:92},
+  {p:[[54.5,140],[57.5,141],[58.5,160],[55.5,160]],a:95},
+  {p:[[46,158],[50.5,159],[48.5,170],[45,168]],t:"t"},
+  {p:[[50,158],[58.5,158],[61.5,174],[62.5,194],[60.5,210],[57,210],[55,190],[52,172]],a:95},
+  {p:[[44,164],[51,166],[55,186],[57,208],[53,212],[49,196],[45,180]],a:100},
+  {p:[[52,209],[63,207],[66.5,216],[54,218]],t:"t"},
+  {p:[[54,216],[66,216],[71,230],[73,250],[71,262],[64,266],[59,258],[56,240]],tt:"h"},
+  {p:[[53.5,221],[57.5,221],[56,240],[52.5,236]],a:70}],
+ frontL:[
+  [[3,81],[16,79],[32,80]],2.6,"t",[[2,141],[16,140]],2,"t",[[2,160],[16.5,159]],2,"t",[[2,180],[15.5,180]],2,"t",
+  [[16,124],[17.5,150],[16.5,180],[13.5,206]],1.4,"t",[[34,214],[20,232],[5,246]],2,"t",
+  [[62,240],[64,262]],.7,"d",[[66,238],[68.5,259]],.7,"d",[[59,240],[60,255]],.7,"d",
+  [[14,406],[14,413]],.6,"d",[[18,406],[18.5,413]],.6,"d",[[22,406],[22.5,413]],.6,"d",[[26,407],[26.5,412]],.6,"d"],
+ back:[
+  {p:[[-17,20],[-10,13],[0,11],[10,13],[17,20],[19.5,33],[0,35],[-19.5,33]],t:"t",c:1},
+  {p:[[2,35],[18,33],[18.5,43],[10,47],[2,45]],a:90},
+  {p:[[1.5,46],[11,45],[13,58],[5,62],[1.5,60]],a:75},
+  {p:[[0,56],[8,57],[11,64],[26,72],[38,80],[32,90],[24,104],[16,126],[8,150],[0,168]],a:-28},
+  {p:[[-3.5,66],[0,62],[3.5,66],[6,80],[3.5,94],[0,98],[-3.5,94],[-6,80]],t:"t",c:1},
+  {p:[[36,82],[47,84],[54,96],[56,112],[53,126],[47,128],[43,112],[38,96]],a:75},
+  {p:[[12,98],[25,96],[38,102],[40,114],[30,122],[18,122],[12,112]],a:-18},
+  {p:[[26,122],[38,116],[42,126],[32,134]],a:-35},
+  {p:[[6,152],[18,132],[34,126],[42,132],[39,150],[36,172],[30,196],[16,202],[6,190]],a:-58},
+  {p:[[0,158],[8,172],[16,196],[12,206],[0,214],[-12,206],[-16,196],[-8,172]],t:"t",c:1},
+  {p:[[30,170],[37.5,172],[36,198],[31,206],[26,194]],a:110},
+  {p:[[14,202],[30,198],[39,212],[38,226],[28,220],[17,212]],a:-60},
+  {p:[[2,214],[16,208],[30,214],[39,226],[40,244],[33,258],[19,262],[6,258],[2,240]],a:-40},
+  {p:[[41,128],[50,126],[56,134],[58,150],[55,164],[49,166],[45,156],[42,142]],a:92},
+  {p:[[47.5,152],[53,152],[52.5,162],[48.5,163]],t:"t"},
+  {p:[[46,170],[59,168],[62,190],[60.5,210],[54,212],[50,196],[47,182]],a:95},
+  {p:[[52,209],[63,207],[66.5,216],[54,218]],t:"t"},
+  {p:[[54,216],[66,216],[71,230],[73,250],[71,262],[64,266],[59,258],[56,240]],tt:"h"},
+  {p:[[4,258],[8.5,262],[9,292],[6,280]],a:80},
+  {p:[[22,264],[37,264],[36,292],[32,318],[25,318],[24,292]],a:95},
+  {p:[[8,264],[20,264],[22,292],[18,318],[12,318],[9,294]],a:88},
+  {p:[[37,262],[39.5,266],[34,316],[32,314]],t:"t"},
+  {p:[[18,328],[30,330],[32,346],[28,364],[21,370],[18,350]],a:95},
+  {p:[[8,330],[17,330],[17,352],[14,372],[9,366],[8,346]],a:85},
+  {p:[[25,362],[30,362],[26.5,384],[22,388],[21,374]],a:90},
+  {p:[[13,368],[21,368],[20,398],[15,400],[14,384]],t:"t"},
+  {p:[[10,398],[24,398],[29,406],[25.5,414],[12,414],[8,406]],t:"h"}],
+ backL:[
+  [[10,96],[24,92],[40,86]],2.4,"t",[[0,214],[0,250]],1.3,"d",[[3,257],[18,263],[34,257]],1,"d",
+  [[62,240],[64,262]],.7,"d",[[66,238],[68.5,259]],.7,"d",[[59,240],[60,255]],.7,"d"]
+};
+function anatDefs(px){const angs=new Set();["front","back"].forEach(v=>ANAT[v].forEach(o=>{if(o.a!=null){angs.add(o.a);if(!o.c)angs.add(-o.a)}}));
+  let d=`<defs><radialGradient id="${px}mg" cx=".42" cy=".36" r=".78"><stop offset="0" stop-color="#ee9f83"/><stop offset=".5" stop-color="#d0705a"/><stop offset="1" stop-color="#a5432f"/></radialGradient>`+
+  `<radialGradient id="${px}tg" cx=".45" cy=".4" r=".8"><stop offset="0" stop-color="#fffaf3"/><stop offset=".65" stop-color="#f0e3d1"/><stop offset="1" stop-color="#d9c1a3"/></radialGradient>`+
+  `<radialGradient id="${px}hg" cx=".45" cy=".35" r=".8"><stop offset="0" stop-color="#f8dccd"/><stop offset=".6" stop-color="#eab9a3"/><stop offset="1" stop-color="#cf8a72"/></radialGradient>`+
+  `<linearGradient id="${px}sh" x1="0" x2="1"><stop offset="0" stop-color="#fff3ea" stop-opacity=".2"/><stop offset=".42" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#3a0800" stop-opacity=".26"/></linearGradient>`+
+  `<linearGradient id="${px}vs" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".1"/><stop offset=".5" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#2a0500" stop-opacity=".16"/></linearGradient>`+
+  `<radialGradient id="${px}gs"><stop offset="0" stop-color="#000" stop-opacity=".28"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>`;
+  angs.forEach(a=>{d+=`<pattern id="${px}f${String(a).replace("-","m")}" patternUnits="userSpaceOnUse" width="2.6" height="2.6" patternTransform="rotate(${a})"><path d="M0 1.3H2.6" stroke="#6e1d10" stroke-width=".5" stroke-opacity=".26"/><path d="M0 .2H2.6" stroke="#ffd9c8" stroke-width=".35" stroke-opacity=".22"/></pattern>`});
+  return d+`</defs>`}
+function bodyFigure(cx,view,px){
+  px=px||"a";const X=(x,k)=>+(cx+k*x).toFixed(1),pts=(p,k)=>p.map(([x,y])=>[X(x,k),y]);
+  const head=crPath(pts(ANAT.head,1)),body=bodyOutline(cx),cid=`${px}c${view}`;
+  let g=`<ellipse cx="${cx}" cy="418" rx="44" ry="6" fill="url(#${px}gs)"/>`;
+  g+=`<clipPath id="${cid}"><path d="${body}"/><path d="${head}"/></clipPath>`;
+  g+=`<path d="${body}" fill="#7a2a1c"/><path d="${head}" fill="url(#${px}mg)"/>`;
+  g+=`<g clip-path="url(#${cid})">`;
+  const shape=(o,k)=>{const d=crPath(pts(o.p,k));if(o.t==="t")return `<path d="${d}" fill="url(#${px}tg)" stroke="#c9ad8c" stroke-width=".4"/>`;if(o.t==="h")return `<path d="${d}" fill="url(#${px}hg)" stroke="#b5654f" stroke-width=".5"/>`;
+    const a=o.c?o.a:o.a*k;return `<path d="${d}" fill="url(#${px}mg)" stroke="#82301f" stroke-width=".55" stroke-opacity=".7"/><path d="${d}" fill="url(#${px}f${String(a).replace("-","m")})"/>`};
+  ANAT[view].forEach(o=>{g+=o.c?shape(o,1):shape(o,-1)+shape(o,1)});
+  const L=ANAT[view+"L"];for(let i=0;i<L.length;i+=3){const p=L[i],w=L[i+1],col=L[i+2]==="t"?"#f6ecdc":"#5e1a10",op=L[i+2]==="t"?.95:.45;
+    const one=k=>`<path d="${crOpen(pts(p,k))}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" opacity="${op}"/>`;g+=p.every(q=>q[0]===0)?one(1):one(-1)+one(1)}
+  if(view==="front"){[-1,1].forEach(k=>{g+=`<ellipse cx="${X(7,k)}" cy="33.5" rx="3.6" ry="2.1" fill="#3d1810"/><circle cx="${X(7,k)-.8}" cy="33" r=".8" fill="#fff" opacity=".7"/>`});g+=`<path d="M${cx-5} 50.5 Q${cx} 52.3 ${cx+5} 50.5" fill="none" stroke="#5e1a10" stroke-width=".8" opacity=".6"/>`}
+  else{for(let y=104;y<=206;y+=8.5)g+=`<circle cx="${cx}" cy="${y.toFixed(1)}" r="1.5" fill="#efe2cf" opacity=".85"/>`}
+  g+=`</g>`;
+  [-1,1].forEach(k=>{g+=`<ellipse cx="${X(20,k)}" cy="38" rx="3.4" ry="7" fill="url(#${px}mg)" stroke="#82301f" stroke-width=".6"/><path d="M${X(20.6,k)} 34 Q${X(22,k)} 38 ${X(20.6,k)} 42" fill="none" stroke="#6e1d10" stroke-width=".6" opacity=".6"/>`});
+  g+=`<path d="${body}" fill="url(#${px}sh)" pointer-events="none"/><path d="${head}" fill="url(#${px}sh)" pointer-events="none"/><path d="${body}" fill="url(#${px}vs)" pointer-events="none"/>`;
+  g+=`<path d="${body}" fill="none" stroke="#6a2316" stroke-width=".9"/>`+(view==="back"?`<clipPath id="${cid}h"><rect x="${cx-30}" y="0" width="60" height="52"/></clipPath><path d="${head}" fill="none" stroke="#6a2316" stroke-width=".9" clip-path="url(#${cid}h)"/>`:`<path d="${head}" fill="none" stroke="#6a2316" stroke-width=".9"/>`);
   return g;
 }
 function pinFor(w){
@@ -3464,15 +3545,16 @@ function pinFor(w){
 function siteLabel(w){return w.site==="อื่น ๆ"&&w.siteNote?w.siteNote:siteShort(w.site)}
 function renderMap(){
   if(!featReady)return;const svg=$("bmSvg");if(!svg)return;
-  let g=`<defs><linearGradient id="mus" x1="0" x2="1"><stop offset="0" stop-color="#b14d37"/><stop offset=".5" stop-color="#d9805f"/><stop offset="1" stop-color="#b14d37"/></linearGradient></defs>`;
-  g+=bodyFigure(FX,"front")+bodyFigure(BX,"back");
-  g+=`<text x="${FX}" y="440" text-anchor="middle" class="bm-view">ด้านหน้า</text><text x="${BX}" y="440" text-anchor="middle" class="bm-view">ด้านหลัง</text>`;
-  g+=`<text x="${FX-78}" y="300" class="bm-side" text-anchor="middle">ขวา</text><text x="${FX+78}" y="300" class="bm-side" text-anchor="middle">ซ้าย</text>`;
-  g+=`<text x="${BX-78}" y="300" class="bm-side" text-anchor="middle">ซ้าย</text><text x="${BX+78}" y="300" class="bm-side" text-anchor="middle">ขวา</text>`;
-  ["front","back"].forEach(v=>BM2[v].forEach(m=>{g+=`<circle class="bm-dot" cx="${m[3]}" cy="${m[4]}" r="3.6"><title>${m[1].split(" (")[0]} ${m[2]}</title></circle>`}));
+  const fig=px=>{let g=anatDefs(px)+bodyFigure(FX,"front",px)+bodyFigure(BX,"back",px);
+    g+=`<text x="${FX}" y="440" text-anchor="middle" class="bm-view">ด้านหน้า</text><text x="${BX}" y="440" text-anchor="middle" class="bm-view">ด้านหลัง</text>`;
+    g+=`<text x="${FX-78}" y="300" class="bm-side" text-anchor="middle">ขวา</text><text x="${FX+78}" y="300" class="bm-side" text-anchor="middle">ซ้าย</text>`;
+    g+=`<text x="${BX-78}" y="300" class="bm-side" text-anchor="middle">ซ้าย</text><text x="${BX+78}" y="300" class="bm-side" text-anchor="middle">ขวา</text>`;
+    ["front","back"].forEach(v=>BM2[v].forEach(m=>{g+=`<circle class="bm-dot" cx="${m[3]}" cy="${m[4]}" r="3.6"><title>${m[1].split(" (")[0]} ${m[2]}</title></circle>`}));
+    return g+`<g class="bm-dyn"></g>`};
+  let g="";
   (wounds||[]).forEach((w,i)=>{const p=pinFor(w);if(!p)return;const S=w.stage&&STAGES[w.stage],on=i===wActive;
     g+=`<g class="bm-pin${on?" on":""}" data-i="${i}"><circle cx="${p.x}" cy="${p.y}" r="${on?11:9}" fill="var(${S?S.c:"--muted"})" stroke="#fff" stroke-width="2.5"/><text x="${p.x}" y="${p.y+4}" text-anchor="middle">${i+1}</text></g>`});
-  svg.innerHTML=g;if($("bmOv"))$("bmOv").innerHTML=g;
+  [[svg,"a"],[$("bmOv"),"b"]].forEach(([el,px])=>{if(!el)return;if(el.dataset.fig!=="3"){el.innerHTML=fig(px);el.dataset.fig="3"}const dy=el.querySelector(".bm-dyn");if(dy)dy.innerHTML=g});
   const w=curW();
   $("bmNew").setAttribute("aria-pressed",bmNewMode);$("bmNew").textContent=bmNewMode?"ยกเลิก":"+ ปักหมุดแผลใหม่";
   $("bmHint").textContent=bmNewMode?"แตะตำแหน่งของแผลใหม่บนร่างกาย":w?`แผลที่ ${wActive+1}: ${siteLabel(w)}${w.side?" "+w.side:""} · แตะที่อื่นเพื่อย้ายหมุด หรือแตะหมุดเพื่อเลือกแผล`:"แตะจุดใดก็ได้บนร่างกายเพื่อปักหมุดตำแหน่งแผล";
