@@ -1112,6 +1112,10 @@ html body{background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--
   :root:not([data-theme="light"]) .app-bg{color:#4fd1b8;opacity:.8}}
 :root[data-theme="dark"] body{background:radial-gradient(110% 70% at 50% 0%,color-mix(in srgb,var(--pc) 14%,#10283c) 0%,#0b1f30 45%,#071522 100%) fixed!important}
 :root[data-theme="dark"] .app-bg{color:#4fd1b8;opacity:.8}
+
+.login-gate.fade{animation:lgFade .35s ease-out}
+@keyframes lgFade{from{opacity:0}to{opacity:1}}
+.armed{background:var(--s1)!important;color:#fff!important;border-color:var(--s1)!important}
 </style>
 </head>
 <body>
@@ -2146,7 +2150,7 @@ async function admListRender(){const box=$("admList");if(!box)return;const u=adm
   box.innerHTML="";list.forEach(a=>{const r=document.createElement("div");r.className="adm-row";const me=a.email===u.email;
     r.innerHTML=`<div class="ar-t"><b></b><small></small></div><span class="tpill ${a.status==="approved"?"ok":"wait"}">${a.status==="approved"?"อนุมัติแล้ว":"รออนุมัติ"}</span>`+(a.status!=="approved"?'<button type="button" class="btn sm primary" data-op="approve">อนุมัติ</button>':"")+(me?"":'<button type="button" class="btn sm ghost" data-op="remove">ลบ</button>');
     r.querySelector("b").textContent=a.name+(me?" (คุณ)":"");r.querySelector("small").textContent=a.email;
-    r.querySelectorAll("[data-op]").forEach(b=>b.onclick=async()=>{const op=b.dataset.op;if(op==="remove"&&!confirm(`ลบบัญชี ${a.email}?`))return;
+    r.querySelectorAll("[data-op]").forEach(b=>b.onclick=async()=>{const op=b.dataset.op;if(op==="remove"&&!twoTap(b,"แตะอีกครั้งเพื่อยืนยัน"))return;
       try{if(u.mode==="server"&&admServer())await syncCall({action:"adminSet",token:u.token,email:a.email,op});
         else{let L=admLocal();if(op==="remove")L=L.filter(x=>x.email!==a.email);else L.forEach(x=>{if(x.email===a.email)x.status="approved"});admLocalSet(L)}}catch(e){alert("ทำรายการไม่สำเร็จ: "+(e.message||e))}admListRender()});
     box.append(r)});
@@ -2914,7 +2918,13 @@ function userMenu(open){const m=$("userMenu"),b=$("userBtn");if(!m)return;m.hidd
 $("userBtn").onclick=e=>{e.stopPropagation();userMenu($("userMenu").hidden)};
 document.addEventListener("click",e=>{if(!e.target.closest("#userMenu")&&!e.target.closest("#userBtn"))userMenu(false)});
 document.addEventListener("keydown",e=>{if(e.key==="Escape")userMenu(false)});
-$("otChip").onclick=()=>{userMenu(false);if(!confirm("ออกจากระบบ?"))return;otUser=null;try{sessionStorage.removeItem("pi-ot")}catch(e){}try{setAdmin(false)}catch(e){}go("prevent");otPaint()};
+function twoTap(btn,msg){if(btn.dataset.arm){delete btn.dataset.arm;return true}const sp=btn.querySelector("span")||btn,old=sp.textContent;btn.dataset.arm="1";sp.textContent=msg;btn.classList.add("armed");
+  setTimeout(()=>{if(btn.dataset.arm){delete btn.dataset.arm;sp.textContent=old;btn.classList.remove("armed")}},3000);return false}
+function doLogout(){userMenu(false);otUser=null;try{sessionStorage.removeItem("pi-ot")}catch(e){}try{setAdmin(false)}catch(e){}
+  document.querySelectorAll(".modal").forEach(m=>m.hidden=true);try{liveClose()}catch(e){}document.body.classList.remove("noscroll");
+  go("prevent",false);window.scrollTo(0,0);otPaint();try{$("lgOT").value="";$("lgName").value="";$("lgErr").textContent="";setTimeout(()=>$("lgOT").focus(),100)}catch(e){}try{const g=$("loginGate");g.scrollTop=0;g.classList.remove("fade");void g.offsetWidth;g.classList.add("fade")}catch(e){}
+  try{history.replaceState(null,"",location.pathname+"#login")}catch(e){}}
+$("otChip").onclick=doLogout;
 otPaint();
 
 /* ---------- Central sync: Google Sheets via Apps Script ---------- */
@@ -2987,7 +2997,7 @@ $("syncSave").onclick=async()=>{const url=$("syncUrl").value.trim(),key=$("syncK
   try{await syncCall({action:"ping"});m.textContent="เชื่อมต่อสำเร็จ กำลังส่งข้อมูลที่มีในเครื่องขึ้นระบบกลาง…";syncSeedAll();await syncRun();m.textContent="เชื่อมต่อสำเร็จ ข้อมูลจะซิงก์อัตโนมัติทุกครั้งที่บันทึก และทุก 1 นาที"}
   catch(e){m.textContent="เชื่อมต่อไม่สำเร็จ: "+(e.message||e)+" — ตรวจ URL, KEY และการ Deploy (Who has access: Anyone)"}};
 $("syncNow").onclick=()=>{$("syncMsg").textContent="";syncRun()};
-$("syncOff").onclick=()=>{if(!confirm("ยกเลิกการเชื่อมต่อระบบกลางในเครื่องนี้? ข้อมูลในเครื่องยังอยู่"))return;try{localStorage.removeItem("pi-sync");localStorage.removeItem("pi-sync-q");localStorage.removeItem("pi-sync-last")}catch(e){}syncFill();syncPaint();$("syncMsg").textContent="ยกเลิกแล้ว"};
+$("syncOff").onclick=()=>{if(!twoTap($("syncOff"),"แตะอีกครั้งเพื่อยืนยันยกเลิก"))return;try{localStorage.removeItem("pi-sync");localStorage.removeItem("pi-sync-q");localStorage.removeItem("pi-sync-last")}catch(e){}syncFill();syncPaint();$("syncMsg").textContent="ยกเลิกแล้ว"};
 $("syncLink").onclick=async()=>{const c=syncCfg();if(!c){$("syncMsg").textContent="ต้องเชื่อมต่อในเครื่องนี้ก่อน";return}
   const enc=encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({url:c.url,key:c.key}))))),link=location.origin+location.pathname+"#sync="+enc;
   try{if(navigator.share){await navigator.share({title:"ตั้งค่า Skin Guard ระบบกลาง",url:link});return}}catch(e){}
