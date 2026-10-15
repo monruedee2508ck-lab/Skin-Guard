@@ -1,6 +1,6 @@
 /**
  * Skin Guard – ระบบกลางบน Google Sheets + Google Drive
- * วางโค้ดนี้ใน Apps Script ของ Google Sheet ที่สร้างไว้ แล้ว Deploy เป็น Web app
+ * วางโค้ดนี้ใน Apps Script (จากเมนู Extensions ของ Google Sheet หรือสร้าง New project ที่ script.google.com ก็ได้) แล้ว Deploy เป็น Web app
  * 1) เปลี่ยน KEY ด้านล่างเป็นรหัสลับของหน่วยงาน (ยาวอย่างน้อย 16 ตัว) และห้ามเผยแพร่
  * 2) Deploy > New deployment > Web app > Execute as: Me > Who has access: Anyone
  */
@@ -16,12 +16,30 @@ const SHEETS = {
   admins:   ['email', 'name', 'salt', 'hash', 'status', 'created', 'approvedBy', 'token', 'tokenExp']
 };
 
+const BOOK_NAMES = ['Skin guard-ข้อมูลกลาง', 'Skin Guard – ข้อมูลกลาง', 'Skin Guard - ข้อมูลกลาง'];
+let _book = null;
+/** ใช้ได้ทั้งแบบผูกกับ Google Sheet และแบบสร้างโปรเจกต์ใหม่ที่ script.google.com (จะหา/สร้างสเปรดชีตให้เอง) */
+function book() {
+  if (_book) return _book;
+  try { const a = SpreadsheetApp.getActiveSpreadsheet(); if (a) return (_book = a); } catch (e) {}
+  const props = PropertiesService.getScriptProperties();
+  const id = props.getProperty('SS_ID');
+  if (id) { try { return (_book = SpreadsheetApp.openById(id)); } catch (e) {} }
+  for (let i = 0; i < BOOK_NAMES.length; i++) {
+    const it = DriveApp.getFilesByName(BOOK_NAMES[i]);
+    if (it.hasNext()) { _book = SpreadsheetApp.openById(it.next().getId()); break; }
+  }
+  if (!_book) _book = SpreadsheetApp.create(BOOK_NAMES[1]);
+  props.setProperty('SS_ID', _book.getId());
+  return _book;
+}
+
 /**
  * กด ▶ Run ฟังก์ชันนี้ 1 ครั้งหลังวางโค้ด เพื่อสร้างแท็บข้อมูลทั้งหมด โฟลเดอร์เก็บภาพ และขออนุญาตใช้งาน
  */
 function setup() {
   if (KEY.indexOf('CHANGE-ME') === 0) throw new Error('ยังไม่ได้เปลี่ยน KEY ด้านบนเป็นรหัสลับของหน่วยงาน');
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = book();
   Object.keys(SHEETS).forEach(function (name) {
     const sh = sheet(name);
     const head = sh.getRange(1, 1, 1, SHEETS[name].length);
@@ -32,6 +50,7 @@ function setup() {
   if (first && first.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(first);
   const f = folder();
   Logger.log('พร้อมใช้งาน: สร้างแท็บ ' + Object.keys(SHEETS).join(', ') + ' และโฟลเดอร์ภาพ ' + f.getName() + ' แล้ว');
+  Logger.log('สเปรดชีต: ' + ss.getName() + ' ' + ss.getUrl());
   Logger.log('ขั้นต่อไป: Deploy > New deployment > Web app > Execute as: Me > Who has access: Anyone');
 }
 
@@ -64,7 +83,7 @@ function doPost(e) {
 function out(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
 
 function sheet(name) {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = book();
   let sh = ss.getSheetByName(name);
   if (!sh) { sh = ss.insertSheet(name); sh.appendRow(SHEETS[name]); sh.setFrozenRows(1); }
   return sh;
