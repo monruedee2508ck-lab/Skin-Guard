@@ -999,6 +999,8 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
 
 #braden{display:none!important}
 #bwEdit[hidden]{display:none!important}
+
+.photo-btns[hidden],label.chk[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -1231,7 +1233,7 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
         <label class="btn primary filebtn" for="photo">ถ่ายภาพ แล้ววัดด้วยไม้บรรทัดบนจอ</label>
         <label class="btn filebtn alt" for="photoLib">เลือกจากคลังภาพ</label>
       </div>
-      <p class="note" id="liveFailTip" style="margin:0" hidden>ในแอป Claude หน้าเว็บอาจเปิดกล้องสดไม่ได้ เปิดแอปจากลิงก์ GitHub ใน Safari จะใช้กล้องสดพร้อมไม้บรรทัดได้ ถ้ากล้องขึ้นจอดำ ให้ไปที่ การตั้งค่า → Claude → เปิด "กล้อง"</p>
+      <p class="note" id="liveFailTip" style="margin:0" hidden>ถ้าเปิดในแอป Claude, LINE หรือ Messenger กล้องสดมักถูกปิดไว้ ให้เปิดลิงก์ monruedee2508ck-lab.github.io/Skin-Guard ใน Safari (iPad/iPhone) หรือ Chrome (Android) แล้วกดอนุญาตกล้อง · ถ้าเคยกดไม่อนุญาตไปแล้ว ให้เปิดสิทธิ์กล้องของเว็บนี้ในการตั้งค่าเบราว์เซอร์</p>
     </div>
     <label class="chk" for="rulerOn"><input id="rulerOn" type="checkbox" checked>เปิดไม้บรรทัดบนจอทับภาพหลังถ่ายหรือเลือกภาพ</label>
     <div class="row photo-btns">
@@ -2252,9 +2254,9 @@ async function liveOpen(){
   $("liveScaleV").textContent=`${(+live.ppc).toFixed(0)} px = 1 cm`;
   try{await v.play()}catch(e){}
   setTimeout(liveLayout,60)}
-function liveFallback(why,code){const f=$("liveFail");f.hidden=false;live.pend=true;
+function liveFallback(why,code){const f=$("liveFail");f.hidden=false;live.pend=true;try{const r=$("photoLib").closest(".row");if(r)r.hidden=true;$("rulerOn").closest("label").hidden=true}catch(e){}
   $("liveFailMsg").textContent=why+(code?` (${code})`:"")+" — ใช้วิธีถ่ายภาพแทนได้ ภาพที่ได้จะเปิดไม้บรรทัดบนจอทับให้วัดต่อทันที";
-  $("liveFailTip").hidden=!/claude\.ai|claudeusercontent|anthropic/.test(location.hostname+document.referrer);
+  $("liveFailTip").hidden=false;
   f.scrollIntoView({behavior:"smooth",block:"center"})}
 function liveOpenStill(f){if(!f)return;if(f.type&&!/^image\//.test(f.type)){photoErr("ไฟล์นี้ไม่ใช่รูปภาพ");return}
   const url=URL.createObjectURL(f),im=$("liveImg");live.still={f,url};im.onload=()=>setTimeout(liveLayout,30);im.onerror=()=>{liveClose();loadPhoto(f)};im.src=url;im.hidden=false;$("liveVid").hidden=true;
