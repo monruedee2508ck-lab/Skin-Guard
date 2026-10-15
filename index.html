@@ -1103,10 +1103,20 @@ header.hero.topbar h1{white-space:nowrap}
 .lg-foot{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;margin-top:4px}
 .lg-foot span{color:rgba(235,245,250,.85);font-size:.88rem}
 .lg-foot small{color:rgba(200,220,228,.5);font-size:.8rem}
+
+/* ===== in-app background ===== */
+html body{background:radial-gradient(120% 80% at 50% 0%,color-mix(in srgb,var(--pc) 9%,#f4f8fa) 0%,#edf3f6 45%,#e6eef2 100%) fixed!important;min-height:100vh}
+.app-bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;color:color-mix(in srgb,var(--pc) 70%,#1d8f86);opacity:.55}
+.wrap{position:relative;z-index:1}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:radial-gradient(110% 70% at 50% 0%,color-mix(in srgb,var(--pc) 14%,#10283c) 0%,#0b1f30 45%,#071522 100%) fixed!important}
+  :root:not([data-theme="light"]) .app-bg{color:#4fd1b8;opacity:.8}}
+:root[data-theme="dark"] body{background:radial-gradient(110% 70% at 50% 0%,color-mix(in srgb,var(--pc) 14%,#10283c) 0%,#0b1f30 45%,#071522 100%) fixed!important}
+:root[data-theme="dark"] .app-bg{color:#4fd1b8;opacity:.8}
 </style>
 </head>
 <body>
 
+<svg class="app-bg" id="appBg" aria-hidden="true" preserveAspectRatio="xMidYMid slice"></svg>
 <div class="wrap">
   <div class="login-gate" id="loginGate" role="dialog" aria-modal="true" aria-labelledby="lgTitle">
     <svg class="lg-art" id="lgArt" aria-hidden="true" preserveAspectRatio="none"></svg>
@@ -2873,14 +2883,16 @@ function thDateLong(d){try{return new Date(d+"T00:00:00").toLocaleDateString("th
 
 
 /* login background art: mesh waves + light streaks */
-(function lgArtDraw(){const svg=$("lgArt");if(!svg)return;const W=1000,H=1000;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);let g="";
+function meshArt(svg,stroke,streak){if(!svg)return;const W=1000,H=1000;svg.setAttribute("viewBox",`0 0 ${W} ${H}`);let g="";
   const mesh=(ox,oy,sx,sy,flip)=>{for(let i=0;i<22;i++){const t=i/21;let d="";for(let k=0;k<=24;k++){const u=k/24,x=ox+sx*u,y=oy+sy*(t*0.9+0.08*Math.sin(u*Math.PI*1.6+t*3)+0.25*u*u*(flip?-1:1)*t);d+=(k?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)}
-      g+=`<path d="${d}" fill="none" stroke="#4fd1b8" stroke-opacity="${(0.08+0.22*(1-t)).toFixed(2)}" stroke-width="1"/>`}
+      g+=`<path d="${d}" fill="none" stroke="${stroke}" stroke-opacity="${(0.08+0.22*(1-t)).toFixed(2)}" stroke-width="1"/>`}
     for(let k=0;k<=16;k++){const u=k/16;let d="";for(let i=0;i<=21;i++){const t=i/21,x=ox+sx*u,y=oy+sy*(t*0.9+0.08*Math.sin(u*Math.PI*1.6+t*3)+0.25*u*u*(flip?-1:1)*t);d+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)}
-      g+=`<path d="${d}" fill="none" stroke="#4fd1b8" stroke-opacity="0.07" stroke-width="1"/>`}};
+      g+=`<path d="${d}" fill="none" stroke="${stroke}" stroke-opacity="0.07" stroke-width="1"/>`}};
   mesh(-40,640,520,380,false);mesh(1040,-40,-460,420,true);
-  [[60,380,180],[110,620,120],[890,250,160],[940,520,110],[820,120,70]].forEach(([x,y,h])=>{g+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+h}" stroke="url(#lgStreak)" stroke-width="2"/>`});
-  svg.innerHTML=`<defs><linearGradient id="lgStreak" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ff5dd" stop-opacity="0"/><stop offset=".5" stop-color="#7ff5dd" stop-opacity=".7"/><stop offset="1" stop-color="#7ff5dd" stop-opacity="0"/></linearGradient></defs>`+g})();
+  const gid="stk"+Math.random().toString(36).slice(2,6);
+  if(streak)[[60,380,180],[110,620,120],[890,250,160],[940,520,110],[820,120,70]].forEach(([x,y,h])=>{g+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+h}" stroke="url(#${gid})" stroke-width="2"/>`});
+  svg.innerHTML=`<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${streak||stroke}" stop-opacity="0"/><stop offset=".5" stop-color="${streak||stroke}" stop-opacity=".7"/><stop offset="1" stop-color="${streak||stroke}" stop-opacity="0"/></linearGradient></defs>`+g}
+meshArt($("lgArt"),"#4fd1b8","#7ff5dd");meshArt($("appBg"),"currentColor","currentColor");
 /* ---------- OT login gate ---------- */
 var otUser=null;
 function otGet(){if(otUser)return otUser;try{const v=sessionStorage.getItem("pi-ot");if(v)return JSON.parse(v)}catch(e){}return null}
