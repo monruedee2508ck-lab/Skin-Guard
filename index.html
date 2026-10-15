@@ -1028,6 +1028,7 @@ body.locked{overflow:hidden}
 
 .sync-st{display:inline-flex;align-items:center;gap:6px;margin-top:6px;font:inherit;font-size:.78rem;font-weight:600;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);border-radius:99px;padding:4px 10px;cursor:pointer;position:relative;z-index:2}
 .sync-st[hidden]{display:none!important}
+.sync-st .ss-i{font-style:normal}
 .sync-st.err{background:rgba(217,83,79,.85);border-color:transparent}.sync-st.off,.sync-st.wait{background:rgba(224,122,46,.8);border-color:transparent}
 #syncCard label{display:flex;flex-direction:column;gap:5px;font-size:.86rem;color:var(--muted)}
 .sync-msg{margin:0;font-size:.86rem;color:var(--ink);min-height:1.2em}
@@ -1043,6 +1044,41 @@ body.locked{overflow:hidden}
 .ar-t{flex:1;min-width:150px;display:flex;flex-direction:column}.ar-t b{color:var(--ink);font-size:.95rem}.ar-t small{color:var(--muted);font-size:.8rem}
 .adm-row .tpill{font-size:.74rem;font-weight:600;border-radius:99px;padding:2px 9px}
 .adm-row .tpill.ok{background:color-mix(in srgb,var(--ok) 16%,var(--surface));color:var(--ok)}.adm-row .tpill.wait{background:color-mix(in srgb,var(--s2) 18%,var(--surface));color:var(--s2)}
+
+/* ===== top bar redesign ===== */
+header.hero.topbar{position:relative;padding:16px 18px 18px!important;border-radius:22px;overflow:visible;
+  background:radial-gradient(120% 140% at 0% 0%,color-mix(in srgb,var(--pc) 55%,var(--navy)) 0%,var(--navy) 55%,color-mix(in srgb,var(--navy) 80%,#000) 100%);
+  box-shadow:0 10px 30px -12px color-mix(in srgb,var(--navy) 70%,transparent),inset 0 1px 0 rgba(255,255,255,.08)}
+header.hero.topbar .art{right:-10px;top:-24px;width:140px;height:140px;opacity:.08}
+header.hero.topbar h1{margin:0!important;font-size:1.45rem;line-height:1.1;letter-spacing:.01em}
+.tb-row{display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(145deg,var(--pc),color-mix(in srgb,var(--pc) 55%,var(--gold)));box-shadow:0 6px 16px -6px var(--pc),inset 0 1px 0 rgba(255,255,255,.35)}
+.brand-t{display:flex;flex-direction:column;min-width:0}
+.brand-t small{color:rgba(255,255,255,.7);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-top:2px;white-space:nowrap}
+.tb-right{display:flex;align-items:center;gap:8px;flex:none}
+.tb-right .sync-st{margin:0}
+.user-btn{display:flex;align-items:center;gap:8px;font:inherit;color:#fff;cursor:pointer;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:4px 10px 4px 4px;max-width:260px;backdrop-filter:blur(6px)}
+.user-btn[hidden]{display:none!important}
+.user-btn:hover{background:rgba(255,255,255,.16)}
+.user-btn .un{font-size:.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.user-btn .chev{flex:none;opacity:.8;transition:transform .2s}
+.user-btn[aria-expanded=true] .chev{transform:rotate(180deg)}
+.av{flex:none;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.95rem;color:var(--navy);background:linear-gradient(145deg,#fff,color-mix(in srgb,var(--gold) 45%,#fff))}
+.av.lg{width:44px;height:44px;font-size:1.15rem}
+.user-btn.admin .av{box-shadow:0 0 0 2px var(--gold)}
+.user-menu{position:absolute;right:14px;top:calc(100% - 6px);z-index:30;width:min(300px,calc(100vw - 40px));background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 40px -12px rgba(0,0,0,.45);padding:8px;display:flex;flex-direction:column;gap:2px;animation:umIn .16s ease-out}
+.user-menu[hidden]{display:none!important}
+@keyframes umIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.um-head{display:flex;align-items:center;gap:12px;padding:10px 10px 12px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.um-head div{display:flex;flex-direction:column;min-width:0}.um-head b{font-size:.98rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.um-head small{color:var(--muted);font-size:.8rem}
+.um-item{display:flex;align-items:center;gap:12px;width:100%;font:inherit;font-size:.92rem;text-align:left;color:var(--ink);background:none;border:0;border-radius:12px;padding:11px 12px;cursor:pointer}
+.um-item:hover{background:var(--bg)}
+.um-item svg{flex:none;color:var(--muted)}
+.um-item.danger{color:var(--s1)}.um-item.danger svg{color:var(--s1)}
+header.hero.topbar h1{white-space:nowrap}
+@media (max-width:480px){.tb-right .sync-st{width:34px;height:34px;padding:0;justify-content:center}.tb-right .sync-st .ss-t{display:none}.tb-right .sync-st .ss-i{font-style:normal;font-size:15px}header.hero.topbar{padding:14px 14px 16px!important}.user-btn .un{display:none}.user-btn{padding:3px 8px 3px 3px}.brand-t small{letter-spacing:.08em}header.hero.topbar h1{font-size:1.3rem}.logo{width:40px;height:40px}}
 </style>
 </head>
 <body>
@@ -1060,12 +1096,26 @@ body.locked{overflow:hidden}
       <p class="lg-note">เลข OT ใช้ระบุผู้ประเมินและผู้บันทึก ข้อมูลเก็บในเครื่องนี้เท่านั้น</p>
     </form>
   </div>
-  <header class="hero">
-    <button type="button" class="adm-lock" id="admLock" aria-label="โหมดผู้ดูแล (Admin)"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path id="admShackle" d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span id="admLbl">Admin</span></button>
-    <button type="button" class="ot-chip" id="otChip" hidden></button>
+  <header class="hero topbar">
     <svg class="art" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="44" fill="none" stroke="#fff" stroke-width="6"/><path d="M50 22v28l18 12" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    <h1>Skin Guard</h1>
-    <button type="button" class="sync-st" id="syncSt" hidden></button>
+    <div class="tb-row">
+      <div class="brand">
+        <span class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+        <div class="brand-t"><h1>Skin Guard</h1><small>Pressure Injury Care</small></div>
+      </div>
+      <div class="tb-right">
+        <button type="button" class="sync-st" id="syncSt" hidden></button>
+        <button type="button" class="user-btn" id="userBtn" aria-haspopup="menu" aria-expanded="false" hidden>
+          <span class="av" id="userAv">?</span><span class="un" id="userName"></span>
+          <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="user-menu" id="userMenu" role="menu" hidden>
+      <div class="um-head"><span class="av lg" id="umAv">?</span><div><b id="umName"></b><small id="umSub"></small></div></div>
+      <button type="button" class="um-item" id="admLock" role="menuitem"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path id="admShackle" d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span id="admLbl">เข้าโหมดผู้ดูแล (Admin)</span></button>
+      <button type="button" class="um-item danger" id="otChip" role="menuitem"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h12"/></svg><span>ออกจากระบบ</span></button>
+    </div>
   </header>
 
   <section class="card patient">
@@ -2011,7 +2061,7 @@ function isAdmin(){return !!admGet()}
 function setAdmin(on){admMem=on&&typeof on==="object"?on:null;try{if(admMem)sessionStorage.setItem("pi-admin",JSON.stringify(admMem));else sessionStorage.removeItem("pi-admin")}catch(e){}admPaint();try{admListRender()}catch(e){}}
 function admPaint(){const u=admGet(),on=!!u;ADMIN_PAGES.forEach(x=>{const t=$("tab-"+x);if(t)t.hidden=!on});
   const nav=document.querySelector(".pagetabs");if(nav)nav.classList.toggle("u3",!on);
-  const b=$("admLock");if(b){b.classList.toggle("on",on);$("admLbl").textContent=on?`Admin: ${(u.name||u.email).split(" ")[0]} · ออก`:"Admin";$("admShackle").setAttribute("d",on?"M8 11V7a4 4 0 0 1 7.5-2":"M8 11V7a4 4 0 0 1 8 0v4")}}
+  const b=$("admLock");if(b){b.classList.toggle("on",on);$("admLbl").textContent=on?`ออกจากโหมดผู้ดูแล (${(u.name||u.email).split(" ")[0]})`:"เข้าโหมดผู้ดูแล (Admin)";{const ub=$("userBtn");if(ub)ub.classList.toggle("admin",on)}try{const o=otGet();if(o)$("umSub").textContent=`OT ${o.ot}`+(on?" · ผู้ดูแลระบบ":"")}catch(e){}$("admShackle").setAttribute("d",on?"M8 11V7a4 4 0 0 1 7.5-2":"M8 11V7a4 4 0 0 1 8 0v4")}}
 async function admHash(salt,pass){const t="skin-guard|"+salt+"|"+pass;try{if(crypto&&crypto.subtle){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}}catch(e){}
   let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return "f"+h.toString(16)}
 function admLocal(){try{return JSON.parse(localStorage.getItem("pi-admins")||"[]")}catch(e){return[]}}
@@ -2069,7 +2119,7 @@ document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b
 $("alerts").addEventListener("click",e=>{const a=e.target.closest(".alert");if(a&&!a.dataset.go){go("prevent");if(a.querySelector(".crit-al"))setTimeout(openRisk,60);
   else if(/ภาพผิวหนัง/.test(a.textContent))setTimeout(()=>openRisk(true,"skin"),60);
   else if(/พลิกตัว/.test(a.textContent))setTimeout(()=>openRisk(true,"turn"),60)}});
-$("admLock").onclick=()=>{if(isAdmin()){setAdmin(false);if(ADMIN_PAGES.includes(document.body.dataset.page))go("prevent");advise("ออกจากระบบผู้ดูแลแล้ว","หน้าแนวโน้มและข้อมูลหอผู้ป่วยถูกซ่อน")}else askAdmin(null)};
+$("admLock").onclick=()=>{userMenu(false);if(isAdmin()){setAdmin(false);if(ADMIN_PAGES.includes(document.body.dataset.page))go("prevent");advise("ออกจากระบบผู้ดูแลแล้ว","หน้าแนวโน้มและข้อมูลหอผู้ป่วยถูกซ่อน")}else askAdmin(null)};
 $("admCancel").onclick=admClose;
 $("admTabIn").onclick=()=>admTab(false);$("admTabReg").onclick=()=>admTab(true);
 $("admModal").addEventListener("click",e=>{if(e.target.id==="admModal")admClose()});
@@ -2789,8 +2839,11 @@ function thDateLong(d){try{return new Date(d+"T00:00:00").toLocaleDateString("th
 /* ---------- OT login gate ---------- */
 var otUser=null;
 function otGet(){if(otUser)return otUser;try{const v=sessionStorage.getItem("pi-ot");if(v)return JSON.parse(v)}catch(e){}return null}
-function otPaint(){const u=otGet(),gate=$("loginGate"),chip=$("otChip");gate.hidden=!!u;document.body.classList.toggle("locked",!u);
-  chip.hidden=!u;if(u){chip.textContent=`${u.name||("OT "+u.ot)} · ออก`;chip.title=`OT ${u.ot}`;if(u.name&&!$("nurseName").value.trim()){$("nurseName").value=u.name}}
+function userInit(n){n=String(n||"").replace(/^(พว\.|พย\.|นส\.|นาย|นาง(สาว)?|ผช\.|ดร\.)\s*/,"").trim();return n?n.slice(0,1):"?"}
+function otPaint(){const u=otGet(),gate=$("loginGate");gate.hidden=!!u;document.body.classList.toggle("locked",!u);
+  $("userBtn").hidden=!u;if(!u)userMenu(false);
+  if(u){const nm=u.name||("OT "+u.ot);$("userName").textContent=nm;$("userAv").textContent=userInit(u.name)||"?";$("umAv").textContent=userInit(u.name);$("umName").textContent=nm;
+    $("umSub").textContent=`OT ${u.ot}`+(isAdmin()?" · ผู้ดูแลระบบ":"");if(u.name&&!$("nurseName").value.trim()){$("nurseName").value=u.name}}
   else{try{const l=JSON.parse(localStorage.getItem("pi-ot-last")||"null");if(l){$("lgOT").value=l.ot||"";$("lgName").value=l.name||""}}catch(e){}setTimeout(()=>{try{($("lgOT").value?$("lgName"):$("lgOT")).focus()}catch(e){}},80)}}
 $("lgForm").addEventListener("submit",e=>{e.preventDefault();const ot=$("lgOT").value.trim().replace(/\s+/g,""),name=$("lgName").value.trim();
   if(!/^[0-9A-Za-z\-]{3,12}$/.test(ot)){$("lgErr").textContent="ใส่เลข OT 3–12 หลัก (ตัวเลขหรือตัวอักษร)";$("lgOT").focus();return}
@@ -2798,7 +2851,11 @@ $("lgForm").addEventListener("submit",e=>{e.preventDefault();const ot=$("lgOT").
   otUser={ot,name,at:Date.now()};try{sessionStorage.setItem("pi-ot",JSON.stringify(otUser));localStorage.setItem("pi-ot-last",JSON.stringify({ot,name}))}catch(e){}
   if(name){$("nurseName").value=name;try{localStorage.setItem("pi-nurse",name)}catch(e){}}
   $("lgErr").textContent="";otPaint();try{update()}catch(e){}});
-$("otChip").onclick=()=>{if(!confirm("ออกจากระบบ?"))return;otUser=null;try{sessionStorage.removeItem("pi-ot")}catch(e){}try{setAdmin(false)}catch(e){}go("prevent");otPaint()};
+function userMenu(open){const m=$("userMenu"),b=$("userBtn");if(!m)return;m.hidden=!open;if(b)b.setAttribute("aria-expanded",open)}
+$("userBtn").onclick=e=>{e.stopPropagation();userMenu($("userMenu").hidden)};
+document.addEventListener("click",e=>{if(!e.target.closest("#userMenu")&&!e.target.closest("#userBtn"))userMenu(false)});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")userMenu(false)});
+$("otChip").onclick=()=>{userMenu(false);if(!confirm("ออกจากระบบ?"))return;otUser=null;try{sessionStorage.removeItem("pi-ot")}catch(e){}try{setAdmin(false)}catch(e){}go("prevent");otPaint()};
 otPaint();
 
 /* ---------- Central sync: Google Sheets via Apps Script ---------- */
@@ -2860,7 +2917,7 @@ async function syncRun(){if(!syncCfg())return syncPaint();if(SYNC.busy){SYNC.aga
   SYNC.busy=false;syncPaint();if(SYNC.again){SYNC.again=false;syncSoon(500)}}
 function syncPaint(){const b=$("syncSt");if(!b)return;const c=syncCfg();b.hidden=!c;if(!c)return;const n=syncQ().length,ok=+localStorage.getItem("pi-sync-ok")||0;
   b.className="sync-st "+(SYNC.status==="err"?"err":SYNC.status==="offline"?"off":n?"wait":"ok");
-  b.textContent=SYNC.status==="busy"?"☁ กำลังซิงก์…":SYNC.status==="err"?"☁ ซิงก์ไม่สำเร็จ · แตะเพื่อลองใหม่":SYNC.status==="offline"?`☁ ออฟไลน์ · รอส่ง ${n}`:n?`☁ รอส่ง ${n} รายการ`:ok?`☁ ซิงก์แล้ว ${hhmm(ok)} น.`:"☁ ระบบกลาง";
+  {const txt=SYNC.status==="busy"?"☁ กำลังซิงก์…":SYNC.status==="err"?"☁ ซิงก์ไม่สำเร็จ · แตะเพื่อลองใหม่":SYNC.status==="offline"?`☁ ออฟไลน์ · รอส่ง ${n}`:n?`☁ รอส่ง ${n} รายการ`:ok?`☁ ซิงก์แล้ว ${hhmm(ok)} น.`:"☁ ระบบกลาง";b.innerHTML='<i class="ss-i" aria-hidden="true">☁</i><span class="ss-t"></span>';b.querySelector(".ss-t").textContent=txt.replace(/^☁ /,"");b.title=txt};
   const m=$("syncMsg");if(m&&SYNC.status==="err")m.textContent="เชื่อมต่อไม่สำเร็จ: "+SYNC.err}
 function syncFill(){let c=null;try{c=JSON.parse(localStorage.getItem("pi-sync")||"null")}catch(e){}$("syncUrl").value=c&&c.url||"";$("syncKey").value=c&&c.key||""}
 $("syncSt").onclick=()=>syncSoon(10);
