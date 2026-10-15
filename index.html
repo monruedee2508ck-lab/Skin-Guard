@@ -1390,10 +1390,6 @@ body.locked{overflow:hidden}
     <button class="btn primary" id="careOpen" type="button">ดูการพยาบาลที่แนะนำ</button>
   </section>
   </div>
-  <section class="card progcard" id="progW">
-    <h2>ความคืบหน้าของแผล</h2>
-    <div class="prog-list"></div>
-  </section>
   <section class="card nowound tonote" id="wNoteCard">
     <div class="nw-ic" aria-hidden="true">✎</div>
     <div class="nw-tx"><b>บันทึกการพยาบาล</b><small>ประเมินแผลแล้ว ลงบันทึก Nurse's Note พร้อมลงชื่อได้เลย</small></div>
@@ -3373,7 +3369,7 @@ function healStats(pts){
 
 function renderProg(){
   if(!featReady)return;const list=(wounds||[]).map((w,i)=>({x:woundCalc(w),i})).filter(o=>o.x.stage&&o.x.stage!=="none");
-  ["progW","progR"].forEach(id=>{const card=$(id);if(!card)return;card.hidden=!list.length;const box=card.querySelector(".prog-list");box.innerHTML="";
+  ["progR"].forEach(id=>{const card=$(id);if(!card)return;card.hidden=!list.length;const box=card.querySelector(".prog-list");box.innerHTML="";
     list.forEach(({x,i})=>{const h=woundProg(x),S=STAGES[x.stage],st=h&&h.n>=2?h.status:["ประเมินครั้งแรก","--muted","na"];
       const r=document.createElement("div");r.className="prow";r.style.setProperty("--c",`var(${st[1]})`);
       const pts=h?[]:[];
