@@ -16,11 +16,31 @@ const SHEETS = {
   admins:   ['email', 'name', 'salt', 'hash', 'status', 'created', 'approvedBy', 'token', 'tokenExp']
 };
 
+/**
+ * กด ▶ Run ฟังก์ชันนี้ 1 ครั้งหลังวางโค้ด เพื่อสร้างแท็บข้อมูลทั้งหมด โฟลเดอร์เก็บภาพ และขออนุญาตใช้งาน
+ */
+function setup() {
+  if (KEY.indexOf('CHANGE-ME') === 0) throw new Error('ยังไม่ได้เปลี่ยน KEY ด้านบนเป็นรหัสลับของหน่วยงาน');
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  Object.keys(SHEETS).forEach(function (name) {
+    const sh = sheet(name);
+    const head = sh.getRange(1, 1, 1, SHEETS[name].length);
+    head.setValues([SHEETS[name]]).setFontWeight('bold').setFontColor('#ffffff').setBackground('#132b4f');
+    sh.setFrozenRows(1);
+  });
+  const first = ss.getSheetByName('Sheet1') || ss.getSheetByName('ชีต1');
+  if (first && first.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(first);
+  const f = folder();
+  Logger.log('พร้อมใช้งาน: สร้างแท็บ ' + Object.keys(SHEETS).join(', ') + ' และโฟลเดอร์ภาพ ' + f.getName() + ' แล้ว');
+  Logger.log('ขั้นต่อไป: Deploy > New deployment > Web app > Execute as: Me > Who has access: Anyone');
+}
+
 function doGet() { return out({ ok: true, app: 'SkinGuard', time: Date.now() }); }
 
 function doPost(e) {
   let req;
   try { req = JSON.parse(e.postData.contents); } catch (err) { return out({ ok: false, error: 'bad_json' }); }
+  if (KEY.indexOf('CHANGE-ME') === 0) return out({ ok: false, error: 'key_not_set' });
   if (!req || req.key !== KEY) return out({ ok: false, error: 'unauthorized' });
   const lock = LockService.getScriptLock();
   lock.waitLock(25000);

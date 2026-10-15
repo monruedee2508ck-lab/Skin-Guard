@@ -3119,7 +3119,7 @@ $("syncSave").onclick=async()=>{const url=$("syncUrl").value.trim(),key=$("syncK
   if(key.length<8){m.textContent="รหัสลับต้องยาวอย่างน้อย 8 ตัว";return}
   try{localStorage.setItem("pi-sync",JSON.stringify({url,key,on:true}))}catch(e){}m.textContent="กำลังทดสอบการเชื่อมต่อ…";
   try{await syncCall({action:"ping"});m.textContent="เชื่อมต่อสำเร็จ กำลังส่งข้อมูลที่มีในเครื่องขึ้นระบบกลาง…";syncSeedAll();await syncRun();m.textContent="เชื่อมต่อสำเร็จ ข้อมูลจะซิงก์อัตโนมัติทุกครั้งที่บันทึก และทุก 1 นาที"}
-  catch(e){m.textContent="เชื่อมต่อไม่สำเร็จ: "+(e.message||e)+" — ตรวจ URL, KEY และการ Deploy (Who has access: Anyone)"}};
+  catch(e){const em=String(e&&e.message||e),tx=/unauthorized/.test(em)?"รหัสลับ (KEY) ไม่ตรงกับใน Apps Script":/key_not_set/.test(em)?"ยังไม่ได้เปลี่ยน KEY ในโค้ด Apps Script":em;m.textContent="เชื่อมต่อไม่สำเร็จ: "+tx+" — ตรวจ URL, KEY และการ Deploy (Who has access: Anyone)"}};
 $("syncNow").onclick=()=>{$("syncMsg").textContent="";syncRun()};
 $("syncOff").onclick=()=>{if(!twoTap($("syncOff"),"แตะอีกครั้งเพื่อยืนยันยกเลิก"))return;try{localStorage.removeItem("pi-sync");localStorage.removeItem("pi-sync-q");localStorage.removeItem("pi-sync-last")}catch(e){}syncFill();syncPaint();$("syncMsg").textContent="ยกเลิกแล้ว"};
 $("syncLink").onclick=async()=>{const c=syncCfg();if(!c){$("syncMsg").textContent="ต้องเชื่อมต่อในเครื่องนี้ก่อน";return}
