@@ -956,6 +956,17 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
 
 #stepsCard[hidden]{display:none!important}
 .map-cta{font-size:.92rem}.map-cta b{color:var(--pc)}
+
+.progcard[hidden]{display:none!important}
+.prog-list{display:flex;flex-direction:column;gap:8px}
+.prow{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:12px;padding:10px 12px;box-shadow:inset 3px 0 0 var(--c);cursor:pointer}
+.prow .ovn{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:.85rem}
+.pr-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.pr-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pr-h b{font-size:.95rem;color:var(--ink)}
+.pr-h .tpill{font-size:.74rem;font-weight:600;border-radius:99px;padding:2px 9px;background:color-mix(in srgb,var(--c) 16%,var(--surface));color:var(--c)}
+.pr-t small{color:var(--muted);font-size:.8rem;line-height:1.4}
+.pr-s{flex:none}
+@media (max-width:420px){.pr-s{display:none}}
 </style>
 </head>
 <body>
@@ -1273,6 +1284,10 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
     <button class="btn primary" id="careOpen" type="button">ดูการพยาบาลที่แนะนำ</button>
   </section>
   </div>
+  <section class="card progcard" id="progW">
+    <h2>ความคืบหน้าของแผล</h2>
+    <div class="prog-list"></div>
+  </section>
   <section class="card nowound tonote" id="wNoteCard">
     <div class="nw-ic" aria-hidden="true">✎</div>
     <div class="nw-tx"><b>บันทึกการพยาบาล</b><small>ประเมินแผลแล้ว ลงบันทึก Nurse's Note พร้อมลงชื่อได้เลย</small></div>
@@ -1354,6 +1369,10 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
   </div>
 
   <div class="page" id="page-record" hidden>
+  <section class="card progcard" id="progR">
+    <h2>ความคืบหน้าของแผล</h2>
+    <div class="prog-list"></div>
+  </section>
   <section class="card">
     <h2>บันทึกทางการพยาบาล</h2>
     <div class="notehead">
@@ -1927,6 +1946,7 @@ function update(){
   renderCare(c);stageAdvice();
   if(typeof savePatient==="function")savePatient();
   if(wounds&&wounds.length)renderWoundBar();
+  try{renderProg()}catch(e){}
   {const nWo=(wounds||[]).filter(w=>w&&w.stage&&w.stage!=="none").length,nw=!nWo;
    $("noWound").classList.toggle("has",!nw);$("nwIc").textContent=nw?"✓":"!";
    $("nwT").textContent=nw?"ไม่พบแผลกดทับ":`มีแผลกดทับ ${nWo} ตำแหน่ง`;
@@ -2650,23 +2670,50 @@ function stageCare(k){
   if(k==="s3"||k==="s4"||k==="us")return "ทำแผลตามหลัก Wound Bed Paradigm: Moisture balance, Bacteria balance (Silver/Alginate dressing), Debridement";
   return "";
 }
+function woundProg(x){
+  if(typeof dashRows!=="function"||!x||!x.stage||x.stage==="none")return null;
+  const key=x.site+"|"+(x.side||""),today=$("date").value;
+  let pts=woundSeries(dashRows(),key).filter(p=>p.date!==today);
+  pts.push({date:today,push:x.push,a:x.a,stage:x.stage,site:x.site,side:x.side});
+  return healStats(pts)}
+function progText(h){if(!h)return"";if(h.n<2)return"ประเมินครั้งแรก (ใช้เป็นค่าตั้งต้น)";
+  const fa=(+h.f.a||0).toFixed(1),la=(+h.l.a||0).toFixed(1);
+  return `${h.status[0]} · PUSH ${h.f.push}→${h.l.push} · พื้นที่ ${fa}→${la} cm² (${h.pct>0?"+":""}${h.pct}%) ใน ${h.days} วัน`+(h.stalled?" · ไม่ดีขึ้น ≥ 2 สัปดาห์ ควรทบทวนแผนการดูแล":"")}
+function noteDate(iso){try{return new Date(iso).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"2-digit"})}catch(e){return iso||"-"}}
 function buildNote(c){
-  const d=c.date?new Date(c.date).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"}):"-";
-  const list=(wounds&&wounds.length)?wounds.map(woundCalc):[c];
-  const multi=list.length>1;
-  let t=`วันที่ประเมิน: ${d}${c.hn?"\nผู้ป่วย: "+c.hn:""}`;
-  if(multi)t+=`\nจำนวนแผลกดทับ: ${list.length} ตำแหน่ง`;
-  list.forEach((x,i)=>{t+=(multi?`\n\n[แผลที่ ${i+1}] ${siteShort(x.site)}${x.side?" "+x.side:""}\n`:"\n")+woundBlock(x)});
-  if(multi)t+="\n";
-  t+=skNoteLine()+chkNoteLine()+(bradenTotal()!=null?`\nBraden Scale: ${bradenTotal()} คะแนน (${bradenRisk(bradenTotal())})`:"");
-  const CRn=compoundRisk(bradenTotal(),crData());
-  if(CRn.f.length)t+=`\nปัจจัยเสี่ยงร่วมทางคลินิก (Clinical Risk Factors): ${CRn.f.map(x=>x.val).join(" · ")}`;
-  if(CRn.crit)t+=`\nระดับความเสี่ยง: Critical Risk (ปัจจัยเสี่ยงร่วมทางคลินิก: ${CRn.rule}) แจ้งหัวหน้าเวรและแพทย์แล้ว`;
-  const lines=[];
-  if(CRn.crit)critActions(CRn.f).forEach(l=>lines.push(l.replace(/<[^>]+>/g,"")));
-  list.forEach((x,i)=>{const sc=stageCare(x.stage);if(sc)lines.push((multi?`แผลที่ ${i+1} (${siteShort(x.site)}${x.side?" "+x.side:""}): `:"")+sc)});
-  careLines({stage:null,device:list.some(x=>x.device)}).forEach(l=>lines.push(l));
-  return t+`\nการพยาบาล:\n`+lines.map(l=>"- "+l).join("\n");
+  const t=bradenTotal(),hn=$("hn").value.trim();
+  const list=((wounds&&wounds.length)?wounds.map(woundCalc):[c]).filter(x=>x.stage&&x.stage!=="none");
+  const L=[];
+  L.push(`วันที่ ${noteDate($("date").value)}${hn?" · HN "+hn:""}`);
+  // risk
+  let risk=t!=null?`Braden ${t} (${bradenRisk(t)})`:"Braden ยังประเมินไม่ครบ";
+  try{const CR=compoundRisk(t,crData());if(CR.f.length)risk+=` · ${CR.f.map(x=>x.val).join(", ")}`;if(CR.crit)risk+=" → Critical Risk"}catch(e){}
+  if($("sepsis").checked)risk+=" · มี sepsis/บวม/รอยแดง";
+  L.push("■ ความเสี่ยง: "+risk);
+  // wounds
+  if(!list.length)L.push("■ ผิวหนัง: ไม่พบแผลกดทับ");
+  else{L.push(`■ แผลกดทับ ${list.length} ตำแหน่ง`);
+    list.forEach((x,i)=>{const where=(x.site==="อื่น ๆ"&&x.siteNote?x.siteNote:siteShort(x.site))+(x.side?" "+x.side:"");
+      const exu=EXU.find(e=>e[1]===x.exu),tis=TIS.find(t=>t[1]===x.tis),sn=stageName(x.stage).split(" (")[0];
+      L.push(`${i+1}) ${where}${x.device?" (MDRPI)":""} — ${sn} · ${x.L}×${x.W}×${x.D} cm (${x.a.toFixed(1)} cm²)`);
+      L.push(`   Exudate ${exu?exu[0]:"-"} · ${tis?tis[2]:"-"} · PUSH ${x.push}/17`);
+      const ex=[];if(x.edge&&x.edge.length)ex.push("ขอบ "+x.edge.map(k=>labelOf(EDGE,k)).join("/"));if(x.peri&&x.peri.length)ex.push("รอบแผล "+x.peri.map(k=>labelOf(PERI,k)).join("/"));
+      if(x.inf&&x.inf.length)ex.push((x.inf.length>=2?"สงสัยติดเชื้อ: ":"ติดเชื้อ: ")+x.inf.map(k=>labelOf(INF,k)).join("/"));
+      if(ex.length)L.push("   "+ex.join(" · "));
+      const pg=progText(woundProg(x));if(pg)L.push("   ความคืบหน้า: "+pg);
+      if(x.dressings&&x.dressings.length){let d="   วัสดุ: "+x.dressings.join(", ");try{const du=dueOf(x);if(du)d+=` · เปลี่ยนครั้งถัดไป ${fmtDT(du.t)}`}catch(e){}L.push(d)}})}
+  // nursing care (short, de-duplicated)
+  const A=[];const add=a=>{if(a&&!A.includes(a))A.push(a)};
+  list.forEach(x=>{const k=x.stage;if(k==="s3"||k==="s4"||k==="us")add("ทำแผลแบบ Wound bed preparation (ชุ่มชื้นพอดี ควบคุมเชื้อ ตัดเนื้อตาย)");
+    else if(k==="s1"||k==="dt")add("ลดแรงกดบริเวณแผล ไม่นวด ประเมินผิวทุกเวร");else if(k==="s2")add("ปิดแผลด้วยวัสดุชุ่มชื้น ไม่เจาะตุ่มน้ำ");else if(k==="iad")add("ทำความสะอาดผิวและเคลือบผิวหลังขับถ่ายทุกครั้ง");
+    if(x.device)add("ตรวจผิวใต้อุปกรณ์ รองวัสดุนุ่ม ขยับอุปกรณ์ทุก 2 ชม.")});
+  try{const CR=compoundRisk(t,crData());if(CR.crit){add("แจ้งหัวหน้าเวร/แพทย์ (Critical Risk) ใช้ที่นอนลดแรงกด");if(CR.f.some(f=>f.k==="alb"))add("ปรึกษานักโภชนาการภายใน 24 ชม.");if(CR.f.some(f=>f.k==="vp"))add("เฝ้าระวัง DTI ตรวจส้นเท้า/ก้นกบ/ใบหูทุก 2–4 ชม.");if(CR.f.some(f=>f.k==="hyp"))add("ตรวจผิวใต้อุปกรณ์ให้ออกซิเจน")}}catch(e){}
+  if((t!=null&&t<=12)||$("sepsis").checked)add("Soft silicone foam ป้องกันที่ก้นกบ/ส้นเท้า");
+  let prev=["พลิกตัวทุก 2 ชม."];try{const it=chkItems().map(i=>i.id);const S={heel:"ยกส้นเท้า",barrier:"ทา barrier cream หลังขับถ่าย",pos:"ตะแคง 30°",hob:"หัวเตียง ≤ 30°",lift:"ใช้ผ้ายกเคลื่อนย้าย",nut:"ติดตามอาหาร/feed"};it.forEach(k=>{if(S[k])prev.push(S[k])})}catch(e){}
+  add(prev.join(", "));
+  L.push("■ การพยาบาล");A.forEach(a=>L.push("- "+a));
+  const sk=skNoteLine();if(sk)L.push("■ "+sk.replace(/^\n/,"").replace(/ \(\d+ ตำแหน่ง\)/,""));
+  return L.join("\n");
 }
 /* init wounds from the saved draft, or start with the wound already on screen */
 (function(){
@@ -2987,6 +3034,18 @@ function healStats(pts){
   let eta=null;if(rate>0&&la>0){const d=new Date(l.date);d.setDate(d.getDate()+Math.round(la/rate*7));eta=d.toISOString().slice(0,10)}
   return {f,l,days,dp,da,pct,rate,status,stalled,eta,n:pts.length,twoWk:twoWk.length>0};
 }
+
+function renderProg(){
+  if(!featReady)return;const list=(wounds||[]).map((w,i)=>({x:woundCalc(w),i})).filter(o=>o.x.stage&&o.x.stage!=="none");
+  ["progW","progR"].forEach(id=>{const card=$(id);if(!card)return;card.hidden=!list.length;const box=card.querySelector(".prog-list");box.innerHTML="";
+    list.forEach(({x,i})=>{const h=woundProg(x),S=STAGES[x.stage],st=h&&h.n>=2?h.status:["ประเมินครั้งแรก","--muted","na"];
+      const r=document.createElement("div");r.className="prow";r.style.setProperty("--c",`var(${st[1]})`);
+      const pts=h?[]:[];
+      r.innerHTML=`<span class="ovn" style="background:var(${S?S.c:"--muted"})">${i+1}</span><div class="pr-t"><div class="pr-h"><b></b><span class="tpill">${st[0]}</span></div><small></small></div><div class="pr-s"></div>`;
+      r.querySelector("b").textContent=`${(x.site==="อื่น ๆ"&&x.siteNote?x.siteNote:siteShort(x.site))}${x.side?" "+x.side:""} · ${S?S.name.split(" (")[0]:""}`;
+      r.querySelector("small").textContent=h&&h.n>=2?`PUSH ${h.f.push} → ${h.l.push} · พื้นที่ ${(+h.f.a||0).toFixed(1)} → ${(+h.l.a||0).toFixed(1)} cm² (${h.pct>0?"+":""}${h.pct}%) · ${h.days} วัน ${h.n} ครั้ง`+(h.stalled?" · ⚠ ไม่ดีขึ้น ≥ 2 สัปดาห์":""):`PUSH ${x.push}/17 · พื้นที่ ${x.a.toFixed(1)} cm² · ค่าตั้งต้นสำหรับเทียบครั้งต่อไป`;
+      if(h&&h.n>=2){const ser=woundSeries(dashRows(),x.site+"|"+(x.side||"")).filter(p=>p.date!==$("date").value).map(p=>+p.push||0);ser.push(x.push);r.querySelector(".pr-s").innerHTML=spark(ser,css(st[1])||"#2e7d4f")}
+      r.onclick=()=>{go("wound");if(i!==wActive)switchWound(i)};box.append(r)})})}
 function woundName(r){return (r.site==="อื่น ๆ"&&r.siteNote?r.siteNote:siteShort(r.site))+(r.side?" "+r.side:"")}
 function renderDash(){
   if(!featReady)return;
