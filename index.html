@@ -1001,6 +1001,12 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
 #bwEdit[hidden]{display:none!important}
 
 .photo-btns[hidden],label.chk[hidden]{display:none!important}
+
+.camsize{border:1.5px solid var(--ok);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:10px;background:color-mix(in srgb,var(--ok) 8%,var(--surface))}
+.camsize[hidden]{display:none!important}
+.cs-h{display:flex;gap:10px;align-items:center}.cs-h div{display:flex;flex-direction:column}
+.cs-h b{color:var(--ok)}.cs-h small{color:var(--ink);font-size:.9rem}
+.cs-ok{width:28px;height:28px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
 </style>
 </head>
 <body>
@@ -1226,6 +1232,14 @@ details.crx[open]>.crx-s{border-bottom:1px solid var(--line)}
     <h2><span class="n">2</span>ถ่ายภาพแผล</h2>
     <p class="note" style="margin:0">วางไม้บรรทัดหรือแถบวัดแผลที่มีขีดเซนติเมตรชัด ๆ ไว้ข้างแผลในระนาบเดียวกับผิว ถือกล้องตั้งฉากกับแผล แสงสว่างพอ ไม่ให้เห็นใบหน้าหรือชื่อผู้ป่วยในภาพ ถ่ายเสร็จแอปจะหาไม้บรรทัดและขอบแผล แล้วคำนวณพื้นที่ให้อัตโนมัติ</p>
     <button class="btn primary livebtn" id="liveOpen" type="button"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M8 7l1.5-3h5L16 7"/><path d="M5 17h14M7 17v-2M10 17v-1.5M13 17v-2M16 17v-1.5"/></svg>เปิดกล้องพร้อมไม้บรรทัดวัดแผล</button>
+    <div class="camsize" id="camSize" hidden>
+      <div class="cs-h"><span class="cs-ok">✓</span><div><b>วัดขนาดจากกล้องแล้ว</b><small id="camSizeTxt"></small></div></div>
+      <p class="note" style="margin:0">ไม่ต้องกรอกขนาดในขั้นถัดไป ถ้าแผลมีความลึกหรือโพรงใต้ขอบ ให้วัดด้วยไม้พันสำลีปลอดเชื้อแล้วกรอกเพิ่มที่นี่</p>
+      <div class="grid">
+        <label for="camDep">ความลึก (ถ้ามี)<span class="unit"><input id="camDep" type="number" inputmode="decimal" min="0" step="0.1" placeholder="0"><span>cm</span></span></label>
+        <label for="camUnd">โพรงใต้ขอบ/อุโมงค์ (ถ้ามี)<span class="unit"><input id="camUnd" type="number" inputmode="decimal" min="0" step="0.1" placeholder="0"><span>cm</span></span></label>
+      </div>
+    </div>
     <div class="livefail" id="liveFail" hidden>
       <b>เปิดกล้องสดไม่ได้</b>
       <p id="liveFailMsg"></p>
@@ -2038,6 +2052,7 @@ function update(){
   if(typeof savePatient==="function")savePatient();
   if(wounds&&wounds.length)renderWoundBar();
   try{renderProg()}catch(e){}
+  try{camPaint()}catch(e){}
   {const nWo=(wounds||[]).filter(w=>w&&w.stage&&w.stage!=="none").length,nw=!nWo;
    $("noWound").classList.toggle("has",!nw);$("nwIc").textContent=nw?"✓":"!";
    $("nwT").textContent=nw?"ไม่พบแผลกดทับ":`มีแผลกดทับ ${nWo} ตำแหน่ง`;
@@ -2203,7 +2218,7 @@ $("mCal").onclick=()=>setMode("cal");$("mTrace").onclick=()=>setMode("trace");$(
 $("calcm").addEventListener("input",measure);
 $("undoPt").onclick=()=>{(mode==="cal"?cal:poly).pop();hint();measure()};
 $("clearPt").onclick=()=>{cal=[];poly=[];cvOverlay=null;$("cvOut").innerHTML="";setMode("cal");measure()};
-$("applySize").onclick=()=>{if(!meas)return;$("len").value=meas.L.toFixed(1);$("wid").value=meas.W.toFixed(1);st.photoUsed=meas.areaTrue;update();toast("");$("applySize").textContent="ใส่ขนาดในข้อ 3 แล้ว ใส่ความลึกต่อได้เลย";$("dep").focus()};
+$("applySize").onclick=()=>{if(!meas)return;$("len").value=meas.L.toFixed(1);$("wid").value=meas.W.toFixed(1);st.photoUsed=meas.areaTrue;update();camMark();toast("");$("applySize").textContent="ใส่ขนาดในข้อ 3 แล้ว ใส่ความลึกต่อได้เลย";$("dep").focus()};
 function loadPhoto(f,after){
   if(!f)return;
   $("photoErr").hidden=true;
@@ -2271,7 +2286,12 @@ function liveClose(){if(live.stream){live.stream.getTracks().forEach(t=>t.stop()
 function liveFrame(){if(live.still){const im=$("liveImg"),iw=im.naturalWidth,ih=im.naturalHeight;if(!iw)return null;const r=im.getBoundingClientRect(),k=Math.min(r.width/iw,r.height/ih);return {file:live.still.f,k,ox:(r.width-iw*k)/2,oy:(r.height-ih*k)/2}}
   const v=$("liveVid"),vw=v.videoWidth,vh=v.videoHeight;if(!vw)return null;const r=v.getBoundingClientRect(),k=Math.max(r.width/vw,r.height/vh),ox=(r.width-vw*k)/2,oy=(r.height-vh*k)/2;
   const c=document.createElement("canvas");c.width=vw;c.height=vh;c.getContext("2d").drawImage(v,0,0,vw,vh);return {c,k,ox,oy}}
-function liveApplySize(){if(live.L>0)$("len").value=live.L.toFixed(1);if(live.W>0)$("wid").value=live.W.toFixed(1);const w=curW();if(w){w.L=$("len").value;w.W=$("wid").value}update()}
+function liveApplySize(){if(live.L>0)$("len").value=live.L.toFixed(1);if(live.W>0)$("wid").value=live.W.toFixed(1);const w=curW();if(w){w.L=$("len").value;w.W=$("wid").value}update();camMark()}
+function camMark(){const w=curW();if(w){w.sizeSrc="cam";if(!(parseFloat($("dep").value)>0))$("dep").value=0}update();camPaint()}
+function camPaint(){const w=curW(),box=$("camSize");if(!box)return;const on=!!(w&&w.sizeSrc==="cam"&&parseFloat(w.L)>0&&parseFloat(w.W)>0);box.hidden=!on;if(!on)return;
+  const L=parseFloat(w.L),W=parseFloat(w.W);$("camSizeTxt").textContent=`ยาว ${L} × กว้าง ${W} cm · พื้นที่ ${(L*W).toFixed(1)} cm²`;
+  if(document.activeElement!==$("camDep"))$("camDep").value=parseFloat(w.D)>0?w.D:"";if(document.activeElement!==$("camUnd"))$("camUnd").value=parseFloat(w.U)>0?w.U:""}
+[["camDep","dep"],["camUnd","und"]].forEach(([a,b])=>$(a).addEventListener("input",()=>{$(b).value=$(a).value===""?(b==="dep"?0:""):$(a).value;$(b).dispatchEvent(new Event("input",{bubbles:true}))}));
 $("liveOpen").onclick=liveOpen;$("liveClose").onclick=liveClose;
 $("liveScale").addEventListener("input",()=>{live.ppc=+$("liveScale").value;$("liveScaleV").textContent=`${live.ppc.toFixed(0)} px = 1 cm`;try{localStorage.setItem("pi-live-ppc",String(live.ppc))}catch(e){}liveDraw()});
 $("liveGrid").onclick=()=>{live.grid=!live.grid;$("liveGrid").setAttribute("aria-pressed",live.grid);liveDraw()};
@@ -3471,13 +3491,14 @@ function renderStepModal(){
   const nx=$("smNext");nx.disabled=!!x.err;nx.textContent=x.n===STEPS.length?"เสร็จสิ้น · ดูการพยาบาลที่แนะนำ":"ถัดไป";
 }
 function closeStep(){if(!stepOpen)return;$("stepStore").append(stepEl(stepOpen));stepOpen=0;$("stepModal").hidden=true;document.body.classList.remove("noscroll");renderSteps()}
+["len","wid"].forEach(id=>$(id).addEventListener("input",e=>{if(e.isTrusted){const w=curW();if(w&&w.sizeSrc==="cam"){w.sizeSrc="";camPaint()}}}));
 $("smNext").onclick=()=>{
   const ss=stepState(),x=ss.find(s=>s.n===stepOpen);if(!x||x.err)return;const w=curW();
   if(x.skip&&w){w.visited=[...new Set([...(w.visited||[]),x.n])];update()}
-  if(x.n<STEPS.length){const n=x.n+1;openStep(n);const sh=$("stepModal").querySelector(".stepsheet");sh.classList.remove("swap","back");void sh.offsetWidth;sh.classList.add("swap")}
+  if(x.n<STEPS.length){let n=x.n+1;if(n===3&&w&&w.sizeSrc==="cam"&&parseFloat(w.L)>0&&parseFloat(w.W)>0)n=4;openStep(n);const sh=$("stepModal").querySelector(".stepsheet");sh.classList.remove("swap","back");void sh.offsetWidth;sh.classList.add("swap")}
   else{closeStep();openCare()}
 };
-$("smBack").onclick=()=>{if(stepOpen>1){openStep(stepOpen-1);const sh=$("stepModal").querySelector(".stepsheet");sh.classList.remove("swap","back");void sh.offsetWidth;sh.classList.add("back")}};
+$("smBack").onclick=()=>{if(stepOpen>1){const w=curW();openStep(stepOpen===4&&w&&w.sizeSrc==="cam"?2:stepOpen-1);const sh=$("stepModal").querySelector(".stepsheet");sh.classList.remove("swap","back");void sh.offsetWidth;sh.classList.add("back")}};
 $("smClose").onclick=closeStep;
 $("stepModal").addEventListener("click",e=>{if(e.target===$("stepModal"))closeStep()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&stepOpen)closeStep()});
