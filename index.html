@@ -453,6 +453,15 @@ section.card.cta{background:linear-gradient(135deg,var(--gold-t),var(--surface))
 .as-v{font-size:.78rem;font-weight:600;color:var(--muted);text-align:right;max-width:55%;overflow-wrap:anywhere}
 .as-v.on{color:var(--pc)}.as-v.bad{color:var(--s1)}
 .advsub .advchips{padding:2px 12px 12px}
+/* patient bar (read-only) */
+.pt-bar{display:flex;align-items:center;gap:12px}
+.pt-ic{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--pt);color:var(--pc)}
+.pt-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;line-height:1.35}
+.pt-tx b{font-family:var(--font-display);font-weight:600;font-size:1.08rem;overflow-wrap:anywhere}
+.pt-tx small{color:var(--muted);font-size:.84rem}
+.pt-tx small .hn{font-family:var(--font-num);font-weight:600;color:var(--ink)}
+.pt-chg{flex:none;background:var(--surface)}
+.pt-bar.empty .pt-tx b{color:var(--muted);font-weight:500}
 /* patient gate */
 .pg-sheet .rm-body{display:flex;flex-direction:column;gap:12px;padding:6px 18px 8px}
 .pg-hi{margin:0;font-family:var(--font-display);font-size:1.25rem;font-weight:600}
@@ -1264,7 +1273,12 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
   </header>
 
   <section class="card patient">
-    <div class="grid">
+    <div class="pt-bar" id="ptBar">
+      <span class="pt-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+      <div class="pt-tx"><b id="ptBarName"></b><small id="ptBarMeta"></small></div>
+      <button type="button" class="btn sm pt-chg" id="ptBarBtn">เปลี่ยนผู้ป่วย</button>
+    </div>
+    <div class="grid pt-edit" hidden>
       <input id="bed" type="hidden">
       <label for="hn">HN<input id="hn" type="text" inputmode="numeric" placeholder="เช่น 6701234"></label>
       <label for="ptName" class="pt-name">ชื่อ-สกุลผู้ป่วย<input id="ptName" type="text" autocomplete="off" placeholder="เช่น นายสมชาย ใจดี"></label>
@@ -1869,6 +1883,7 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
         <p class="pg-err" id="pgErr" role="alert"></p>
       </div>
       <div class="rm-foot">
+        <button class="btn" id="pgCancel" type="button" hidden>ยกเลิก</button>
         <button class="btn primary" id="pgGo" type="submit">ถัดไป: ประเมินความเสี่ยง</button>
       </div>
     </form>
@@ -4399,7 +4414,8 @@ $("ddLater").onclick=()=>{$("ddModal").hidden=true;document.body.classList.remov
 $("ddModal").addEventListener("click",e=>{if(e.target===$("ddModal"))$("ddLater").onclick()});
 setTimeout(()=>ddPop(),1200);
 /* patient gate: after login, enter HN + name before assessing */
-function ptGateOpen(){if(!otGet()||!$("loginGate").hidden)return;const g=$("ptGate");if(!g)return;
+function ptGateOpen(canCancel){if(!otGet()||!$("loginGate").hidden)return;const g=$("ptGate");if(!g)return;
+  {const h0=$("hn").value.trim();$("pgCancel").hidden=!(canCancel===true&&h0&&h0!=="ตัวอย่าง")}
   const u=otGet()||{},hn=$("hn").value.trim(),real=hn&&hn!=="ตัวอย่าง";
   $("pgSub").textContent=`${u.name?u.name+" · ":""}กรอก HN และชื่อผู้ป่วย แล้วจึงเริ่มประเมินความเสี่ยง`;
   $("pgHN").value=real?hn:"";$("pgName").value=real?$("ptName").value.trim():"";$("pgDate").value=$("date").value||new Date(Date.now()+7*3600e3).toISOString().slice(0,10);$("pgErr").textContent="";
@@ -4416,9 +4432,21 @@ $("pgForm").addEventListener("submit",e=>{e.preventDefault();const hn=$("pgHN").
   if(nm.length<2){$("pgErr").textContent="ใส่ชื่อ-สกุลผู้ป่วย";$("pgName").focus();return}
   if(hn!==curHN){if(!loadPatientRec(hn))blankPatientForm();changePatient(hn)}
   $("hn").value=hn;$("ptName").value=nm;if($("pgDate").value)$("date").value=$("pgDate").value;
-  try{savePatient()}catch(e){}update();try{dcPaint()}catch(e){}
+  try{savePatient()}catch(e){}update();try{dcPaint()}catch(e){}try{ptBarPaint()}catch(e){}
   $("ptGate").hidden=true;document.body.classList.remove("noscroll");go("prevent");window.scrollTo(0,0)});
 setTimeout(()=>{try{if(otGet()&&$("loginGate").hidden){const h=$("hn").value.trim();if(!h||h==="ตัวอย่าง")ptGateOpen()}}catch(e){}},900);
+/* read-only patient bar */
+function ptBarPaint(){const bar=$("ptBar");if(!bar)return;const hn=$("hn").value.trim(),nm=$("ptName").value.trim(),d=$("date").value;
+  const empty=!hn;bar.classList.toggle("empty",empty);
+  $("ptBarName").textContent=empty?"ยังไม่ได้เลือกผู้ป่วย":(nm||"ไม่ระบุชื่อ");
+  let dt="";try{dt=d?thDateLong(d):""}catch(e){dt=d}
+  $("ptBarMeta").innerHTML=empty?"แตะ เลือกผู้ป่วย เพื่อกรอก HN และชื่อ":`HN <span class="hn"></span>${dt?" · ประเมินวันที่ "+esc(dt):""}`;
+  if(!empty)$("ptBarMeta").querySelector(".hn").textContent=hn;
+  $("ptBarBtn").textContent=empty?"เลือกผู้ป่วย":"เปลี่ยนผู้ป่วย"}
+$("ptBarBtn").onclick=()=>ptGateOpen(true);
+$("pgCancel").onclick=()=>{$("ptGate").hidden=true;document.body.classList.remove("noscroll")};
+{const _upd=update;update=function(){const r=_upd.apply(this,arguments);try{ptBarPaint()}catch(e){}return r}}
+setTimeout(()=>{try{ptBarPaint()}catch(e){}},50);
 /* discharge (all users) */
 var dcKind="home";
 var DCK={home:"กลับบ้าน",transfer:"ย้ายหอผู้ป่วย",refer:"ส่งต่อโรงพยาบาลอื่น",dead:"เสียชีวิต",other:"อื่น ๆ"};
@@ -4449,7 +4477,7 @@ $("dcBtn").onclick=()=>{const hn=$("hn").value.trim();if(!hn)return;
   try{syncEnq("delpatient",hn,null)}catch(e){}
   blankPatientForm();$("dcNote").value="";dcKind="home";$("dcDate").value="";$("dcTime").value="";
   renderHist();try{if(isAdmin())renderWard()}catch(e){}dcPaint();
-  go("prevent");window.scrollTo(0,0);setTimeout(()=>{try{ptGateOpen()}catch(e){}},300);
+  go("prevent");window.scrollTo(0,0);try{ptBarPaint()}catch(e){}
   advise("จำหน่ายผู้ป่วยแล้ว",`HN ${hn} · ${DCK[kind]} · บันทึกไว้ในประวัติการประเมิน`,"--ok","✓")};
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
