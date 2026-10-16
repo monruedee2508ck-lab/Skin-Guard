@@ -1431,6 +1431,20 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
 .signbox .sign-g>label{min-width:0}
 .signbox input,.signbox select{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
 .signbox input[type=date],.signbox input[type=time]{-webkit-appearance:none;appearance:none;text-align:left}
+/* stage illustrations */
+.stage-opt{flex-direction:row!important;align-items:flex-start;gap:12px!important;--svbg:var(--surface)}
+.stage-opt[aria-pressed=true]{--svbg:color-mix(in srgb,var(--c) 10%,var(--surface))}
+.stage-opt .st-svg{flex:none;width:104px;height:68px;border-radius:8px;border:1px solid var(--line);background:var(--svbg)}
+.stage-opt .st-tx{display:flex;flex-direction:column;gap:2px;min-width:0;color:inherit;font-size:inherit}
+.stage-opt .st-tx b{font-size:.95rem;color:var(--ink)}
+.st-legend{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.74rem;color:var(--muted);margin:0 2px 2px}
+.st-legend span{display:inline-flex;align-items:center;gap:5px}
+.st-legend span::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--d);border:1px solid rgba(0,0,0,.12)}
+.gd-st{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
+.gd-st .st-svg{flex:none;width:84px;height:55px;border-radius:6px;border:1px solid var(--line);background:var(--surface)}
+@media (min-width:700px){.stages{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+  .stage-opt{flex-direction:column!important;gap:8px!important}
+  .stage-opt .st-svg{width:100%;height:auto;aspect-ratio:120/78;max-height:130px}}
 </style>
 </head>
 <body>
@@ -2354,11 +2368,27 @@ function renderWizard(){
     again.onclick=()=>{st.path=[];st.node="start";st.stage=null;update();renderWizard();renderStages()};
     r.append(back,again);w.append(r)}
 }
+
+/* stage illustration: skin cross-section (epidermis, dermis, fat, muscle, bone) */
+function stageSvg(k){const cut=(w,d)=>`M${60-w},16 C${60-w+5},${d} ${60+w-5},${d} ${60+w},16 Z`,bed=(w,d)=>`M${60-w},16 C${60-w+5},${d} ${60+w-5},${d} ${60+w},16`;
+  let g=`<rect x="0" y="16" width="120" height="5" fill="#f1c7a6"/><rect x="0" y="21" width="120" height="14" fill="#eaa293"/>
+<rect x="0" y="35" width="120" height="17" fill="#f6dc8a"/>${[8,22,36,50,64,78,92,106].map((x,i)=>`<circle cx="${x+(i%2?3:0)}" cy="${i%2?46:41}" r="4.2" fill="none" stroke="#e2bf5c" stroke-width=".8"/>`).join("")}
+<rect x="0" y="52" width="120" height="15" fill="#c95f5a"/>${[56,60,64].map(y=>`<path d="M0 ${y}H120" stroke="#b04b47" stroke-width=".7" stroke-dasharray="7 4"/>`).join("")}
+<rect x="0" y="67" width="120" height="11" fill="#ece4d3"/><path d="M0 67H120" stroke="#cfc4ad" stroke-width=".8"/>`;
+  const air='fill="var(--svbg,var(--surface))"';
+  if(k==="s1")g+=`<ellipse cx="60" cy="21" rx="28" ry="6" fill="#d8433b" opacity=".5"/><ellipse cx="60" cy="18.5" rx="22" ry="2.6" fill="#c9302a" opacity=".55"/>`;
+  else if(k==="s2")g+=`<path d="${cut(22,30)}" ${air}/><path d="${bed(22,30)}" fill="none" stroke="#f08c8c" stroke-width="2.4"/>`;
+  else if(k==="s3")g+=`<path d="${cut(26,48)}" ${air}/><path d="${bed(26,48)}" fill="none" stroke="#d8433b" stroke-width="2.6"/><path d="M50 40.5q4 -2 8 0" stroke="#f3e1a0" stroke-width="2" fill="none"/>`;
+  else if(k==="s4")g+=`<path d="${cut(28,74)}" ${air}/><path d="${bed(28,74)}" fill="none" stroke="#d8433b" stroke-width="2.4"/><ellipse cx="60" cy="68.5" rx="11" ry="3.2" fill="#fbf7ee" stroke="#cfc4ad" stroke-width=".8"/>`;
+  else if(k==="us")g+=`<path d="${cut(28,58)}" fill="#4b3326"/><path d="M34 16h52" stroke="#3a261c" stroke-width="3"/><ellipse cx="66" cy="24" rx="9" ry="3.4" fill="#d9c070" opacity=".9"/><path d="M42 21l6 3M70 30l7 2" stroke="#2a1a12" stroke-width="1"/>`;
+  else if(k==="dt")g+=`<ellipse cx="60" cy="18.5" rx="26" ry="3.6" fill="#7a3a8c" opacity=".65"/><ellipse cx="60" cy="58" rx="30" ry="11" fill="#5e2468" opacity=".72"/><ellipse cx="60" cy="58" rx="16" ry="5" fill="#3f1446" opacity=".6"/>`;
+  else if(k==="iad")g+=`<ellipse cx="60" cy="18" rx="42" ry="3.5" fill="#e0574f" opacity=".45"/><path d="M28 16.5l6-1.2M52 16.4l7-1M78 16.5l6-1.1" stroke="#c43c35" stroke-width="1.2"/>${[[34,8],[48,5],[66,9],[82,6],[94,10]].map(([x,y])=>`<path d="M${x} ${y}q2.2 3 0 4.6q-2.2-1.6 0-4.6z" fill="#6fb4e1"/>`).join("")}`;
+  return `<svg class="st-svg" viewBox="0 0 120 78" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${g}</svg>`}
 function renderStages(){
-  const s=$("stages");s.innerHTML="";
+  const s=$("stages");s.innerHTML='<div class="st-legend" aria-hidden="true"><span style="--d:#f1c7a6">หนังกำพร้า</span><span style="--d:#eaa293">หนังแท้</span><span style="--d:#f6dc8a">ไขมัน</span><span style="--d:#c95f5a">กล้ามเนื้อ</span><span style="--d:#ece4d3">กระดูก</span></div>';
   Object.entries(STAGES).forEach(([k,v])=>{const b=document.createElement("button");b.className="stage-opt";
     b.style.setProperty("--c",`var(${v.c})`);b.setAttribute("aria-pressed",st.stage===k);
-    b.innerHTML=`<b>${v.name}</b><span>${v.d}</span>`;
+    b.innerHTML=`${stageSvg(k)}<span class="st-tx"><b>${v.name}</b><span>${v.d}</span></span>`;
     b.onclick=()=>{st.stage=k;st.node="="+k;st.path=["start"];update();renderStages();renderWizard()};s.append(b)});
 }
 function seg(el,title,opts,key){
@@ -4897,7 +4927,7 @@ $("hmGuide").onclick=()=>{const b=$("gdBody");if(!b.dataset.done){let h="";
     try{h+=`<h4>ระดับความเสี่ยงตาม Braden Scale</h4><div class="gd-row">${LEVELS.map(r=>`<span style="--c:var(${r.c})">${r.name} · ${r.range}</span>`).join("")}</div>`}catch(e){}
     try{h+=`<h4>การดูแลพื้นฐานทุกราย (Routine care)</h4><ul>${CARE.routine.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
     h+=`<h4>การพลิกตัวและจัดท่า</h4><ul><li>พลิกตะแคงตัวทุก 2 ชั่วโมง สลับ หงาย ตะแคงซ้าย ตะแคงขวา</li><li>ตะแคง 30 องศา ใช้หมอนรองหลังและระหว่างเข่า</li><li>ยกส้นเท้าให้ลอยพ้นที่นอน ไม่ไขหัวเตียงเกิน 30 องศาถ้าไม่มีข้อห้าม</li></ul>`;
-    try{h+=`<h4>ระดับแผลกดทับ (NPIAP)</h4><ul>${Object.values(STAGES).map(x=>`<li><b>${x.name}</b>${x.d?" · "+x.d:""}</li>`).join("")}</ul>`}catch(e){}
+    try{h+=`<h4>ระดับแผลกดทับ (NPIAP)</h4>${Object.entries(STAGES).map(([k,x])=>`<div class="gd-st">${stageSvg(k)}<div><b>${x.name}</b>${x.d?"<br>"+x.d:""}</div></div>`).join("")}`}catch(e){}
     try{h+=`<h4>Medical Device-Related Pressure Injury (MDRPI)</h4><ul>${CARE.device.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
     b.insertAdjacentHTML("beforeend",h);b.dataset.done=1}sheetOpen("guideModal")};
 $("gdClose").onclick=()=>sheetClose("guideModal");
