@@ -1213,6 +1213,127 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
 .login-gate.fade{animation:lgFade .35s ease-out}
 @keyframes lgFade{from{opacity:0}to{opacity:1}}
 .armed{background:var(--s1)!important;color:#fff!important;border-color:var(--s1)!important}
+
+/* ===== Pastel app theme (reference design) ===== */
+:root{--bg:#f4f5fb;--surface:#ffffff;--line:#e3e7f2;--ink:#1d2748;--muted:#67708f;
+  --teal:#13ac90;--teal-t:#e2f6f1;--coral:#e9567f;--coral-t:#fde8ee;--indigo:#7262e6;--indigo-t:#efecfd;--sky:#3a92dc;--sky-t:#e5f0fb;
+  --navy:#1e2a5a;--gold:#f0a03a;--gold-t:#fff2e0;--sun:#f0a03a;--sun-t:#fff2e0;
+  --mint1:#5fe0c4;--mint2:#22b99a;--hm-av:#e9e4ff;
+  --shadow:0 1px 3px rgba(60,72,140,.06),0 10px 26px rgba(60,72,140,.08)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1426;--surface:#171e36;--line:#2a3352;--ink:#e8ebf7;--muted:#9aa3c0;
+  --teal:#4fd8bb;--teal-t:#133630;--coral:#ff86a6;--coral-t:#3b1d2a;--indigo:#a497ff;--indigo-t:#252146;--sky:#7dbcf2;--sky-t:#14283d;
+  --navy:#0b1230;--gold:#f7bd5e;--gold-t:#352812;--sun:#f7bd5e;--sun-t:#352812;--mint1:#3fc9ad;--mint2:#1b9d83;--hm-av:#2a2550;
+  --shadow:0 1px 3px rgba(0,0,0,.3),0 10px 26px rgba(0,0,0,.28);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1426;--surface:#171e36;--line:#2a3352;--ink:#e8ebf7;--muted:#9aa3c0;
+  --teal:#4fd8bb;--teal-t:#133630;--coral:#ff86a6;--coral-t:#3b1d2a;--indigo:#a497ff;--indigo-t:#252146;--sky:#7dbcf2;--sky-t:#14283d;
+  --navy:#0b1230;--gold:#f7bd5e;--gold-t:#352812;--sun:#f7bd5e;--sun-t:#352812;--mint1:#3fc9ad;--mint2:#1b9d83;--hm-av:#2a2550;
+  --shadow:0 1px 3px rgba(0,0,0,.3),0 10px 26px rgba(0,0,0,.28);color-scheme:dark}
+html body{background:linear-gradient(165deg,#f1eeff 0%,#f4f6fb 42%,#e9f7f3 100%) fixed!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:linear-gradient(165deg,#161634 0%,#0f1426 45%,#0c1c22 100%) fixed!important}}
+:root[data-theme="dark"] body{background:linear-gradient(165deg,#161634 0%,#0f1426 45%,#0c1c22 100%) fixed!important}
+.app-bg{opacity:.28!important}
+section.card,.result{border-radius:22px}
+/* light top bar */
+header.hero.topbar{background:color-mix(in srgb,var(--surface) 88%,transparent)!important;color:var(--ink);box-shadow:var(--shadow)!important;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+header.hero.topbar h1{color:var(--navy);font-weight:700}
+header.hero.topbar h1 .g{background:linear-gradient(90deg,var(--mint2),var(--teal));-webkit-background-clip:text;background-clip:text;color:transparent}
+header.hero.topbar .brand-t small{color:var(--muted)}
+header.hero.topbar .art{display:none}
+header.hero.topbar::after{background:linear-gradient(90deg,var(--mint1),var(--indigo),var(--coral))!important;opacity:.8}
+.tb-wave{opacity:.55}
+.user-btn{background:var(--bg)!important;color:var(--ink)!important;border:1px solid var(--line)!important;box-shadow:none!important}
+.sync-st{background:var(--bg)!important;color:var(--ink)!important;border:1px solid var(--line)!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) header.hero.topbar h1{color:var(--ink)}}
+:root[data-theme="dark"] header.hero.topbar h1{color:var(--ink)}
+/* hide patient context on home/patients */
+body[data-page="home"] section.card.patient,body[data-page="patients"] section.card.patient,
+body[data-page="home"] .pagetabs,body[data-page="patients"] .pagetabs,
+body[data-page="home"] #alerts,body[data-page="patients"] #alerts{display:none!important}
+/* home */
+#page-home{gap:16px}
+.hm-hello{display:flex;align-items:center;gap:12px;padding:6px 4px 0}
+.hm-tx{flex:1;min-width:0}
+.hm-hi{margin:0;color:var(--muted);font-size:.95rem}
+.hm-tx h2{margin:2px 0 4px;font-family:var(--font-display);font-size:1.45rem;font-weight:600;color:var(--navy);line-height:1.25;overflow-wrap:anywhere}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hm-tx h2{color:var(--ink)}}
+:root[data-theme="dark"] .hm-tx h2{color:var(--ink)}
+.hm-sub{margin:0;color:var(--muted);font-size:.88rem}
+.hm-nurse{flex:none;width:96px;height:96px}
+.hm-main{font:inherit;display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;border:0;border-radius:22px;padding:18px;color:#fff;
+  background:linear-gradient(135deg,var(--mint1),var(--mint2));box-shadow:0 12px 26px -10px color-mix(in srgb,var(--mint2) 70%,transparent)}
+.hm-main .hm-ic{width:52px;height:52px;border-radius:16px;background:rgba(255,255,255,.25);display:grid;place-items:center;flex:none}
+.hm-mt{flex:1;display:flex;flex-direction:column;line-height:1.25}
+.hm-mt b{font-family:var(--font-display);font-size:1.2rem;font-weight:600}
+.hm-mt small{font-size:.95rem;opacity:.95}
+.hm-go{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.28);display:grid;place-items:center;font-size:1.4rem;line-height:1}
+.hm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:720px){.hm-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.hm-tile{font:inherit;position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:10px;text-align:left;cursor:pointer;border:0;border-radius:20px;padding:16px;min-height:118px;
+  background:var(--tb);color:var(--ink);box-shadow:var(--shadow)}
+.hm-tile b{font-family:var(--font-display);font-weight:600;font-size:.98rem;line-height:1.3;color:var(--tc)}
+.hm-tile .hm-ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--surface);color:var(--tc)}
+.t-pink{--tb:var(--coral-t);--tc:var(--coral)}.t-lav{--tb:var(--indigo-t);--tc:var(--indigo)}.t-peach{--tb:var(--gold-t);--tc:color-mix(in srgb,var(--gold) 80%,var(--ink))}.t-blue{--tb:var(--sky-t);--tc:var(--sky)}
+.hm-badge{position:absolute;top:10px;right:10px;min-width:24px;height:24px;border-radius:99px;padding:0 7px;background:var(--coral);color:#fff;font-style:normal;font-weight:700;font-size:.8rem;display:grid;place-items:center}
+.hm-tile:active,.hm-main:active{transform:scale(.98)}
+.hm-today h3{margin:4px 4px 10px;font-family:var(--font-display);font-size:1.08rem;font-weight:600}
+.hm-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:720px){.hm-stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.hm-stat{font:inherit;text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px;border:0;border-radius:18px;padding:14px;background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.hm-stat .si{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 14%,var(--surface));color:var(--c)}
+.hm-stat small{display:block;color:var(--muted);font-size:.8rem}
+.hm-stat b{font-family:var(--font-display);font-size:1.35rem;font-weight:600;color:var(--c)}
+.hm-stat b i{font-style:normal;font-size:.85rem;color:var(--muted);font-weight:500;margin-left:4px}
+/* patients */
+#page-patients{gap:12px}
+.pl-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:4px 4px 0}
+.pl-head h2{margin:0;font-family:var(--font-display);font-size:1.3rem;font-weight:600}
+.pl-search,label.pl-search{display:flex;flex-direction:row;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:0 14px;color:var(--muted);box-shadow:var(--shadow)}
+.pl-search input{flex:1;min-width:0;border:0!important;background:transparent!important;box-shadow:none!important;padding:12px 0;font-size:1rem}
+.pl-filters{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.pl-filters button{font:inherit;font-size:.86rem;white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:99px;padding:7px 14px;cursor:pointer}
+.pl-filters button[aria-pressed=true]{background:var(--indigo);border-color:var(--indigo);color:#fff;font-weight:600}
+.pl-list{display:flex;flex-direction:column;gap:10px}
+.pl-item{font:inherit;text-align:left;cursor:pointer;display:flex;align-items:center;gap:12px;width:100%;border:1px solid transparent;border-radius:20px;padding:12px 14px;background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.pl-item.on{border-color:var(--indigo)}
+.pl-av{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-display);font-weight:600;font-size:1.05rem;color:var(--avc);background:var(--avb)}
+.pl-tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.pl-tx b{font-size:.98rem;overflow-wrap:anywhere}
+.pl-tx small{color:var(--muted);font-size:.8rem}
+.pl-tx .pill{align-self:flex-start;font-size:.72rem}
+.pl-push{flex:none;text-align:right;font-family:var(--font-display);line-height:1.1}
+.pl-push small{display:block;font-size:.65rem;color:var(--muted);letter-spacing:.06em}
+.pl-push b{font-size:1.4rem;font-weight:600;color:var(--coral)}
+.pl-empty{text-align:center;color:var(--muted);padding:26px 12px;background:var(--surface);border-radius:20px;box-shadow:var(--shadow)}
+/* bottom nav */
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;
+  padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));
+  background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);box-shadow:0 -6px 24px rgba(40,50,110,.08)}
+.bnav button{font:inherit;font-size:.74rem;font-weight:600;border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border-radius:14px;cursor:pointer}
+.bnav button[aria-current=page]{color:var(--indigo);background:var(--indigo-t)}
+body.has-bnav .wrap{padding-bottom:84px}
+body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+@media (min-width:900px){.bnav{left:50%;right:auto;transform:translateX(-50%);width:min(560px,90vw);bottom:14px;border-radius:22px;border:1px solid var(--line)}}
+/* sheets */
+.more-list{display:flex;flex-direction:column;gap:8px;padding:8px 16px 4px}
+.more-list button{font:inherit;display:flex;align-items:center;gap:12px;text-align:left;border:0;border-radius:16px;padding:12px 14px;background:var(--bg);color:var(--ink);cursor:pointer;font-weight:600}
+.more-list button i{font-style:normal;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--c,var(--indigo)) 14%,var(--surface));color:var(--c,var(--indigo));font-size:1.05rem}
+.more-list button small{display:block;font-weight:400;color:var(--muted);font-size:.78rem}
+.more-list button.danger{color:var(--s1)}
+.al-list{display:flex;flex-direction:column;gap:8px;padding:6px 0}
+.al-item{font:inherit;text-align:left;cursor:pointer;display:flex;gap:10px;align-items:flex-start;border:0;border-radius:14px;padding:10px 12px;background:var(--bg);color:var(--ink);box-shadow:inset 4px 0 0 var(--c)}
+.al-item b{display:block;font-size:.92rem}
+.al-item small{color:var(--muted);font-size:.8rem}
+.gd-body h4{margin:8px 0 4px;font-family:var(--font-display);font-size:.98rem;color:var(--indigo)}
+.gd-body ul{margin:0;padding-left:20px;font-size:.9rem;display:flex;flex-direction:column;gap:3px}
+.gd-row{display:flex;gap:8px;flex-wrap:wrap}
+.gd-row span{font-size:.8rem;border-radius:99px;padding:3px 10px;background:color-mix(in srgb,var(--c) 14%,var(--surface));color:var(--c);font-weight:600}
+/* patient bar tune */
+.pt-ic{background:var(--hm-av)!important;color:var(--indigo)!important}
+/* splash */
+.login-gate{background:linear-gradient(180deg,#15205a 0%,#273287 42%,#5f55c9 78%,#9f92ee 100%)!important}
+.lg-quote{position:relative;margin:10px 0 0;display:flex;align-items:center;justify-content:center;gap:6px;color:rgba(255,255,255,.92);font-size:.98rem;font-style:italic}
+.lg-btn{background:linear-gradient(135deg,#4f86f7,#6b5ce6)!important;color:#fff!important;box-shadow:0 10px 24px -8px rgba(90,100,240,.7)!important}
+.lg-card{background:rgba(255,255,255,.1)!important;border-color:rgba(200,200,255,.28)!important}
 </style>
 </head>
 <body>
@@ -1238,6 +1359,7 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
         </svg>
                 <h1 id="lgTitle">Skin Guard</h1>
         <p class="lg-tag">Smart Pressure Injury Assessment<br>&amp; Clinical Care</p>
+        <p class="lg-quote"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 20s-7-4.4-7-9.6A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.4C19 15.6 12 20 12 20z" fill="#ff9fb6"/></svg>“ดูแลผิวหนัง คือการดูแลชีวิต”</p>
       </div>
       <form class="lg-card" id="lgForm" autocomplete="off">
         <label for="lgOT">เลข OT<input id="lgOT" type="text" inputmode="numeric" autocomplete="username" maxlength="12" placeholder="เช่น 12345" required></label>
@@ -1255,7 +1377,7 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
     <div class="tb-row">
       <div class="brand">
         <span class="logo" aria-hidden="true"><svg viewBox="0 0 512 512" width="44" height="44" aria-hidden="true"><defs><linearGradient id="sglbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#173a63"/><stop offset="1" stop-color="#0b1e38"/></linearGradient><linearGradient id="sglsh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fe3c8"/><stop offset="1" stop-color="#22a99a"/></linearGradient><linearGradient id="sglep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd2c2"/><stop offset="1" stop-color="#f6a48e"/></linearGradient><linearGradient id="sglde" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ec7f82"/><stop offset="1" stop-color="#d5596a"/></linearGradient><linearGradient id="sglfa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7d58a"/><stop offset="1" stop-color="#e9b85a"/></linearGradient><clipPath id="sglin"><path d="M256 120 L378 162 V250 C378 334 323 390 256 420 C189 390 134 334 134 250 V162 Z"/></clipPath></defs><rect width="512" height="512" rx="112" fill="url(#sglbg)"/><g transform="translate(256 256) scale(1.0) translate(-256 -270)"><path d="M256 120 L378 162 V250 C378 334 323 390 256 420 C189 390 134 334 134 250 V162 Z" fill="#0e2a4a" opacity=".55"/><g clip-path="url(#sglin)"><path d="M90.0,351.0 L94.0,351.7 L98.0,352.0 L102.0,351.8 L106.0,351.1 L110.0,350.1 L114.0,348.7 L118.0,347.1 L122.0,345.4 L126.0,343.8 L130.0,342.4 L134.0,341.2 L138.0,340.4 L142.0,340.0 L146.0,340.1 L150.0,340.7 L154.0,341.6 L158.0,342.9 L162.0,344.5 L166.0,346.1 L170.0,347.8 L174.0,349.3 L178.0,350.5 L182.0,351.5 L186.0,351.9 L190.0,352.0 L194.0,351.5 L198.0,350.6 L202.0,349.4 L206.0,347.9 L210.0,346.3 L214.0,344.6 L218.0,343.1 L222.0,341.7 L226.0,340.7 L230.0,340.1 L234.0,340.0 L238.0,340.3 L242.0,341.1 L246.0,342.2 L250.0,343.7 L254.0,345.3 L258.0,347.0 L262.0,348.6 L266.0,350.0 L270.0,351.0 L274.0,351.7 L278.0,352.0 L282.0,351.8 L286.0,351.1 L290.0,350.1 L294.0,348.7 L298.0,347.1 L302.0,345.4 L306.0,343.8 L310.0,342.4 L314.0,341.2 L318.0,340.4 L322.0,340.0 L326.0,340.1 L330.0,340.7 L334.0,341.6 L338.0,342.9 L342.0,344.5 L346.0,346.1 L350.0,347.8 L354.0,349.3 L358.0,350.5 L362.0,351.5 L366.0,351.9 L370.0,352.0 L374.0,351.5 L378.0,350.6 L382.0,349.4 L386.0,347.9 L390.0,346.3 L394.0,344.6 L398.0,343.1 L402.0,341.7 L406.0,340.7 L410.0,340.1 L414.0,340.0 L418.0,340.3 L422.0,341.1 L422.0,470.0 L90.0,470.0 Z" fill="url(#sglfa)"/><circle cx="170" cy="380" r="19" fill="none" stroke="#c98f3a" stroke-width="3" opacity=".45"/><circle cx="214" cy="372" r="19" fill="none" stroke="#c98f3a" stroke-width="3" opacity=".45"/><circle cx="258" cy="384" r="19" fill="none" stroke="#c98f3a" stroke-width="3" opacity=".45"/><circle cx="302" cy="372" r="19" fill="none" stroke="#c98f3a" stroke-width="3" opacity=".45"/><circle cx="346" cy="380" r="19" fill="none" stroke="#c98f3a" stroke-width="3" opacity=".45"/><circle cx="192" cy="410" r="19" fill="none" stroke="#c98f3a" stroke-width="3" opacity=".45"/><circle cx="236" cy="412" r="19" fill="none" stroke="#c98f3a" stroke-width="3" opacity=".45"/><circle cx="280" cy="412" r="19" fill="none" stroke="#c98f3a" stroke-width="3" opacity=".45"/><circle cx="324" cy="410" r="19" fill="none" stroke="#c98f3a" stroke-width="3" opacity=".45"/><circle cx="258" cy="440" r="19" fill="none" stroke="#c98f3a" stroke-width="3" opacity=".45"/><path d="M90.0,301.0 L94.0,298.4 L98.0,292.0 L102.0,285.6 L106.0,283.0 L110.0,285.6 L114.0,292.0 L118.0,298.4 L122.0,301.0 L126.0,298.4 L130.0,292.0 L134.0,285.6 L138.0,283.0 L142.0,285.6 L146.0,292.0 L150.0,298.4 L154.0,301.0 L158.0,298.4 L162.0,292.0 L166.0,285.6 L170.0,283.0 L174.0,285.6 L178.0,292.0 L182.0,298.4 L186.0,301.0 L190.0,298.4 L194.0,292.0 L198.0,285.6 L202.0,283.0 L206.0,285.6 L210.0,292.0 L214.0,298.4 L218.0,301.0 L222.0,298.4 L226.0,292.0 L230.0,285.6 L234.0,283.0 L238.0,285.6 L242.0,292.0 L246.0,298.4 L250.0,301.0 L254.0,298.4 L258.0,292.0 L262.0,285.6 L266.0,283.0 L270.0,285.6 L274.0,292.0 L278.0,298.4 L282.0,301.0 L286.0,298.4 L290.0,292.0 L294.0,285.6 L298.0,283.0 L302.0,285.6 L306.0,292.0 L310.0,298.4 L314.0,301.0 L318.0,298.4 L322.0,292.0 L326.0,285.6 L330.0,283.0 L334.0,285.6 L338.0,292.0 L342.0,298.4 L346.0,301.0 L350.0,298.4 L354.0,292.0 L358.0,285.6 L362.0,283.0 L366.0,285.6 L370.0,292.0 L374.0,298.4 L378.0,301.0 L382.0,298.4 L386.0,292.0 L390.0,285.6 L394.0,283.0 L398.0,285.6 L402.0,292.0 L406.0,298.4 L410.0,301.0 L414.0,298.4 L418.0,292.0 L422.0,285.6 L422.0,341.1 L418.0,340.3 L414.0,340.0 L410.0,340.1 L406.0,340.7 L402.0,341.7 L398.0,343.1 L394.0,344.6 L390.0,346.3 L386.0,347.9 L382.0,349.4 L378.0,350.6 L374.0,351.5 L370.0,352.0 L366.0,351.9 L362.0,351.5 L358.0,350.5 L354.0,349.3 L350.0,347.8 L346.0,346.1 L342.0,344.5 L338.0,342.9 L334.0,341.6 L330.0,340.7 L326.0,340.1 L322.0,340.0 L318.0,340.4 L314.0,341.2 L310.0,342.4 L306.0,343.8 L302.0,345.4 L298.0,347.1 L294.0,348.7 L290.0,350.1 L286.0,351.1 L282.0,351.8 L278.0,352.0 L274.0,351.7 L270.0,351.0 L266.0,350.0 L262.0,348.6 L258.0,347.0 L254.0,345.3 L250.0,343.7 L246.0,342.2 L242.0,341.1 L238.0,340.3 L234.0,340.0 L230.0,340.1 L226.0,340.7 L222.0,341.7 L218.0,343.1 L214.0,344.6 L210.0,346.3 L206.0,347.9 L202.0,349.4 L198.0,350.6 L194.0,351.5 L190.0,352.0 L186.0,351.9 L182.0,351.5 L178.0,350.5 L174.0,349.3 L170.0,347.8 L166.0,346.1 L162.0,344.5 L158.0,342.9 L154.0,341.6 L150.0,340.7 L146.0,340.1 L142.0,340.0 L138.0,340.4 L134.0,341.2 L130.0,342.4 L126.0,343.8 L122.0,345.4 L118.0,347.1 L114.0,348.7 L110.0,350.1 L106.0,351.1 L102.0,351.8 L98.0,352.0 L94.0,351.7 L90.0,351.0 Z" fill="url(#sglde)"/><path d="M90.0,266.0 L94.0,268.7 L98.0,270.9 L102.0,272.5 L106.0,273.0 L110.0,272.5 L114.0,270.9 L118.0,268.7 L122.0,266.0 L126.0,263.3 L130.0,261.1 L134.0,259.5 L138.0,259.0 L142.0,259.5 L146.0,261.1 L150.0,263.3 L154.0,266.0 L158.0,268.7 L162.0,270.9 L166.0,272.5 L170.0,273.0 L174.0,272.5 L178.0,270.9 L182.0,268.7 L186.0,266.0 L190.0,263.3 L194.0,261.1 L198.0,259.5 L202.0,259.0 L206.0,259.5 L210.0,261.1 L214.0,263.3 L218.0,266.0 L222.0,268.7 L226.0,270.9 L230.0,272.5 L234.0,273.0 L238.0,272.5 L242.0,270.9 L246.0,268.7 L250.0,266.0 L254.0,263.3 L258.0,261.1 L262.0,259.5 L266.0,259.0 L270.0,259.5 L274.0,261.1 L278.0,263.3 L282.0,266.0 L286.0,268.7 L290.0,270.9 L294.0,272.5 L298.0,273.0 L302.0,272.5 L306.0,270.9 L310.0,268.7 L314.0,266.0 L318.0,263.3 L322.0,261.1 L326.0,259.5 L330.0,259.0 L334.0,259.5 L338.0,261.1 L342.0,263.3 L346.0,266.0 L350.0,268.7 L354.0,270.9 L358.0,272.5 L362.0,273.0 L366.0,272.5 L370.0,270.9 L374.0,268.7 L378.0,266.0 L382.0,263.3 L386.0,261.1 L390.0,259.5 L394.0,259.0 L398.0,259.5 L402.0,261.1 L406.0,263.3 L410.0,266.0 L414.0,268.7 L418.0,270.9 L422.0,272.5 L422.0,285.6 L418.0,292.0 L414.0,298.4 L410.0,301.0 L406.0,298.4 L402.0,292.0 L398.0,285.6 L394.0,283.0 L390.0,285.6 L386.0,292.0 L382.0,298.4 L378.0,301.0 L374.0,298.4 L370.0,292.0 L366.0,285.6 L362.0,283.0 L358.0,285.6 L354.0,292.0 L350.0,298.4 L346.0,301.0 L342.0,298.4 L338.0,292.0 L334.0,285.6 L330.0,283.0 L326.0,285.6 L322.0,292.0 L318.0,298.4 L314.0,301.0 L310.0,298.4 L306.0,292.0 L302.0,285.6 L298.0,283.0 L294.0,285.6 L290.0,292.0 L286.0,298.4 L282.0,301.0 L278.0,298.4 L274.0,292.0 L270.0,285.6 L266.0,283.0 L262.0,285.6 L258.0,292.0 L254.0,298.4 L250.0,301.0 L246.0,298.4 L242.0,292.0 L238.0,285.6 L234.0,283.0 L230.0,285.6 L226.0,292.0 L222.0,298.4 L218.0,301.0 L214.0,298.4 L210.0,292.0 L206.0,285.6 L202.0,283.0 L198.0,285.6 L194.0,292.0 L190.0,298.4 L186.0,301.0 L182.0,298.4 L178.0,292.0 L174.0,285.6 L170.0,283.0 L166.0,285.6 L162.0,292.0 L158.0,298.4 L154.0,301.0 L150.0,298.4 L146.0,292.0 L142.0,285.6 L138.0,283.0 L134.0,285.6 L130.0,292.0 L126.0,298.4 L122.0,301.0 L118.0,298.4 L114.0,292.0 L110.0,285.6 L106.0,283.0 L102.0,285.6 L98.0,292.0 L94.0,298.4 L90.0,301.0 Z" fill="url(#sglep)"/></g><path d="M206 196 L242 230 L310 160" fill="none" stroke="#f2c14e" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/><path d="M256 92 L404 142 V250 C404 350 338 414 256 450 C174 414 108 350 108 250 V142 Z" fill="none" stroke="url(#sglsh)" stroke-width="26" stroke-linejoin="round"/></g></svg></span>
-        <div class="brand-t"><h1>Skin Guard</h1><small>Smart Pressure Injury Assessment &amp; Clinical Care</small></div>
+        <div class="brand-t"><h1>Skin <span class="g">Guard</span></h1><small>Smart Pressure Injury Assessment &amp; Clinical Care</small></div>
       </div>
       <div class="tb-right">
         <button type="button" class="sync-st" id="syncSt" hidden></button>
@@ -1299,6 +1421,53 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
 
 
 
+
+  <div class="page" id="page-home" hidden>
+  <section class="hm-hello">
+    <div class="hm-tx"><p class="hm-hi">สวัสดีค่ะ</p><h2 id="hmName">คุณพยาบาล</h2><p class="hm-sub">ดูแลผู้ป่วยให้ปลอดภัยจากแผลกดทับ</p></div>
+    <svg class="hm-nurse" viewBox="0 0 120 120" aria-hidden="true">
+<circle cx="60" cy="60" r="56" fill="var(--hm-av)"/>
+<path d="M22 112c4-22 20-32 38-32s34 10 38 32" fill="#ffffff" stroke="#c9d3ee" stroke-width="1.5"/>
+<path d="M50 82l10 12 10-12" fill="none" stroke="#7fd6c2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="53" y="66" width="14" height="16" rx="6" fill="#f6cdb3"/>
+<path d="M33 52c0-17 12-28 27-28s27 11 27 28c0 8-2 14-5 18 1-9-2-17-6-21-6 4-18 7-32 6-4 5-6 10-6 15-3-4-5-10-5-18z" fill="#5b4a6e"/>
+<ellipse cx="60" cy="54" rx="19" ry="21" fill="#f9d9c4"/>
+<path d="M41 48c4-11 12-16 19-16 9 0 16 5 19 14-8-3-20-4-30-1-3 1-6 2-8 3z" fill="#5b4a6e"/>
+<circle cx="52" cy="56" r="2.3" fill="#3b2f4a"/><circle cx="68" cy="56" r="2.3" fill="#3b2f4a"/>
+<circle cx="47" cy="63" r="3.2" fill="#f7a7b4" opacity=".55"/><circle cx="73" cy="63" r="3.2" fill="#f7a7b4" opacity=".55"/>
+<path d="M54 66q6 5 12 0" fill="none" stroke="#c46a6f" stroke-width="2" stroke-linecap="round"/>
+<path d="M40 30q20-14 40 0l-3 9q-17-8-34 0z" fill="#ffffff" stroke="#c9d3ee" stroke-width="1.5"/>
+<path d="M60 26v8M56 30h8" stroke="#ee5b84" stroke-width="2.6" stroke-linecap="round"/>
+</svg>
+  </section>
+  <button class="hm-main" type="button" id="hmBraden">
+    <span class="hm-ic"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg></span>
+    <span class="hm-mt"><b>ประเมินความเสี่ยง</b><small>Braden Scale</small></span>
+    <span class="hm-go" aria-hidden="true">›</span>
+  </button>
+  <div class="hm-grid">
+    <button class="hm-tile t-pink" type="button" id="hmWound"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><path d="M8 22v-7H6.5L8 9h8l1.5 6H16v7"/><path d="M12 13v4"/></svg></span><b>ประเมินผิวหนัง<br>และแผล</b></button>
+    <button class="hm-tile t-lav" type="button" id="hmRecord"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/></svg></span><b>บันทึกผล<br>และติดตาม</b></button>
+    <button class="hm-tile t-peach" type="button" id="hmAlert"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><b>แจ้งเตือน<br>ความเสี่ยง</b><i class="hm-badge" id="hmAlertN" hidden></i></button>
+    <button class="hm-tile t-blue" type="button" id="hmGuide"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5c3-1 6-1 9 1 3-2 6-2 9-1v14c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6v14"/></svg></span><b>คู่มือ &amp; แนวทาง<br>การดูแล</b></button>
+  </div>
+  <section class="hm-today">
+    <h3>สรุปวันนี้</h3>
+    <div class="hm-stats" id="hmStats"></div>
+  </section>
+  </div>
+
+  <div class="page" id="page-patients" hidden>
+  <div class="pl-head"><h2>รายชื่อผู้ป่วย</h2><button class="btn primary sm" id="plAdd" type="button">+ รับผู้ป่วยใหม่</button></div>
+  <label class="pl-search" for="plQ"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="plQ" type="search" placeholder="ค้นหาชื่อ / HN" autocomplete="off"></label>
+  <div class="pl-filters" id="plF" role="group" aria-label="กรองรายชื่อ">
+    <button type="button" data-f="all" aria-pressed="true">ทั้งหมด</button>
+    <button type="button" data-f="high" aria-pressed="false">มีความเสี่ยงสูง</button>
+    <button type="button" data-f="wound" aria-pressed="false">มีแผลกดทับ</button>
+    <button type="button" data-f="due" aria-pressed="false">ต้องติดตาม</button>
+  </div>
+  <div class="pl-list" id="plList"></div>
+  </div>
 
   <div class="page" id="page-prevent">
   <section class="card">
@@ -1888,6 +2057,33 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
       </div>
     </form>
   </div>
+  <nav class="bnav" id="bnav" aria-label="เมนูหลัก" hidden>
+    <button type="button" data-b="home"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg><span>หน้าแรก</span></button>
+    <button type="button" data-b="patients"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>ผู้ป่วย</span></button>
+    <button type="button" data-b="history"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/></svg><span>ประวัติ</span></button>
+    <button type="button" data-b="more"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg><span>อื่น ๆ</span></button>
+  </nav>
+  <div class="modal" id="moreModal" hidden role="dialog" aria-modal="true" aria-label="เมนูเพิ่มเติม">
+    <div class="sheet more-sheet">
+      <div class="rm-kick">เมนูเพิ่มเติม</div>
+      <div class="rm-body more-list" id="moreList"></div>
+      <div class="rm-foot"><button class="btn" id="moreClose" type="button">ปิด</button></div>
+    </div>
+  </div>
+  <div class="modal" id="alModal" hidden role="dialog" aria-modal="true" aria-labelledby="alTitle">
+    <div class="sheet">
+      <div class="rm-kick">แจ้งเตือนความเสี่ยง</div>
+      <div class="rm-body"><h3 class="pg-hi" id="alTitle">ผู้ป่วยที่ต้องดูแลตอนนี้</h3><div class="al-list" id="alList"></div></div>
+      <div class="rm-foot"><button class="btn" id="alClose" type="button">ปิด</button></div>
+    </div>
+  </div>
+  <div class="modal" id="guideModal" hidden role="dialog" aria-modal="true" aria-labelledby="gdTitle">
+    <div class="sheet">
+      <div class="rm-kick">คู่มือ &amp; แนวทางการดูแล</div>
+      <div class="rm-body gd-body" id="gdBody"><h3 class="pg-hi" id="gdTitle">แนวทางป้องกันและดูแลแผลกดทับ</h3></div>
+      <div class="rm-foot"><button class="btn" id="gdClose" type="button">ปิด</button></div>
+    </div>
+  </div>
   <div class="modal" id="ddModal" hidden role="dialog" aria-modal="true" aria-labelledby="ddTitle">
     <div class="sheet">
       <div class="rm-kick">แจ้งเตือนการทำแผล</div>
@@ -2276,7 +2472,7 @@ function renderRisk(t){
   box.append(d);
 }
 /* Pages */
-const PAGES=["prevent","wound","trend","record","ward"];
+const PAGES=["home","patients","prevent","wound","trend","record","ward"];
 var ADMIN_PAGES=["trend","ward"],admNext=null,bootDone=false;
 var admMem=null,admRegMode=false;
 function admGet(){if(admMem)return admMem;try{const v=sessionStorage.getItem("pi-admin");if(v&&v[0]==="{")return JSON.parse(v)}catch(e){}return null}
@@ -2328,13 +2524,14 @@ async function admListRender(){const box=$("admList");if(!box)return;const u=adm
     box.append(r)});
   if(!list.length)box.innerHTML='<p class="note" style="margin:0">ยังไม่มีบัญชี</p>'}
 function go(pg,scroll){
-  if(!PAGES.includes(pg))pg="prevent";
+  if(!PAGES.includes(pg))pg="home";
   if(ADMIN_PAGES.includes(pg)&&!isAdmin()){if(bootDone){askAdmin(()=>go(pg,scroll));return}pg="prevent"}
   document.body.dataset.page=pg;
   if(pg==="record"){setTimeout(()=>{try{dcPaint()}catch(e){}},0)}
   if(pg==="record"||pg==="trend")setTimeout(renderDash,0);
   if(pg==="ward"){setTimeout(renderWard,0);setTimeout(()=>{try{admListRender()}catch(e){}},0)}
-  PAGES.forEach(x=>{$("page-"+x).hidden=x!==pg;$("tab-"+x).setAttribute("aria-selected",x===pg)});
+  PAGES.forEach(x=>{$("page-"+x).hidden=x!==pg;const tb=$("tab-"+x);if(tb)tb.setAttribute("aria-selected",x===pg)});
+  try{bnavPaint();if(pg==="home")homePaint();if(pg==="patients")plPaint()}catch(e){}
   try{localStorage.setItem("pi-page",pg)}catch(e){}
   try{history.replaceState(null,"","#"+pg)}catch(e){}
   if(scroll!==false)window.scrollTo({top:0,behavior:"smooth"});
@@ -3129,7 +3326,7 @@ $("lgForm").addEventListener("submit",e=>{e.preventDefault();const ot=$("lgOT").
   if(name.length<2){$("lgErr").textContent="ใส่ชื่อ-สกุล";$("lgName").focus();return}
   otUser={ot,name,at:Date.now()};try{sessionStorage.setItem("pi-ot",JSON.stringify(otUser));localStorage.setItem("pi-ot-last",JSON.stringify({ot,name}))}catch(e){}
   if(name){$("nurseName").value=name;try{localStorage.setItem("pi-nurse",name)}catch(e){}}
-  $("lgErr").textContent="";try{sessionStorage.removeItem("pi-dd-seen")}catch(e){}otPaint();try{update()}catch(e){}setTimeout(()=>{try{ptGateOpen()}catch(e){}},150);setTimeout(()=>ddPop(),500)});
+  $("lgErr").textContent="";try{sessionStorage.removeItem("pi-dd-seen")}catch(e){}otPaint();try{update()}catch(e){}go("home");setTimeout(()=>ddPop(),500)});
 function userMenu(open){const m=$("userMenu"),b=$("userBtn");if(!m)return;m.hidden=!open;if(b)b.setAttribute("aria-expanded",open)}
 $("userBtn").onclick=e=>{e.stopPropagation();userMenu($("userMenu").hidden)};
 document.addEventListener("click",e=>{if(!e.target.closest("#userMenu")&&!e.target.closest("#userBtn"))userMenu(false)});
@@ -3138,7 +3335,7 @@ function twoTap(btn,msg){if(btn.dataset.arm){delete btn.dataset.arm;return true}
   setTimeout(()=>{if(btn.dataset.arm){delete btn.dataset.arm;sp.textContent=old;btn.classList.remove("armed")}},3000);return false}
 function doLogout(){userMenu(false);otUser=null;try{sessionStorage.removeItem("pi-ot");sessionStorage.removeItem("pi-dd-seen")}catch(e){}try{setAdmin(false)}catch(e){}
   document.querySelectorAll(".modal").forEach(m=>m.hidden=true);try{liveClose()}catch(e){}document.body.classList.remove("noscroll");
-  go("prevent",false);window.scrollTo(0,0);otPaint();try{$("lgOT").value="";$("lgName").value="";$("lgErr").textContent="";setTimeout(()=>$("lgOT").focus(),100)}catch(e){}try{const g=$("loginGate");g.scrollTop=0;g.classList.remove("fade");void g.offsetWidth;g.classList.add("fade")}catch(e){}
+  go("home",false);window.scrollTo(0,0);otPaint();try{$("lgOT").value="";$("lgName").value="";$("lgErr").textContent="";setTimeout(()=>$("lgOT").focus(),100)}catch(e){}try{const g=$("loginGate");g.scrollTop=0;g.classList.remove("fade");void g.offsetWidth;g.classList.add("fade")}catch(e){}
   try{history.replaceState(null,"",location.pathname+"#login")}catch(e){}}
 $("otChip").onclick=doLogout;
 otPaint();
@@ -4414,6 +4611,7 @@ $("ddLater").onclick=()=>{$("ddModal").hidden=true;document.body.classList.remov
 $("ddModal").addEventListener("click",e=>{if(e.target===$("ddModal"))$("ddLater").onclick()});
 setTimeout(()=>ddPop(),1200);
 /* patient gate: after login, enter HN + name before assessing */
+var gateNext=null;
 function ptGateOpen(canCancel){if(!otGet()||!$("loginGate").hidden)return;const g=$("ptGate");if(!g)return;
   {const h0=$("hn").value.trim();$("pgCancel").hidden=!(canCancel===true&&h0&&h0!=="ตัวอย่าง")}
   const u=otGet()||{},hn=$("hn").value.trim(),real=hn&&hn!=="ตัวอย่าง";
@@ -4433,8 +4631,8 @@ $("pgForm").addEventListener("submit",e=>{e.preventDefault();const hn=$("pgHN").
   if(hn!==curHN){if(!loadPatientRec(hn))blankPatientForm();changePatient(hn)}
   $("hn").value=hn;$("ptName").value=nm;if($("pgDate").value)$("date").value=$("pgDate").value;
   try{savePatient()}catch(e){}update();try{dcPaint()}catch(e){}try{ptBarPaint()}catch(e){}
-  $("ptGate").hidden=true;document.body.classList.remove("noscroll");go("prevent");window.scrollTo(0,0)});
-setTimeout(()=>{try{if(otGet()&&$("loginGate").hidden){const h=$("hn").value.trim();if(!h||h==="ตัวอย่าง")ptGateOpen()}}catch(e){}},900);
+  $("ptGate").hidden=true;document.body.classList.remove("noscroll");const nx=gateNext||"prevent";gateNext=null;go(nx);window.scrollTo(0,0)});
+
 /* read-only patient bar */
 function ptBarPaint(){const bar=$("ptBar");if(!bar)return;const hn=$("hn").value.trim(),nm=$("ptName").value.trim(),d=$("date").value;
   const empty=!hn;bar.classList.toggle("empty",empty);
@@ -4442,11 +4640,80 @@ function ptBarPaint(){const bar=$("ptBar");if(!bar)return;const hn=$("hn").value
   let dt="";try{dt=d?thDateLong(d):""}catch(e){dt=d}
   $("ptBarMeta").innerHTML=empty?"แตะ เลือกผู้ป่วย เพื่อกรอก HN และชื่อ":`HN <span class="hn"></span>${dt?" · ประเมินวันที่ "+esc(dt):""}`;
   if(!empty)$("ptBarMeta").querySelector(".hn").textContent=hn;
-  $("ptBarBtn").textContent=empty?"เลือกผู้ป่วย":"เปลี่ยนผู้ป่วย"}
-$("ptBarBtn").onclick=()=>ptGateOpen(true);
+  $("ptBarBtn").textContent=empty?"เลือกผู้ป่วย":"เปลี่ยนผู้ป่วย";try{const u=otGet();$("bnav").hidden=!u;document.body.classList.toggle("has-bnav",!!u)}catch(e){}}
+$("ptBarBtn").onclick=()=>go("patients");
 $("pgCancel").onclick=()=>{$("ptGate").hidden=true;document.body.classList.remove("noscroll")};
 {const _upd=update;update=function(){const r=_upd.apply(this,arguments);try{ptBarPaint()}catch(e){}return r}}
 setTimeout(()=>{try{ptBarPaint()}catch(e){}},50);
+
+/* ===== Home dashboard, patient list, bottom nav ===== */
+function realHN(){const h=$("hn").value.trim();return h&&h!=="ตัวอย่าง"?h:""}
+function needPt(next){if(realHN())return go(next);gateNext=next;ptGateOpen(false)}
+function ptList(){let a=[];try{a=allPatients().filter(p=>p.hn&&p.hn!=="ตัวอย่าง")}catch(e){}return a.map(p=>{const t=riskOf(p.braden);let crit=false;try{crit=compoundRisk(t,p.cr||{}).crit}catch(e){}
+  const ws=(p.wounds||[]).filter(w=>w.stage&&w.stage!=="none");let push=null;ws.forEach(w=>{try{const v=woundCalc(w).push;if(push==null||v>push)push=v}catch(e){}});
+  let due=0;ws.forEach(w=>{try{const S=dressStatus(w);if(S.cls==="over"||S.cls==="soon")due++}catch(e){}});let turn=null;try{turn=turnFor(p.hn)}catch(e){}
+  return {p,t,crit,high:crit||(t!=null&&t<=12),ws,push,due,turn}}).sort((a,b)=>(b.p.updated||0)-(a.p.updated||0))}
+function homePaint(){const u=otGet()||{};$("hmName").textContent=u.name?"คุณ"+u.name.replace(/^(พว\.|พยาบาล|นาย|นาง|นางสาว|น\.ส\.)\s*/,""):"คุณพยาบาล";
+  const L=ptList(),high=L.filter(x=>x.high).length,wound=L.filter(x=>x.ws.length).length,due=L.reduce((a,x)=>a+x.due,0);
+  const st=(c,ic,lbl,v,unit,f)=>`<button type="button" class="hm-stat" style="--c:var(${c})" data-f="${f}"><span class="si">${ic}</span><span><small>${lbl}</small><b>${v}<i>${unit}</i></b></span></button>`;
+  $("hmStats").innerHTML=st("--teal","&#128100;","ผู้ป่วยทั้งหมด",L.length,"ราย","all")+st("--coral","&#9888;","มีความเสี่ยงสูง",high,"ราย","high")+st("--indigo","&#9673;","มีแผลกดทับ",wound,"ราย","wound")+st("--gold","&#9201;","ครบกำหนดทำแผล",due,"แผล","due");
+  $("hmStats").querySelectorAll(".hm-stat").forEach(b=>b.onclick=()=>{plFilter=b.dataset.f;go("patients")});
+  const n=alertItems().length,bd=$("hmAlertN");bd.hidden=!n;bd.textContent=n}
+var plFilter="all";
+function avColor(s){let h=0;for(const ch of String(s))h=(h*31+ch.charCodeAt(0))%360;return h}
+function plPaint(){const q=($("plQ").value||"").trim().toLowerCase();let L=ptList();
+  document.querySelectorAll("#plF button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.f===plFilter)));
+  if(plFilter==="high")L=L.filter(x=>x.high);else if(plFilter==="wound")L=L.filter(x=>x.ws.length);else if(plFilter==="due")L=L.filter(x=>x.due||x.high);
+  if(q)L=L.filter(x=>(x.p.hn+" "+(x.p.name||"")).toLowerCase().includes(q));
+  const box=$("plList");box.innerHTML="";
+  if(!L.length){box.innerHTML=`<div class="pl-empty">${q||plFilter!=="all"?"ไม่พบผู้ป่วยตามเงื่อนไขนี้":"ยังไม่มีผู้ป่วยในรายชื่อ กด + รับผู้ป่วยใหม่ เพื่อเริ่ม"}</div>`;return}
+  const cur=realHN();
+  L.forEach(x=>{const b=document.createElement("button");b.type="button";b.className="pl-item"+(x.p.hn===cur?" on":"");const hue=avColor(x.p.hn);
+    b.style.setProperty("--avb",`hsl(${hue} 70% 92%)`);b.style.setProperty("--avc",`hsl(${hue} 45% 38%)`);
+    const nm=x.p.name||"ไม่ระบุชื่อ",ini=(nm.replace(/^(นาย|นางสาว|นาง|น\.ส\.|ด\.ช\.|ด\.ญ\.)\s*/,"").trim()[0]||"?");
+    const dt=x.p.updated?new Date(x.p.updated).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"}):"";
+    b.innerHTML=`<span class="pl-av"></span><span class="pl-tx"><b></b><small></small>${riskPill(x.t,x.crit)}</span>${x.push!=null?`<span class="pl-push"><small>PUSH</small><b>${x.push}</b></span>`:""}`;
+    b.querySelector(".pl-av").textContent=ini;b.querySelector("b").textContent=nm;b.querySelector("small").textContent=`HN ${x.p.hn}${dt?" · "+dt:""}${x.due?" · ครบกำหนดทำแผล "+x.due:""}`;
+    b.onclick=()=>{if(x.p.hn!==curHN)changePatient(x.p.hn);go("prevent")};box.append(b)})}
+$("plQ").addEventListener("input",plPaint);
+document.querySelectorAll("#plF button").forEach(b=>b.onclick=()=>{plFilter=b.dataset.f;plPaint()});
+$("plAdd").onclick=()=>{gateNext="prevent";ptGateOpen(true);$("pgHN").value="";$("pgName").value="";$("pgCancel").hidden=false;setTimeout(()=>$("pgHN").focus(),120)};
+$("hmBraden").onclick=()=>needPt("prevent");$("hmWound").onclick=()=>needPt("wound");$("hmRecord").onclick=()=>needPt("record");
+function alertItems(){const out=[];ptList().forEach(x=>{const nm=`HN ${x.p.hn}${x.p.name?" · "+x.p.name:""}`;
+    if(x.crit)out.push({c:"--crit",hn:x.p.hn,t:"Critical Risk",d:nm,go:"prevent"});else if(x.high)out.push({c:"--s1",hn:x.p.hn,t:`${bradenRisk(x.t)} (Braden ${x.t})`,d:nm,go:"prevent"});
+    if(x.due)out.push({c:"--gold",hn:x.p.hn,t:`ครบกำหนดเปลี่ยนวัสดุปิดแผล ${x.due} แผล`,d:nm,go:"wound"});
+    try{if(x.turn&&x.turn.lt&&!x.turn.done)out.push({c:"--sky",hn:x.p.hn,t:`ถึงเวลาพลิกตัวเป็นท่า${x.turn.pos}`,d:nm,go:"prevent"})}catch(e){}});return out}
+function sheetOpen(id){document.querySelectorAll(".modal").forEach(m=>{if(m.id!==id)m.hidden=true});$(id).hidden=false;document.body.classList.add("noscroll")}
+function sheetClose(id){$(id).hidden=true;document.body.classList.remove("noscroll")}
+$("hmAlert").onclick=()=>{const A=alertItems(),box=$("alList");box.innerHTML=A.length?"":'<p class="note" style="margin:6px 2px">ตอนนี้ไม่มีผู้ป่วยที่ต้องแจ้งเตือน</p>';
+  A.forEach(a=>{const b=document.createElement("button");b.type="button";b.className="al-item";b.style.setProperty("--c",`var(${a.c})`);b.innerHTML="<span><b></b><small></small></span>";b.querySelector("b").textContent=a.t;b.querySelector("small").textContent=a.d;
+    b.onclick=()=>{sheetClose("alModal");if(a.hn!==curHN)changePatient(a.hn);go(a.go)};box.append(b)});sheetOpen("alModal")};
+$("alClose").onclick=()=>sheetClose("alModal");
+$("hmGuide").onclick=()=>{const b=$("gdBody");if(!b.dataset.done){let h="";
+    try{h+=`<h4>ระดับความเสี่ยงตาม Braden Scale</h4><div class="gd-row">${LEVELS.map(r=>`<span style="--c:var(${r.c})">${r.name} · ${r.range}</span>`).join("")}</div>`}catch(e){}
+    try{h+=`<h4>การดูแลพื้นฐานทุกราย (Routine care)</h4><ul>${CARE.routine.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
+    h+=`<h4>การพลิกตัวและจัดท่า</h4><ul><li>พลิกตะแคงตัวทุก 2 ชั่วโมง สลับ หงาย ตะแคงซ้าย ตะแคงขวา</li><li>ตะแคง 30 องศา ใช้หมอนรองหลังและระหว่างเข่า</li><li>ยกส้นเท้าให้ลอยพ้นที่นอน ไม่ไขหัวเตียงเกิน 30 องศาถ้าไม่มีข้อห้าม</li></ul>`;
+    try{h+=`<h4>ระดับแผลกดทับ (NPIAP)</h4><ul>${Object.values(STAGES).map(x=>`<li><b>${x.name}</b>${x.d?" · "+x.d:""}</li>`).join("")}</ul>`}catch(e){}
+    try{h+=`<h4>Medical Device-Related Pressure Injury (MDRPI)</h4><ul>${CARE.device.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
+    b.insertAdjacentHTML("beforeend",h);b.dataset.done=1}sheetOpen("guideModal")};
+$("gdClose").onclick=()=>sheetClose("guideModal");
+function bnavPaint(){const pg=document.body.dataset.page,m={home:"home",patients:"patients",prevent:"patients",wound:"patients",record:"history"};
+  document.querySelectorAll("#bnav button").forEach(b=>{if(b.dataset.b===m[pg])b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")})}
+document.querySelectorAll("#bnav button").forEach(b=>b.onclick=()=>{const k=b.dataset.b;
+  if(k==="home"||k==="patients")return go(k);
+  if(k==="history"){go("record");setTimeout(()=>{try{$("histFold").open=true;renderHist();$("histCard").scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}},150);return}
+  const L=$("moreList"),adm=isAdmin(),items=[
+    ["record","&#9998;","บันทึกการพยาบาล","Nurse's Note และจำหน่ายผู้ป่วย","--indigo"],
+    ["guide","&#128214;","คู่มือ & แนวทางการดูแล","ระดับความเสี่ยง การพลิกตัว ระดับแผล","--sky"],
+    ["trend","&#128200;","แนวโน้มและรายงาน",adm?"แนวโน้มแผล ตัวชี้วัดคุณภาพ ส่งออก Excel/PDF":"เฉพาะผู้ดูแลระบบ","--teal"],
+    ["ward","&#127973;","หอผู้ป่วยและระบบกลาง",adm?"ภาพรวมหอ ระบบกลาง บัญชีผู้ดูแล":"เฉพาะผู้ดูแลระบบ","--gold"],
+    ["admin","&#128273;",adm?"ออกจากโหมดผู้ดูแล":"เข้าโหมดผู้ดูแล (Admin)","","--crit"],
+    ["logout","&#8617;","ออกจากระบบ","","--s1"]];
+  L.innerHTML="";items.forEach(([k2,ic,t,sub,c])=>{const x=document.createElement("button");x.type="button";if(k2==="logout")x.className="danger";x.style.setProperty("--c",`var(${c})`);x.innerHTML=`<i>${ic}</i><span>${t}${sub?`<small>${sub}</small>`:""}</span>`;
+    x.onclick=()=>{sheetClose("moreModal");if(k2==="guide")return $("hmGuide").onclick();if(k2==="admin")return $("admLock").onclick();if(k2==="logout")return doLogout();go(k2)};L.append(x)});
+  sheetOpen("moreModal")});
+$("moreClose").onclick=()=>sheetClose("moreModal");
+setTimeout(()=>{try{ptBarPaint();bnavPaint();if(document.body.dataset.page==="home")homePaint();if(document.body.dataset.page==="patients")plPaint()}catch(e){}},200);
 /* discharge (all users) */
 var dcKind="home";
 var DCK={home:"กลับบ้าน",transfer:"ย้ายหอผู้ป่วย",refer:"ส่งต่อโรงพยาบาลอื่น",dead:"เสียชีวิต",other:"อื่น ๆ"};
@@ -4477,7 +4744,7 @@ $("dcBtn").onclick=()=>{const hn=$("hn").value.trim();if(!hn)return;
   try{syncEnq("delpatient",hn,null)}catch(e){}
   blankPatientForm();$("dcNote").value="";dcKind="home";$("dcDate").value="";$("dcTime").value="";
   renderHist();try{if(isAdmin())renderWard()}catch(e){}dcPaint();
-  go("prevent");window.scrollTo(0,0);try{ptBarPaint()}catch(e){}
+  go("home");window.scrollTo(0,0);try{ptBarPaint()}catch(e){}
   advise("จำหน่ายผู้ป่วยแล้ว",`HN ${hn} · ${DCK[kind]} · บันทึกไว้ในประวัติการประเมิน`,"--ok","✓")};
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
