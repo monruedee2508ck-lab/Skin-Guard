@@ -1540,13 +1540,13 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
     <button class="hm-tile t-blue" type="button" id="hmGuide"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5c3-1 6-1 9 1 3-2 6-2 9-1v14c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6v14"/></svg></span><b>คู่มือ &amp; แนวทาง<br>การดูแล</b></button>
   </div>
   <div class="hm-flow" aria-label="แนวคิด SMART-SKIN CARE"><span>Assess</span><i>›</i><span>Prevent</span><i>›</i><span>Monitor</span><i>›</i><span>Document</span><i>›</i><span>Improve</span></div>
+  <section class="hm-today" id="hmToday">
+    <h3>สรุปวันนี้</h3>
+    <div class="hm-stats" id="hmStats"></div>
+  </section>
   <section class="hm-today" id="hmTodo">
     <h3>งานที่ต้องทำตอนนี้</h3>
     <div class="al-list" id="hmTodoList"></div>
-  </section>
-  <section class="hm-today" id="hmToday" hidden>
-    <h3>สรุปวันนี้ <span class="adm-tag">ผู้ดูแลระบบ</span></h3>
-    <div class="hm-stats" id="hmStats"></div>
   </section>
   </div>
 
@@ -4851,7 +4851,7 @@ function homePaint(){const u=otGet()||{};$("hmName").textContent=u.name?"คุ�
   $("hmStats").innerHTML=st("--teal","&#128100;","ผู้ป่วยทั้งหมด",L.length,"ราย","all")+st("--coral","&#9888;","มีความเสี่ยงสูง",high,"ราย","high")+st("--indigo","&#9673;","มีแผลกดทับ",wound,"ราย","wound")+st("--gold","&#9201;","ครบกำหนดทำแผล",due,"แผล","due");
   $("hmStats").querySelectorAll(".hm-stat").forEach(b=>b.onclick=()=>{plFilter=b.dataset.f;go("patients")});
   const n=alertItems().length,bd=$("hmAlertN");bd.hidden=!n;bd.textContent=n;
-  const adm=isAdmin();$("hmToday").hidden=!adm;try{todoPaint()}catch(e){console.error(e)}}
+  $("hmToday").hidden=false;try{todoPaint()}catch(e){console.error(e)}}
 var plFilter="all";
 function avColor(s){let h=0;for(const ch of String(s))h=(h*31+ch.charCodeAt(0))%360;return h}
 function plPaint(){const q=($("plQ").value||"").trim().toLowerCase();let L=ptList();
