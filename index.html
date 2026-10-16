@@ -1423,6 +1423,11 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
 .signbox input,.signbox select{font-size:.86rem;min-height:36px;padding:6px 10px}
 .signbox .btn{font-size:.8rem;min-height:34px;padding:5px 12px}
 #planRisk .fs-t .h-en{display:block}
+/* risk sheet table of contents */
+.rm-toc{position:sticky;top:-8px;z-index:3;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:-8px -14px 6px;padding:8px 14px;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.rm-toc::-webkit-scrollbar{display:none}
+.rm-toc button{flex:none;font:inherit;font-size:.78rem;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 11px;cursor:pointer;white-space:nowrap}
+.rm-toc button[aria-current]{background:var(--teal);border-color:var(--teal);color:#fff}
 </style>
 </head>
 <body>
@@ -5114,6 +5119,24 @@ function kpi3Paint(){const box=$("kpi3G");if(!box||!isAdmin())return;const d0=bk
 /* --- admin state changes repaint the nav and home --- */
 {const _ap=admPaint;admPaint=function(){const r=_ap.apply(this,arguments);try{bnavPaint();if(document.body.dataset.page==="home")homePaint()}catch(e){}return r}}
 setTimeout(()=>{try{bnavPaint()}catch(e){}},120);
+
+/* --- table of contents inside the long assessment result sheet --- */
+function rmToc(){const m=$("riskModal");if(!m||m.hidden)return;const body=m.querySelector(".rm-body");if(!body)return;
+  let bar=$("rmToc");const H=[...body.querySelectorAll("#riskAlert h4,#riskAlert details>summary,#rmPane h4,#rmPane details>summary")].filter(e=>e.offsetParent!==null&&e.textContent.trim());
+  if(H.length<3){if(bar)bar.hidden=true;return}
+  if(!bar){bar=document.createElement("nav");bar.id="rmToc";bar.className="rm-toc";bar.setAttribute("aria-label","สารบัญ");body.prepend(bar);body.addEventListener("scroll",rmTocSpy,{passive:true})}
+  bar.hidden=false;bar.innerHTML="";rmToc.H=H;
+  H.forEach((h,i)=>{const t=h.textContent.replace(/\s+/g," ").trim().replace(/\s*\([^)]*\)\s*$/,"").replace(/\s*\(ข้อที่.*$/,"");
+    const b=document.createElement("button");b.type="button";b.textContent=t.length>26?t.slice(0,25)+"…":t;b.title=t;
+    b.onclick=()=>{const d=h.closest("details");if(d&&h.tagName==="SUMMARY")d.open=true;
+      const y=h.getBoundingClientRect().top-body.getBoundingClientRect().top+body.scrollTop-bar.offsetHeight-8;body.scrollTo({top:Math.max(0,y),behavior:"smooth"});
+      rmToc.lock=Date.now();bar.querySelectorAll("button").forEach(x=>x.removeAttribute("aria-current"));b.setAttribute("aria-current","true")};
+    bar.append(b)});rmTocSpy()}
+function rmTocSpy(){const bar=$("rmToc"),H=rmToc.H||[];if(!bar||bar.hidden||!H.length)return;if(rmToc.lock&&Date.now()-rmToc.lock<1200)return;const body=bar.parentNode,top=body.getBoundingClientRect().top+bar.offsetHeight+20;
+  let k=0;H.forEach((h,i)=>{if(h.getBoundingClientRect().top<=top)k=i});if(body.scrollTop>0&&body.scrollTop+body.clientHeight>=body.scrollHeight-4)k=H.length-1;const B=bar.querySelectorAll("button");
+  B.forEach((x,i)=>{if(i===k){if(!x.hasAttribute("aria-current")){x.setAttribute("aria-current","true");try{const L=x.offsetLeft-bar.offsetLeft,R=L+x.offsetWidth;if(L<bar.scrollLeft)bar.scrollTo({left:L-14,behavior:"smooth"});else if(R>bar.scrollLeft+bar.clientWidth)bar.scrollTo({left:R-bar.clientWidth+14,behavior:"smooth"})}catch(e){}}}else x.removeAttribute("aria-current")})}
+{const _rs=rmShow;rmShow=function(){const r=_rs.apply(this,arguments);setTimeout(()=>{try{const b=$("riskModal").querySelector(".rm-body");b.scrollTop=0;rmToc()}catch(e){}},30);return r}}
+{let tm=0;const mo=new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(()=>{try{rmToc()}catch(e){}},60)});["riskAlert","rmPane"].forEach(id=>{const e=$(id);if(e)mo.observe(e,{childList:true})})}
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}

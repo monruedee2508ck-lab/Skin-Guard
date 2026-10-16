@@ -1,5 +1,5 @@
 // Skin Guard service worker: ใช้งานแบบออฟไลน์ได้หลังเปิดครั้งแรก
-const VERSION = "skin-guard-v54";
+const VERSION = "skin-guard-v55";
 const CORE = ["./", "./index.html", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png", "./favicon.png"];
 const CDN = /^(https:\/\/cdnjs\.cloudflare\.com|https:\/\/fonts\.googleapis\.com|https:\/\/fonts\.gstatic\.com)/;
