@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#122b52">
 <meta name="description" content="Skin Guard ระบบประเมินความเสี่ยงและดูแลแผลกดทับ">
 <link rel="manifest" href="manifest.webmanifest">
@@ -1416,6 +1416,12 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
 .k3 small{display:block;color:var(--muted);font-size:.74rem;line-height:1.3}
 .k3 b{display:block;font-family:var(--font-num);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-top:4px}
 .k3 span{display:block;font-size:.74rem;color:var(--muted)}
+/* compact signature box */
+.signbox{padding:10px 12px;gap:8px}
+.signbox .sign-t{font-size:.84rem}
+.signbox label{font-size:.76rem}
+.signbox input,.signbox select{font-size:.86rem;min-height:36px;padding:6px 10px}
+.signbox .btn{font-size:.8rem;min-height:34px;padding:5px 12px}
 </style>
 </head>
 <body>
@@ -2740,7 +2746,6 @@ function renderAlerts(){
   if(hn&&typeof hist!=="undefined"){const today=$("date").value;const last=hist.filter(h=>!h.ex&&h.hn===hn&&h.braden!=null).sort((a,b)=>a.date<b.date?1:-1)[0];
     if(last&&last.date<today&&t==null)add("--s2",`<span><b>ถึงเวลาประเมิน Braden ประจำวัน</b> ครั้งล่าสุด ${last.date} ได้ ${last.braden} คะแนน</span>`)}
   skAlert(add);featAlerts(add);try{worseAlerts(add)}catch(e){}
-  if(t==null&&!$("sepsis").checked&&BRADEN.every(([k])=>!st.braden[k]))add("--accent",`<span><b>ยังไม่ได้ประเมิน Braden</b> ผู้ป่วยแรกรับทุกรายต้องประเมินผิวหนังภายใน 1 ชั่วโมง และประเมิน Braden ในหน้าประเมินความเสี่ยง</span>`);
 }
 function stageName(k){return k==="none"?"ไม่เข้าเกณฑ์แผลกดทับ":k?STAGES[k].name:"ยังไม่ได้เลือก"}
 function update(){
@@ -3508,7 +3513,7 @@ function otPaint(){const u=otGet(),gate=$("loginGate");gate.hidden=!!u;document.
   if(u){const nm=u.name||("OT "+u.ot);$("userName").textContent=nm;$("userAv").textContent=userInit(u.name)||"?";$("umAv").textContent=userInit(u.name);$("umName").textContent=nm;
     $("umSub").textContent=`OT ${u.ot}`+(isAdmin()?" · ผู้ดูแลระบบ":"");if(u.name&&!$("nurseName").value.trim()){$("nurseName").value=u.name}}
   else{try{const l=JSON.parse(localStorage.getItem("pi-ot-last")||"null");if(l){$("lgOT").value=l.ot||"";$("lgName").value=l.name||""}}catch(e){}setTimeout(()=>{try{($("lgOT").value?$("lgName"):$("lgOT")).focus()}catch(e){}},80)}}
-$("lgForm").addEventListener("submit",e=>{e.preventDefault();const ot=$("lgOT").value.trim().replace(/\s+/g,""),name=$("lgName").value.trim();
+$("lgForm").addEventListener("submit",e=>{e.preventDefault();try{setAdmin(false)}catch(x){}const ot=$("lgOT").value.trim().replace(/\s+/g,""),name=$("lgName").value.trim();
   if(!/^[0-9A-Za-z\-]{3,12}$/.test(ot)){$("lgErr").textContent="ใส่เลข OT 3–12 หลัก (ตัวเลขหรือตัวอักษร)";$("lgOT").focus();return}
   if(name.length<2){$("lgErr").textContent="ใส่ชื่อ-สกุล";$("lgName").focus();return}
   otUser={ot,name,at:Date.now()};try{sessionStorage.setItem("pi-ot",JSON.stringify(otUser));localStorage.setItem("pi-ot-last",JSON.stringify({ot,name}))}catch(e){}
