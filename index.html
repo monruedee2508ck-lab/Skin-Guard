@@ -443,6 +443,29 @@ section.card.cta{background:linear-gradient(135deg,var(--gold-t),var(--surface))
 .sitechips button.on::before{color:var(--surface)}
 @media (prefers-reduced-motion:reduce){.pop,.advice.show,.advice.out{animation:none}}
 
+/* wound feature sub-items */
+.advsub{border-radius:12px;background:var(--bg);overflow:hidden}
+.advsub>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:11px 12px;font-weight:600;font-size:.92rem}
+.advsub>summary::-webkit-details-marker{display:none}
+.advsub>summary::after{content:"";flex:none;width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:-4px 2px 0 0;transition:transform .2s}
+.advsub[open]>summary::after{transform:rotate(-135deg);margin-top:4px}
+.as-t{flex:1;min-width:0}
+.as-v{font-size:.78rem;font-weight:600;color:var(--muted);text-align:right;max-width:55%;overflow-wrap:anywhere}
+.as-v.on{color:var(--pc)}.as-v.bad{color:var(--s1)}
+.advsub .advchips{padding:2px 12px 12px}
+/* patient gate */
+.pg-sheet .rm-body{display:flex;flex-direction:column;gap:12px;padding:6px 18px 8px}
+.pg-hi{margin:0;font-family:var(--font-display);font-size:1.25rem;font-weight:600}
+.pg-sub{margin:0;color:var(--muted);font-size:.9rem}
+.pg-g{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);gap:10px}
+@media (max-width:480px){.pg-g{grid-template-columns:1fr}}
+.pg-list{display:flex;flex-direction:column;gap:6px}
+.pg-list .lbl{font-size:.82rem;color:var(--muted)}
+.pg-chips{display:flex;flex-wrap:wrap;gap:6px}
+.pg-chips button{font:inherit;font-size:.84rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:6px 12px;cursor:pointer}
+.pg-chips button b{font-family:var(--font-num);font-weight:600}
+.pg-err{margin:0;color:var(--s1);font-size:.86rem;min-height:1.2em}
+#ptGate .rm-foot .btn.primary{flex:2}
 /* discharge */
 .dccard .dc-pt{font-size:.95rem}
 .dccard .dc-pt b{font-family:var(--font-display);font-weight:600}
@@ -749,7 +772,7 @@ header.hero .hero-th{font-family:var(--font-display);font-weight:500;color:#fff;
 .sm-body{padding:12px 14px}
 .sm-body>section.card{box-shadow:none;padding:0;background:transparent;overflow:visible}
 .sm-body>section.card>h2{display:none}
-.sm-body>section.card.fold details>summary{display:none}
+.sm-body>section.card.fold details:not(.advsub)>summary{display:none}
 .sm-body>section.card.fold .fold-body{padding:0}
 .sm-body>section.card.fold .infwarn:not(:empty){padding:12px 0 0}
 .sm-hint{padding:0 18px;font-size:.84rem;color:var(--muted);min-height:0}
@@ -1266,7 +1289,6 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
   <div class="page" id="page-prevent">
   <section class="card">
     <h2><span class="n">1</span>ประเมินความเสี่ยง Braden Scale</h2>
-    <p class="note" style="margin:0">แบบประเมินความเสี่ยงต่อการเกิดแผลกดทับของบราเดน ประเมินผู้ป่วยแรกรับทุกราย และประเมินต่อเนื่องทุกวัน วันละ 1 ครั้ง</p>
     <button class="btn primary bw-start" id="bwStart" type="button">เริ่มประเมิน Braden</button>
     <button class="btn ghost bw-start" id="bwEdit" type="button" hidden>แก้ไขคะแนน Braden</button>
     <div class="bwrap" id="braden"></div>
@@ -1431,9 +1453,9 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
       </label>
     </div>
     <label for="siteNote" id="siteNoteWrap" hidden>ระบุตำแหน่งเอง<input id="siteNote" type="text" placeholder="เช่น ด้านในหัวเข่าขวา, ใต้สายให้อาหาร"></label>
-    <label class="chk" for="device"><input id="device" type="checkbox">เกิดจากอุปกรณ์การแพทย์ (Medical device-related, MDRPI)</label>
+    <label class="chk" for="device"><input id="device" type="checkbox">Medical Device-Related Pressure Injury (MDRPI)</label>
     <div class="devbox" id="devBox" hidden>
-      <div class="lbl skl">ชนิดอุปกรณ์การแพทย์ (เลือกได้มากกว่า 1)</div>
+      <div class="lbl skl">Medical device (select all that apply)</div>
       <div class="advchips" id="devChips"></div>
       <input id="devOther" type="text" placeholder="ระบุอุปกรณ์อื่น" aria-label="ระบุอุปกรณ์อื่น" hidden>
     </div>
@@ -1544,9 +1566,9 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
    <details id="advFold">
     <summary><span class="n">6</span><span class="fs-t">ลักษณะแผลเพิ่มเติม</span><span class="fs-m" id="advSum"></span></summary>
     <div class="fold-body">
-    <div class="advgrp"><div class="lbl skl">ขอบแผล (Wound edge)</div><div class="advchips" id="advEdge"></div></div>
-    <div class="advgrp"><div class="lbl skl">ผิวหนังรอบแผล (Periwound skin)</div><div class="advchips" id="advPeri"></div></div>
-    <div class="advgrp"><div class="lbl skl">สัญญาณการติดเชื้อ (Signs of infection)</div><div class="advchips" id="advInf"></div></div>
+    <details class="advsub" id="advSubEdge"><summary><span class="as-t">ขอบแผล (Wound edge)</span><span class="as-v" id="advVEdge"></span></summary><div class="advchips" id="advEdge"></div></details>
+    <details class="advsub" id="advSubPeri"><summary><span class="as-t">ผิวหนังรอบแผล (Periwound skin)</span><span class="as-v" id="advVPeri"></span></summary><div class="advchips" id="advPeri"></div></details>
+    <details class="advsub" id="advSubInf"><summary><span class="as-t">สัญญาณการติดเชื้อ (Signs of infection)</span><span class="as-v" id="advVInf"></span></summary><div class="advchips" id="advInf"></div></details>
     </div>
    </details>
     <div id="infWarn" class="infwarn"></div>
@@ -1831,6 +1853,25 @@ section.card.patient::before{content:"";position:absolute;left:0;right:0;top:0;h
         <button class="btn primary" id="cmOk" type="button">รับทราบ</button>
       </div>
     </div>
+  </div>
+  <div class="modal" id="ptGate" hidden role="dialog" aria-modal="true" aria-labelledby="pgTitle">
+    <form class="sheet pg-sheet" id="pgForm" autocomplete="off" novalidate>
+      <div class="rm-kick">ข้อมูลผู้ป่วย</div>
+      <div class="rm-body">
+        <h3 class="pg-hi" id="pgTitle">เลือกผู้ป่วยที่จะประเมิน</h3>
+        <p class="pg-sub" id="pgSub"></p>
+        <div class="pg-g">
+          <label for="pgHN">HN<input id="pgHN" type="text" inputmode="numeric" placeholder="เช่น 6701234" required></label>
+          <label for="pgName">ชื่อ-สกุลผู้ป่วย<input id="pgName" type="text" placeholder="เช่น นายสมชาย ใจดี" required></label>
+        </div>
+        <label for="pgDate">วันที่ประเมิน<input id="pgDate" type="date"></label>
+        <div class="pg-list" id="pgList" hidden><span class="lbl">ผู้ป่วยในหอ แตะเพื่อเลือก</span><div class="pg-chips" id="pgChips"></div></div>
+        <p class="pg-err" id="pgErr" role="alert"></p>
+      </div>
+      <div class="rm-foot">
+        <button class="btn primary" id="pgGo" type="submit">ถัดไป: ประเมินความเสี่ยง</button>
+      </div>
+    </form>
   </div>
   <div class="modal" id="ddModal" hidden role="dialog" aria-modal="true" aria-labelledby="ddTitle">
     <div class="sheet">
@@ -2129,7 +2170,7 @@ function renderCare(c){
   }else{
     box.append(Object.assign(document.createElement("p"),{className:"empty",textContent:"เลือกระดับแผลในข้อ 4 เพื่อดูการดูแลแผลที่แนะนำ"}));
   }
-  if(c.device)box.append(grp("แผลกดทับจากอุปกรณ์การแพทย์ (MDRPI)","--s1",d=>{d.append(ul(CARE.device.concat(devCare(curW()))));d.append(chips(["Gauze","Webril cotton","ชุดรองสาย HFNC"]))}));
+  if(c.device)box.append(grp("Medical Device-Related Pressure Injury (MDRPI)","--s1",d=>{d.append(ul(CARE.device.concat(devCare(curW()))));d.append(chips(["Gauze","Webril cotton","ชุดรองสาย HFNC"]))}));
   const high=(t!=null&&t<=12),sep=$("sepsis").checked;
   box.append(grp(t==null?"การป้องกันแผลกดทับ (ยังไม่ได้ประเมิน Braden)":`การป้องกันแผลกดทับ · Braden ${t} คะแนน ${bradenRisk(t)}`,high?"--s2":"--accent",d=>{
     if(high||sep){const h=document.createElement("h4");h.textContent=high?"Braden ≤ 12: เพิ่มวัสดุป้องกัน":"มีภาวะ sepsis/บวม/รอยแดง: ใช้วัสดุป้องกันทุกราย";d.append(h,ul(CARE.prevent),chips(CARE.preventProducts))}
@@ -2361,7 +2402,7 @@ function update(){
   $("result").style.setProperty("--stage",c.stage&&STAGES[c.stage]?`var(${STAGES[c.stage].c})`:"var(--line)");
   $("rPush").textContent=c.push;
   const where=c.site+(c.side?" "+c.side:"");
-  $("rMeta").textContent=`${where} · ${c.L}×${c.W}×${c.D} cm · พื้นที่ ${c.a.toFixed(1)} cm²`+(c.device?" · เกิดจากอุปกรณ์":"");
+  $("rMeta").textContent=`${where} · ${c.L}×${c.W}×${c.D} cm · พื้นที่ ${c.a.toFixed(1)} cm²`+(c.device?" · MDRPI":"");
   const exu=EXU.find(e=>e[1]===c.exu),tis=TIS.find(t=>t[1]===c.tis);
   const d=c.date?new Date(c.date).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"}):"-";
   const autoNote=buildNote(c);
@@ -3073,7 +3114,7 @@ $("lgForm").addEventListener("submit",e=>{e.preventDefault();const ot=$("lgOT").
   if(name.length<2){$("lgErr").textContent="ใส่ชื่อ-สกุล";$("lgName").focus();return}
   otUser={ot,name,at:Date.now()};try{sessionStorage.setItem("pi-ot",JSON.stringify(otUser));localStorage.setItem("pi-ot-last",JSON.stringify({ot,name}))}catch(e){}
   if(name){$("nurseName").value=name;try{localStorage.setItem("pi-nurse",name)}catch(e){}}
-  $("lgErr").textContent="";try{sessionStorage.removeItem("pi-dd-seen")}catch(e){}otPaint();try{update()}catch(e){}setTimeout(()=>ddPop(),500)});
+  $("lgErr").textContent="";try{sessionStorage.removeItem("pi-dd-seen")}catch(e){}otPaint();try{update()}catch(e){}setTimeout(()=>{try{ptGateOpen()}catch(e){}},150);setTimeout(()=>ddPop(),500)});
 function userMenu(open){const m=$("userMenu"),b=$("userBtn");if(!m)return;m.hidden=!open;if(b)b.setAttribute("aria-expanded",open)}
 $("userBtn").onclick=e=>{e.stopPropagation();userMenu($("userMenu").hidden)};
 document.addEventListener("click",e=>{if(!e.target.closest("#userMenu")&&!e.target.closest("#userBtn"))userMenu(false)});
@@ -3363,6 +3404,7 @@ function renderAdv(){
       b.onclick=()=>{let v=(w[field]||[]).slice();if(v.includes(k))v=v.filter(x=>x!==k);else{if(exclusive&&k===exclusive)v=[];else v=v.filter(x=>x!==exclusive);v.push(k)}
         w[field]=v;update()};box.append(b)})};
   draw("advEdge",EDGE,"edge");draw("advPeri",PERI,"peri","ok");draw("advInf",INF,"inf");
+  [["advVEdge",EDGE,"edge"],["advVPeri",PERI,"peri"],["advVInf",INF,"inf"]].forEach(([id,list,f])=>{const v=w[f]||[],el=$(id);if(!el)return;el.textContent=v.length?v.map(k=>labelOf(list,k).replace(/ \(.*\)$/,"")).join(", "):"เลือก";el.classList.toggle("on",v.length>0);el.classList.toggle("bad",f==="inf"&&v.length>=2)});
   const n=(w.inf||[]).length,box=$("infWarn");box.innerHTML="";
   {const tot=(w.edge||[]).length+(w.peri||[]).length+n,sm=$("advSum");sm.textContent=n>=2?`สงสัยติดเชื้อ · ${tot} รายการ`:tot?`เลือกแล้ว ${tot} รายการ`:"แตะเพื่อเลือก";sm.classList.toggle("warn",n>=2);sm.classList.toggle("done",tot>0&&n<2)}
   if(n>=2){const d=document.createElement("div");d.className="skcall pop";d.style.setProperty("--c","var(--s1)");
@@ -4059,7 +4101,7 @@ function openStep(n){
   const ss=stepState(),x=ss.find(s=>s.n===n),wq=curW();if(!x||!(x.unlocked||(n===7&&wq&&(wq.dressings||[]).length)))return;
   if(stepOpen&&stepOpen!==n){$("stepStore").append(stepEl(stepOpen))}
   stepOpen=n;const el=stepEl(n);$("smBody").innerHTML="";$("smBody").append(el);
-  el.querySelectorAll("details").forEach(d=>d.open=true);
+  el.querySelectorAll("details:not(.advsub)").forEach(d=>d.open=true);
   const m=$("stepModal");m.hidden=false;document.body.classList.add("noscroll");$("smBody").scrollTop=0;
   if(n===6){const w=curW();if(w){w.visited=w.visited||[]}}
   renderStepModal();setTimeout(()=>{const f=el.querySelector("input:not([type=hidden]):not([type=checkbox]),select");if(f&&n!==1&&n!==2)f.focus({preventScroll:true})},350);
@@ -4356,6 +4398,27 @@ function ddPop(tries){try{
 $("ddLater").onclick=()=>{$("ddModal").hidden=true;document.body.classList.remove("noscroll")};
 $("ddModal").addEventListener("click",e=>{if(e.target===$("ddModal"))$("ddLater").onclick()});
 setTimeout(()=>ddPop(),1200);
+/* patient gate: after login, enter HN + name before assessing */
+function ptGateOpen(){if(!otGet()||!$("loginGate").hidden)return;const g=$("ptGate");if(!g)return;
+  const u=otGet()||{},hn=$("hn").value.trim(),real=hn&&hn!=="ตัวอย่าง";
+  $("pgSub").textContent=`${u.name?u.name+" · ":""}กรอก HN และชื่อผู้ป่วย แล้วจึงเริ่มประเมินความเสี่ยง`;
+  $("pgHN").value=real?hn:"";$("pgName").value=real?$("ptName").value.trim():"";$("pgDate").value=$("date").value||new Date(Date.now()+7*3600e3).toISOString().slice(0,10);$("pgErr").textContent="";
+  let list=[];try{list=allPatients().filter(p=>p.hn&&p.hn!=="ตัวอย่าง").sort((a,b)=>(b.updated||0)-(a.updated||0)).slice(0,12)}catch(e){}
+  const box=$("pgChips");box.innerHTML="";list.forEach(p=>{const b=document.createElement("button");b.type="button";b.innerHTML="<b></b>"+(p.name?" · <span></span>":"");b.querySelector("b").textContent=p.hn;if(p.name)b.querySelector("span").textContent=p.name;
+    b.onclick=()=>{$("pgHN").value=p.hn;$("pgName").value=p.name||"";$("pgErr").textContent="";$("pgName").focus()};box.append(b)});
+  $("pgList").hidden=!list.length;
+  document.querySelectorAll(".modal").forEach(m=>{if(m!==g)m.hidden=true});g.hidden=false;document.body.classList.add("noscroll");
+  setTimeout(()=>{try{($("pgHN").value?$("pgName"):$("pgHN")).focus()}catch(e){}},120)}
+$("pgHN").addEventListener("input",()=>{const r=loadPatientRec($("pgHN").value.trim());if(r&&r.name&&!$("pgName").value.trim())$("pgName").value=r.name;$("pgErr").textContent=""});
+$("pgForm").addEventListener("submit",e=>{e.preventDefault();const hn=$("pgHN").value.trim(),nm=$("pgName").value.trim();
+  if(!hn){$("pgErr").textContent="ใส่ HN ผู้ป่วย";$("pgHN").focus();return}
+  if(hn==="ตัวอย่าง"){$("pgErr").textContent="ใส่ HN ของผู้ป่วยจริง";$("pgHN").focus();return}
+  if(nm.length<2){$("pgErr").textContent="ใส่ชื่อ-สกุลผู้ป่วย";$("pgName").focus();return}
+  if(hn!==curHN){if(!loadPatientRec(hn))blankPatientForm();changePatient(hn)}
+  $("hn").value=hn;$("ptName").value=nm;if($("pgDate").value)$("date").value=$("pgDate").value;
+  try{savePatient()}catch(e){}update();try{dcPaint()}catch(e){}
+  $("ptGate").hidden=true;document.body.classList.remove("noscroll");go("prevent");window.scrollTo(0,0)});
+setTimeout(()=>{try{if(otGet()&&$("loginGate").hidden){const h=$("hn").value.trim();if(!h||h==="ตัวอย่าง")ptGateOpen()}}catch(e){}},900);
 /* discharge (all users) */
 var dcKind="home";
 var DCK={home:"กลับบ้าน",transfer:"ย้ายหอผู้ป่วย",refer:"ส่งต่อโรงพยาบาลอื่น",dead:"เสียชีวิต",other:"อื่น ๆ"};
@@ -4386,7 +4449,7 @@ $("dcBtn").onclick=()=>{const hn=$("hn").value.trim();if(!hn)return;
   try{syncEnq("delpatient",hn,null)}catch(e){}
   blankPatientForm();$("dcNote").value="";dcKind="home";$("dcDate").value="";$("dcTime").value="";
   renderHist();try{if(isAdmin())renderWard()}catch(e){}dcPaint();
-  go("prevent");window.scrollTo(0,0);setTimeout(()=>{try{$("hn").focus()}catch(e){}},250);
+  go("prevent");window.scrollTo(0,0);setTimeout(()=>{try{ptGateOpen()}catch(e){}},300);
   advise("จำหน่ายผู้ป่วยแล้ว",`HN ${hn} · ${DCK[kind]} · บันทึกไว้ในประวัติการประเมิน`,"--ok","✓")};
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
