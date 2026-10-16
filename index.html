@@ -1422,6 +1422,7 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
 .signbox label{font-size:.76rem}
 .signbox input,.signbox select{font-size:.86rem;min-height:36px;padding:6px 10px}
 .signbox .btn{font-size:.8rem;min-height:34px;padding:5px 12px}
+#planRisk .fs-t .h-en{display:block}
 </style>
 </head>
 <body>
@@ -1966,9 +1967,11 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
   </div>
 
   <div class="page" id="page-plan" hidden>
-  <section class="card plan-risk" id="planRisk">
-    <h2>สรุปความเสี่ยง <small class="h-en">Smart Risk Summary</small></h2>
-    <div id="planRiskBody"></div>
+  <section class="card fold plan-risk" id="planRisk">
+   <details id="planRiskFold">
+    <summary><span class="fs-t">สรุปความเสี่ยง<small class="h-en">Smart Risk Summary</small></span><span class="fs-m" id="planRiskSum"></span></summary>
+    <div class="fold-body"><div id="planRiskBody"></div></div>
+   </details>
   </section>
   <section class="card" id="planCard">
     <div class="plan-h"><h2>แผนการป้องกันเฉพาะราย <small class="h-en">Personalized Prevention Plan</small></h2><span class="plan-shift" id="planShift"></span></div>
@@ -5013,7 +5016,8 @@ var CR_WHY={sens:"รับรู้ความเจ็บปวดลดล�
 var CRF_WHY={alb:"โปรตีนต่ำ ผิวและเนื้อเยื่อทนแรงกดได้น้อย หายช้า",hyp:"เนื้อเยื่อขาดออกซิเจน เกิดแผลได้เร็วกว่าปกติ",vp:"หลอดเลือดส่วนปลายหดตัว เลือดไปเลี้ยงผิวลดลง เสี่ยง Deep Tissue Injury"};
 var CRX_WHY={mv:"ท่อช่วยหายใจและอุปกรณ์ยึดท่อกดทับผิวบริเวณใบหน้า",perf:"MAP ต่ำหรือปลายมือเท้าเย็น เลือดไปเลี้ยงผิวไม่พอ",sed:"ผู้ป่วยขยับตัวเองไม่ได้และบอกอาการเจ็บไม่ได้",dev:"อุปกรณ์การแพทย์กดทับผิวต่อเนื่อง (MDRPI)",inc:"ปัสสาวะ/อุจจาระทำให้ผิวเปื่อย (IAD) และเกิดแผลกดทับง่ายขึ้น"};
 function riskSummaryPaint(){const box=$("planRiskBody");if(!box)return;const hn=realHN();
-  if(!hn){box.innerHTML='<p class="rk-none">เลือกผู้ป่วยก่อน</p>';return}
+  const sm=$("planRiskSum");
+  if(!hn){box.innerHTML='<p class="rk-none">เลือกผู้ป่วยก่อน</p>';if(sm){sm.className="fs-m";sm.textContent=""}return}
   const t=bradenTotal(),cr=crData(),R=compoundRisk(t,cr),b=st.braden||{},L=[];
   BRADEN.forEach(([k,name])=>{const v=b[k];if(v>0&&v<=2)L.push({c:"--s2",h:`${name.split(" (")[0]} ${v} คะแนน · ${SHORT[k]?SHORT[k][v-1]:""}`,d:CR_WHY[k]})});
   R.f.forEach(f=>L.push({c:"--crit",h:`${f.name} · ${f.val}`,d:CRF_WHY[f.k]||""}));
@@ -5022,6 +5026,7 @@ function riskSummaryPaint(){const box=$("planRiskBody");if(!box)return;const hn=
   const ws=(wounds||[]).filter(w=>w.stage&&w.stage!=="none");if(ws.length)L.push({c:"--coral",h:`มีแผลอยู่ ${ws.length} แผล`,d:ws.map((w,i)=>`${siteLabel(w)} ${stageShort(w.stage)}`).join(" · ")});
   if((wounds||[]).some(w=>w.device)&&!(cr.x||[]).includes("dev"))L.push({c:"--s1",h:"มีแผลจากอุปกรณ์การแพทย์ (MDRPI)",d:"ตรวจผิวใต้อุปกรณ์ทุกชิ้นทุกเวร"});
   const lvl=t==null?"ยังไม่ได้ประเมิน Braden":R.crit?"Critical Risk":bradenRisk(t)+(t>18?" (ความเสี่ยงต่ำ)":"");
+  if(sm){sm.className="fs-m"+(R.crit?" crit":t!=null&&t<=12?" warn":"");sm.textContent=t==null?"ยังไม่ประเมิน":`${R.crit?"Critical":"Braden "+t}${L.length?` · ${L.length} ปัจจัย`:""}`}
   box.innerHTML=`<div class="rk-head">${riskPill(t,R.crit)}<b>${esc(lvl)}</b></div>${R.crit?`<p class="rk-rule">⚠ ${esc(R.rule)} ต้องป้องกันเชิงรุกทันที</p>`:""}`+
     (L.length?`<ul class="rk-list">${L.map(x=>`<li style="--c:var(${x.c})"><b>${esc(x.h)}</b>${x.d?`<small>เหตุผล: ${esc(x.d)}</small>`:""}</li>`).join("")}</ul>`:`<p class="rk-none">${t==null?"ประเมิน Braden และกรอกปัจจัยเสี่ยงทางคลินิก เพื่อให้แอปสรุปเหตุผลของความเสี่ยง":"ไม่พบปัจจัยที่ต้องเฝ้าระวังเพิ่ม ดูแลตามมาตรฐานพื้นฐาน"}</p>`)+
     `<button class="btn sm" type="button" id="rkEdit">${t==null?"ประเมิน Braden":"แก้ไข Braden / ปัจจัยเสี่ยง"}</button>`;
