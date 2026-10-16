@@ -1434,17 +1434,17 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
 /* stage illustrations */
 .stage-opt{flex-direction:row!important;align-items:flex-start;gap:12px!important;--svbg:var(--surface)}
 .stage-opt[aria-pressed=true]{--svbg:color-mix(in srgb,var(--c) 10%,var(--surface))}
-.stage-opt .st-svg{flex:none;width:104px;height:68px;border-radius:8px;border:1px solid var(--line);background:var(--svbg)}
+.stage-opt .st-svg{flex:none;width:120px;height:75px;border-radius:8px;border:1px solid var(--line);background:var(--svbg)}
 .stage-opt .st-tx{display:flex;flex-direction:column;gap:2px;min-width:0;color:inherit;font-size:inherit}
 .stage-opt .st-tx b{font-size:.95rem;color:var(--ink)}
 .st-legend{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.74rem;color:var(--muted);margin:0 2px 2px}
 .st-legend span{display:inline-flex;align-items:center;gap:5px}
 .st-legend span::before{content:"";width:10px;height:10px;border-radius:3px;background:var(--d);border:1px solid rgba(0,0,0,.12)}
 .gd-st{display:flex;gap:10px;align-items:flex-start;margin:6px 0}
-.gd-st .st-svg{flex:none;width:84px;height:55px;border-radius:6px;border:1px solid var(--line);background:var(--surface)}
+.gd-st .st-svg{flex:none;width:112px;height:70px;border-radius:6px;border:1px solid var(--line);background:var(--surface)}
 @media (min-width:700px){.stages{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
   .stage-opt{flex-direction:column!important;gap:8px!important}
-  .stage-opt .st-svg{width:100%;height:auto;aspect-ratio:120/78;max-height:130px}}
+  .stage-opt .st-svg{width:100%;height:auto;aspect-ratio:240/150}}
 </style>
 </head>
 <body>
@@ -2369,21 +2369,62 @@ function renderWizard(){
     r.append(back,again);w.append(r)}
 }
 
-/* stage illustration: skin cross-section (epidermis, dermis, fat, muscle, bone) */
-function stageSvg(k){const cut=(w,d)=>`M${60-w},16 C${60-w+5},${d} ${60+w-5},${d} ${60+w},16 Z`,bed=(w,d)=>`M${60-w},16 C${60-w+5},${d} ${60+w-5},${d} ${60+w},16`;
-  let g=`<rect x="0" y="16" width="120" height="5" fill="#f1c7a6"/><rect x="0" y="21" width="120" height="14" fill="#eaa293"/>
-<rect x="0" y="35" width="120" height="17" fill="#f6dc8a"/>${[8,22,36,50,64,78,92,106].map((x,i)=>`<circle cx="${x+(i%2?3:0)}" cy="${i%2?46:41}" r="4.2" fill="none" stroke="#e2bf5c" stroke-width=".8"/>`).join("")}
-<rect x="0" y="52" width="120" height="15" fill="#c95f5a"/>${[56,60,64].map(y=>`<path d="M0 ${y}H120" stroke="#b04b47" stroke-width=".7" stroke-dasharray="7 4"/>`).join("")}
-<rect x="0" y="67" width="120" height="11" fill="#ece4d3"/><path d="M0 67H120" stroke="#cfc4ad" stroke-width=".8"/>`;
-  const air='fill="var(--svbg,var(--surface))"';
-  if(k==="s1")g+=`<ellipse cx="60" cy="21" rx="28" ry="6" fill="#d8433b" opacity=".5"/><ellipse cx="60" cy="18.5" rx="22" ry="2.6" fill="#c9302a" opacity=".55"/>`;
-  else if(k==="s2")g+=`<path d="${cut(22,30)}" ${air}/><path d="${bed(22,30)}" fill="none" stroke="#f08c8c" stroke-width="2.4"/>`;
-  else if(k==="s3")g+=`<path d="${cut(26,48)}" ${air}/><path d="${bed(26,48)}" fill="none" stroke="#d8433b" stroke-width="2.6"/><path d="M50 40.5q4 -2 8 0" stroke="#f3e1a0" stroke-width="2" fill="none"/>`;
-  else if(k==="s4")g+=`<path d="${cut(28,74)}" ${air}/><path d="${bed(28,74)}" fill="none" stroke="#d8433b" stroke-width="2.4"/><ellipse cx="60" cy="68.5" rx="11" ry="3.2" fill="#fbf7ee" stroke="#cfc4ad" stroke-width=".8"/>`;
-  else if(k==="us")g+=`<path d="${cut(28,58)}" fill="#4b3326"/><path d="M34 16h52" stroke="#3a261c" stroke-width="3"/><ellipse cx="66" cy="24" rx="9" ry="3.4" fill="#d9c070" opacity=".9"/><path d="M42 21l6 3M70 30l7 2" stroke="#2a1a12" stroke-width="1"/>`;
-  else if(k==="dt")g+=`<ellipse cx="60" cy="18.5" rx="26" ry="3.6" fill="#7a3a8c" opacity=".65"/><ellipse cx="60" cy="58" rx="30" ry="11" fill="#5e2468" opacity=".72"/><ellipse cx="60" cy="58" rx="16" ry="5" fill="#3f1446" opacity=".6"/>`;
-  else if(k==="iad")g+=`<ellipse cx="60" cy="18" rx="42" ry="3.5" fill="#e0574f" opacity=".45"/><path d="M28 16.5l6-1.2M52 16.4l7-1M78 16.5l6-1.1" stroke="#c43c35" stroke-width="1.2"/>${[[34,8],[48,5],[66,9],[82,6],[94,10]].map(([x,y])=>`<path d="M${x} ${y}q2.2 3 0 4.6q-2.2-1.6 0-4.6z" fill="#6fb4e1"/>`).join("")}`;
-  return `<svg class="st-svg" viewBox="0 0 120 78" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${g}</svg>`}
+/* stage illustration v2: realistic skin cross-section (shared anatomy + per-stage wound) */
+function sgDefs(){if(document.getElementById("sgDefs"))return;
+  const W=240,N=40,step=W/N,P=f=>{let a=[];for(let i=0;i<=N;i++){const x=i*step;a.push([x,f(x)])}return a};
+  const bump=x=>Math.exp(-Math.pow((x-120)/46,2));
+  const top=x=>30+0.9*Math.sin(x*.07+.4),epi=x=>top(x)+5.5+1.3*Math.sin(x*.32),der=x=>64+1.6*Math.sin(x*.05+1),
+        fat=x=>98+1.8*Math.sin(x*.045+2)-7*bump(x),bone=x=>126+1.2*Math.sin(x*.06)-13*bump(x);
+  const band=(a,b)=>{const A=P(a),B=P(b).reverse();return "M"+A.map(p=>p.map(v=>v.toFixed(1)).join(",")).join("L")+"L"+B.map(p=>p.map(v=>v.toFixed(1)).join(",")).join("L")+"Z"};
+  const line=f=>"M"+P(f).map(p=>p.map(v=>v.toFixed(1)).join(",")).join("L");
+  let rnd=7;const r=()=>{rnd=(rnd*9301+49297)%233280;return rnd/233280};
+  let lob="";for(let y=67;y<104;y+=9.5)for(let x=-4;x<248;x+=12.5){const xx=x+(r()-.5)*5+(Math.round(y)%2?6:0),yy=y+(r()-.5)*3;lob+=`<ellipse cx="${xx.toFixed(1)}" cy="${yy.toFixed(1)}" rx="${(5.6+r()*1.6).toFixed(1)}" ry="${(4.2+r()*1.2).toFixed(1)}" fill="url(#sgFatL)" stroke="#e3ad6a" stroke-width=".55"/>`}
+  let fib="";for(let i=0;i<9;i++){const y0=100+i*3.2;fib+=`<path d="M-5 ${y0} C60 ${y0-2.5} 90 ${y0-9} 120 ${y0-10} S190 ${y0-3} 245 ${y0+1}" fill="none" stroke="#8e2f2b" stroke-width=".55" opacity=".55"/>`}
+  let trab="";for(let i=0;i<34;i++){trab+=`<circle cx="${(r()*240).toFixed(1)}" cy="${(132+r()*16).toFixed(1)}" r="${(1+r()*2).toFixed(1)}" fill="none" stroke="#d7c8a6" stroke-width=".6"/>`}
+  const fol=(x,h)=>`<path d="M${x} ${top(x)-9}q1.5 4 .6 9" stroke="#5b4636" stroke-width=".9" fill="none"/><path d="M${x+.5} ${top(x)}C${x+1} ${top(x)+12} ${x+4} ${top(x)+22} ${x+6} ${top(x)+h}" stroke="#c98774" stroke-width="3.2" fill="none" stroke-linecap="round"/><path d="M${x+.5} ${top(x)}C${x+1} ${top(x)+12} ${x+4} ${top(x)+22} ${x+6} ${top(x)+h}" stroke="#6b4a3a" stroke-width=".9" fill="none"/><ellipse cx="${x+6.3}" cy="${top(x)+h+1.5}" rx="2.6" ry="2" fill="#b86d5c"/>`;
+  const svg=`<svg id="sgDefs" width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="sgEpi" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8dcc6"/><stop offset="1" stop-color="#e9b697"/></linearGradient>
+<linearGradient id="sgDer" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4bfb0"/><stop offset="1" stop-color="#e59c8c"/></linearGradient>
+<linearGradient id="sgFatB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3d79a"/><stop offset="1" stop-color="#eac27a"/></linearGradient>
+<radialGradient id="sgFatL" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff7d2"/><stop offset=".6" stop-color="#fbe49a"/><stop offset="1" stop-color="#f0c86e"/></radialGradient>
+<linearGradient id="sgMus" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cf5d55"/><stop offset="1" stop-color="#a7403b"/></linearGradient>
+<linearGradient id="sgBone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf6ea"/><stop offset=".25" stop-color="#efe5cf"/><stop offset="1" stop-color="#e3d6b8"/></linearGradient>
+<pattern id="sgColl" width="22" height="9" patternUnits="userSpaceOnUse"><path d="M0 4.5q5.5-3 11 0t11 0" fill="none" stroke="#fbd9cf" stroke-width=".7" opacity=".7"/></pattern>
+<radialGradient id="sgEry" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#d1322b" stop-opacity=".78"/><stop offset=".6" stop-color="#df4a40" stop-opacity=".45"/><stop offset="1" stop-color="#e86a5f" stop-opacity="0"/></radialGradient>
+<linearGradient id="sgPink" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6a3a3"/><stop offset="1" stop-color="#e46f73"/></linearGradient>
+<radialGradient id="sgGranC" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#ff8f87"/><stop offset=".55" stop-color="#d93a35"/><stop offset="1" stop-color="#a51f22"/></radialGradient>
+<pattern id="sgGran" width="5" height="5" patternUnits="userSpaceOnUse"><rect width="5" height="5" fill="#b9282a"/><circle cx="2.5" cy="2.5" r="2.3" fill="url(#sgGranC)"/></pattern>
+<radialGradient id="sgSlough" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#fbeeb0"/><stop offset="1" stop-color="#d9bd5c"/></radialGradient>
+<radialGradient id="sgEsch" cx=".45" cy=".25" r=".9"><stop offset="0" stop-color="#5d3a26"/><stop offset=".55" stop-color="#3a2216"/><stop offset="1" stop-color="#1d110b"/></radialGradient>
+<radialGradient id="sgBruise" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#5a1849" stop-opacity=".9"/><stop offset=".6" stop-color="#7d2f6b" stop-opacity=".55"/><stop offset="1" stop-color="#9b4a84" stop-opacity="0"/></radialGradient>
+<radialGradient id="sgDeep" cx=".5" cy=".55" r=".5"><stop offset="0" stop-color="#3e0d36" stop-opacity=".95"/><stop offset=".5" stop-color="#6a1d55" stop-opacity=".7"/><stop offset="1" stop-color="#8a3a74" stop-opacity="0"/></radialGradient>
+<radialGradient id="sgBlist" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#9c3155"/><stop offset="1" stop-color="#4b0f27"/></radialGradient>
+<linearGradient id="sgDrop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6efff"/><stop offset="1" stop-color="#5aa6dd"/></linearGradient>
+<symbol id="sgBase" viewBox="0 0 240 150">
+<path d="${band(bone,x=>152)}" fill="url(#sgBone)"/><g opacity=".9">${trab}</g><path d="${line(bone)}" stroke="#cdbb93" stroke-width="1.6" fill="none"/>
+<path d="${band(fat,bone)}" fill="url(#sgMus)"/><g clip-path="none">${fib}</g><path d="${line(fat)}" stroke="#f1e6e0" stroke-width="1.1" fill="none" opacity=".85"/>
+<path d="${band(der,fat)}" fill="url(#sgFatB)"/><g>${lob}</g>
+<path d="${band(epi,der)}" fill="url(#sgDer)"/><path d="${band(epi,der)}" fill="url(#sgColl)"/>
+<path d="${line(x=>58+1.5*Math.sin(x*.06))}" stroke="#c0392b" stroke-width="1.3" fill="none" opacity=".75"/><path d="${line(x=>61+1.5*Math.sin(x*.06+1.3))}" stroke="#4a62a8" stroke-width="1.2" fill="none" opacity=".6"/>
+${[40,80,160,200].map(x=>`<path d="M${x} 58.5Q${x+2} ${top(x)+9} ${x+4} 58.8" stroke="#c0392b" stroke-width=".6" fill="none" opacity=".6"/>`).join("")}
+<path d="M178 52c4-3 8 3 4 5s-7-2-3-4 6 2 3 4" stroke="#d98b7c" stroke-width="1" fill="none"/><path d="M181 52C181 44 182 38 182 ${top(182)}" stroke="#d98b7c" stroke-width=".7" fill="none"/>
+${fol(22,24)}${fol(212,22)}
+<path d="${band(top,epi)}" fill="url(#sgEpi)"/><path d="${line(top)}" stroke="#c99878" stroke-width=".9" fill="none"/><path d="${line(x=>top(x)+.9)}" stroke="#fff" stroke-width=".5" fill="none" opacity=".45"/>
+</symbol></defs></svg>`;
+  document.body.insertAdjacentHTML("beforeend",svg);sgDefs.top=top;sgDefs.bone=bone}
+function stageSvg(k){sgDefs();const top=sgDefs.top,bone=sgDefs.bone,air='fill="var(--svbg,var(--surface))"';
+  const crater=(w,d,sk,cx)=>{cx=cx==null?120:cx;const xL=cx-w,xR=cx+w,y=30+d;sk=sk||0;return `M${xL},${top(xL).toFixed(1)}C${xL+w*.1},${(30+d*.6).toFixed(1)} ${cx-w*.6+sk},${y} ${cx+sk},${y}C${cx+w*.6+sk},${y} ${xR-w*.1},${(30+d*.6).toFixed(1)} ${xR},${top(xR).toFixed(1)}Z`};
+  const wall=(w,d,sk)=>crater(w,d,sk).replace(/Z$/,""),hole=(w,d,sk)=>{const c=crater(w,d,sk);return c.replace(/Z$/,`L${120+w},0L${120-w},0Z`)};
+  let g=`<use href="#sgBase" width="240" height="150"/>`;
+  if(k==="s1")g+=`<ellipse cx="120" cy="35" rx="46" ry="9" fill="url(#sgEry)"/><ellipse cx="120" cy="31.5" rx="34" ry="2.4" fill="#d9443b" opacity=".35"/>`;
+  else if(k==="s2")g+=`<path d="${crater(30,15,2)}" fill="url(#sgPink)"/><path d="${hole(27,11.5,2)}" ${air}/><path d="M98 ${top(98)+.5}q-6-7-12-3" stroke="#e8b493" stroke-width="1.6" fill="none" stroke-linecap="round"/><path d="M104 41.5Q122 47 138 41" stroke="#fff" stroke-width="1.1" fill="none" opacity=".7" stroke-linecap="round"/><path d="${wall(30,15,2)}" stroke="#b9575b" stroke-width=".7" fill="none" opacity=".6"/>`;
+  else if(k==="s3")g+=`<path d="${crater(38,48,-3)}" fill="url(#sgGran)"/><path d="${hole(34.5,43,-3)}" ${air}/><ellipse cx="141" cy="62" rx="7" ry="4.5" fill="url(#sgSlough)" transform="rotate(-38 141 62)"/><path d="M99 70Q117 80 136 71" stroke="#fff" stroke-width="1.1" fill="none" opacity=".55" stroke-linecap="round"/><path d="${wall(38,48,-3)}" stroke="#7d1a1c" stroke-width=".8" fill="none" opacity=".7"/>`;
+  else if(k==="s4")g+=`<path d="${crater(42,84,0)}" fill="url(#sgGran)"/><path d="${hole(38.5,79,0)}" ${air}/><path d="M101 ${(bone(101)-1).toFixed(1)}Q120 ${(bone(120)-6).toFixed(1)} 139 ${(bone(139)-1).toFixed(1)}L137 ${(bone(137)+5).toFixed(1)}Q120 ${(bone(120)+3).toFixed(1)} 103 ${(bone(103)+5).toFixed(1)}Z" fill="#fbf5e6" stroke="#cdbb93" stroke-width=".8"/><path d="M110 ${(bone(110)-.5).toFixed(1)}Q120 ${(bone(120)-3.2).toFixed(1)} 128 ${(bone(128)-.8).toFixed(1)}" stroke="#fff" stroke-width="1" fill="none"/><path d="${wall(42,84,0)}" stroke="#7d1a1c" stroke-width=".8" fill="none" opacity=".7"/>`;
+  else if(k==="us")g+=`<path d="${crater(40,58,2)}" fill="url(#sgEsch)"/><path d="M84 ${top(84)+2}Q120 ${top(120)+6} 156 ${top(156)+2}" stroke="#2a1810" stroke-width="2" fill="none"/><path d="M96 40l9 4 5-2M118 37l3 7-4 6M131 41l8 2 3 6M106 54l7 3" stroke="#120a06" stroke-width=".9" fill="none" stroke-linecap="round"/><ellipse cx="91" cy="${top(91)+5}" rx="7" ry="3.2" fill="url(#sgSlough)"/><ellipse cx="151" cy="${top(151)+6}" rx="6" ry="3" fill="url(#sgSlough)"/><path d="M104 36q8-2 16 0" stroke="#8a6248" stroke-width=".9" fill="none" opacity=".8"/>`;
+  else if(k==="dt")g+=`<ellipse cx="120" cy="107" rx="58" ry="17" fill="url(#sgDeep)"/><ellipse cx="120" cy="80" rx="40" ry="16" fill="url(#sgBruise)" opacity=".7"/><ellipse cx="120" cy="35" rx="44" ry="8" fill="url(#sgBruise)"/><path d="M106 ${top(106)+.3}Q120 ${top(120)-9} 134 ${top(134)+.3}Z" fill="url(#sgBlist)"/><path d="M111 ${top(111)-2.5}Q117 ${top(117)-6.5} 124 ${top(124)-6}" stroke="#fff" stroke-width="1" fill="none" opacity=".55" stroke-linecap="round"/>`;
+  else if(k==="iad")g+=`<ellipse cx="120" cy="33.5" rx="82" ry="6" fill="url(#sgEry)" opacity=".85"/>${[[78,7],[118,9],[158,6]].map(([x,w])=>`<path d="${crater(w,3,0,x)}" fill="#ee8a8a"/>`).join("")}<path d="M40 ${top(40)-.6}Q120 ${top(120)-2.4} 200 ${top(200)-.6}" stroke="#fff" stroke-width="1.2" fill="none" opacity=".5" stroke-linecap="round"/>${[[62,12],[96,7],[138,13],[176,8],[196,15]].map(([x,y])=>`<path d="M${x} ${y}q3.4 4.6 0 7q-3.4-2.4 0-7z" fill="url(#sgDrop)" stroke="#4d93c8" stroke-width=".4"/><circle cx="${x-.9}" cy="${y+4}" r=".8" fill="#fff" opacity=".85"/>`).join("")}`;
+  return `<svg class="st-svg" viewBox="0 0 240 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${g}</svg>`}
+
 function renderStages(){
   const s=$("stages");s.innerHTML='<div class="st-legend" aria-hidden="true"><span style="--d:#f1c7a6">หนังกำพร้า</span><span style="--d:#eaa293">หนังแท้</span><span style="--d:#f6dc8a">ไขมัน</span><span style="--d:#c95f5a">กล้ามเนื้อ</span><span style="--d:#ece4d3">กระดูก</span></div>';
   Object.entries(STAGES).forEach(([k,v])=>{const b=document.createElement("button");b.className="stage-opt";
