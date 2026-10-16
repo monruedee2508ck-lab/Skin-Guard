@@ -453,6 +453,17 @@ section.card.cta{background:linear-gradient(135deg,var(--gold-t),var(--surface))
 .as-v{font-size:.78rem;font-weight:600;color:var(--muted);text-align:right;max-width:55%;overflow-wrap:anywhere}
 .as-v.on{color:var(--pc)}.as-v.bad{color:var(--s1)}
 .advsub .advchips{padding:2px 12px 12px}
+body[data-page="discharge"]{--pc:var(--sky);--pt:var(--sky-t)}
+.pagetabs button[data-go="discharge"]{--c:var(--sky);--ct:var(--sky-t)}
+/* reference marker 2x2 cm */
+.lc-mk{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.lc-mk .btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.35)}
+.lc-mk .btn[aria-pressed=true]{background:#22c55e;border-color:#22c55e;color:#06210f}
+.lc-mkst{flex:1;min-width:0;font-size:.8rem;line-height:1.35}
+.lc-mkst.ok{color:#86efac}.lc-mkst.warn{color:#ffd166}
+.lc-a{box-shadow:inset 0 0 0 2px #86efac}
+.mk-pdf{display:inline-flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;color:var(--pc);text-decoration:none;padding:4px 2px}
+.mk-pdf:hover{text-decoration:underline}
 /* patient bar (read-only) */
 .pt-bar{display:flex;align-items:center;gap:12px}
 .pt-ic{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--pt);color:var(--pc)}
@@ -889,7 +900,7 @@ figure.one{margin:0}figure.one img{width:100%;border-radius:14px}figure.one figc
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--navy-c:#9fb4d9;--navy-t:#1b2741}}
 :root[data-theme="dark"]{--navy-c:#9fb4d9;--navy-t:#1b2741}
 .pagetabs button[data-go="ward"]{--c:var(--navy-c);--ct:var(--navy-t)}
-.pagetabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+.pagetabs{grid-template-columns:repeat(6,minmax(0,1fr))!important}
 .pagetabs button{font-size:.78rem;padding:7px 1px}
 .pagetabs button small{font-size:.6rem}
 .patient .grid{grid-template-columns:minmax(0,.9fr) minmax(0,1.5fr) minmax(0,1fr)}
@@ -943,7 +954,7 @@ figure.one{margin:0}figure.one img{width:100%;border-radius:14px}figure.one figc
 .hero{position:relative}
 .adm-lock{position:absolute;top:14px;right:14px;z-index:2;display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.8rem;font-weight:600;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:6px 12px;cursor:pointer;backdrop-filter:blur(4px)}
 .adm-lock.on{background:var(--gold,#e8b84a);border-color:var(--gold,#e8b84a);color:#1b2a44}
-nav.pagetabs.u3{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+nav.pagetabs.u3{grid-template-columns:repeat(4,minmax(0,1fr))!important}
 .pagetabs button[hidden]{display:none!important}
 .adm-sheet{display:flex;flex-direction:column;gap:12px;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px))}
 .adm-sheet h3{margin:0;font-size:1.2rem;color:var(--ink)}
@@ -1248,7 +1259,9 @@ header.hero.topbar::after{background:linear-gradient(90deg,var(--mint1),var(--in
 /* hide patient context on home/patients */
 body[data-page="home"] section.card.patient,body[data-page="patients"] section.card.patient,
 body[data-page="home"] .pagetabs,body[data-page="patients"] .pagetabs,
-body[data-page="home"] #alerts,body[data-page="patients"] #alerts{display:none!important}
+body[data-page="home"] #alerts,body[data-page="patients"] #alerts,
+body[data-page="history"] section.card.patient,body[data-page="history"] .pagetabs,body[data-page="history"] #alerts{display:none!important}
+body[data-page="history"]{--pc:var(--indigo);--pt:var(--indigo-t)}
 /* home */
 #page-home{gap:16px}
 .hm-hello{display:flex;align-items:center;gap:12px;padding:6px 4px 0}
@@ -1305,7 +1318,7 @@ body[data-page="home"] #alerts,body[data-page="patients"] #alerts{display:none!i
 .pl-push b{font-size:1.4rem;font-weight:600;color:var(--coral)}
 .pl-empty{text-align:center;color:var(--muted);padding:26px 12px;background:var(--surface);border-radius:20px;box-shadow:var(--shadow)}
 /* bottom nav */
-.bnav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;
+.bnav{position:fixed;left:0;right:0;bottom:0;z-index:40;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;
   padding:8px max(12px,env(safe-area-inset-right,0px)) calc(8px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px));
   background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);box-shadow:0 -6px 24px rgba(40,50,110,.08)}
 .bnav button{font:inherit;font-size:.74rem;font-weight:600;border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 2px;border-radius:14px;cursor:pointer}
@@ -1411,7 +1424,8 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
     <button role="tab" id="tab-prevent" data-go="prevent" aria-selected="true"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>ประเมินความเสี่ยง<small>Braden · พลิกตัว</small></button>
     <button role="tab" id="tab-wound" data-go="wound" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7l1.5-3h5L16 7"/><circle cx="12" cy="13.5" r="3.5"/></svg>ประเมินแผล<small>เมื่อเกิดแผล</small></button>
     <button role="tab" id="tab-trend" data-go="trend" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/><circle cx="19" cy="6" r="1.5"/></svg>แนวโน้ม<small>Dashboard</small></button>
-    <button role="tab" id="tab-record" data-go="record" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>บันทึก<small>Note · ประวัติ</small></button>
+    <button role="tab" id="tab-record" data-go="record" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>บันทึก<small>Nurse's Note</small></button>
+    <button role="tab" id="tab-discharge" data-go="discharge" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h5v16h-5"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h10"/></svg>จำหน่าย<small>Discharge</small></button>
     <button role="tab" id="tab-ward" data-go="ward" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20V8l9-5 9 5v12"/><path d="M9 20v-6h6v6"/><path d="M12 8v4M10 10h4"/></svg>หอผู้ป่วย<small>Ward</small></button>
     <button type="button" class="duebar" id="dueBar" hidden></button>
   </nav>
@@ -1658,6 +1672,7 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
   <section class="card" data-step="2">
     <h2><span class="n">2</span>ถ่ายภาพแผล</h2>
     <p class="note" style="margin:0">วางไม้บรรทัดหรือแถบวัดแผลที่มีขีดเซนติเมตรชัด ๆ ไว้ข้างแผลในระนาบเดียวกับผิว ถือกล้องตั้งฉากกับแผล แสงสว่างพอ ไม่ให้เห็นใบหน้าหรือชื่อผู้ป่วยในภาพ ถ่ายเสร็จแอปจะหาไม้บรรทัดและขอบแผล แล้วคำนวณพื้นที่ให้อัตโนมัติ</p>
+    <a class="mk-pdf" href="https://monruedee2508ck-lab.github.io/Skin-Guard/marker-2x2cm.pdf" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="1.5" fill="#22c55e"/></svg>พิมพ์กระดาษอ้างอิง 2×2 cm (PDF) สำหรับวางข้างแผล</a>
     <button class="btn primary livebtn" id="liveOpen" type="button"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M8 7l1.5-3h5L16 7"/><path d="M5 17h14M7 17v-2M10 17v-1.5M13 17v-2M16 17v-1.5"/></svg>เปิดกล้องพร้อมไม้บรรทัดวัดแผล</button>
     <div class="camsize" id="camSize" hidden>
       <div class="cs-h"><span class="cs-ok">✓</span><div><b>วัดขนาดจากกล้องแล้ว</b><small id="camSizeTxt"></small></div></div>
@@ -1862,6 +1877,46 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
   </section>
   </div>
 
+  <div class="page" id="page-history" hidden>
+  <section class="card fold" id="histCard">
+   <details id="histFold" open>
+    <summary><span class="fs-t">ประวัติการประเมิน</span><span class="fs-m" id="histSum">กดเพื่อดู</span></summary>
+    <div class="fold-body">
+    <div id="chart"></div>
+    <div class="tablebox" id="hist"></div>
+    <p class="note" style="margin:0">ประวัติเก็บไว้ในเบราว์เซอร์ของเครื่องนี้เท่านั้น ไม่ส่งไปที่อื่น ถ้าล้างข้อมูลเบราว์เซอร์ประวัติจะหายไป</p>
+    </div>
+   </details>
+  </section>
+  </div>
+
+  <div class="page" id="page-discharge" hidden>
+  <section class="card dccard" id="dcCard">
+    <h2>จำหน่ายผู้ป่วย (Discharge)</h2>
+    <div class="dc-pt" id="dcPt"></div>
+    <div class="dc-k">
+      <span class="lbl">ประเภทการจำหน่าย</span>
+      <div class="advchips" id="dcKinds" role="group" aria-label="ประเภทการจำหน่าย">
+        <button type="button" data-k="home" aria-pressed="true">กลับบ้าน</button>
+        <button type="button" data-k="transfer" aria-pressed="false">ย้ายหอผู้ป่วย</button>
+        <button type="button" data-k="refer" aria-pressed="false">ส่งต่อโรงพยาบาลอื่น</button>
+        <button type="button" data-k="dead" aria-pressed="false">เสียชีวิต</button>
+        <button type="button" data-k="other" aria-pressed="false">อื่น ๆ</button>
+      </div>
+    </div>
+    <div class="grid dc-g">
+      <label for="dcDate">วันที่จำหน่าย<input id="dcDate" type="date"></label>
+      <label for="dcTime">เวลา<input id="dcTime" type="time"></label>
+    </div>
+    <div class="dc-sum" id="dcSum"></div>
+    <label for="dcNote">หมายเหตุ
+      <textarea id="dcNote" rows="2" placeholder="เช่น ย้ายไปหอศัลยกรรมชาย 2 ส่งต่อแผนการดูแลแผลให้หอปลายทางแล้ว"></textarea>
+    </label>
+    <button class="btn dc-btn" id="dcBtn" type="button"><span>จำหน่ายผู้ป่วย</span></button>
+    <p class="note" style="margin:0">ผลประเมินและบันทึกที่ลงชื่อแล้วยังเก็บอยู่ในประวัติ ผู้ป่วยจะถูกนำออกจากรายชื่อผู้ป่วยในหอ และหน้าจอจะว่างพร้อมรับผู้ป่วยรายถัดไป</p>
+  </section>
+  </div>
+
   <div class="page" id="page-record" hidden>
   <section class="card progcard" id="progR">
     <h2>ความคืบหน้าของแผล</h2>
@@ -1894,40 +1949,6 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
       <button class="btn primary" id="save">ลงชื่อและบันทึก</button>
     </div>
     <div class="toast" id="toast"></div>
-  </section>
-  <section class="card dccard" id="dcCard">
-    <h2>จำหน่ายผู้ป่วย (Discharge)</h2>
-    <div class="dc-pt" id="dcPt"></div>
-    <div class="dc-k">
-      <span class="lbl">ประเภทการจำหน่าย</span>
-      <div class="advchips" id="dcKinds" role="group" aria-label="ประเภทการจำหน่าย">
-        <button type="button" data-k="home" aria-pressed="true">กลับบ้าน</button>
-        <button type="button" data-k="transfer" aria-pressed="false">ย้ายหอผู้ป่วย</button>
-        <button type="button" data-k="refer" aria-pressed="false">ส่งต่อโรงพยาบาลอื่น</button>
-        <button type="button" data-k="dead" aria-pressed="false">เสียชีวิต</button>
-        <button type="button" data-k="other" aria-pressed="false">อื่น ๆ</button>
-      </div>
-    </div>
-    <div class="grid dc-g">
-      <label for="dcDate">วันที่จำหน่าย<input id="dcDate" type="date"></label>
-      <label for="dcTime">เวลา<input id="dcTime" type="time"></label>
-    </div>
-    <div class="dc-sum" id="dcSum"></div>
-    <label for="dcNote">หมายเหตุ
-      <textarea id="dcNote" rows="2" placeholder="เช่น ย้ายไปหอศัลยกรรมชาย 2 ส่งต่อแผนการดูแลแผลให้หอปลายทางแล้ว"></textarea>
-    </label>
-    <button class="btn dc-btn" id="dcBtn" type="button"><span>จำหน่ายผู้ป่วย</span></button>
-    <p class="note" style="margin:0">ผลประเมินและบันทึกที่ลงชื่อแล้วยังเก็บอยู่ในประวัติ ผู้ป่วยจะถูกนำออกจากรายชื่อผู้ป่วยในหอ และหน้าจอจะว่างพร้อมรับผู้ป่วยรายถัดไป</p>
-  </section>
-  <section class="card fold" id="histCard">
-   <details id="histFold">
-    <summary><span class="fs-t">ประวัติการประเมิน</span><span class="fs-m" id="histSum">กดเพื่อดู</span></summary>
-    <div class="fold-body">
-    <div id="chart"></div>
-    <div class="tablebox" id="hist"></div>
-    <p class="note" style="margin:0">ประวัติเก็บไว้ในเบราว์เซอร์ของเครื่องนี้เท่านั้น ไม่ส่งไปที่อื่น ถ้าล้างข้อมูลเบราว์เซอร์ประวัติจะหายไป</p>
-    </div>
-   </details>
   </section>
   </div>
   <div id="pdfReport" aria-hidden="true"></div>
@@ -1978,13 +1999,17 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
     <canvas id="liveOv"></canvas>
     <div class="lc-top">
       <button type="button" class="lc-x" id="liveClose" aria-label="ปิดกล้อง">✕</button>
-      <div class="lc-read" id="liveRead"><span class="lc-l">ยาว <b id="liveL">–</b> cm</span><span class="lc-w">กว้าง <b id="liveW">–</b> cm</span></div>
+      <div class="lc-read" id="liveRead"><span class="lc-l">ยาว <b id="liveL">–</b> cm</span><span class="lc-w">กว้าง <b id="liveW">–</b> cm</span><span class="lc-a">ยาว×กว้าง <b id="liveA">–</b> cm²</span></div>
       <button type="button" class="lc-lvl" id="liveLvl" hidden aria-label="ระดับความตั้งฉากของกล้อง แตะเพื่อตั้ง 0 องศาจากระนาบผิว"><span class="lv-ring" aria-hidden="true"><i id="liveLvlDot"></i></span><span class="lv-t"><b id="liveLvlDeg">–</b><small id="liveLvlMode">แนวราบ</small></span></button>
     </div>
     <div class="lc-bot">
       <p class="lc-tip" id="liveTip">① วางไม้บรรทัดจริงชิดขอบแผล ② ถือกล้องตั้งฉากจนระดับน้ำเป็นสีเขียว ③ เลื่อน "ปรับสเกล" ให้ขีดบนจอตรงขีด cm ของไม้บรรทัดจริง ④ ลากจุดชมพู (ยาว) ฟ้า (กว้าง) ไปที่ขอบแผล แล้วกด "เก็บค่า" 2–3 ครั้ง</p>
       <p class="lc-warn" id="liveWarn" hidden role="status"></p>
       <label class="lc-scale" for="liveScale"><span>ปรับสเกล</span><input id="liveScale" type="range" min="12" max="160" step="0.5" value="45"><b id="liveScaleV">1 cm</b></label>
+      <div class="lc-mk">
+        <button type="button" class="btn" id="liveMk" aria-pressed="false"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="1.5" fill="#22c55e" stroke="#fff" stroke-width="1.5"/></svg>กระดาษอ้างอิง 2×2 cm</button>
+        <span class="lc-mkst" id="liveMkSt">แตะปุ่มนี้ แล้วแตะที่กระดาษในภาพ</span>
+      </div>
       <div class="lc-avg">
         <button type="button" class="btn" id="liveRec">เก็บค่าครั้งที่ 1</button>
         <span class="lc-samp" id="liveSamp">วัดซ้ำ 2–3 ครั้งแล้วใช้ค่าเฉลี่ย</span>
@@ -2059,7 +2084,6 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
   <nav class="bnav" id="bnav" aria-label="เมนูหลัก" hidden>
     <button type="button" data-b="home"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg><span>หน้าแรก</span></button>
     <button type="button" data-b="patients"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>ผู้ป่วย</span></button>
-    <button type="button" data-b="history"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/></svg><span>ประวัติ</span></button>
     <button type="button" data-b="more"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg><span>อื่น ๆ</span></button>
   </nav>
   <div class="modal" id="moreModal" hidden role="dialog" aria-modal="true" aria-label="เมนูเพิ่มเติม">
@@ -2471,7 +2495,7 @@ function renderRisk(t){
   box.append(d);
 }
 /* Pages */
-const PAGES=["home","patients","prevent","wound","trend","record","ward"];
+const PAGES=["home","patients","history","prevent","wound","trend","record","discharge","ward"];
 var ADMIN_PAGES=["trend","ward"],admNext=null,bootDone=false;
 var admMem=null,admRegMode=false;
 function admGet(){if(admMem)return admMem;try{const v=sessionStorage.getItem("pi-admin");if(v&&v[0]==="{")return JSON.parse(v)}catch(e){}return null}
@@ -2526,11 +2550,11 @@ function go(pg,scroll){
   if(!PAGES.includes(pg))pg="home";
   if(ADMIN_PAGES.includes(pg)&&!isAdmin()){if(bootDone){askAdmin(()=>go(pg,scroll));return}pg="prevent"}
   document.body.dataset.page=pg;
-  if(pg==="record"){setTimeout(()=>{try{dcPaint()}catch(e){}},0)}
+  if(pg==="discharge"){setTimeout(()=>{try{dcPaint()}catch(e){}},0)}
   if(pg==="record"||pg==="trend")setTimeout(renderDash,0);
   if(pg==="ward"){setTimeout(renderWard,0);setTimeout(()=>{try{admListRender()}catch(e){}},0)}
   PAGES.forEach(x=>{$("page-"+x).hidden=x!==pg;const tb=$("tab-"+x);if(tb)tb.setAttribute("aria-selected",x===pg)});
-  try{bnavPaint();if(pg==="home")homePaint();if(pg==="patients")plPaint()}catch(e){}
+  try{bnavPaint();if(pg==="home")homePaint();if(pg==="patients")plPaint();if(pg==="history"){$("histFold").open=true;renderHist()}}catch(e){}
   try{localStorage.setItem("pi-page",pg)}catch(e){}
   try{history.replaceState(null,"","#"+pg)}catch(e){}
   if(scroll!==false)window.scrollTo({top:0,behavior:"smooth"});
@@ -2647,7 +2671,7 @@ if(SAMPLE){const S="กระดูกก้นกบ (Sacrum/Coccyx)",H="ส้
 function renderHist(){
   setTimeout(renderDash,0);
   const box=$("hist"),ch=$("chart");
-  {const hs=$("histSum");if(hs)hs.textContent=hist.length?`${hist.length} รายการ · กดเพื่อดู`:"ยังไม่มีประวัติ"}
+  {const hs=$("histSum");if(hs)hs.textContent=hist.length?`${hist.length} รายการ`:"ยังไม่มีประวัติ"}
   if(!hist.length){box.innerHTML='<p class="empty">ยังไม่มีประวัติ กด "บันทึกลงประวัติ" เพื่อเริ่มติดตาม</p>';ch.innerHTML="";return}
   const rows=[...hist].sort((a,b)=>a.date<b.date?1:-1);
   box.innerHTML=`<table><thead><tr><th>วันที่</th><th>ผู้ป่วย</th><th>ระดับ</th><th style="text-align:right">Braden</th><th style="text-align:right">พื้นที่ cm²</th><th style="text-align:right">PUSH</th><th>ผู้บันทึก</th><th></th></tr></thead><tbody>${
@@ -2838,7 +2862,46 @@ function liveSampPaint(){const s=live.samp,n=s.length,a=liveAvg();
   $("liveSamp").innerHTML=s.map(x=>`${x.L.toFixed(1)}×${x.W.toFixed(1)}`).join(" · ")+`<br>เฉลี่ย <b>${a.L.toFixed(1)} × ${a.W.toFixed(1)}</b> cm`+(big?' <span class="hi">· ค่าต่างกันมาก วัดซ้ำอีกครั้ง</span>':n<2?' <span class="hi">· ควรวัดอีก 1–2 ครั้ง</span>':"")}
 function liveWarn(m){const w=$("liveWarn");w.textContent=m;w.hidden=false;clearTimeout(live.wt);live.wt=setTimeout(()=>{w.hidden=true},4000)}
 function liveGuard(key,m){if(live.scaled)return true;if(live.arm[key]){live.arm[key]=0;return true}live.arm[key]=1;setTimeout(()=>{live.arm[key]=0},4000);liveWarn(m);return false}
-function liveResetMeas(){$("liveTip").hidden=false;live.samp=[];live.scaled=false;live.arm={};$("liveWarn").hidden=true;liveSampPaint()}
+/* reference marker detection: tap on a 2x2 cm coloured square */
+function mkHull(P){P=P.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1]);const cr=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);const lo=[],up=[];
+  for(const p of P){while(lo.length>=2&&cr(lo[lo.length-2],lo[lo.length-1],p)<=0)lo.pop();lo.push(p)}
+  for(let i=P.length-1;i>=0;i--){const p=P[i];while(up.length>=2&&cr(up[up.length-2],up[up.length-1],p)<=0)up.pop();up.push(p)}
+  up.pop();lo.pop();return lo.concat(up)}
+function mkMinRect(H){let best=null;for(let i=0;i<H.length;i++){const a=H[i],b=H[(i+1)%H.length],an=Math.atan2(b[1]-a[1],b[0]-a[0]),c=Math.cos(an),s=Math.sin(an);
+    let u0=1e9,u1=-1e9,v0=1e9,v1=-1e9;for(const p of H){const u=p[0]*c+p[1]*s,v=-p[0]*s+p[1]*c;if(u<u0)u0=u;if(u>u1)u1=u;if(v<v0)v0=v;if(v>v1)v1=v}
+    const A=(u1-u0+1)*(v1-v0+1);if(!best||A<best.A)best={A,w:u1-u0+1,h:v1-v0+1,c,s,u0:u0-.5,u1:u1+.5,v0:v0-.5,v1:v1+.5}}
+  if(!best)return null;const P=(u,v)=>[u*best.c-v*best.s,u*best.s+v*best.c];best.corners=[P(best.u0,best.v0),P(best.u1,best.v0),P(best.u1,best.v1),P(best.u0,best.v1)];return best}
+function mkDetect(src,sw,sh,ix,iy){const S=Math.min(1,720/Math.max(sw,sh)),W=Math.max(2,Math.round(sw*S)),H=Math.max(2,Math.round(sh*S));
+  const c=document.createElement("canvas");c.width=W;c.height=H;const g=c.getContext("2d",{willReadFrequently:true});g.drawImage(src,0,0,W,H);
+  const D=g.getImageData(0,0,W,H).data,x0=Math.round(ix*S),y0=Math.round(iy*S);if(x0<2||y0<2||x0>=W-2||y0>=H-2)return null;
+  let sr=0,sg=0,sb=0,n=0;for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++){const i=((y0+dy)*W+x0+dx)*4;sr+=D[i];sg+=D[i+1];sb+=D[i+2];n++}sr/=n;sg/=n;sb/=n;
+  const sat=Math.max(sr,sg,sb)-Math.min(sr,sg,sb);
+  let best=null;
+  for(const T of [28,38,50,64]){const vis=new Uint8Array(W*H),q=new Int32Array(W*H);let h=0,t=0,cnt=0,leak=false;const st=y0*W+x0;q[t++]=st;vis[st]=1;
+    while(h<t){const p=q[h++];cnt++;if(cnt>W*H*.3){leak=true;break}const x=p%W,y=(p/W)|0;
+      for(const np of [x>0?p-1:-1,x<W-1?p+1:-1,y>0?p-W:-1,y<H-1?p+W:-1]){if(np<0||vis[np])continue;const i=np*4,dr=D[i]-sr,dg=D[i+1]-sg,db=D[i+2]-sb;if(dr*dr+dg*dg+db*db<T*T){vis[np]=1;q[t++]=np}}}
+    if(leak)break;if(cnt<40)continue;
+    const pts=[];for(let k=0;k<t;k++){const p=q[k],x=p%W,y=(p/W)|0;if(x===0||y===0||x===W-1||y===H-1||!vis[p-1]||!vis[p+1]||!vis[p-W]||!vis[p+W])pts.push([x,y])}
+    const R=mkMinRect(mkHull(pts));if(!R)continue;const fill=cnt/R.A,ratio=Math.min(R.w,R.h)/Math.max(R.w,R.h);
+    if(fill<.72)continue;const cand={w:R.w/S,h:R.h/S,fill,ratio,corners:R.corners.map(([x,y])=>[x/S,y/S]),n:cnt,T};
+    if(!best||cand.n>best.n*1.02&&cand.fill>=best.fill-.06)best=cand}
+  if(!best)return null;best.side=(best.w+best.h)/2;best.tilt=Math.round(Math.acos(Math.max(0,Math.min(1,best.ratio)))*180/Math.PI);best.sat=sat;
+  best.cx=best.corners.reduce((a,p)=>a+p[0],0)/4;best.cy=best.corners.reduce((a,p)=>a+p[1],0)/4;return best}
+function mkMap(){if(live.still){const im=$("liveImg"),iw=im.naturalWidth,ih=im.naturalHeight;if(!iw)return null;const r=im.getBoundingClientRect(),k=Math.min(r.width/iw,r.height/ih);return {src:im,sw:iw,sh:ih,k,ox:(r.width-iw*k)/2,oy:(r.height-ih*k)/2}}
+  const v=$("liveVid"),vw=v.videoWidth,vh=v.videoHeight;if(!vw)return null;const r=v.getBoundingClientRect(),k=Math.max(r.width/vw,r.height/vh);return {src:v,sw:vw,sh:vh,k,ox:(r.width-vw*k)/2,oy:(r.height-vh*k)/2}}
+function mkPaint(){const b=$("liveMk"),st=$("liveMkSt");if(!b)return;b.setAttribute("aria-pressed",String(!!live.mkOn));const R=live.mk;st.className="lc-mkst"+(R?(R.tilt>12||R.fill<.85?" warn":" ok"):"");
+  st.textContent=live.mkOn?"แตะที่กระดาษ 2×2 cm ในภาพ 1 ครั้ง":R?(R.tilt>12?`ตั้งสเกลแล้ว แต่กระดาษดูเอียง ${R.tilt}° ถือกล้องให้ตั้งฉากแล้วแตะใหม่`:R.fill<.85?"ตั้งสเกลแล้ว แต่ขอบกระดาษไม่คม ลองแตะใหม่หรือเพิ่มแสง":"ตั้งสเกลจากกระดาษ 2×2 cm แล้ว ✓"):"แตะปุ่มนี้ แล้วแตะที่กระดาษในภาพ"}
+function mkTap(sx,sy){const M=mkMap();if(!M){liveWarn("ภาพยังไม่พร้อม รอสักครู่แล้วแตะใหม่");return}
+  const ix=(sx-M.ox)/M.k,iy=(sy-M.oy)/M.k,R=mkDetect(M.src,M.sw,M.sh,ix,iy);
+  if(!R){live.mk=null;mkPaint();liveWarn("หาขอบกระดาษไม่เจอ แตะให้ตรงกลางกระดาษ ใช้กระดาษสีเขียวหรือน้ำเงินที่ตัดกับผิว และให้แสงสม่ำเสมอ");return}
+  R.k=M.k;R.ox=M.ox;R.oy=M.oy;R.screen=R.corners.map(([x,y])=>[x*M.k+M.ox,y*M.k+M.oy]);live.mk=R;live.mkOn=false;
+  live.ppc=R.side/2*M.k;const sl=$("liveScale");if(live.ppc>+sl.max)sl.max=Math.ceil(live.ppc*1.3);if(live.ppc<+sl.min)sl.min=Math.max(2,Math.floor(live.ppc*.7));sl.value=live.ppc;
+  $("liveScaleV").textContent=`${live.ppc.toFixed(0)} px = 1 cm`;live.scaled=true;$("liveTip").hidden=true;try{localStorage.setItem("pi-live-ppc",String(live.ppc))}catch(e){}
+  mkPaint();liveDraw();
+  if(R.tilt>12)liveWarn(`กระดาษดูเป็นสี่เหลี่ยมผืนผ้า (กล้องเอียงประมาณ ${R.tilt}°) ค่าที่วัดอาจคลาดเคลื่อน ถือกล้องตั้งฉากกับผิวแล้วแตะกระดาษใหม่`);
+  else if(R.fill<.85)liveWarn("ขอบกระดาษไม่ชัด ค่าอาจคลาดเคลื่อน ลองเพิ่มแสงหรือแตะใหม่");
+  else liveWarn("ตั้งสเกลจากกระดาษ 2×2 cm แล้ว ลากจุดชมพูและฟ้าไปที่ขอบแผล แล้วกดปุ่มวงกลมเพื่อคำนวณพื้นที่แผล")}
+function liveResetMeas(){live.mk=null;live.mkOn=(function(){try{return localStorage.getItem("pi-mk")==="1"}catch(e){return false}})();setTimeout(()=>{try{mkPaint()}catch(e){}},0);$("liveTip").hidden=false;live.samp=[];live.scaled=false;live.arm={};$("liveWarn").hidden=true;liveSampPaint()}
 function liveLayout(){const ov=$("liveOv"),r=ov.getBoundingClientRect(),dpr=window.devicePixelRatio||1;ov.width=Math.round(r.width*dpr);ov.height=Math.round(r.height*dpr);
   if(!live.h){const cx=r.width/2,cy=r.height*0.42,d=Math.min(r.width,r.height)*0.18;live.h=[[cx-d,cy],[cx+d,cy],[cx,cy-d*0.6],[cx,cy+d*0.6]];live.ruler={x:24,y:r.height*0.42+Math.min(r.width,r.height)*0.18+40}}
   liveDraw()}
@@ -2860,6 +2923,9 @@ function liveDraw(){const ov=$("liveOv");if(!ov.width)return;const g=ov.getConte
     return len/p};
   const L=seg(live.h[0],live.h[1],"#ff5d8f","ยาว"),Wd=seg(live.h[2],live.h[3],"#3fb8ff","กว้าง");
   $("liveL").textContent=L.toFixed(1);$("liveW").textContent=Wd.toFixed(1);live.L=L;live.W=Wd;
+  if(live.mk&&live.mk.screen){const S=live.mk.screen,bad=live.mk.tilt>12||live.mk.fill<.85;g.save();g.lineWidth=3;g.strokeStyle="rgba(0,0,0,.55)";g.beginPath();S.forEach((p,i)=>i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1]));g.closePath();g.stroke();
+    g.lineWidth=2;g.strokeStyle=bad?"#ffd166":"#4ade80";g.stroke();const top=S.reduce((a,p)=>p[1]<a[1]?p:a,S[0]);g.font="600 12px system-ui,sans-serif";g.fillStyle=bad?"#ffd166":"#4ade80";g.textAlign="center";g.fillText(bad?"2×2 cm ⚠":"2×2 cm ✓",top[0],Math.max(14,top[1]-8));g.restore()}
+  {const a=live.L*live.W;const el=$("liveA");if(el)el.textContent=a>0?a.toFixed(1):"–"}
   if(live.drag&&live.drag.k==="h")liveLoupe(g,W,H,live.h[live.drag.i],live.drag.i<2?"#ff5d8f":"#3fb8ff")}
 function liveLoupe(g,W,H,q,c){const st=live.still,src=st?$("liveImg"):$("liveVid"),sw=st?src.naturalWidth:src.videoWidth,sh=st?src.naturalHeight:src.videoHeight;if(!sw)return;
   const k=st?Math.min(W/sw,H/sh):Math.max(W/sw,H/sh),ox=(W-sw*k)/2,oy=(H-sh*k)/2,Z=3,R=58;
@@ -2923,12 +2989,19 @@ $("liveLvl").onclick=async()=>{const D=window.DeviceOrientationEvent;
   if(!lvl.u)return;if(lvl.ref){lvl.ref=null;liveWarn("กลับเป็นระดับน้ำอัตโนมัติ (แนวราบ/แนวตั้ง)")}else{lvl.ref=lvl.u.slice();liveWarn("ตั้ง 0° แล้ว ใช้เมื่อแผลอยู่บนผิวที่เอียง: ถือโทรศัพท์ขนานกับผิวก่อนแตะ")}lvlPaint()};
 $("liveShot").onclick=()=>{if(!liveGuard("shot","ยังไม่ได้เทียบสเกลกับไม้บรรทัดจริงในภาพนี้ · กดปุ่มวงกลมอีกครั้งเพื่อใช้สเกลเดิม"))return;const f=liveFrame();if(!f)return;const {c,k,ox,oy}=f,ppcImg=live.ppc/k,toImg=q=>[(q[0]-ox)/k,(q[1]-oy)/k];
   const r0=toImg([live.ruler.x,live.ruler.y-14]);
+  let MK=null;if(live.mk){MK=live.mk;if(c){try{const R2=mkDetect(c,c.width,c.height,live.mk.cx,live.mk.cy);if(R2&&Math.abs(R2.side-live.mk.side)<live.mk.side*.25)MK=R2}catch(e){}}}
+  const mid=toImg([(live.h[0][0]+live.h[1][0])/2,(live.h[0][1]+live.h[1][1])/2]);
   const go=fileObj=>{liveApplySize();liveClose();
-    loadPhoto(fileObj,sc=>{const p=ppcImg*sc,x0=Math.min(cv.width-p*5-4,Math.max(4,r0[0]*sc)),y0=Math.min(cv.height-6,Math.max(6,r0[1]*sc));
+    loadPhoto(fileObj,sc=>{
+      if(MK){const sd=MK.side*sc,cx=MK.cx*sc,cy=MK.cy*sc;cal=[[cx-sd/2,cy],[cx+sd/2,cy]];$("calcm").value=2;setMode("seed");measure();
+        setStatus(`ปรับเทียบจากกระดาษอ้างอิง 2×2 cm แล้ว (1 cm = ${(sd/2).toFixed(0)} px) กำลังหาขอบแผลและคำนวณพื้นที่…`);
+        const sp=[Math.min(cv.width-3,Math.max(2,mid[0]*sc)),Math.min(cv.height-3,Math.max(2,mid[1]*sc))];setTimeout(()=>{try{cvDetect(sp)}catch(e){}},120);return}
+      const p=ppcImg*sc,x0=Math.min(cv.width-p*5-4,Math.max(4,r0[0]*sc)),y0=Math.min(cv.height-6,Math.max(6,r0[1]*sc));
       cal=[[x0,y0],[x0+p*5,y0]];$("calcm").value=5;setMode("seed");measure();
       setStatus(`ปรับเทียบจากไม้บรรทัดบนจอแล้ว (1 cm = ${p.toFixed(0)} px) แตะกลางแผลเพื่อตรวจจับขอบอัตโนมัติ`)})};
   if(f.file)go(f.file);else c.toBlob(b=>{if(b)go(new File([b],"wound.jpg",{type:"image/jpeg"}))},"image/jpeg",.92)};
-$("liveOv").addEventListener("pointerdown",e=>{const q=livePt(e);let best=-1,bd=34;live.h.forEach((h,i)=>{const d=Math.hypot(h[0]-q[0],h[1]-q[1]);if(d<bd){bd=d;best=i}});
+$("liveMk").onclick=()=>{live.mkOn=!live.mkOn;try{localStorage.setItem("pi-mk",live.mkOn?"1":"0")}catch(e){}mkPaint()};
+$("liveOv").addEventListener("pointerdown",e=>{const q=livePt(e);if(live.mkOn){const near=live.h&&live.h.some(h=>Math.hypot(h[0]-q[0],h[1]-q[1])<26);if(!near){e.preventDefault();mkTap(q[0],q[1]);return}}let best=-1,bd=34;live.h.forEach((h,i)=>{const d=Math.hypot(h[0]-q[0],h[1]-q[1]);if(d<bd){bd=d;best=i}});
   if(best>=0)live.drag={k:"h",i:best};else if(Math.abs(q[1]-(live.ruler.y-12))<26&&q[0]>live.ruler.x-12)live.drag={k:"r",dx:q[0]-live.ruler.x,dy:q[1]-live.ruler.y};else return;
   $("liveOv").setPointerCapture(e.pointerId);e.preventDefault();liveDraw()});
 $("liveOv").addEventListener("pointermove",e=>{if(!live.drag)return;const q=livePt(e);if(live.drag.k==="h")live.h[live.drag.i]=q;else{live.ruler={x:q[0]-live.drag.dx,y:q[1]-live.drag.dy};live.scaled=true;$("liveTip").hidden=true}liveDraw()});
@@ -4696,13 +4769,14 @@ $("hmGuide").onclick=()=>{const b=$("gdBody");if(!b.dataset.done){let h="";
     try{h+=`<h4>Medical Device-Related Pressure Injury (MDRPI)</h4><ul>${CARE.device.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
     b.insertAdjacentHTML("beforeend",h);b.dataset.done=1}sheetOpen("guideModal")};
 $("gdClose").onclick=()=>sheetClose("guideModal");
-function bnavPaint(){const pg=document.body.dataset.page,m={home:"home",patients:"patients",prevent:"patients",wound:"patients",record:"history"};
+function bnavPaint(){const pg=document.body.dataset.page,m={home:"home",patients:"patients",prevent:"patients",wound:"patients",record:"patients",discharge:"patients",history:"more",trend:"more",ward:"more"};
   document.querySelectorAll("#bnav button").forEach(b=>{if(b.dataset.b===m[pg])b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")})}
 document.querySelectorAll("#bnav button").forEach(b=>b.onclick=()=>{const k=b.dataset.b;
   if(k==="home"||k==="patients")return go(k);
-  if(k==="history"){go("record");setTimeout(()=>{try{$("histFold").open=true;renderHist();$("histCard").scrollIntoView({behavior:"smooth",block:"start"})}catch(e){}},150);return}
   const L=$("moreList"),adm=isAdmin(),items=[
-    ["record","&#9998;","บันทึกการพยาบาล","Nurse's Note และจำหน่ายผู้ป่วย","--indigo"],
+    ["history","&#128203;","ประวัติการประเมิน","ผลประเมิน บันทึกที่ลงชื่อ และการจำหน่ายทั้งหมด","--indigo"],
+    ["record","&#9998;","บันทึกการพยาบาล","Nurse's Note","--indigo"],
+    ["discharge","&#8618;","จำหน่ายผู้ป่วย","กลับบ้าน ย้ายหอ ส่งต่อ","--sky"],
     ["guide","&#128214;","คู่มือ & แนวทางการดูแล","ระดับความเสี่ยง การพลิกตัว ระดับแผล","--sky"],
     ["trend","&#128200;","แนวโน้มและรายงาน",adm?"แนวโน้มแผล ตัวชี้วัดคุณภาพ ส่งออก Excel/PDF":"เฉพาะผู้ดูแลระบบ","--teal"],
     ["ward","&#127973;","หอผู้ป่วยและระบบกลาง",adm?"ภาพรวมหอ ระบบกลาง บัญชีผู้ดูแล":"เฉพาะผู้ดูแลระบบ","--gold"],
