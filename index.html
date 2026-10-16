@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Skin Guard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
 [hidden]{display:none!important}
 
@@ -1347,6 +1347,75 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
 .lg-quote{position:relative;margin:10px 0 0;display:flex;align-items:center;justify-content:center;gap:6px;color:rgba(255,255,255,.92);font-size:.98rem;font-style:italic}
 .lg-btn{background:linear-gradient(135deg,#4f86f7,#6b5ce6)!important;color:#fff!important;box-shadow:0 10px 24px -8px rgba(90,100,240,.7)!important}
 .lg-card{background:rgba(255,255,255,.1)!important;border-color:rgba(200,200,255,.28)!important}
+
+/* ===== v3.0 SMART-SKIN CARE (Clean Medical palette) ===== */
+:root{--font-body:"Noto Sans Thai","IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --bg:#F7FAFC;--ink:#17324D;--navy:#17324D;--muted:#5a6f84;--line:#dfe8ee;
+  --mint:#2EC4B6;--teal:#14998d;--teal-t:#e3f7f5;--mint1:#5ad8cc;--mint2:#2EC4B6;
+  --coral:#d8628a;--coral-t:#fde9f1;--pink:#F48FB1;--gold:#c98a12;--gold-t:#fff4dc;--amber:#F5B942;--crit:#d64545;--critbg:#EF6461;--hm-av:#e3f7f5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1824;--ink:#e6eef5;--navy:#0b1a2a;--muted:#9db0c2;--line:#26384a;
+  --mint:#3fd2c4;--teal:#4fd8c9;--teal-t:#123532;--mint1:#3fd2c4;--mint2:#22a99c;--coral:#ff9ebf;--coral-t:#3a1d2a;--pink:#ff9ebf;--gold:#f5c35a;--gold-t:#33270f;--amber:#F5B942;--crit:#ff7b78;--critbg:#EF6461;--hm-av:#173a3a}}
+:root[data-theme="dark"]{--bg:#0e1824;--ink:#e6eef5;--navy:#0b1a2a;--muted:#9db0c2;--line:#26384a;
+  --mint:#3fd2c4;--teal:#4fd8c9;--teal-t:#123532;--mint1:#3fd2c4;--mint2:#22a99c;--coral:#ff9ebf;--coral-t:#3a1d2a;--pink:#ff9ebf;--gold:#f5c35a;--gold-t:#33270f;--amber:#F5B942;--crit:#ff7b78;--critbg:#EF6461;--hm-av:#173a3a}
+html body{background:linear-gradient(170deg,#eefaf8 0%,#F7FAFC 40%,#f3f7fb 100%) fixed!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) body{background:linear-gradient(170deg,#0f2224 0%,#0e1824 45%,#0d1622 100%) fixed!important}}
+:root[data-theme="dark"] body{background:linear-gradient(170deg,#0f2224 0%,#0e1824 45%,#0d1622 100%) fixed!important}
+.bnav button[aria-current=page]{color:var(--teal);background:var(--teal-t)}
+.bnav button{font-size:.68rem;padding:6px 0}
+.bnav button span{white-space:nowrap}
+.h-en{display:block;font-family:var(--font-body);font-size:.72rem;font-weight:500;color:var(--muted);letter-spacing:.02em;margin-top:2px}
+h2:has(.h-en){flex-wrap:wrap;row-gap:0}
+h2 .h-en{flex-basis:100%;margin-top:0}
+.plan-h h2{flex:1;min-width:0}
+.adm-tag{font-family:var(--font-body);font-size:.68rem;font-weight:600;color:var(--teal);background:var(--teal-t);border-radius:999px;padding:2px 8px;vertical-align:middle;margin-left:6px}
+.hm-flow{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 3px;margin:2px 0 14px;font-size:.68rem;font-weight:600;color:var(--navy)}
+.hm-flow span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:2px 7px;box-shadow:var(--shadow)}
+.hm-flow i{font-style:normal;color:var(--mint)}
+:root[data-theme="dark"] .hm-flow{color:var(--ink)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .hm-flow{color:var(--ink)}}
+.al-item .st{margin-left:auto;flex:none;font-size:.72rem;font-weight:600;color:var(--c);white-space:nowrap}
+.al-item.low{box-shadow:inset 4px 0 0 var(--line)}
+/* plan page */
+body[data-page="plan"] .pagetabs{display:none!important}
+body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
+.plan-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.plan-shift{flex:none;font-size:.76rem;font-weight:600;color:var(--teal);background:var(--teal-t);border-radius:999px;padding:3px 10px;margin-top:4px}
+.plan-prog{margin:4px 0 12px}
+.plan-prog .bar{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.plan-prog .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--mint1),var(--teal));border-radius:999px;transition:width .3s}
+.plan-prog small{display:flex;justify-content:space-between;color:var(--muted);font-size:.78rem;margin-top:4px}
+.plan-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.pi-row{border:1px solid var(--line);border-radius:16px;padding:10px 12px;background:var(--surface);box-shadow:inset 4px 0 0 var(--c)}
+.pi-top{display:flex;gap:10px;align-items:flex-start}
+.pi-t{flex:1;min-width:0}
+.pi-t b{display:block;font-size:.92rem;font-weight:600;line-height:1.4}
+.pi-t small{color:var(--muted);font-size:.76rem}
+.pi-st{flex:none;font-size:.74rem;font-weight:700;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.pi-st.done{color:#13795b;background:#e2f6ee}.pi-st.na{color:var(--muted);background:var(--bg);border:1px solid var(--line)}.pi-st.wait{color:#9a6400;background:#fff1d6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pi-st.done{color:#7fe0b8;background:#12342a}:root:not([data-theme="light"]) .pi-st.wait{color:#f5c35a;background:#33270f}}
+:root[data-theme="dark"] .pi-st.done{color:#7fe0b8;background:#12342a}:root[data-theme="dark"] .pi-st.wait{color:#f5c35a;background:#33270f}
+.pi-act{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pi-act .btn{min-height:36px;padding:6px 12px;font-size:.82rem}
+.pi-why{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.pi-why button{font:inherit;font-size:.78rem;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 10px;cursor:pointer}
+.pi-meta{font-size:.76rem;color:var(--muted);margin-top:4px}
+.rk-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px}
+.rk-head b{font-size:1.05rem}
+.rk-rule{font-size:.82rem;color:var(--crit);font-weight:600;margin:0 0 8px}
+.rk-list{display:flex;flex-direction:column;gap:6px;margin:0 0 10px;padding:0;list-style:none}
+.rk-list li{border-radius:12px;background:var(--bg);padding:8px 10px;box-shadow:inset 3px 0 0 var(--c)}
+.rk-list li b{display:block;font-size:.88rem}
+.rk-list li small{color:var(--muted);font-size:.78rem}
+.rk-none{color:var(--muted);font-size:.86rem;margin:0 0 10px}
+.ho-text{width:100%;font:inherit;font-size:.84rem;line-height:1.55;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--bg);color:var(--ink);resize:vertical}
+.wtype{margin:-2px 0 12px}
+.wtype .lbl{display:block;margin-bottom:6px}
+/* KPI v3 */
+.kpi3-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:10px}
+.k3{border-radius:16px;background:var(--bg);padding:10px 12px;box-shadow:inset 0 3px 0 var(--c)}
+.k3 small{display:block;color:var(--muted);font-size:.74rem;line-height:1.3}
+.k3 b{display:block;font-family:var(--font-num);font-size:1.5rem;color:var(--ink);line-height:1.2;margin-top:4px}
+.k3 span{display:block;font-size:.74rem;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -1380,7 +1449,7 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
         <button class="lg-btn" type="submit">เข้าสู่ระบบ</button>
         <p class="lg-note">เลข OT ใช้ระบุผู้ประเมินและผู้บันทึก</p>
       </form>
-      <div class="lg-foot"><span>Supported by Braden Scale • NPIAP • PUSH 3.0 Standard</span><small>v2.0 Clinical Edition</small></div>
+      <div class="lg-foot"><span>Supported by Braden Scale • NPIAP • PUSH 3.0 Standard</span><small>v3.0 · SMART-SKIN CARE</small></div>
     </div>
   </div>
   <header class="hero topbar">
@@ -1464,8 +1533,13 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
     <button class="hm-tile t-peach" type="button" id="hmAlert"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><b>แจ้งเตือน<br>ความเสี่ยง</b><i class="hm-badge" id="hmAlertN" hidden></i></button>
     <button class="hm-tile t-blue" type="button" id="hmGuide"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5c3-1 6-1 9 1 3-2 6-2 9-1v14c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6v14"/></svg></span><b>คู่มือ &amp; แนวทาง<br>การดูแล</b></button>
   </div>
-  <section class="hm-today">
-    <h3>สรุปวันนี้</h3>
+  <div class="hm-flow" aria-label="แนวคิด SMART-SKIN CARE"><span>Assess</span><i>›</i><span>Prevent</span><i>›</i><span>Monitor</span><i>›</i><span>Document</span><i>›</i><span>Improve</span></div>
+  <section class="hm-today" id="hmTodo">
+    <h3>งานที่ต้องทำตอนนี้</h3>
+    <div class="al-list" id="hmTodoList"></div>
+  </section>
+  <section class="hm-today" id="hmToday" hidden>
+    <h3>สรุปวันนี้ <span class="adm-tag">ผู้ดูแลระบบ</span></h3>
     <div class="hm-stats" id="hmStats"></div>
   </section>
   </div>
@@ -1501,6 +1575,8 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
       </div>
       <div class="lbl">ยา Vasopressor ที่ได้รับอยู่</div>
       <div class="advchips" id="crVp"></div>
+      <div class="lbl">ปัจจัยทางคลินิกอื่น (ใช้วางแผนการป้องกัน)</div>
+      <div class="advchips" id="crX" role="group" aria-label="ปัจจัยทางคลินิกอื่น"></div>
       <div class="crx-out" id="crOut"></div>
       <p class="rule">เกณฑ์: Albumin &lt; 3.5 g/dL · Hypoxia = SpO₂ &lt; 90% หรือ PaO₂ &lt; 60 mmHg · ได้รับ Vasopressor ใดๆ<br>Critical Risk = Braden ≤ 12 ร่วมกับปัจจัยอย่างน้อย 1 ข้อ หรือ Braden ≤ 18 ร่วมกับปัจจัยตั้งแต่ 2 ข้อขึ้นไป</p>
       </div>
@@ -1620,6 +1696,7 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
   <div id="stepStore" hidden>
   <section class="card" data-step="1">
     <h2><span class="n">1</span>ตำแหน่งแผล</h2>
+    <div class="wtype"><span class="lbl">ชนิดของแผล</span><div class="advchips" id="wType" role="group" aria-label="ชนิดของแผล"></div></div>
     <div class="bodymap">
       <div class="bm-top">
         <span class="note" id="bmHint">แตะจุดใดก็ได้บนร่างกายเพื่อปักหมุดตำแหน่งแผล</span>
@@ -1792,6 +1869,11 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
   </div>
 
   <div class="page" id="page-trend" hidden>
+  <section class="card kpi3" id="kpi3">
+    <h2>ตัวชี้วัดคุณภาพการพยาบาล <small class="h-en">Nursing Quality &amp; Research</small></h2>
+    <div class="kpi3-g" id="kpi3G"></div>
+    <p class="note" style="margin:0">คำนวณจากข้อมูลในเครื่องนี้ (รวมข้อมูลที่ดึงจากระบบกลาง) · เฉพาะผู้ดูแลระบบ</p>
+  </section>
   <section class="card" id="ovCard">
     <h2>ภาพรวมแผลของผู้ป่วย</h2>
     <div class="ov-sum" id="ovSum"></div>
@@ -1877,6 +1959,24 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
   </section>
   </div>
 
+  <div class="page" id="page-plan" hidden>
+  <section class="card plan-risk" id="planRisk">
+    <h2>สรุปความเสี่ยง <small class="h-en">Smart Risk Summary</small></h2>
+    <div id="planRiskBody"></div>
+  </section>
+  <section class="card" id="planCard">
+    <div class="plan-h"><h2>แผนการป้องกันเฉพาะราย <small class="h-en">Personalized Prevention Plan</small></h2><span class="plan-shift" id="planShift"></span></div>
+    <div class="plan-prog" id="planProg"></div>
+    <div class="plan-list" id="planList"></div>
+    <p class="note" style="margin:0">กิจกรรมคำนวณจากคะแนน Braden ปัจจัยเสี่ยงทางคลินิก และแผลของผู้ป่วยรายนี้ บันทึกเวลาและผู้ทำทุกครั้ง ถ้ากิจกรรมใดไม่เหมาะสม ให้เลือกเหตุผล</p>
+  </section>
+  <section class="card plan-ho">
+    <h2>ส่งเวร <small class="h-en">Nursing Handover</small></h2>
+    <p class="note" style="margin:0 0 10px">สรุปความเสี่ยง แผล การพลิกตัว และกิจกรรมที่ยังค้างของผู้ป่วยทุกราย สำหรับส่งต่อเวรถัดไป</p>
+    <button class="btn primary" id="hoBtn" type="button">สรุปส่งเวร</button>
+  </section>
+  </div>
+
   <div class="page" id="page-history" hidden>
   <section class="card fold" id="histCard">
    <details id="histFold" open>
@@ -1913,7 +2013,7 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
       <textarea id="dcNote" rows="2" placeholder="เช่น ย้ายไปหอศัลยกรรมชาย 2 ส่งต่อแผนการดูแลแผลให้หอปลายทางแล้ว"></textarea>
     </label>
     <button class="btn dc-btn" id="dcBtn" type="button"><span>จำหน่ายผู้ป่วย</span></button>
-    <p class="note" style="margin:0">ผลประเมินและบันทึกที่ลงชื่อแล้วยังเก็บอยู่ในประวัติ ผู้ป่วยจะถูกนำออกจากรายชื่อผู้ป่วยในหอ และหน้าจอจะว่างพร้อมรับผู้ป่วยรายถัดไป</p>
+    <p class="note" style="margin:0">ผลประเมินและบันทึกที่ลงชื่อแล้วยังเก็บอยู่ในประวัติ ผู้ป่วยจะถูกนำออกจากรายชื่อผู้ป่วย และ<b>ภาพถ่ายผิวหนังและภาพแผลทั้งหมดของผู้ป่วยรายนี้จะถูกลบ</b> ทั้งในเครื่องนี้และในระบบกลาง เพื่อคุ้มครองข้อมูลส่วนบุคคล</p>
   </section>
   </div>
 
@@ -2084,13 +2184,23 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
   <nav class="bnav" id="bnav" aria-label="เมนูหลัก" hidden>
     <button type="button" data-b="home"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg><span>หน้าแรก</span></button>
     <button type="button" data-b="patients"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>ผู้ป่วย</span></button>
-    <button type="button" data-b="more"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg><span>อื่น ๆ</span></button>
+    <button type="button" data-b="assess"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg><span>ประเมิน</span></button>
+    <button type="button" data-b="plan"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span>แผนการดูแล</span></button>
+    <button type="button" data-b="report" hidden><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M6 16v-5"/><path d="M11 16V7"/><path d="M16 16v-8"/><path d="M21 16v-3"/></svg><span>รายงาน</span></button>
+    <button type="button" data-b="more"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg><span>เพิ่มเติม</span></button>
   </nav>
   <div class="modal" id="moreModal" hidden role="dialog" aria-modal="true" aria-label="เมนูเพิ่มเติม">
     <div class="sheet more-sheet">
       <div class="rm-kick">เมนูเพิ่มเติม</div>
       <div class="rm-body more-list" id="moreList"></div>
       <div class="rm-foot"><button class="btn" id="moreClose" type="button">ปิด</button></div>
+    </div>
+  </div>
+  <div class="modal" id="hoModal" hidden role="dialog" aria-modal="true" aria-labelledby="hoTitle">
+    <div class="sheet">
+      <div class="rm-kick">Nursing Handover</div>
+      <div class="rm-body"><h3 class="pg-hi" id="hoTitle">สรุปส่งเวร</h3><textarea id="hoText" rows="16" readonly class="ho-text"></textarea></div>
+      <div class="rm-foot"><button class="btn" id="hoClose" type="button">ปิด</button><button class="btn primary" id="hoCopy" type="button">คัดลอกข้อความ</button></div>
     </div>
   </div>
   <div class="modal" id="alModal" hidden role="dialog" aria-modal="true" aria-labelledby="alTitle">
@@ -2124,7 +2234,7 @@ body.has-bnav .advice{bottom:calc(84px + env(safe-area-inset-bottom,0px))}
     <button type="button" class="adv-x" aria-label="ปิดคำแนะนำ">×</button>
   </div>
   <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="ดูภาพผิวหนัง"></div>
-  <div class="app-foot" aria-hidden="true"><svg viewBox="0 0 56 16" preserveAspectRatio="none"><path d="M1.0,4.0 L3.0,5.3 L5.0,5.6 L7.0,4.7 L9.0,3.3 L11.0,2.4 L13.0,2.7 L15.0,4.0 L17.0,5.3 L19.0,5.6 L21.0,4.7 L23.0,3.3 L25.0,2.4 L27.0,2.7 L29.0,4.0 L31.0,5.3 L33.0,5.6 L35.0,4.7 L37.0,3.3 L39.0,2.4 L41.0,2.7 L43.0,4.0 L45.0,5.3 L47.0,5.6 L49.0,4.7 L51.0,3.3 L53.0,2.4 L55.0,2.7" fill="none" stroke="#f3a08c" stroke-width="1.6" stroke-linecap="round" opacity=".75"/><path d="M1.0,10.1 L2.0,9.5 L3.0,8.1 L4.0,7.0 L5.0,7.1 L6.0,8.2 L7.0,9.5 L8.0,10.1 L9.0,9.5 L10.0,8.1 L11.0,7.0 L12.0,7.1 L13.0,8.2 L14.0,9.5 L15.0,10.1 L16.0,9.5 L17.0,8.1 L18.0,7.0 L19.0,7.1 L20.0,8.2 L21.0,9.5 L22.0,10.1 L23.0,9.5 L24.0,8.1 L25.0,7.0 L26.0,7.1 L27.0,8.2 L28.0,9.5 L29.0,10.1 L30.0,9.5 L31.0,8.1 L32.0,7.0 L33.0,7.1 L34.0,8.2 L35.0,9.5 L36.0,10.1 L37.0,9.5 L38.0,8.1 L39.0,7.0 L40.0,7.1 L41.0,8.2 L42.0,9.5 L43.0,10.1 L44.0,9.5 L45.0,8.1 L46.0,7.0 L47.0,7.1 L48.0,8.2 L49.0,9.5 L50.0,10.1 L51.0,9.5 L52.0,8.1 L53.0,7.0 L54.0,7.1 L55.0,8.2" fill="none" stroke="#e0606f" stroke-width="1.6" stroke-linecap="round" opacity=".6"/><path d="M1.0,14.0 L3.0,14.2 L5.0,13.9 L7.0,13.3 L9.0,12.6 L11.0,12.0 L13.0,11.8 L15.0,12.1 L17.0,12.7 L19.0,13.4 L21.0,14.0 L23.0,14.2 L25.0,13.9 L27.0,13.3 L29.0,12.6 L31.0,12.0 L33.0,11.8 L35.0,12.1 L37.0,12.7 L39.0,13.4 L41.0,14.0 L43.0,14.2 L45.0,13.9 L47.0,13.3 L49.0,12.6 L51.0,12.0 L53.0,11.8 L55.0,12.1" fill="none" stroke="#d9a441" stroke-width="1.6" stroke-linecap="round" opacity=".6"/></svg><span><b>Skin Guard</b> · v2.0 Clinical Edition</span></div>
+  <div class="app-foot" aria-hidden="true"><svg viewBox="0 0 56 16" preserveAspectRatio="none"><path d="M1.0,4.0 L3.0,5.3 L5.0,5.6 L7.0,4.7 L9.0,3.3 L11.0,2.4 L13.0,2.7 L15.0,4.0 L17.0,5.3 L19.0,5.6 L21.0,4.7 L23.0,3.3 L25.0,2.4 L27.0,2.7 L29.0,4.0 L31.0,5.3 L33.0,5.6 L35.0,4.7 L37.0,3.3 L39.0,2.4 L41.0,2.7 L43.0,4.0 L45.0,5.3 L47.0,5.6 L49.0,4.7 L51.0,3.3 L53.0,2.4 L55.0,2.7" fill="none" stroke="#f3a08c" stroke-width="1.6" stroke-linecap="round" opacity=".75"/><path d="M1.0,10.1 L2.0,9.5 L3.0,8.1 L4.0,7.0 L5.0,7.1 L6.0,8.2 L7.0,9.5 L8.0,10.1 L9.0,9.5 L10.0,8.1 L11.0,7.0 L12.0,7.1 L13.0,8.2 L14.0,9.5 L15.0,10.1 L16.0,9.5 L17.0,8.1 L18.0,7.0 L19.0,7.1 L20.0,8.2 L21.0,9.5 L22.0,10.1 L23.0,9.5 L24.0,8.1 L25.0,7.0 L26.0,7.1 L27.0,8.2 L28.0,9.5 L29.0,10.1 L30.0,9.5 L31.0,8.1 L32.0,7.0 L33.0,7.1 L34.0,8.2 L35.0,9.5 L36.0,10.1 L37.0,9.5 L38.0,8.1 L39.0,7.0 L40.0,7.1 L41.0,8.2 L42.0,9.5 L43.0,10.1 L44.0,9.5 L45.0,8.1 L46.0,7.0 L47.0,7.1 L48.0,8.2 L49.0,9.5 L50.0,10.1 L51.0,9.5 L52.0,8.1 L53.0,7.0 L54.0,7.1 L55.0,8.2" fill="none" stroke="#e0606f" stroke-width="1.6" stroke-linecap="round" opacity=".6"/><path d="M1.0,14.0 L3.0,14.2 L5.0,13.9 L7.0,13.3 L9.0,12.6 L11.0,12.0 L13.0,11.8 L15.0,12.1 L17.0,12.7 L19.0,13.4 L21.0,14.0 L23.0,14.2 L25.0,13.9 L27.0,13.3 L29.0,12.6 L31.0,12.0 L33.0,11.8 L35.0,12.1 L37.0,12.7 L39.0,13.4 L41.0,14.0 L43.0,14.2 L45.0,13.9 L47.0,13.3 L49.0,12.6 L51.0,12.0 L53.0,11.8 L55.0,12.1" fill="none" stroke="#d9a441" stroke-width="1.6" stroke-linecap="round" opacity=".6"/></svg><span><b>Skin Guard v3.0</b> · SMART-SKIN CARE · Assess → Prevent → Monitor → Document → Improve</span></div>
   <p class="note">เครื่องมือนี้ช่วยประเมินตามเกณฑ์ NPIAP (2016) และ PUSH Tool 3.0 ไม่ใช้แทนการตัดสินใจทางคลินิกของพยาบาลหรือแพทย์ แผลที่เยื่อบุ (mucosal) ไม่จัดระดับด้วยระบบนี้</p>
 </div>
 
@@ -2256,6 +2366,7 @@ function bradenTotal(){const v=BRADEN.map(b=>st.braden[b[0]]);return v.every(x=>
 function bradenRisk(t){return t<=9?"Very High Risk":t<=12?"High Risk":t<=14?"Moderate Risk":"Risk"}
 var VP_LIST=["Norepinephrine","Epinephrine","Dopamine","Vasopressin","Phenylephrine"],crWasCrit=null;
 function crData(){return (typeof st!=="undefined"&&st&&st.cr)||{}}
+var CR_X=[["mv","ใช้เครื่องช่วยหายใจ"],["perf","Perfusion ไม่ดี (MAP < 65 / ปลายมือเท้าเย็น)"],["sed","ได้ยานอนหลับ/ยาหย่อนกล้ามเนื้อ"],["dev","มีอุปกรณ์การแพทย์สัมผัสผิว"],["inc","กลั้นอุจจาระ/ปัสสาวะไม่ได้"]];
 function crFactors(cr){cr=cr||{};const f=[],a=parseFloat(cr.alb),s=parseFloat(cr.spo2),p=parseFloat(cr.pao2);
   if(a>0&&a<3.5)f.push({k:"alb",name:"Albumin ต่ำ",val:`Albumin ${a} g/dL${a<2.5?" (ต่ำมาก)":""}`});
   const hx=[];if(s>0&&s<90)hx.push(`SpO₂ ${s}%`);if(p>0&&p<60)hx.push(`PaO₂ ${p} mmHg`);
@@ -2278,6 +2389,8 @@ function critActions(f){const has=k=>f.some(x=>x.k===k),a=[
 function crPaint(){const box=$("crBox");if(!box)return;if(!crPaint.init){crPaint.init=1;crLoad()}const t=bradenTotal(),cr=crData(),R=compoundRisk(t,cr);
   const vb=$("crVp");if(vb&&!vb.children.length){VP_LIST.forEach(n=>{const b=document.createElement("button");b.type="button";b.textContent=n;b.dataset.vp=n;b.setAttribute("aria-pressed","false");vb.append(b)})}
   if(vb)vb.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(!!(cr.vp&&cr.vp.includes(b.dataset.vp)))));
+  {const xb=$("crX");if(xb&&!xb.children.length){CR_X.forEach(([k,n])=>{const b=document.createElement("button");b.type="button";b.textContent=n;b.dataset.x=k;b.setAttribute("aria-pressed","false");xb.append(b)})}
+    if(xb)xb.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(!!(cr.x&&cr.x.includes(b.dataset.x)))))}
   const a=parseFloat(cr.alb),sp=parseFloat(cr.spo2),pa=parseFloat(cr.pao2);
   $("crAlb").parentNode.classList.toggle("bad",a>0&&a<3.5);$("crSpo2").parentNode.classList.toggle("bad",sp>0&&sp<90);$("crPao2").parentNode.classList.toggle("bad",pa>0&&pa<60);
   box.classList.toggle("crit",R.crit);
@@ -2495,7 +2608,7 @@ function renderRisk(t){
   box.append(d);
 }
 /* Pages */
-const PAGES=["home","patients","history","prevent","wound","trend","record","discharge","ward"];
+const PAGES=["home","patients","history","prevent","wound","plan","trend","record","discharge","ward"];
 var ADMIN_PAGES=["trend","ward"],admNext=null,bootDone=false;
 var admMem=null,admRegMode=false;
 function admGet(){if(admMem)return admMem;try{const v=sessionStorage.getItem("pi-admin");if(v&&v[0]==="{")return JSON.parse(v)}catch(e){}return null}
@@ -2552,6 +2665,8 @@ function go(pg,scroll){
   document.body.dataset.page=pg;
   if(pg==="discharge"){setTimeout(()=>{try{dcPaint()}catch(e){}},0)}
   if(pg==="record"||pg==="trend")setTimeout(renderDash,0);
+  if(pg==="plan")setTimeout(()=>{try{planPaint()}catch(e){console.error(e)}},0);
+  if(pg==="trend")setTimeout(()=>{try{kpi3Paint()}catch(e){console.error(e)}},0);
   if(pg==="ward"){setTimeout(renderWard,0);setTimeout(()=>{try{admListRender()}catch(e){}},0)}
   PAGES.forEach(x=>{$("page-"+x).hidden=x!==pg;const tb=$("tab-"+x);if(tb)tb.setAttribute("aria-selected",x===pg)});
   try{bnavPaint();if(pg==="home")homePaint();if(pg==="patients")plPaint();if(pg==="history"){$("histFold").open=true;renderHist()}}catch(e){}
@@ -2624,7 +2739,7 @@ function renderAlerts(){
   else if(s.started&&s.done&&s.left<=15*60000)add("--s2",`<span><b>ใกล้ถึงเวลาพลิกตัว</b> ${hhmm(s.next)} น. เป็นท่า${s.nextPos}</span>`);
   if(hn&&typeof hist!=="undefined"){const today=$("date").value;const last=hist.filter(h=>!h.ex&&h.hn===hn&&h.braden!=null).sort((a,b)=>a.date<b.date?1:-1)[0];
     if(last&&last.date<today&&t==null)add("--s2",`<span><b>ถึงเวลาประเมิน Braden ประจำวัน</b> ครั้งล่าสุด ${last.date} ได้ ${last.braden} คะแนน</span>`)}
-  skAlert(add);featAlerts(add);
+  skAlert(add);featAlerts(add);try{worseAlerts(add)}catch(e){}
   if(t==null&&!$("sepsis").checked&&BRADEN.every(([k])=>!st.braden[k]))add("--accent",`<span><b>ยังไม่ได้ประเมิน Braden</b> ผู้ป่วยแรกรับทุกรายต้องประเมินผิวหนังภายใน 1 ชั่วโมง และประเมิน Braden ในหน้าประเมินความเสี่ยง</span>`);
 }
 function stageName(k){return k==="none"?"ไม่เข้าเกณฑ์แผลกดทับ":k?STAGES[k].name:"ยังไม่ได้เลือก"}
@@ -2711,7 +2826,7 @@ $("save").onclick=()=>{const c=current();
   if(!c.stage&&bt==null){toast("ประเมิน Braden หรือระดับแผลก่อนบันทึก");return}
   if(!$("nurseName").value.trim()){toast("ใส่ชื่อพยาบาลผู้บันทึกก่อนบันทึก");$("nurseName").focus();return}
   if(!$("recDate").value||!$("recTime").value)recNow();
-  hist=hist.filter(h=>!h.ex);{const sig={braden:bt,nurse:$("nurseName").value.trim(),ot:(otGet()||{}).ot||"",role:$("nurseRole").value,recDate:$("recDate").value,recTime:$("recTime").value,noteText:fullNote()},base=Date.now();
+  hist=hist.filter(h=>!h.ex);{const sig={braden:bt,nurse:$("nurseName").value.trim(),ot:(otGet()||{}).ot||"",role:$("nurseRole").value,recDate:$("recDate").value,recTime:$("recTime").value,noteText:fullNote(),docMin:docMinutes()},base=Date.now();ptOpenAt=Date.now();
     const ws=(wounds||[]).filter(w=>w.stage);
     if(ws.length)ws.forEach((w,i)=>{const x=woundCalc(w);hist.push({...c,...x,...sig,woundNo:wounds.indexOf(w)+1,woundCount:wounds.length,id:base+i});if(w.photo){wpPut({id:String(base+i),hn:c.hn,site:w.site,side:w.side||"",date:c.date,img:w.photo,push:x.push,a:x.a}).then(()=>{try{syncEnq("photo",String(base+i),{store:"wound"})}catch(e){}})}});
     else hist.push({...c,...sig,id:base})}
@@ -3446,7 +3561,7 @@ async function syncPush(){let q=syncQ();if(!q.length)return 0;let sent=0;
 async function syncPull(){const since=+localStorage.getItem("pi-sync-last")||0,j=await syncCall({action:"pull",since});
   const pend=new Set(syncQ().map(x=>x.type.replace(/^del/,"")+"|"+x.key));let curChanged=false,histChanged=false;
   (j.patients||[]).forEach(r=>{const hn=String(r.hn);if(pend.has("patient|"+hn))return;
-    if(r.deleted==="y"){try{localStorage.removeItem(PT+hn)}catch(e){}return}
+    if(r.deleted==="y"){try{if(localStorage.getItem(PT+hn)!=null)photosPurge(hn,false)}catch(e){}try{localStorage.removeItem(PT+hn)}catch(e){}return}
     let rec;try{rec=JSON.parse(r.json)}catch(e){return}const old=loadPatientRec(hn),sig=o=>{if(!o)return"";const {updated,...x}=o;return JSON.stringify(x)};
     if(sig(old)===sig(rec))return;try{localStorage.setItem(PT+hn,JSON.stringify(rec))}catch(e){}if(hn===curHN)curChanged=true});
   if((j.history||[]).length){let ids;try{ids=new Set(JSON.parse(localStorage.getItem("pi-sync-hids")||"[]"))}catch(e){ids=new Set()}
@@ -3458,7 +3573,7 @@ async function syncPull(){const since=+localStorage.getItem("pi-sync-last")||0,j
   (j.turns||[]).forEach(r=>{const hn=String(r.hn),t=+r.t||0,k="pi-turn-"+hn;if(pend.has("turn|"+hn))return;if(t>(+localStorage.getItem(k)||0))try{localStorage.setItem(k,String(t))}catch(e){}});
   let gotPhoto=false;
   for(const r of (j.photos||[])){const id=String(r.id),store=String(r.store||"");if(pend.has("photo|"+id))continue;
-    if(r.deleted==="y"){if(store==="skin"){await skDel(id);gotPhoto=true}continue}
+    if(r.deleted==="y"){if(store==="skin"){await skDel(id);gotPhoto=true}else if(store==="wound"){await wpDel(id)}continue}
     if(await idbGet(store,id))continue;
     try{const g=await syncCall({action:"photo",id});if(g.rec&&g.rec.img){if(g.store==="skin")await skPut(g.rec);else await wpPut(g.rec);gotPhoto=true}}catch(e){}}
   try{localStorage.setItem("pi-sync-last",String(j.time||Date.now()))}catch(e){}
@@ -3555,7 +3670,7 @@ function captureWound(){
 function woundCalc(w){
   const n=v=>{const x=parseFloat(v);return isNaN(x)||x<0?0:x};
   const L=n(w.L),W=n(w.W),D=n(w.D),U=n(w.U),a=+(L*W).toFixed(2),as=areaScore(a);
-  return {site:w.site,side:w.side,device:w.device,L,W,D,U,a,vol:+(L*W*D).toFixed(2),as,exu:w.exu,tis:w.tis,stage:w.stage,push:as+(w.exu??0)+(w.tis??0),ai:w.ai,photoUsed:w.photoUsed,siteNote:w.siteNote||"",devices:w.devices||[],deviceOther:w.deviceOther||"",poaSrc:w.poaSrc||"",poaFrom:w.poaFrom||"",cvTissue:w.cvTissue||null,dressLog:w.dressLog||[],dressings:w.dressings||[],dressAt:w.dressAt||null,edge:w.edge||[],peri:w.peri||[],inf:w.inf||[],origin:w.origin||"",found:w.found||"",pin:w.pin||null};
+  return {wtype:w.wtype||"pi",site:w.site,side:w.side,device:w.device,L,W,D,U,a,vol:+(L*W*D).toFixed(2),as,exu:w.exu,tis:w.tis,stage:w.stage,push:as+(w.exu??0)+(w.tis??0),ai:w.ai,photoUsed:w.photoUsed,siteNote:w.siteNote||"",devices:w.devices||[],deviceOther:w.deviceOther||"",poaSrc:w.poaSrc||"",poaFrom:w.poaFrom||"",cvTissue:w.cvTissue||null,dressLog:w.dressLog||[],dressings:w.dressings||[],dressAt:w.dressAt||null,edge:w.edge||[],peri:w.peri||[],inf:w.inf||[],origin:w.origin||"",found:w.found||"",pin:w.pin||null};
 }
 function loadWound(i){
   wActive=i;const w=wounds[i];
@@ -4175,7 +4290,7 @@ $("cmpLeft").addEventListener("change",drawCmp);
 /* ---------- Quality indicators (HAPI rate) ---------- */
 function woundRegistry(){
   const m=new Map();
-  hist.filter(h=>!h.ex&&h.stage&&h.stage!=="none").forEach(h=>{const key=(h.hn||"")+"|"+h.site+"|"+(h.side||"");let r=m.get(key);
+  hist.filter(h=>!h.ex&&h.stage&&h.stage!=="none"&&(!h.wtype||h.wtype==="pi"||h.wtype==="mdrpi")).forEach(h=>{const key=(h.hn||"")+"|"+h.site+"|"+(h.side||"");let r=m.get(key);
     if(!r){r={hn:h.hn||"",site:h.site,side:h.side||"",origin:"",found:"",first:h.date,stage:h.stage,device:!!h.device,last:h};m.set(key,r)}
     if(h.origin)r.origin=h.origin;if(h.poaSrc){r.poaSrc=h.poaSrc;r.poaFrom=h.poaFrom||""}if(h.found&&(!r.found||h.found<r.found))r.found=h.found;if(h.date<r.first){r.first=h.date;r.stage=h.stage}if(h.device)r.device=true;r.last=h});
   return [...m.values()].map(r=>({...r,month:(r.found||r.first||"").slice(0,7)}));
@@ -4634,7 +4749,7 @@ function riskOf(b){const v=BRADEN.map(x=>b&&b[x[0]]);return v.every(x=>x>0)?v.re
 function savePatient(){
   if(!ptReady||!curHN)return;
   const rec={hn:curHN,name:$("ptName").value.trim(),bed:$("bed").value.trim(),braden:st.braden||{},sepsis:$("sepsis").checked,cr:st.cr||{},wActive:wActive||0,
-    wounds:(wounds||[]).map(w=>{const {photo,...r}=w;return r}),noteExtra:$("noteExtra").value,updated:Date.now()};
+    wounds:(wounds||[]).map(w=>{const {photo,...r}=w;return r}),noteExtra:$("noteExtra").value,plan:planState(),updated:Date.now()};
   const old=loadPatientRec(curHN),sig=o=>{if(!o)return"";const {updated,...r}=o;return JSON.stringify(r)};
   if(old&&sig(old)===sig(rec))return;
   try{localStorage.setItem(PT+curHN,JSON.stringify(rec))}catch(e){}
@@ -4730,7 +4845,8 @@ function homePaint(){const u=otGet()||{};$("hmName").textContent=u.name?"คุ�
   const st=(c,ic,lbl,v,unit,f)=>`<button type="button" class="hm-stat" style="--c:var(${c})" data-f="${f}"><span class="si">${ic}</span><span><small>${lbl}</small><b>${v}<i>${unit}</i></b></span></button>`;
   $("hmStats").innerHTML=st("--teal","&#128100;","ผู้ป่วยทั้งหมด",L.length,"ราย","all")+st("--coral","&#9888;","มีความเสี่ยงสูง",high,"ราย","high")+st("--indigo","&#9673;","มีแผลกดทับ",wound,"ราย","wound")+st("--gold","&#9201;","ครบกำหนดทำแผล",due,"แผล","due");
   $("hmStats").querySelectorAll(".hm-stat").forEach(b=>b.onclick=()=>{plFilter=b.dataset.f;go("patients")});
-  const n=alertItems().length,bd=$("hmAlertN");bd.hidden=!n;bd.textContent=n}
+  const n=alertItems().length,bd=$("hmAlertN");bd.hidden=!n;bd.textContent=n;
+  const adm=isAdmin();$("hmToday").hidden=!adm;try{todoPaint()}catch(e){console.error(e)}}
 var plFilter="all";
 function avColor(s){let h=0;for(const ch of String(s))h=(h*31+ch.charCodeAt(0))%360;return h}
 function plPaint(){const q=($("plQ").value||"").trim().toLowerCase();let L=ptList();
@@ -4746,7 +4862,7 @@ function plPaint(){const q=($("plQ").value||"").trim().toLowerCase();let L=ptLis
     const dt=x.p.updated?new Date(x.p.updated).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"}):"";
     b.innerHTML=`<span class="pl-av"></span><span class="pl-tx"><b></b><small></small>${riskPill(x.t,x.crit)}</span>${x.push!=null?`<span class="pl-push"><small>PUSH</small><b>${x.push}</b></span>`:""}`;
     b.querySelector(".pl-av").textContent=ini;b.querySelector("b").textContent=nm;b.querySelector("small").textContent=`HN ${x.p.hn}${dt?" · "+dt:""}${x.due?" · ครบกำหนดทำแผล "+x.due:""}`;
-    b.onclick=()=>{if(x.p.hn!==curHN)changePatient(x.p.hn);go("prevent")};box.append(b)})}
+    b.onclick=()=>{if(x.p.hn!==curHN)changePatient(x.p.hn);go(x.ws.length?"wound":"prevent")};box.append(b)})}
 $("plQ").addEventListener("input",plPaint);
 document.querySelectorAll("#plF button").forEach(b=>b.onclick=()=>{plFilter=b.dataset.f;plPaint()});
 $("plAdd").onclick=()=>{gateNext="prevent";ptGateOpen(true);$("pgHN").value="";$("pgName").value="";$("pgCancel").hidden=false;setTimeout(()=>$("pgHN").focus(),120)};
@@ -4769,21 +4885,27 @@ $("hmGuide").onclick=()=>{const b=$("gdBody");if(!b.dataset.done){let h="";
     try{h+=`<h4>Medical Device-Related Pressure Injury (MDRPI)</h4><ul>${CARE.device.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
     b.insertAdjacentHTML("beforeend",h);b.dataset.done=1}sheetOpen("guideModal")};
 $("gdClose").onclick=()=>sheetClose("guideModal");
-function bnavPaint(){const pg=document.body.dataset.page,m={home:"home",patients:"patients",prevent:"patients",wound:"patients",record:"patients",discharge:"patients",history:"more",trend:"more",ward:"more"};
+function bnavPaint(){const pg=document.body.dataset.page,m={home:"home",patients:"patients",prevent:"assess",wound:"assess",plan:"plan",record:"more",discharge:"more",history:"more",trend:"report",ward:"more"};
+  const nav=$("bnav"),rb=nav.querySelector('[data-b="report"]');if(rb)rb.hidden=!isAdmin();
+  nav.style.gridTemplateColumns=`repeat(${[...nav.querySelectorAll("button")].filter(b=>!b.hidden).length},1fr)`;
   document.querySelectorAll("#bnav button").forEach(b=>{if(b.dataset.b===m[pg])b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")})}
 document.querySelectorAll("#bnav button").forEach(b=>b.onclick=()=>{const k=b.dataset.b;
   if(k==="home"||k==="patients")return go(k);
+  if(k==="assess"){const hn=realHN(),has=hn&&(wounds||[]).some(w=>w.stage&&w.stage!=="none");return needPt(has?"wound":"prevent")}
+  if(k==="plan")return needPt("plan");
+  if(k==="report")return go("trend");
   const L=$("moreList"),adm=isAdmin(),items=[
     ["history","&#128203;","ประวัติการประเมิน","ผลประเมิน บันทึกที่ลงชื่อ และการจำหน่ายทั้งหมด","--indigo"],
     ["record","&#9998;","บันทึกการพยาบาล","Nurse's Note","--indigo"],
     ["discharge","&#8618;","จำหน่ายผู้ป่วย","กลับบ้าน ย้ายหอ ส่งต่อ","--sky"],
     ["guide","&#128214;","คู่มือ & แนวทางการดูแล","ระดับความเสี่ยง การพลิกตัว ระดับแผล","--sky"],
-    ["trend","&#128200;","แนวโน้มและรายงาน",adm?"แนวโน้มแผล ตัวชี้วัดคุณภาพ ส่งออก Excel/PDF":"เฉพาะผู้ดูแลระบบ","--teal"],
+    ["handover","&#128203;","สรุปส่งเวร","Nursing Handover ผู้ป่วยทุกราย","--teal"],
+    ["trend","&#128200;","รายงานและสถิติ",adm?"ตัวชี้วัดคุณภาพ แนวโน้มแผล ส่งออก Excel/PDF":"เฉพาะผู้ดูแลระบบ","--teal"],
     ["ward","&#127973;","หอผู้ป่วยและระบบกลาง",adm?"ภาพรวมหอ ระบบกลาง บัญชีผู้ดูแล":"เฉพาะผู้ดูแลระบบ","--gold"],
     ["admin","&#128273;",adm?"ออกจากโหมดผู้ดูแล":"เข้าโหมดผู้ดูแล (Admin)","","--crit"],
     ["logout","&#8617;","ออกจากระบบ","","--s1"]];
   L.innerHTML="";items.forEach(([k2,ic,t,sub,c])=>{const x=document.createElement("button");x.type="button";if(k2==="logout")x.className="danger";x.style.setProperty("--c",`var(${c})`);x.innerHTML=`<i>${ic}</i><span>${t}${sub?`<small>${sub}</small>`:""}</span>`;
-    x.onclick=()=>{sheetClose("moreModal");if(k2==="guide")return $("hmGuide").onclick();if(k2==="admin")return $("admLock").onclick();if(k2==="logout")return doLogout();go(k2)};L.append(x)});
+    x.onclick=()=>{sheetClose("moreModal");if(k2==="guide")return $("hmGuide").onclick();if(k2==="handover")return hoOpen();if(k2==="admin")return $("admLock").onclick();if(k2==="logout")return doLogout();go(k2)};L.append(x)});
   sheetOpen("moreModal")});
 $("moreClose").onclick=()=>sheetClose("moreModal");
 setTimeout(()=>{try{ptBarPaint();bnavPaint();if(document.body.dataset.page==="home")homePaint();if(document.body.dataset.page==="patients")plPaint()}catch(e){}},200);
@@ -4815,10 +4937,174 @@ $("dcBtn").onclick=()=>{const hn=$("hn").value.trim();if(!hn)return;
   saveHist(hist);
   try{localStorage.removeItem(PT+hn);localStorage.removeItem("pi-turn-"+hn)}catch(e){}
   try{syncEnq("delpatient",hn,null)}catch(e){}
+  const purge=photosPurge(hn,true);
   blankPatientForm();$("dcNote").value="";dcKind="home";$("dcDate").value="";$("dcTime").value="";
   renderHist();try{if(isAdmin())renderWard()}catch(e){}dcPaint();
   go("home");window.scrollTo(0,0);try{ptBarPaint()}catch(e){}
-  advise("จำหน่ายผู้ป่วยแล้ว",`HN ${hn} · ${DCK[kind]} · บันทึกไว้ในประวัติการประเมิน`,"--ok","✓")};
+  purge.then(n=>advise("จำหน่ายผู้ป่วยแล้ว",`HN ${hn} · ${DCK[kind]} · บันทึกไว้ในประวัติการประเมิน${n?` · ลบภาพถ่ายของผู้ป่วยแล้ว ${n} ภาพ`:""}`,"--ok","✓"))};
+/* ===== Skin Guard v3.0 · SMART-SKIN CARE ===== */
+/* --- photos: removed from this device (and the central system) on discharge --- */
+async function wpDel(id){const db=await wpReady();if(!db)return;return new Promise(res=>{try{const t=db.transaction("p","readwrite");t.objectStore("p").delete(id);t.oncomplete=()=>res();t.onerror=()=>res();t.onabort=()=>res()}catch(e){res()}})}
+async function photosPurge(hn,enq){hn=String(hn||"");if(!hn)return 0;let n=0;
+  try{if(!skinTried){skinTried=true;skinDB=await skOpen()}}catch(e){}
+  try{for(const r of await skAll(hn)){await skDel(r.id);if(enq)try{syncEnq("delphoto",r.id,{store:"skin"})}catch(e){}n++}}catch(e){}
+  try{for(const r of await wpAll(hn)){await wpDel(r.id);if(enq)try{syncEnq("delphoto",r.id,{store:"wound"})}catch(e){}n++}}catch(e){}
+  return n}
+
+/* --- documentation time --- */
+var ptOpenAt=Date.now(),ptOpenHN=null;
+function docMinutes(){if(!ptOpenAt)return null;const m=(Date.now()-ptOpenAt)/60000;return m>0&&m<=180?Math.round(m*10)/10:null}
+{const _cp=changePatient;changePatient=function(nh){const k=String(nh||"").trim();if(k&&k!==ptOpenHN){ptOpenHN=k;ptOpenAt=Date.now()}if(typeof st!=="undefined")st.planHN=null;return _cp.apply(this,arguments)}}
+
+/* --- personalized prevention plan (status per date|shift, stored in the patient record) --- */
+var PLAN_WHY=["ผู้ป่วยอาการไม่คงที่","แพทย์สั่ง/ข้อจำกัดการรักษา","ผู้ป่วยปฏิเสธ","ไม่มีอุปกรณ์","อื่น ๆ"];
+var SHIFT_TH={m:"เวรเช้า",a:"เวรบ่าย",n:"เวรดึก"};
+var PX_SHORT={vent:"ตรวจผิวใต้ท่อช่วยหายใจ",perf:"ตรวจจุดเสี่ยง DTI",o2skin:"ตรวจผิวใต้อุปกรณ์ออกซิเจน",nut2:"ติดตามโภชนาการ",sedskin:"ตรวจผิวทุกครั้งที่พลิกตัว",inc:"ดูแลผิวหลังขับถ่าย",reassess:"ประเมิน Braden ซ้ำ"};
+function bkkDate(){return new Date(Date.now()+7*3600e3).toISOString().slice(0,10)}
+function planKey(){return bkkDate()+"|"+shiftNow()}
+function planState(){if(typeof st==="undefined")return {};if(!st.plan||st.planHN!==curHN){const r=curHN?loadPatientRec(curHN):null;st.plan=(r&&r.plan)||{};st.planHN=curHN}return st.plan}
+function planPrune(P){const lim=new Date(Date.now()+7*3600e3-3*864e5).toISOString().slice(0,10);Object.keys(P).forEach(k=>{if(k.slice(0,10)<lim)delete P[k]})}
+function planItems(){let items=[];try{items=chkItems()}catch(e){}const has=id=>items.some(x=>x.id===id),cr=crData(),x=cr.x||[],f=crFactors(cr).map(z=>z.k);
+  const add=(id,text,tag,c)=>{if(!has(id))items.push({id,text,tag,c})};
+  if(x.includes("mv"))add("vent","ตรวจผิวใต้ท่อช่วยหายใจและที่ยึดท่อ (มุมปาก ริมฝีปาก ใบหู) เลื่อนตำแหน่งท่อตามแนวทางของหน่วยงาน","ใช้เครื่องช่วยหายใจ","--sky");
+  if(x.includes("perf")||f.includes("vp"))add("perf","ตรวจส้นเท้า Sacrum ใบหู ปลายมือปลายเท้า ทุก 2–4 ชม. ถ้าพลิกตัวเต็มที่ไม่ได้ใช้ small shift",x.includes("perf")?"Perfusion ไม่ดี":"Vasopressor","--s1");
+  if(f.includes("hyp"))add("o2skin","ตรวจผิวใต้อุปกรณ์ให้ออกซิเจน (mask, NIV, cannula, สาย SpO₂) และย้ายตำแหน่งสาย SpO₂","Hypoxia","--sky");
+  if(f.includes("alb"))add("nut2","ติดตามพลังงานและโปรตีนที่ได้รับ ปรึกษานักโภชนาการเมื่อได้ไม่ถึงเป้าหมาย","Albumin ต่ำ","--s2");
+  if(x.includes("sed"))add("sedskin","ตรวจผิวหนังทุกครั้งที่พลิกตัว เพราะผู้ป่วยบอกอาการเจ็บหรือขยับเองไม่ได้","ยานอนหลับ/ยาหย่อนกล้ามเนื้อ","--s2");
+  if(x.includes("dev"))add("device","ตรวจผิวใต้อุปกรณ์การแพทย์ ขยับหรือรองอุปกรณ์ทุก 2 ชั่วโมง","อุปกรณ์การแพทย์","--s1");
+  if(x.includes("inc")&&!has("barrier"))add("inc","ทำความสะอาดผิวและทาครีมเคลือบผิว (Barrier cream) หลังขับถ่ายทุกครั้ง","กลั้นการขับถ่ายไม่ได้","--si");
+  if(bradenTotal()==null)items.unshift({id:"reassess",text:"ประเมิน Braden Scale ของวันนี้",tag:"ยังไม่ประเมิน","c":"--accent"});
+  return items}
+function planEntry(P,key){return (P||planState())[key||planKey()]||null}
+function planSet(id,v){const P=planState(),k=planKey(),e=P[k]||(P[k]={i:{}});e.i=e.i||{};if(v)e.i[id]=v;else delete e.i[id];planPrune(P);st.plan=P;try{savePatient()}catch(e){}planPaint()}
+function piStatus(v){return !v?{c:"wait",t:"🟠 รอดำเนินการ"}:v.s==="done"?{c:"done",t:"✅ เสร็จแล้ว"}:{c:"na",t:"⚪ ไม่ได้ดำเนินการ"}}
+function planCounts(e){const n=e&&e._n||0,i=e&&e.i||{},ids=e&&e._l||Object.keys(i);let done=0,na=0;ids.forEach(id=>{const v=i[id];if(v&&v.s==="done")done++;else if(v&&v.s==="na")na++});return {n,done,na,pend:Math.max(0,n-done-na)}}
+var planOpen=null;
+function planPaint(){if(!$("page-plan"))return;riskSummaryPaint();
+  const hn=realHN(),list=$("planList");$("planShift").textContent=`${SHIFT_TH[shiftNow()]} · ${new Date().toLocaleDateString("th-TH",{day:"numeric",month:"short"})}`;
+  if(!hn){list.innerHTML='<div class="pl-empty">ยังไม่ได้เลือกผู้ป่วย</div>';$("planProg").innerHTML="";return}
+  const items=planItems(),P=planState(),k=planKey(),e=P[k]||(P[k]={i:{}});
+  const ids=items.map(x=>x.id);if(e._n!==items.length||JSON.stringify(e._l||[])!==JSON.stringify(ids)){e._n=items.length;e._l=ids;st.plan=P;try{savePatient()}catch(x){}}
+  const C=planCounts(e),pct=C.n?Math.round((C.done+C.na)/C.n*100):0;
+  $("planProg").innerHTML=`<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div><small><span>บันทึกแล้ว ${C.done+C.na}/${C.n} กิจกรรม (${pct}%)</span><span>เสร็จ ${C.done} · ไม่ได้ทำ ${C.na} · รอ ${C.pend}</span></small>`;
+  list.innerHTML="";let turnDue=null;try{turnDue=turnFor(hn)}catch(x){}
+  items.forEach(it=>{const v=e.i[it.id],S=piStatus(v),row=document.createElement("div");row.className="pi-row";row.style.setProperty("--c",`var(${v&&v.s==="done"?"--ok":v?"--line":it.c})`);
+    row.innerHTML=`<div class="pi-top"><div class="pi-t"><b></b><small></small></div><span class="pi-st ${S.c}">${S.t}</span></div>`;
+    row.querySelector("b").textContent=it.text;row.querySelector("small").textContent=it.tag+(it.id==="turn"&&turnDue&&turnDue.next?` · รอบถัดไป ${hhmm(turnDue.next)} น.`:"");
+    if(v){const m=document.createElement("div");m.className="pi-meta";m.textContent=(v.s==="done"?`ทำเมื่อ ${hhmm(v.t)} น.`:`เหตุผล: ${v.r||"-"} · ${hhmm(v.t)} น.`)+(v.by?` · ${v.by}`:"")+(v.ot?` (OT ${v.ot})`:"");row.append(m)}
+    const act=document.createElement("div");act.className="pi-act";
+    const by=()=>{const u=otGet()||{};return {by:(($("nurseName")&&$("nurseName").value.trim())||u.name||""),ot:u.ot||""}};
+    if(!v){const d=document.createElement("button");d.type="button";d.className="btn primary sm";d.textContent="✓ เสร็จแล้ว";d.onclick=()=>planSet(it.id,Object.assign({s:"done",t:Date.now()},by()));
+      const n=document.createElement("button");n.type="button";n.className="btn sm";n.textContent="ไม่เหมาะสม / ทำไม่ได้";n.onclick=()=>{planOpen=planOpen===it.id?null:it.id;planPaint()};act.append(d,n)}
+    else{const u=document.createElement("button");u.type="button";u.className="btn ghost sm";u.textContent="แก้ไขสถานะ";u.onclick=()=>planSet(it.id,null);act.append(u);
+      if(it.id==="turn"&&v.s==="done"){}}
+    row.append(act);
+    if(!v&&planOpen===it.id){const w=document.createElement("div");w.className="pi-why";w.setAttribute("role","group");w.setAttribute("aria-label","เหตุผลที่ไม่ได้ดำเนินการ");
+      PLAN_WHY.forEach(r=>{const b=document.createElement("button");b.type="button";b.textContent=r;b.onclick=()=>{let rr=r;if(r==="อื่น ๆ"){rr=(prompt("ระบุเหตุผล")||"").trim();if(!rr)return}planOpen=null;planSet(it.id,Object.assign({s:"na",r:rr,t:Date.now()},by()))};w.append(b)});row.append(w)}
+    list.append(row)})}
+
+/* --- Smart Risk Summary: reasons, not just a score --- */
+var CR_WHY={sens:"รับรู้ความเจ็บปวดลดลง บอกไม่ได้เมื่อถูกกดทับ",mois:"ผิวเปียกชื้นบ่อย ผิวเปื่อยและฉีกขาดง่าย",act:"อยู่บนเตียงตลอด แรงกดต่อเนื่องที่ปุ่มกระดูก",mob:"ขยับเปลี่ยนท่าเองได้น้อย",nut:"ได้สารอาหารไม่เพียงพอ เนื้อเยื่อซ่อมแซมช้า",fric:"มีแรงเสียดทาน/แรงเฉือนขณะเลื่อนตัว"};
+var CRF_WHY={alb:"โปรตีนต่ำ ผิวและเนื้อเยื่อทนแรงกดได้น้อย หายช้า",hyp:"เนื้อเยื่อขาดออกซิเจน เกิดแผลได้เร็วกว่าปกติ",vp:"หลอดเลือดส่วนปลายหดตัว เลือดไปเลี้ยงผิวลดลง เสี่ยง Deep Tissue Injury"};
+var CRX_WHY={mv:"ท่อช่วยหายใจและอุปกรณ์ยึดท่อกดทับผิวบริเวณใบหน้า",perf:"MAP ต่ำหรือปลายมือเท้าเย็น เลือดไปเลี้ยงผิวไม่พอ",sed:"ผู้ป่วยขยับตัวเองไม่ได้และบอกอาการเจ็บไม่ได้",dev:"อุปกรณ์การแพทย์กดทับผิวต่อเนื่อง (MDRPI)",inc:"ปัสสาวะ/อุจจาระทำให้ผิวเปื่อย (IAD) และเกิดแผลกดทับง่ายขึ้น"};
+function riskSummaryPaint(){const box=$("planRiskBody");if(!box)return;const hn=realHN();
+  if(!hn){box.innerHTML='<p class="rk-none">เลือกผู้ป่วยก่อน</p>';return}
+  const t=bradenTotal(),cr=crData(),R=compoundRisk(t,cr),b=st.braden||{},L=[];
+  BRADEN.forEach(([k,name])=>{const v=b[k];if(v>0&&v<=2)L.push({c:"--s2",h:`${name.split(" (")[0]} ${v} คะแนน · ${SHORT[k]?SHORT[k][v-1]:""}`,d:CR_WHY[k]})});
+  R.f.forEach(f=>L.push({c:"--crit",h:`${f.name} · ${f.val}`,d:CRF_WHY[f.k]||""}));
+  (cr.x||[]).forEach(k=>{const n=(CR_X.find(z=>z[0]===k)||[])[1];if(n)L.push({c:"--sky",h:n,d:CRX_WHY[k]||""})});
+  if($("sepsis").checked)L.push({c:"--s2",h:"มีภาวะ sepsis / บวม / มีรอยแดง",d:"ผิวเปราะบาง ต้องใช้วัสดุ Soft Silicone/Foam ป้องกัน"});
+  const ws=(wounds||[]).filter(w=>w.stage&&w.stage!=="none");if(ws.length)L.push({c:"--coral",h:`มีแผลอยู่ ${ws.length} แผล`,d:ws.map((w,i)=>`${siteLabel(w)} ${stageShort(w.stage)}`).join(" · ")});
+  if((wounds||[]).some(w=>w.device)&&!(cr.x||[]).includes("dev"))L.push({c:"--s1",h:"มีแผลจากอุปกรณ์การแพทย์ (MDRPI)",d:"ตรวจผิวใต้อุปกรณ์ทุกชิ้นทุกเวร"});
+  const lvl=t==null?"ยังไม่ได้ประเมิน Braden":R.crit?"Critical Risk":bradenRisk(t)+(t>18?" (ความเสี่ยงต่ำ)":"");
+  box.innerHTML=`<div class="rk-head">${riskPill(t,R.crit)}<b>${esc(lvl)}</b></div>${R.crit?`<p class="rk-rule">⚠ ${esc(R.rule)} ต้องป้องกันเชิงรุกทันที</p>`:""}`+
+    (L.length?`<ul class="rk-list">${L.map(x=>`<li style="--c:var(${x.c})"><b>${esc(x.h)}</b>${x.d?`<small>เหตุผล: ${esc(x.d)}</small>`:""}</li>`).join("")}</ul>`:`<p class="rk-none">${t==null?"ประเมิน Braden และกรอกปัจจัยเสี่ยงทางคลินิก เพื่อให้แอปสรุปเหตุผลของความเสี่ยง":"ไม่พบปัจจัยที่ต้องเฝ้าระวังเพิ่ม ดูแลตามมาตรฐานพื้นฐาน"}</p>`)+
+    `<button class="btn sm" type="button" id="rkEdit">${t==null?"ประเมิน Braden":"แก้ไข Braden / ปัจจัยเสี่ยง"}</button>`;
+  $("rkEdit").onclick=()=>{go("prevent");setTimeout(()=>{try{$("crBox").open=true}catch(e){}},80)}}
+
+/* --- extra clinical chips --- */
+$("crX").addEventListener("click",e=>{const b=e.target.closest("button[data-x]");if(!b)return;const cur=(crData().x||[]).slice(),k=b.dataset.x,i=cur.indexOf(k);if(i>=0)cur.splice(i,1);else cur.push(k);crSet("x",cur)});
+
+/* --- wound type --- */
+var WTYPES=[["pi","แผลกดทับ (Pressure injury)"],["mdrpi","MDRPI"],["masd","IAD / MASD"],["tear","Skin tear"],["surg","แผลผ่าตัด"],["other","แผลอื่น ๆ"]];
+function wtypePaint(){const box=$("wType");if(!box)return;if(!box.children.length)WTYPES.forEach(([k,n])=>{const b=document.createElement("button");b.type="button";b.dataset.w=k;b.textContent=n;b.setAttribute("aria-pressed","false");box.append(b)});
+  const w=wounds&&wounds[wActive],cur=w&&w.wtype||"pi";box.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.w===cur)))}
+$("wType").addEventListener("click",e=>{const b=e.target.closest("button[data-w]");if(!b)return;const w=wounds&&wounds[wActive];if(!w)return;w.wtype=b.dataset.w;
+  if(w.wtype==="mdrpi"&&!$("device").checked){$("device").checked=true;$("device").dispatchEvent(new Event("change",{bubbles:true}))}
+  if(w.wtype==="pi"&&$("device").checked){$("device").checked=false;$("device").dispatchEvent(new Event("change",{bubbles:true}))}
+  wtypePaint();update();try{savePatient()}catch(x){}});
+{const _lw=loadWound;loadWound=function(){const r=_lw.apply(this,arguments);try{wtypePaint()}catch(e){}return r}}
+setTimeout(()=>{try{wtypePaint()}catch(e){}},60);
+
+/* --- wound progress: alert when a wound gets worse --- */
+function woundWorse(w,hn){if(!w||!w.stage||w.stage==="none"||!w.site||!hn)return null;
+  const S=hist.filter(h=>!h.ex&&h.hn===hn&&h.site===w.site&&(h.side||"")===(w.side||"")&&h.push!=null).sort((a,b)=>(+a.id||0)-(+b.id||0));
+  let cur=null;try{cur=woundCalc(w)}catch(e){}const last=S[S.length-1];let a,b;
+  if(cur&&last&&cur.a>0&&(cur.push!==last.push||Math.abs((cur.a||0)-(last.a||0))>0.01)){a=last;b=cur}else if(S.length>=2){a=S[S.length-2];b=last}else return null;
+  const why=[];if(b.push>a.push)why.push(`PUSH ${a.push} → ${b.push}`);if(a.a>0&&b.a>a.a*1.1)why.push(`พื้นที่ ${(+a.a).toFixed(1)} → ${(+b.a).toFixed(1)} cm² (+${Math.round((b.a/a.a-1)*100)}%)`);
+  return why.length?why:null}
+function worseAlerts(add){const hn=realHN();if(!hn||typeof hist==="undefined")return;(wounds||[]).forEach((w,i)=>{const y=woundWorse(w,hn);
+  if(y)add("--s1",`<span><b>แผลที่ ${i+1} แย่ลง</b> ${esc(siteLabel(w))}${w.side?" "+esc(w.side):""} · ${y.join(" · ")} ทบทวนแผนการดูแลแผลและรายงานแพทย์</span>`,"wound","ดูแผล")})}
+{const _ai=alertItems;alertItems=function(){const out=_ai.apply(this,arguments);try{ptList().forEach(x=>{(x.ws||[]).forEach(w=>{const y=woundWorse(w,x.p.hn);if(y)out.push({c:"--s1",hn:x.p.hn,t:`แผลแย่ลง · ${siteLabel(w)} (${y[0]})`,d:`HN ${x.p.hn}${x.p.name?" · "+x.p.name:""}`,go:"wound"})})})}catch(e){}return out}}
+
+/* --- home: work to do now (all users) --- */
+function todoPaint(){const box=$("hmTodoList");if(!box)return;box.innerHTML="";const A=alertItems().slice(),k=planKey();
+  ptList().forEach(x=>{const e=x.p.plan&&x.p.plan[k],C=planCounts(e);const nm=`HN ${x.p.hn}${x.p.name?" · "+x.p.name:""}`;
+    if(!e||!e._n)A.push({c:"--line",low:1,hn:x.p.hn,t:`ยังไม่ได้บันทึกกิจกรรมป้องกัน${SHIFT_TH[shiftNow()]}`,d:nm,go:"plan"});
+    else if(C.pend)A.push({c:"--gold",hn:x.p.hn,t:`กิจกรรมป้องกันรอดำเนินการ ${C.pend} รายการ`,d:nm,go:"plan",st:`${C.done+C.na}/${C.n}`})});
+  if(!A.length){box.innerHTML='<p class="note" style="margin:6px 4px">ไม่มีงานค้าง ผู้ป่วยทุกรายได้รับการดูแลตามแผนแล้ว</p>';return}
+  A.slice(0,8).forEach(a=>{const b=document.createElement("button");b.type="button";b.className="al-item"+(a.low?" low":"");b.style.setProperty("--c",`var(${a.c})`);
+    b.innerHTML="<span><b></b><small></small></span>"+(a.st?`<span class="st">${esc(a.st)}</span>`:"");b.querySelector("b").textContent=a.t;b.querySelector("small").textContent=a.d;
+    b.onclick=()=>{if(a.hn!==curHN)changePatient(a.hn);go(a.go)};box.append(b)});
+  if(A.length>8){const m=document.createElement("button");m.type="button";m.className="btn ghost sm";m.textContent=`ดูทั้งหมด ${A.length} รายการ`;m.onclick=()=>go("patients");box.append(m)}}
+
+/* --- Nursing Handover --- */
+function hoText(){const sh=shiftNow(),k=planKey(),L=ptList().slice().sort((a,b)=>String(a.p.bed||a.p.hn).localeCompare(String(b.p.bed||b.p.hn),"th",{numeric:true}));
+  const u=otGet()||{},nm=(($("nurseName")&&$("nurseName").value.trim())||u.name||"");
+  let t=`สรุปส่งเวร Skin Guard · ${SHIFT_TH[sh]} ${thDateLong(bkkDate())} เวลา ${hhmm(Date.now())} น.\nผู้ป่วยทั้งหมด ${L.length} ราย\n`;
+  L.forEach((x,i)=>{const p=x.p,cr=p.cr||{},R=compoundRisk(x.t,cr);
+    t+=`\n${i+1}) ${p.bed?"เตียง "+p.bed+" · ":""}HN ${p.hn}${p.name?" · "+p.name:""}\n`;
+    t+=`   ความเสี่ยง: ${x.t==null?"ยังไม่ประเมิน Braden":`Braden ${x.t} ${R.crit?"Critical Risk":bradenRisk(x.t)}`}${R.f.length?` · ${R.f.map(f=>f.name).join(", ")}`:""}${(cr.x||[]).length?` · ${(cr.x||[]).map(k=>(CR_X.find(z=>z[0]===k)||[])[1]||k).join(", ")}`:""}\n`;
+    if(x.ws.length)x.ws.forEach(w=>{let push=null;try{push=woundCalc(w).push}catch(e){}let S=null;try{S=dressStatus(w)}catch(e){}const y=woundWorse(w,p.hn);
+      t+=`   แผล: ${siteLabel(w)}${w.side?" "+w.side:""} ${stageShort(w.stage)}${push!=null?" PUSH "+push:""}${y?" ⚠ แย่ลง ("+y.join(", ")+")":""}${S&&(S.cls==="over"||S.cls==="soon")?" · ครบกำหนดเปลี่ยนวัสดุปิดแผล":""}\n`});
+    else t+=`   แผล: ไม่มี\n`;
+    if(x.turn&&x.turn.lt)t+=`   พลิกตัวล่าสุด ${hhmm(x.turn.lt)} น.${x.turn.pos?` · รอบถัดไปท่า${x.turn.pos}`:""}${x.turn.next?` ${hhmm(x.turn.next)} น.`:""}\n`;
+    const e=p.plan&&p.plan[k];if(e&&e._n){const C=planCounts(e),ids=e._l||[],nm2=id=>(typeof CHK_SHORT!=="undefined"&&CHK_SHORT[id])||PX_SHORT[id]||id;
+      const pend=ids.filter(id=>!e.i||!e.i[id]).map(nm2),na=ids.filter(id=>e.i&&e.i[id]&&e.i[id].s==="na").map(id=>`${nm2(id)} (${e.i[id].r||"-"})`);
+      t+=`   กิจกรรมป้องกันเวรนี้: เสร็จ ${C.done}/${C.n}${pend.length?` · ค้าง: ${pend.join(", ")}`:""}${na.length?` · ไม่ได้ทำ: ${na.join(", ")}`:""}\n`}
+    else t+=`   กิจกรรมป้องกันเวรนี้: ยังไม่ได้บันทึก\n`});
+  t+=`\nผู้ส่งเวร: ${nm||"................"}${u.ot?" (OT "+u.ot+")":""}`;return t}
+function hoOpen(){$("hoText").value=hoText();sheetOpen("hoModal")}
+$("hoBtn").onclick=hoOpen;$("hoClose").onclick=()=>sheetClose("hoModal");
+$("hoCopy").onclick=()=>{const t=$("hoText").value;const ok=()=>{$("hoCopy").textContent="คัดลอกแล้ว ✓";setTimeout(()=>$("hoCopy").textContent="คัดลอกข้อความ",1800)};
+  if(navigator.clipboard)navigator.clipboard.writeText(t).then(ok).catch(()=>{$("hoText").select();document.execCommand&&document.execCommand("copy");ok()});else{$("hoText").select();try{document.execCommand("copy")}catch(e){}ok()}};
+
+/* --- Quality & research dashboard (admin) --- */
+function kpi3Paint(){const box=$("kpi3G");if(!box||!isAdmin())return;const d0=bkkDate(),mo=d0.slice(0,7),L=ptList();
+  const bradenToday=L.filter(x=>hist.some(h=>!h.ex&&h.hn===x.p.hn&&h.braden!=null&&(h.date===d0||h.recDate===d0))).length;
+  let n=0,done=0,na=0,acts=0;const byShift={m:0,a:0,n:0};
+  L.forEach(x=>{const P=x.p.plan||{};Object.keys(P).forEach(k=>{const e=P[k],C=planCounts(e);const [dt,sh]=k.split("|");
+    Object.values(e.i||{}).forEach(v=>{if(v&&v.s==="done"&&dt===d0){acts++;byShift[sh]=(byShift[sh]||0)+1}});
+    if(dt===d0){n+=C.n;done+=C.done;na+=C.na}})});
+  const prevPct=n?Math.round(done/Math.max(1,n-na)*100):null;
+  let hapi=0;try{hapi=woundRegistry().filter(r=>r.origin==="hapi"&&r.month===mo).length}catch(e){}
+  const G=new Map();hist.filter(h=>!h.ex&&h.push!=null&&h.stage&&h.stage!=="none").forEach(h=>{const k=(h.hn||"")+"|"+h.site+"|"+(h.side||"");if(!G.has(k))G.set(k,[]);G.get(k).push(h)});
+  let imp=0,same=0,worse=0;G.forEach(a=>{if(a.length<2)return;a.sort((x,y)=>(+x.id||0)-(+y.id||0));const p=a[a.length-2],c=a[a.length-1];if(c.push<p.push)imp++;else if(c.push>p.push)worse++;else same++});
+  const tracked=imp+same+worse;
+  const dm=hist.filter(h=>!h.ex&&h.docMin!=null&&(h.recDate||h.date||"").slice(0,7)===mo).map(h=>+h.docMin).filter(v=>v>0);
+  const avg=dm.length?(dm.reduce((a,b)=>a+b,0)/dm.length):null;
+  const recToday=new Set(hist.filter(h=>!h.ex&&(h.recDate===d0)).map(h=>h.id)).size;
+  const k=(c,lbl,v,sub)=>`<div class="k3" style="--c:var(${c})"><small>${lbl}</small><b>${v}</b><span>${sub}</span></div>`;
+  box.innerHTML=k("--teal","Braden Compliance (วันนี้)",L.length?Math.round(bradenToday/L.length*100)+"%":"–",`ประเมินแล้ว ${bradenToday}/${L.length} ราย`)+
+    k("--mint","Prevention Compliance (วันนี้)",prevPct==null?"–":prevPct+"%",n?`เสร็จ ${done} จาก ${n-na} กิจกรรม${na?` · ไม่เหมาะสม ${na}`:""}`:"ยังไม่มีการบันทึกกิจกรรม")+
+    k("--crit","HAPI Incidence (เดือนนี้)",hapi,"แผลกดทับที่เกิดในโรงพยาบาล")+
+    k("--coral","Wound Progress",tracked?Math.round(imp/tracked*100)+"%":"–",tracked?`ดีขึ้น ${imp} · คงที่ ${same} · แย่ลง ${worse}`:"ต้องมีผลประเมินแผลอย่างน้อย 2 ครั้ง")+
+    k("--sky","Documentation Time",avg==null?"–":avg.toFixed(1)+" นาที",avg==null?"เฉลี่ยต่อการบันทึก (เดือนนี้)":`เฉลี่ยต่อการบันทึก จาก ${dm.length} ครั้ง`)+
+    k("--gold","Nursing Workload (วันนี้)",acts,`กิจกรรม · เช้า ${byShift.m||0} บ่าย ${byShift.a||0} ดึก ${byShift.n||0} · บันทึก ${recToday} ครั้ง`)}
+
+/* --- admin state changes repaint the nav and home --- */
+{const _ap=admPaint;admPaint=function(){const r=_ap.apply(this,arguments);try{bnavPaint();if(document.body.dataset.page==="home")homePaint()}catch(e){}return r}}
+setTimeout(()=>{try{bnavPaint()}catch(e){}},120);
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
