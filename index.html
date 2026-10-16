@@ -1428,6 +1428,9 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
 .rm-toc::-webkit-scrollbar{display:none}
 .rm-toc button{flex:none;font:inherit;font-size:.78rem;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:5px 11px;cursor:pointer;white-space:nowrap}
 .rm-toc button[aria-current]{background:var(--teal);border-color:var(--teal);color:#fff}
+.signbox .sign-g>label{min-width:0}
+.signbox input,.signbox select{width:100%;max-width:100%;min-width:0;box-sizing:border-box}
+.signbox input[type=date],.signbox input[type=time]{-webkit-appearance:none;appearance:none;text-align:left}
 </style>
 </head>
 <body>
@@ -2042,7 +2045,7 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
       <button class="btn ghost sm" id="noteRegen" type="button" hidden>สร้างข้อความใหม่จากผลประเมิน</button>
     </div>
     <textarea id="note" aria-label="บันทึกทางการพยาบาล แก้ไขได้" rows="12"></textarea>
-    <label for="noteExtra">บันทึกเพิ่มเติม
+    <label for="noteExtra" hidden>บันทึกเพิ่มเติม
       <textarea id="noteExtra" rows="3" placeholder="เช่น อาการผู้ป่วย การรายงานแพทย์ การให้ความรู้ญาติ"></textarea>
     </label>
     <div class="signbox">
@@ -2767,7 +2770,7 @@ function update(){
   $("rMeta").textContent=`${where} · ${c.L}×${c.W}×${c.D} cm · พื้นที่ ${c.a.toFixed(1)} cm²`+(c.device?" · MDRPI":"");
   const exu=EXU.find(e=>e[1]===c.exu),tis=TIS.find(t=>t[1]===c.tis);
   const d=c.date?new Date(c.date).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"}):"-";
-  const autoNote=buildNote(c);
+  const autoNote=buildNote(c)+($("noteExtra").value.trim()?"\n"+$("noteExtra").value.trim():"");
   lastAutoNote=autoNote;if(!noteEdited)$("note").value=autoNote;else $("noteRegen").hidden=false;
   renderCare(c);stageAdvice();
   if(typeof savePatient==="function")savePatient();
@@ -3630,7 +3633,7 @@ function recNow(){const n=new Date();$("recDate").value=`${n.getFullYear()}-${St
 function fullNote(){
   const extra=$("noteExtra").value.trim(),name=$("nurseName").value.trim();
   const d=$("recDate").value,t=$("recTime").value;
-  return $("note").value.trim()+(extra?`\n\nบันทึกเพิ่มเติม:\n${extra}`:"")+
+  return $("note").value.trim()+
     `\n\nผู้บันทึก: ${name||"................................"} (${$("nurseRole").value})${(otGet()||{}).ot?" OT "+otGet().ot:""}\nวันที่ ${d?thDateLong(d):"..........."} เวลา ${t||"......"} น.`;
 }
 $("note").addEventListener("input",()=>{if($("note").value!==lastAutoNote){noteEdited=true;$("noteState").textContent="แก้ไขข้อความแล้ว ผลประเมินที่เปลี่ยนภายหลังจะไม่ทับข้อความนี้";$("noteRegen").hidden=false}});
@@ -4617,7 +4620,8 @@ $("cdsSave").onclick=()=>{
   const n=new Date(),ts=n.toLocaleString("th-TH",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
   const line=`[${ts}] แผล${woundName(cdsCur.d.last)} แย่ลงต่อเนื่อง ${cdsCur.d.days} วัน (PUSH ${cdsCur.d.base.push}→${cdsCur.d.last.push}): ${sel.join(", ")}`;
   const ex=$("noteExtra");ex.value=(ex.value.trim()?ex.value.trim()+"\n":"")+line;
-  closeCDS();advise("บันทึกการดำเนินการแล้ว","เพิ่มลงในบันทึกเพิ่มเติมของ Nurse's Note ในหน้าบันทึก","--ok","✓");
+  if(noteEdited)$("note").value=$("note").value.trimEnd()+"\n"+line;else update();try{savePatient()}catch(e){}
+  closeCDS();advise("บันทึกการดำเนินการแล้ว","เพิ่มลงใน Nurse's Note ในหน้าบันทึกแล้ว","--ok","✓");
 };
 
 /* ================= Dressing expiry: status, countdown, early change ================= */
