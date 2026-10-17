@@ -1562,6 +1562,61 @@ body[data-page="qa"]{--pc:var(--teal);--pt:var(--teal-t)}
 .sv-leg{font-size:.74rem;color:var(--muted);margin:6px 0}
 @media (max-width:520px){.qa-bar{grid-template-columns:1fr}.qa-g{grid-template-columns:1fr 1fr}.qa-k b{font-size:1.25rem}}
 .qa-zero{margin:18px 6px;text-align:center;color:var(--ok);font-weight:600;font-size:.85rem}
+/* ===== Patient Overview + iPad UX ===== */
+body[data-page="overview"] .pagetabs,body[data-page="overview"] #alerts{display:none!important}
+body[data-page="overview"]{--pc:var(--teal);--pt:var(--teal-t)}
+.pv-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
+.pv-k{background:var(--surface);border-radius:20px;box-shadow:var(--shadow),inset 0 4px 0 var(--c);padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.pv-h{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:700;color:var(--muted);text-transform:none}
+.pv-ic{width:26px;height:26px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--c) 15%,var(--surface));color:var(--c);font-size:.9rem}
+.pv-cnt{margin-left:auto;font-size:.78rem;color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--surface));border-radius:999px;padding:2px 9px}
+.pv-big{font-family:var(--font-display);font-size:1.5rem;line-height:1.2;color:var(--c)}
+.pv-big i{font-style:normal;font-size:.9rem;color:var(--muted);margin-left:2px}
+.pv-big.pv-ok{color:var(--ok);font-size:1.15rem}
+.pv-sub{font-size:.8rem;color:var(--muted)}
+.pv-due{align-self:flex-start;font-size:.74rem;font-weight:700;color:#9a6400;background:#fff1d6;border-radius:999px;padding:2px 9px;margin-top:2px}
+.pv-ul{margin:4px 0 0;padding-left:18px;font-size:.84rem;display:flex;flex-direction:column;gap:3px}
+.pv-tag{font-size:.68rem;font-weight:700;border-radius:999px;padding:1px 7px;white-space:nowrap}
+.pv-tag.bad{background:var(--coral-t);color:var(--crit)}.pv-tag.warn{background:#fff1d6;color:#9a6400}
+.pv-turn{margin-top:8px;align-self:flex-start;min-height:44px}
+.pv-tasks{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.pv-task{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:12px;padding:8px 10px}
+.pv-task>span{flex:1;min-width:0;font-size:.86rem;line-height:1.35}
+.pv-task small{display:block;color:var(--muted);font-size:.72rem}
+.pv-task .btn{flex:none;min-height:40px}
+.pv-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px}
+.pv-btn{font:inherit;border:0;border-radius:20px;padding:14px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;color:#fff;box-shadow:var(--shadow);min-height:96px;text-align:center}
+.pv-btn b{display:block;font-family:var(--font-display);font-size:1.02rem}
+.pv-btn small{display:block;font-size:.7rem;opacity:.9;line-height:1.3}
+.pv-bi{font-size:1.5rem;line-height:1}
+.pv-a{background:linear-gradient(135deg,#2EC4B6,#17998d)}.pv-c{background:linear-gradient(135deg,#7b8cf0,#5a67d8)}.pv-hb{background:linear-gradient(135deg,#f3a96a,#e07b39)}
+.pv-more{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:8px}
+.pv-more .lbl{font-size:.78rem;color:var(--muted);margin-right:2px}
+.pv-more button{font:inherit;font-size:.82rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;cursor:pointer;min-height:40px}
+.draft-bar{display:flex;align-items:center;gap:12px;background:#fff6e0;color:#5b4300;border-radius:16px;padding:10px 14px;margin-bottom:12px;box-shadow:inset 4px 0 0 #f5b942}
+.draft-bar>span{flex:1;min-width:0}.draft-bar b{display:block;font-size:.88rem}.draft-bar small{font-size:.76rem;opacity:.85}
+:root[data-theme="dark"] .draft-bar{background:#33270f;color:#f5d48a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .draft-bar{background:#33270f;color:#f5d48a}}
+.as-ind{display:inline-flex;align-items:center;gap:6px;margin:8px 4px 0;font-size:.74rem;color:var(--ok);font-weight:600}
+.as-ind::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
+.lv-foot{flex-wrap:wrap}
+.lv-foot .btn{flex:1 1 30%}
+@media (max-width:420px){.pv-btn small{display:none}.pv-btn{min-height:80px}}
+/* iPad / tablet: two-column overview, larger targets */
+@media (min-width:760px){
+  .pv-grid{grid-template-columns:1fr 1fr;gap:14px}
+  .pv-wide{grid-column:1/-1}
+  .pv-big{font-size:1.75rem}
+  .pv-btn{flex-direction:row;justify-content:center;text-align:left;min-height:84px;padding:16px 18px;gap:12px}
+  .pv-bi{font-size:1.8rem}
+  .pv-task{padding:10px 14px}
+  .pv-tasks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .bnav button{font-size:.78rem;padding:8px 2px;min-height:56px}
+  .btn{min-height:46px}
+}
+#page-overview:not([hidden]){display:flex;flex-direction:column}
+#pvDraft{order:-2}
+@media (max-width:759px){.pv-actions{order:-1}}
 </style>
 </head>
 <body>
@@ -1627,6 +1682,7 @@ body[data-page="qa"]{--pc:var(--teal);--pt:var(--teal-t)}
       <div class="pt-tx"><b id="ptBarName"></b><small id="ptBarMeta"></small></div>
       <button type="button" class="btn sm pt-chg" id="ptBarBtn">เปลี่ยนผู้ป่วย</button>
     </div>
+    <span class="as-ind" id="asInd" hidden role="status"></span>
     <div class="grid pt-edit" hidden>
       <input id="bed" type="hidden">
       <label for="hn">HN<input id="hn" type="text" inputmode="numeric" placeholder="เช่น 6701234"></label>
@@ -1688,6 +1744,17 @@ body[data-page="qa"]{--pc:var(--teal);--pt:var(--teal-t)}
     <button type="button" data-f="due" aria-pressed="false">ต้องติดตาม</button>
   </div>
   <div class="pl-list" id="plList"></div>
+  </div>
+
+  <div class="page" id="page-overview" hidden>
+  <div class="draft-bar" id="pvDraft" hidden></div>
+  <div class="pv-grid" id="pvGrid"></div>
+  <div class="pv-actions">
+    <button type="button" class="pv-btn pv-a" id="pvAssess"><span class="pv-bi">&#128203;</span><span><b>ประเมิน</b><small>Braden · ผิวหนัง · แผล</small></span></button>
+    <button type="button" class="pv-btn pv-c" id="pvCare"><span class="pv-bi">&#9989;</span><span><b>บันทึกการดูแล</b><small>กิจกรรมป้องกันประจำเวร</small></span></button>
+    <button type="button" class="pv-btn pv-hb" id="pvHist"><span class="pv-bi">&#128340;</span><span><b>ดูประวัติ</b><small>ผลประเมินและบันทึกเดิม</small></span></button>
+  </div>
+  <div class="pv-more"><span class="lbl">เพิ่มเติม</span><button type="button" id="pvNote">Nurse's Note</button><button type="button" id="pvHo">สรุปส่งเวร</button><button type="button" id="pvDc">จำหน่ายผู้ป่วย</button><button type="button" id="pvGuide">คู่มือการดูแล</button></div>
   </div>
 
   <div class="page" id="page-prevent">
@@ -2165,6 +2232,7 @@ body[data-page="qa"]{--pc:var(--teal);--pt:var(--teal-t)}
   </div>
 
   <div class="page" id="page-record" hidden>
+  <div class="draft-bar" id="rcDraft" hidden></div>
   <section class="card progcard" id="progR">
     <h2>ความคืบหน้าของแผล</h2>
     <div class="prog-list"></div>
@@ -2342,6 +2410,13 @@ body[data-page="qa"]{--pc:var(--teal);--pt:var(--teal-t)}
       <div class="rm-kick">เมนูเพิ่มเติม</div>
       <div class="rm-body more-list" id="moreList"></div>
       <div class="rm-foot"><button class="btn" id="moreClose" type="button">ปิด</button></div>
+    </div>
+  </div>
+  <div class="modal" id="lvModal" hidden role="alertdialog" aria-modal="true" aria-labelledby="lvTitle">
+    <div class="sheet">
+      <div class="rm-kick">ข้อมูลยังไม่ได้บันทึก</div>
+      <div class="rm-body"><h3 class="pg-hi" id="lvTitle">ยังไม่ได้บันทึกการประเมินลงประวัติ</h3><p class="note" style="margin:0">ระบบเก็บร่างไว้ให้อัตโนมัติแล้ว ออกจากหน้านี้ได้โดยข้อมูลไม่หาย แต่ผลประเมินจะยังไม่อยู่ในประวัติและรายงานคุณภาพจนกว่าจะกด "ลงชื่อและบันทึก"</p></div>
+      <div class="rm-foot lv-foot"><button class="btn" id="lvStay" type="button">อยู่หน้านี้</button><button class="btn" id="lvLeave" type="button">ออก (เก็บร่างไว้)</button><button class="btn primary" id="lvGo" type="button">ไปบันทึกตอนนี้</button></div>
     </div>
   </div>
   <div class="modal" id="svModal" hidden role="dialog" aria-modal="true" aria-labelledby="svTitle">
@@ -2821,7 +2896,7 @@ function renderRisk(t){
   box.append(d);
 }
 /* Pages */
-const PAGES=["home","patients","history","prevent","wound","plan","qa","trend","record","discharge","ward"];
+const PAGES=["home","patients","overview","history","prevent","wound","plan","qa","trend","record","discharge","ward"];
 var ADMIN_PAGES=["trend","ward","qa"],admNext=null,bootDone=false;
 var admMem=null,admRegMode=false;
 function admGet(){if(admMem)return admMem;try{const v=sessionStorage.getItem("pi-admin");if(v&&v[0]==="{")return JSON.parse(v)}catch(e){}return null}
@@ -5036,7 +5111,7 @@ $("pgForm").addEventListener("submit",e=>{e.preventDefault();const hn=$("pgHN").
   if(hn!==curHN){if(!loadPatientRec(hn))blankPatientForm();changePatient(hn)}
   $("hn").value=hn;$("ptName").value=nm;if($("pgDate").value)$("date").value=$("pgDate").value;
   try{savePatient()}catch(e){}update();try{dcPaint()}catch(e){}try{ptBarPaint()}catch(e){}
-  $("ptGate").hidden=true;document.body.classList.remove("noscroll");const nx=gateNext||"prevent";gateNext=null;go(nx);window.scrollTo(0,0)});
+  $("ptGate").hidden=true;document.body.classList.remove("noscroll");const nx=gateNext||"overview";gateNext=null;go(nx);window.scrollTo(0,0)});
 
 /* read-only patient bar */
 function ptBarPaint(){const bar=$("ptBar");if(!bar)return;const hn=$("hn").value.trim(),nm=$("ptName").value.trim(),d=$("date").value;
@@ -5080,10 +5155,10 @@ function plPaint(){const q=($("plQ").value||"").trim().toLowerCase();let L=ptLis
     const dt=x.p.updated?new Date(x.p.updated).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"}):"";
     b.innerHTML=`<span class="pl-av"></span><span class="pl-tx"><b></b><small></small>${riskPill(x.t,x.crit)}</span>${x.push!=null?`<span class="pl-push"><small>PUSH</small><b>${x.push}</b></span>`:""}`;
     b.querySelector(".pl-av").textContent=ini;b.querySelector("b").textContent=nm;b.querySelector("small").textContent=`HN ${x.p.hn}${dt?" · "+dt:""}${x.due?" · ครบกำหนดทำแผล "+x.due:""}`;
-    b.onclick=()=>{if(x.p.hn!==curHN)changePatient(x.p.hn);go(x.ws.length?"wound":"prevent")};box.append(b)})}
+    b.onclick=()=>{if(x.p.hn!==curHN)changePatient(x.p.hn);go("overview")};box.append(b)})}
 $("plQ").addEventListener("input",plPaint);
 document.querySelectorAll("#plF button").forEach(b=>b.onclick=()=>{plFilter=b.dataset.f;plPaint()});
-$("plAdd").onclick=()=>{gateNext="prevent";ptGateOpen(true);$("pgHN").value="";$("pgName").value="";$("pgCancel").hidden=false;setTimeout(()=>$("pgHN").focus(),120)};
+$("plAdd").onclick=()=>{gateNext="overview";ptGateOpen(true);$("pgHN").value="";$("pgName").value="";$("pgCancel").hidden=false;setTimeout(()=>$("pgHN").focus(),120)};
 $("hmBraden").onclick=()=>needPt("prevent");$("hmWound").onclick=()=>needPt("wound");$("hmRecord").onclick=()=>needPt("record");
 function alertItems(){const out=[];ptList().forEach(x=>{const nm=`HN ${x.p.hn}${x.p.name?" · "+x.p.name:""}`;
     if(x.crit)out.push({c:"--crit",hn:x.p.hn,t:"Critical Risk",d:nm,go:"prevent"});else if(x.high)out.push({c:"--s1",hn:x.p.hn,t:`${bradenRisk(x.t)} (Braden ${x.t})`,d:nm,go:"prevent"});
@@ -5103,7 +5178,7 @@ $("hmGuide").onclick=()=>{const b=$("gdBody");if(!b.dataset.done){let h="";
     try{h+=`<h4>Medical Device-Related Pressure Injury (MDRPI)</h4><ul>${CARE.device.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
     b.insertAdjacentHTML("beforeend",h);b.dataset.done=1}sheetOpen("guideModal")};
 $("gdClose").onclick=()=>sheetClose("guideModal");
-function bnavPaint(){const pg=document.body.dataset.page,m={home:"home",patients:"patients",prevent:"assess",wound:"assess",plan:"plan",qa:"report",record:"more",discharge:"more",history:"more",trend:"more",ward:"more"};
+function bnavPaint(){const pg=document.body.dataset.page,m={home:"home",patients:"patients",overview:"patients",prevent:"assess",wound:"assess",plan:"plan",qa:"report",record:"more",discharge:"more",history:"more",trend:"more",ward:"more"};
   const nav=$("bnav"),rb=nav.querySelector('[data-b="report"]');if(rb)rb.hidden=!isAdmin();
   nav.style.gridTemplateColumns=`repeat(${[...nav.querySelectorAll("button")].filter(b=>!b.hidden).length},1fr)`;
   document.querySelectorAll("#bnav button").forEach(b=>{if(b.dataset.b===m[pg])b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")})}
@@ -5628,6 +5703,67 @@ $("svClose").onclick=()=>sheetClose("svModal");
 $("svSave").onclick=()=>{if(svAns.some(v=>!v)){$("svErr").textContent="ตอบให้ครบทุกข้อ";return}
   hist.push({id:Date.now(),type:"survey",date:qaDay(0),role:($("nurseRole")&&$("nurseRole").value)||"",q:svAns.slice(),c:$("svC").value.trim()});saveHist(hist);sheetClose("svModal");
   advise("ขอบคุณสำหรับการประเมิน","คำตอบไม่ระบุชื่อ ใช้พัฒนาคุณภาพ Skin Guard","--ok","✓")};
+
+/* ===== Patient Overview (first screen after choosing a patient) ===== */
+function pvBy(){const u=otGet()||{};return {by:(($("nurseName")&&$("nurseName").value.trim())||u.name||""),ot:u.ot||""}}
+function pvPaint(){if(!$("page-overview"))return;const hn=realHN();
+  if(!hn){$("pvGrid").innerHTML='<div class="pl-empty">ยังไม่ได้เลือกผู้ป่วย</div>';return}
+  const t=bradenTotal(),cr=crData(),R=compoundRisk(t,cr),L=t!=null?levelOf(t):null;
+  // risk
+  const fx=R.f.map(f=>f.name).concat((cr.x||[]).map(k=>((typeof CR_X!=="undefined"&&CR_X.find(z=>z[0]===k))||[])[1]).filter(Boolean));
+  const rc=R.crit?"--crit":L?L.c:"--muted",rn=R.crit?"Critical Risk":L?L.name:"ยังไม่ได้ประเมิน";
+  const risk=`<div class="pv-k" style="--c:var(${rc})"><div class="pv-h"><span class="pv-ic">&#9888;</span>Risk Status</div><b class="pv-big">${rn}</b><span class="pv-sub">${R.crit?esc(R.rule):fx.length?"ปัจจัยร่วม: "+esc(fx.slice(0,3).join(", ")):t!=null?"ไม่พบปัจจัยเสี่ยงร่วมทางคลินิก":"แตะ ประเมิน เพื่อเริ่ม Braden"}</span></div>`;
+  // braden
+  const H=hist.filter(h=>!h.ex&&h.hn===hn&&h.braden!=null).sort((a,b)=>(+b.id||0)-(+a.id||0))[0],today=bkkDate();
+  const BSN={sens:"รับความรู้สึก",mois:"ความชื้น",act:"กิจกรรม",mob:"การเคลื่อนไหว",nut:"โภชนาการ",fric:"แรงเสียดทาน"};const low=BRADEN.filter(([k])=>st.braden[k]>0&&st.braden[k]<=2).map(([k,n])=>BSN[k]||n.split(" (")[0]);
+  const bdate=H?(H.recDate||H.date):"",due=t==null||(bdate&&bdate<today&&!pvDirty());
+  const brad=`<div class="pv-k" style="--c:var(${L?L.c:"--muted"})"><div class="pv-h"><span class="pv-ic">&#9636;</span>Braden Score ล่าสุด</div><b class="pv-big">${t??"–"}<i>/23</i></b><span class="pv-sub">${H?"บันทึกล่าสุด "+esc(thDate(bdate))+(H.recTime?" "+esc(H.recTime)+" น.":""):"ยังไม่มีการบันทึกลงประวัติ"}${low.length?" · ข้อที่ต่ำ: "+esc(low.join(", ")):""}</span>${due?'<span class="pv-due">ถึงเวลาประเมินวันนี้</span>':""}</div>`;
+  // skin
+  const ws=(wounds||[]).map((w,i)=>({w,i})).filter(x=>x.w.stage&&x.w.stage!=="none");
+  let skinRows=ws.map(({w,i})=>{let push=null;try{push=woundCalc(w).push}catch(e){}let worse=null;try{worse=woundWorse(w,hn)}catch(e){}let S=null;try{S=dressStatus(w)}catch(e){}
+    return `<li><b>แผลที่ ${i+1}</b> ${esc(siteLabel(w))}${w.side?" "+esc(w.side):""} · ${esc(stageShort(w.stage))}${push!=null?" · PUSH "+push:""}${worse?' <span class="pv-tag bad">แย่ลง</span>':""}${S&&(S.cls==="over"||S.cls==="soon")?' <span class="pv-tag warn">ครบกำหนดทำแผล</span>':""}</li>`}).join("");
+  const skin=`<div class="pv-k" style="--c:var(${ws.length?"--coral":"--ok"})"><div class="pv-h"><span class="pv-ic">&#9673;</span>Skin Status</div>${ws.length?`<b class="pv-big">${ws.length}<i> แผล</i></b><ul class="pv-ul">${skinRows}</ul>`:`<b class="pv-big pv-ok">ผิวหนังปกติ</b><span class="pv-sub">ไม่มีแผลกดทับ${$("sepsis").checked?" · มี sepsis/บวม/รอยแดง":""}</span>`}</div>`;
+  // turning
+  const T=turnFor(hn),s=turnState();
+  const turn=`<div class="pv-k" style="--c:var(${T.lt&&!T.done?"--s1":"--sky"})"><div class="pv-h"><span class="pv-ic">&#8635;</span>Repositioning Schedule</div><b class="pv-big">${T.done?"พลิกแล้ว ✓":"ท่า"+esc(T.pos)}</b><span class="pv-sub">${T.lt?"พลิกล่าสุด "+hhmm(T.lt)+" น. · ":""}รอบถัดไป ${hhmm(T.next)} น. ท่า${esc(s.nextPos)}</span>${T.done?"":`<button type="button" class="btn primary pv-turn" id="pvTurn">พลิกเป็นท่า${esc(T.pos)}แล้ว</button>`}</div>`;
+  // tasks
+  let items=[];try{items=planItems()}catch(e){}const P=planState(),k=planKey(),e=P[k]||{i:{}},pend=items.filter(it=>!(e.i||{})[it.id]);
+  const tasks=`<div class="pv-k pv-wide" style="--c:var(${pend.length?"--gold":"--ok"})"><div class="pv-h"><span class="pv-ic">&#10003;</span>Pending Nursing Tasks · ${SHIFT_TH[shiftNow()]}<span class="pv-cnt">${items.length-pend.length}/${items.length}</span></div>
+    ${pend.length?`<div class="pv-tasks">${pend.slice(0,6).map(it=>`<div class="pv-task"><span>${esc(it.text)}<small>${esc(it.tag)}</small></span><button type="button" class="btn sm primary" data-done="${esc(it.id)}" aria-label="ทำแล้ว: ${esc(it.text)}">✓ ทำแล้ว</button></div>`).join("")}</div>${pend.length>6?`<span class="pv-sub">และอีก ${pend.length-6} รายการ ในบันทึกการดูแล</span>`:""}`:'<b class="pv-big pv-ok">ครบทุกกิจกรรมของเวรนี้ ✓</b>'}</div>`;
+  $("pvGrid").innerHTML=risk+brad+skin+turn+tasks;
+  const tb=$("pvTurn");if(tb)tb.onclick=()=>{$("turnBtn").onclick();try{if(items.some(x=>x.id==="turn")&&!(e.i||{}).turn)planSet("turn",Object.assign({s:"done",t:Date.now()},pvBy()))}catch(x){}pvPaint()};
+  $("pvGrid").querySelectorAll("[data-done]").forEach(b=>b.onclick=()=>{planSet(b.dataset.done,Object.assign({s:"done",t:Date.now()},pvBy()));if(b.dataset.done==="turn"&&!turnFor(hn).done)try{$("turnBtn").onclick()}catch(x){}pvPaint()});
+  draftPaint()}
+$("pvAssess").onclick=()=>{const has=(wounds||[]).some(w=>w.stage&&w.stage!=="none");go(has?"wound":"prevent")};
+$("pvCare").onclick=()=>{go("plan");setTimeout(()=>{try{$("planFold").open=true}catch(e){}},60)};
+$("pvHist").onclick=()=>go("history");
+$("pvNote").onclick=()=>go("record");$("pvDc").onclick=()=>go("discharge");$("pvHo").onclick=()=>hoOpen();$("pvGuide").onclick=()=>$("hmGuide").onclick();
+
+/* ===== Auto-save draft + leave warning ===== */
+var ASSESS_PAGES=["prevent","wound","record"],lvBypass=false;
+function pvSig(){return JSON.stringify({b:st.braden||{},s:$("sepsis").checked,w:(wounds||[]).filter(w=>w.stage).map(w=>[w.site,w.side||"",w.stage,w.L,w.W,w.D,w.exu,w.tis])})}
+function pvSavedSig(hn){try{let v=localStorage.getItem("pi-sv-"+hn);if(v==null&&hist.some(h=>!h.ex&&h.hn===hn&&h.type!=="discharge")){v=pvSig();localStorage.setItem("pi-sv-"+hn,v)}return v}catch(e){return null}}
+function pvDirty(){const hn=realHN();if(!hn||!ptReady)return false;const meaningful=bradenTotal()!=null||(wounds||[]).some(w=>w.stage);return meaningful&&pvSig()!==pvSavedSig(hn)||!!noteDraftGet(hn)}
+function noteDraftGet(hn){try{const d=JSON.parse(localStorage.getItem("pi-nd-"+hn)||"null");return d&&d.v?d:null}catch(e){return null}}
+var draftAt=0;
+function draftPaint(){const hn=realHN(),dirty=pvDirty();
+  ["pvDraft","rcDraft"].forEach(id=>{const el=$(id);if(!el)return;el.hidden=!dirty;if(dirty)el.innerHTML=`<span><b>มีร่างการประเมินที่ยังไม่ได้บันทึกลงประวัติ</b><small>ระบบบันทึกร่างอัตโนมัติไว้แล้ว${draftAt?" · "+hhmm(draftAt)+" น.":""} ข้อมูลไม่หาย ทำต่อได้ทุกเมื่อ</small></span>${id==="pvDraft"?'<button type="button" class="btn sm primary" data-go="record">ไปบันทึก</button>':""}`});
+  const ind=$("asInd");if(ind){ind.hidden=!hn||!ASSESS_PAGES.includes(document.body.dataset.page);ind.textContent=draftAt?`บันทึกร่างอัตโนมัติ ${hhmm(draftAt)} น.`:"บันทึกร่างอัตโนมัติ"}}
+{const _upd2=update;update=function(){const r=_upd2.apply(this,arguments);if(ptReady&&realHN()){draftAt=Date.now()}try{draftPaint()}catch(e){}return r}}
+$("note").addEventListener("input",()=>{const hn=realHN();if(!hn)return;try{localStorage.setItem("pi-nd-"+hn,JSON.stringify({v:$("note").value,t:Date.now()}))}catch(e){}draftAt=Date.now();draftPaint()});
+{const _cp2=changePatient;changePatient=function(nh){const r=_cp2.apply(this,arguments);try{const d=noteDraftGet(String(nh||"").trim());if(d&&$("hn").value.trim()===String(nh).trim()){$("note").value=d.v;noteEdited=true;try{$("noteRegen").hidden=false}catch(x){}}}catch(e){}try{draftPaint()}catch(e){}return r}}
+{const _sv=$("save").onclick;$("save").onclick=function(){const n=hist.length;const r=_sv.apply(this,arguments);if(hist.length>n){const hn=realHN();try{localStorage.setItem("pi-sv-"+hn,pvSig());localStorage.removeItem("pi-nd-"+hn)}catch(e){}draftPaint()}return r}}
+function lvAsk(proceed){$("lvModal").hidden=false;document.body.classList.add("noscroll");
+  $("lvGo").onclick=()=>{lvClose();lvBypass=true;try{go("record")}finally{lvBypass=false}setTimeout(()=>{try{$("save").scrollIntoView({block:"center",behavior:"smooth"})}catch(e){}},250)};
+  $("lvLeave").onclick=()=>{lvClose();proceed()};$("lvStay").onclick=lvClose}
+function lvClose(){$("lvModal").hidden=true;document.body.classList.remove("noscroll")}
+{const _go2=go;go=function(pg,scroll){const cur=document.body.dataset.page;
+  const run=()=>{const r=_go2(pg,scroll);if(pg==="overview")setTimeout(()=>{try{pvPaint()}catch(e){console.error(e)}},0);setTimeout(()=>{try{draftPaint()}catch(e){}},0);return r};
+  if(!lvBypass&&ASSESS_PAGES.includes(cur)&&!ASSESS_PAGES.includes(pg)&&pvDirty()){lvAsk(()=>{lvBypass=true;try{run()}finally{lvBypass=false}});return}
+  return run()}}
+{const _lo=doLogout;doLogout=function(){if(!lvBypass&&pvDirty()){lvAsk(()=>{lvBypass=true;try{_lo()}finally{lvBypass=false}});return}return _lo.apply(this,arguments)}}
+window.addEventListener("beforeunload",e=>{try{if(pvDirty()&&ASSESS_PAGES.includes(document.body.dataset.page)){e.preventDefault();e.returnValue="";return ""}}catch(x){}});
+setTimeout(()=>{try{draftPaint()}catch(e){}},300);
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
