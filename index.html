@@ -1455,6 +1455,18 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
 .cm-hint{margin:0 0 8px;font-size:.8rem;color:var(--teal);font-weight:600}
 #planCard .fs-t .h-en{display:block}
 #planCard .plan-h{justify-content:flex-end;margin-bottom:4px}
+/* swipeable care cards */
+.cs-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0 2px}
+.cs-tabs::-webkit-scrollbar{display:none}
+.cs-tabs button{flex:none;font:inherit;font-size:.8rem;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+.cs-tabs button[aria-selected=true]{background:var(--c,var(--teal));border-color:var(--c,var(--teal));color:#fff}
+.cs-track{display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;align-items:flex-start;transition:height .25s ease}
+.cs-track::-webkit-scrollbar{display:none}
+.cs-slide{flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always}
+.cs-slide>.cgroup{margin:0}
+.cs-dots{display:flex;justify-content:center;gap:6px;padding:2px 0 4px}
+.cs-dots i{width:7px;height:7px;border-radius:50%;background:var(--line);transition:width .2s,background .2s}
+.cs-dots i.on{width:20px;border-radius:4px;background:var(--teal)}
 </style>
 </head>
 <body>
@@ -5249,6 +5261,27 @@ function careToNote(){const L=[...carePick];if(!L.length)return false;const n=ne
 {const _rc=renderCare;renderCare=function(){const r=_rc.apply(this,arguments);try{carePickPaint()}catch(e){}return r}}
 $("cmNote").onclick=()=>{const n=careToNote();closeCare();go("record");if(n)setTimeout(()=>{advise("เพิ่มลง Nurse's Note แล้ว",`${n} รายการ · ตรวจทานแล้วกด "ลงชื่อและบันทึก"`,"--ok","✓");try{const e=$("note");e.scrollIntoView({block:"center"})}catch(x){}},250)};
 {const _oc=openCare;openCare=function(){const r=_oc.apply(this,arguments);try{carePickPaint()}catch(e){}return r}}
+
+/* care advice as swipeable cards */
+var csIdx=0;
+function careSwipe(){const box=$("care");if(!box)return;const kids=[...box.children].filter(e=>e.classList&&e.classList.contains("cgroup"));if(kids.length<2)return;
+  const lab=t=>/Medical Device/.test(t)?"MDRPI":/Dressing/.test(t)?"วัสดุปิดแผล":t.split(" · ")[0].replace(/\s*\([^)]*\)\s*$/,"").trim();
+  const tabs=document.createElement("div");tabs.className="cs-tabs";tabs.setAttribute("role","tablist");
+  const track=document.createElement("div");track.className="cs-track";const dots=document.createElement("div");dots.className="cs-dots";
+  kids.forEach((g,i)=>{const sl=document.createElement("div");sl.className="cs-slide";sl.setAttribute("role","tabpanel");sl.append(g);track.append(sl);
+    const b=document.createElement("button");b.type="button";b.setAttribute("role","tab");b.textContent=lab((g.querySelector("h3")||{}).textContent||"หัวข้อ "+(i+1));b.style.setProperty("--c",getComputedStyle(g).getPropertyValue("--c")||"var(--teal)");
+    b.onclick=()=>csGo(i,true);tabs.append(b);const d=document.createElement("i");dots.append(d)});
+  box.append(tabs,track,dots);
+  let tm=0;track.addEventListener("scroll",()=>{clearTimeout(tm);tm=setTimeout(()=>{const i=Math.round(track.scrollLeft/Math.max(1,track.clientWidth));if(i!==csIdx){csIdx=i;csPaint()}},80)},{passive:true});
+  csIdx=Math.min(csIdx,kids.length-1);requestAnimationFrame(()=>{track.scrollLeft=csIdx*track.clientWidth;csPaint()})}
+function csGo(i,smooth){const box=$("care"),track=box&&box.querySelector(".cs-track");if(!track)return;csIdx=i;track.scrollTo({left:i*track.clientWidth,behavior:smooth?"smooth":"auto"});csPaint()}
+function csPaint(){const box=$("care");if(!box)return;const track=box.querySelector(".cs-track");if(!track)return;
+  box.querySelectorAll(".cs-tabs button").forEach((b,i)=>{b.setAttribute("aria-selected",String(i===csIdx));if(i===csIdx){const T=b.parentNode,L=b.offsetLeft-T.offsetLeft,R=L+b.offsetWidth;if(L<T.scrollLeft)T.scrollTo({left:L-12,behavior:"smooth"});else if(R>T.scrollLeft+T.clientWidth)T.scrollTo({left:R-T.clientWidth+12,behavior:"smooth"})}});
+  box.querySelectorAll(".cs-dots i").forEach((d,i)=>d.classList.toggle("on",i===csIdx));
+  const sl=track.children[csIdx];if(sl)track.style.height=sl.firstElementChild.offsetHeight+"px"}
+{const _rc2=renderCare;renderCare=function(){const r=_rc2.apply(this,arguments);try{careSwipe()}catch(e){console.error(e)}return r}}
+{const _oc2=openCare;openCare=function(){csIdx=0;const r=_oc2.apply(this,arguments);setTimeout(()=>{try{csPaint()}catch(e){}},60);return r}}
+window.addEventListener("resize",()=>{try{csGo(csIdx,false)}catch(e){}});
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
