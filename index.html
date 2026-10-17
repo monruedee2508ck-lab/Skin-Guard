@@ -1627,6 +1627,9 @@ body[data-page="overview"]{--pc:var(--teal);--pt:var(--teal-t)}
 .rm-top .rm-dots{margin-left:auto}
 .rm-x{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:1.4rem;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0 0 2px}
 .rm-x:hover,.rm-x:focus-visible{color:var(--ink);border-color:var(--muted)}
+body[data-page="wound"] #result{display:none!important}
+.wchip .wt .wsz{font-style:normal;font-size:.74rem;font-weight:600;color:var(--ink);margin-top:1px}
+.wb-list{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))!important}
 </style>
 </head>
 <body>
@@ -4000,7 +4003,7 @@ function renderWoundBar(){
   wounds.forEach((w,i)=>{const x=woundCalc(w),S=w.stage&&STAGES[w.stage];
     const b=document.createElement("button");b.type="button";b.setAttribute("role","tab");b.setAttribute("aria-selected",i===wActive);
     b.className="wchip"+(i===wActive?" on":"");b.style.setProperty("--c",`var(${S?S.c:"--line"})`);
-    b.innerHTML=`<span class="wn">${i+1}</span><span class="wt"><b></b><small></small></span><span class="wp"><small>PUSH</small>${x.push}</span>`;
+    b.innerHTML=`<span class="wn">${i+1}</span><span class="wt"><b></b><small></small><em class="wsz"></em></span><span class="wp"><small>PUSH</small>${x.push}</span>`;b.querySelector(".wsz").textContent=x.a>0?`${+x.L||0}×${+x.W||0}${+x.D?"×"+(+x.D):""} cm · พื้นที่ ${x.a.toFixed(1)} cm²`:"ยังไม่ได้วัดขนาด";
     b.querySelector("b").textContent=siteLabel(w)+(w.side?" "+w.side:"");
     b.querySelector(".wt small").textContent=S?S.name.split(" (")[0]:"ยังไม่ได้ประเมิน";
     b.onclick=()=>{if(i!==wActive)switchWound(i);setTimeout(()=>{let n=1;try{const c=stepState().find(x=>!x.done);n=c?c.n:1}catch(e){}openStep(n)},120)};box.append(b)});
