@@ -2886,7 +2886,7 @@ function renderRisk(t){
     cb.innerHTML=`<h4>⚠ ปรับระดับเป็น Critical Risk เพราะพบปัจจัยเสี่ยงร่วมทางคลินิก (Clinical Risk Factors)</h4><div class="crx-tag">${CR.f.map(x=>`<span>${x.name} · ${x.val}</span>`).join("")}</div><h4>แนวทางป้องกันเชิงรุก (ทำทันที)</h4><ul>${critActions(CR.f).map(x=>`<li>${x}</li>`).join("")}</ul>`;rb.append(cb)}
   else if(CR.f.length){const cb=document.createElement("div");cb.className="critbox";cb.innerHTML=`<h4>ปัจจัยเสี่ยงร่วมทางคลินิกที่พบ (ยังไม่เข้าเกณฑ์ Critical Risk)</h4><div class="crx-tag">${CR.f.map(x=>`<span>${x.name} · ${x.val}</span>`).join("")}</div>`;rb.append(cb)}
   const acts=[];
-  if(t!=null)acts.push("ปฏิบัติตาม Routine Care ทุกวัน (ดูแถบ ดูแลประจำวัน)");
+  if(t!=null)acts.push("ปฏิบัติตาม Routine Care ทุกวัน (ดูแถบ Routine Care)");
   if(needDressing)acts.push(`<b>ใช้วัสดุปิดผิวหนัง Soft Silicone/Foam ป้องกันในตำแหน่งที่เสี่ยงที่สุด เช่น Coccyx</b> (ดูแถบ อุปกรณ์)${sep&&!(t<=12)?" เพราะมีภาวะ sepsis/บวม/รอยแดง ต้องใช้ทุกรายไม่ว่าคะแนนเท่าใด":""}`);
   acts.push("<b>พลิกตะแคงตัวทุก 2 ชั่วโมงตามนาฬิกาเตือนการพลิกตะแคงตัว</b> (1 ซ้าย → 3 หงาย → 5 ขวา → 7 หงาย → 9 ซ้าย → 11 หงาย) ใช้นาฬิกาด้านล่างช่วยเตือน");
   acts.push("ประเมินผิวหนังและถ่ายภาพซ้ำทุกเวร ถ้าพบรอยแดงที่กดแล้วไม่จาง ให้ไปประเมินในหน้าประเมินแผลทันที");
@@ -5778,7 +5778,7 @@ function rsBuild(){const rb=document.querySelector("#riskAlert .riskbox .rb");if
     else if(el.tagName==="DETAILS"&&el.classList.contains("routine")){const sm=el.querySelector("summary");const h=document.createElement("h4");h.textContent=(sm&&sm.textContent||"Routine Care").trim();const body=[...el.childNodes].filter(n=>n!==sm);cur={title:h.textContent,els:[h,...body]};secs.push(cur);el.remove()}
     else if(cur)cur.els.push(el)});
   if(secs.length<2)return;
-  const lab=t=>/สิ่งที่ต้องทำ/.test(t)?"ข้อแนะนำ":/วัสดุ/.test(t)?"อุปกรณ์":/Routine/i.test(t)?"ดูแลประจำวัน":/ระวัง/.test(t)?"ข้อระวัง":t.replace(/\s*\(.*\)\s*$/,"");
+  const lab=t=>/สิ่งที่ต้องทำ/.test(t)?"ข้อแนะนำ":/วัสดุ/.test(t)?"อุปกรณ์":/Routine/i.test(t)?"Routine Care":/ระวัง/.test(t)?"ข้อระวัง":t.replace(/\s*\(.*\)\s*$/,"");
   const tabs=document.createElement("div");tabs.className="cs-tabs rs-tabs";tabs.setAttribute("role","tablist");
   const track=document.createElement("div");track.className="cs-track rs-track";const dots=document.createElement("div");dots.className="cs-dots";
   secs.forEach((sc,i)=>{const sl=document.createElement("div");sl.className="cs-slide rs-slide";sl.setAttribute("role","tabpanel");const card=document.createElement("div");card.className="rs-card";sc.els.forEach(e=>card.append(e));sl.append(card);track.append(sl);
