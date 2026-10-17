@@ -1508,6 +1508,60 @@ img.hm-nurse{border-radius:50%;object-fit:cover;border:3px solid var(--surface);
 .gd-card ul{margin:0;padding-left:20px;font-size:.88rem;display:flex;flex-direction:column;gap:3px}
 .gd-card .gd-h{margin:8px 0 2px;font-size:.9rem;color:var(--c);font-family:var(--font-display)}
 .gd-tabs button{font-size:.74rem;padding:6px 9px}
+/* ===== Quality & Safety Analytics ===== */
+body[data-page="qa"] section.card.patient,body[data-page="qa"] .pagetabs,body[data-page="qa"] #alerts{display:none!important}
+body[data-page="qa"]{--pc:var(--teal);--pt:var(--teal-t)}
+.qa-head h2{margin:4px 2px 2px;font-family:var(--font-display);font-size:1.18rem;color:var(--navy)}
+:root[data-theme="dark"] .qa-head h2{color:var(--ink)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .qa-head h2{color:var(--ink)}}
+.qa-lead{margin:0 2px 10px;font-size:.82rem;color:var(--muted)}
+.qa-bar{display:grid;grid-template-columns:1fr 1.4fr;gap:10px;margin-bottom:10px}
+.qa-bar label{font-size:.78rem;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+.qa-tabs{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:8px 2px;margin-bottom:6px}
+.qa-tabs button[aria-selected=true]{background:var(--teal);border-color:var(--teal);color:#fff}
+.qa-intro{margin:0 0 10px;font-size:.84rem;color:var(--muted)}
+.qa-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:10px}
+.qa-k{border-radius:16px;background:var(--bg);padding:10px 12px;box-shadow:inset 0 3px 0 var(--c);display:flex;flex-direction:column;gap:2px}
+.qa-kh{display:flex;justify-content:space-between;gap:6px;align-items:flex-start}
+.qa-kh small{font-size:.78rem;font-weight:600;color:var(--ink);line-height:1.3}
+.qa-ty{flex:none;font-size:.62rem;font-weight:700;letter-spacing:.03em;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 6px}
+.qa-k b{font-family:var(--font-num);font-size:1.55rem;line-height:1.2;color:var(--ink)}
+.qa-sub{font-size:.74rem;color:var(--muted)}
+.qa-st{font-size:.72rem;font-weight:700;color:var(--c)}
+.qa-h{margin:14px 0 6px;font-size:.95rem;font-family:var(--font-display);display:flex;align-items:center;gap:6px}
+.qa-n{font-size:.72rem;background:var(--teal-t);color:var(--teal);border-radius:999px;padding:1px 8px}
+.qa-bars{display:flex;flex-direction:column;gap:6px}
+.qa-br{display:grid;grid-template-columns:minmax(110px,40%) 1fr 64px;gap:8px;align-items:center;font-size:.8rem}
+.qa-bl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qa-bt{height:9px;border-radius:99px;background:var(--line);overflow:hidden}.qa-bt i{display:block;height:100%;border-radius:99px}
+.qa-bv{text-align:right;font-weight:700}.qa-bv small{display:block;font-weight:400;color:var(--muted);font-size:.68rem}
+.qa-chs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.qa-ch{margin:0;background:var(--bg);border-radius:14px;padding:8px}
+.qa-ch figcaption{font-size:.78rem;font-weight:600;margin:0 4px 2px}
+.qa-ch svg text{font-size:9px;fill:var(--muted)}
+.qa-tbl{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
+.qa-tbl table{width:100%;border-collapse:collapse;font-size:.78rem}
+.qa-tbl th,.qa-tbl td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.qa-tbl th{background:var(--bg);font-weight:700;white-space:nowrap}
+.qa-tbl td small{display:block;color:var(--muted);font-size:.7rem}
+.qa-tbl td.num,.qa-tbl th.num{text-align:right}
+.qa-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.qa-chips span{font-size:.76rem;border-radius:999px;padding:3px 10px;background:var(--gold-t);color:var(--ink)}
+.qa-fix{display:block;color:var(--ok);font-weight:600;font-size:.76rem;margin-bottom:4px}
+.qa-sug{display:block;color:var(--muted);margin-bottom:4px}
+.qa-fixb{min-height:30px;padding:3px 10px;font-size:.74rem}
+.qa-base{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin-bottom:10px}
+.qa-base label{font-size:.76rem;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.qa-exp{display:flex;flex-wrap:wrap;gap:8px}
+.qa-link h2{margin:0 0 4px}
+.sv-q{display:flex;flex-direction:column;gap:6px;padding:8px 0;border-bottom:1px solid var(--line)}
+.sv-q>span{font-size:.88rem;font-weight:600}
+.sv-s{display:flex;gap:6px}
+.sv-s button{flex:1;font:inherit;font-weight:700;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 0;cursor:pointer}
+.sv-s button[aria-pressed=true]{background:var(--teal);border-color:var(--teal);color:#fff}
+.sv-leg{font-size:.74rem;color:var(--muted);margin:6px 0}
+@media (max-width:520px){.qa-bar{grid-template-columns:1fr}.qa-g{grid-template-columns:1fr 1fr}.qa-k b{font-size:1.25rem}}
+.qa-zero{margin:18px 6px;text-align:center;color:var(--ok);font-weight:600;font-size:.85rem}
 </style>
 </head>
 <body>
@@ -1949,11 +2003,7 @@ img.hm-nurse{border-radius:50%;object-fit:cover;border:3px solid var(--surface);
   </div>
 
   <div class="page" id="page-trend" hidden>
-  <section class="card kpi3" id="kpi3">
-    <h2>ตัวชี้วัดคุณภาพการพยาบาล <small class="h-en">Nursing Quality &amp; Research</small></h2>
-    <div class="kpi3-g" id="kpi3G"></div>
-    <p class="note" style="margin:0">คำนวณจากข้อมูลในเครื่องนี้ (รวมข้อมูลที่ดึงจากระบบกลาง) · เฉพาะผู้ดูแลระบบ</p>
-  </section>
+  <section class="card qa-link"><h2>ตัวชี้วัดคุณภาพการพยาบาล</h2><p class="note" style="margin:0 0 10px">ดูตัวชี้วัด 10 รายการ แจ้งเตือนความปลอดภัย และรายงานวิจัยได้ที่เมนู Nursing Quality &amp; Patient Safety Analytics</p><button type="button" class="btn primary" data-go="qa">เปิด Analytics</button></section>
   <section class="card" id="ovCard">
     <h2>ภาพรวมแผลของผู้ป่วย</h2>
     <div class="ov-sum" id="ovSum"></div>
@@ -2062,6 +2112,16 @@ img.hm-nurse{border-radius:50%;object-fit:cover;border:3px solid var(--surface);
     <p class="note" style="margin:0 0 10px">สรุปความเสี่ยง แผล การพลิกตัว และกิจกรรมที่ยังค้างของผู้ป่วยทุกราย สำหรับส่งต่อเวรถัดไป</p>
     <button class="btn primary" id="hoBtn" type="button">สรุปส่งเวร</button>
   </section>
+  </div>
+
+  <div class="page" id="page-qa" hidden>
+  <div class="qa-head"><h2>Nursing Quality &amp; Patient Safety Analytics</h2><p class="qa-lead">บันทึกการดูแลครั้งเดียว Skin Guard คำนวณตัวชี้วัด แดชบอร์ด และรายงานคุณภาพให้อัตโนมัติ · เฉพาะผู้ดูแลระบบ</p></div>
+  <div class="qa-bar"><label for="qaMonth">เดือน<input id="qaMonth" type="month"></label><label for="qaPD">วันนอนรวมของหอ (patient-days)<input id="qaPD" type="number" inputmode="numeric" min="0" placeholder="ใช้คิดอัตราต่อ 1,000 วันนอน"></label></div>
+  <div class="cs-tabs qa-tabs" id="qaTabs" role="tablist"><button type="button" role="tab">Clinical Outcomes</button><button type="button" role="tab">Nursing Performance</button><button type="button" role="tab">Patient Safety Alerts</button><button type="button" role="tab">QI &amp; Research</button></div>
+  <section class="card qa-sec" id="qaS0"></section>
+  <section class="card qa-sec" id="qaS1" hidden></section>
+  <section class="card qa-sec" id="qaS2" hidden></section>
+  <section class="card qa-sec" id="qaS3" hidden></section>
   </div>
 
   <div class="page" id="page-history" hidden>
@@ -2282,6 +2342,14 @@ img.hm-nurse{border-radius:50%;object-fit:cover;border:3px solid var(--surface);
       <div class="rm-kick">เมนูเพิ่มเติม</div>
       <div class="rm-body more-list" id="moreList"></div>
       <div class="rm-foot"><button class="btn" id="moreClose" type="button">ปิด</button></div>
+    </div>
+  </div>
+  <div class="modal" id="svModal" hidden role="dialog" aria-modal="true" aria-labelledby="svTitle">
+    <div class="sheet">
+      <div class="rm-kick">Nurse Satisfaction / Usability</div>
+      <div class="rm-body"><h3 class="pg-hi" id="svTitle">ความพึงพอใจต่อการใช้ Skin Guard</h3><p class="note" style="margin:0 0 8px">ไม่ระบุชื่อผู้ตอบ ใช้ประเมินคุณภาพนวัตกรรม</p><div id="svQ"></div>
+        <label for="svC">ข้อเสนอแนะ<textarea id="svC" rows="2" placeholder="ถ้ามี"></textarea></label><p class="pg-err" id="svErr" role="alert"></p></div>
+      <div class="rm-foot"><button class="btn" id="svClose" type="button">ปิด</button><button class="btn primary" id="svSave" type="button">ส่งแบบประเมิน</button></div>
     </div>
   </div>
   <div class="modal" id="hoModal" hidden role="dialog" aria-modal="true" aria-labelledby="hoTitle">
@@ -2753,8 +2821,8 @@ function renderRisk(t){
   box.append(d);
 }
 /* Pages */
-const PAGES=["home","patients","history","prevent","wound","plan","trend","record","discharge","ward"];
-var ADMIN_PAGES=["trend","ward"],admNext=null,bootDone=false;
+const PAGES=["home","patients","history","prevent","wound","plan","qa","trend","record","discharge","ward"];
+var ADMIN_PAGES=["trend","ward","qa"],admNext=null,bootDone=false;
 var admMem=null,admRegMode=false;
 function admGet(){if(admMem)return admMem;try{const v=sessionStorage.getItem("pi-admin");if(v&&v[0]==="{")return JSON.parse(v)}catch(e){}return null}
 function isAdmin(){return !!admGet()}
@@ -2811,7 +2879,7 @@ function go(pg,scroll){
   if(pg==="discharge"){setTimeout(()=>{try{dcPaint()}catch(e){}},0)}
   if(pg==="record"||pg==="trend")setTimeout(renderDash,0);
   if(pg==="plan")setTimeout(()=>{try{planPaint()}catch(e){console.error(e)}},0);
-  if(pg==="trend")setTimeout(()=>{try{kpi3Paint()}catch(e){console.error(e)}},0);
+  if(pg==="qa")setTimeout(()=>{try{qaPaint()}catch(e){console.error(e)}},0);
   if(pg==="ward"){setTimeout(renderWard,0);setTimeout(()=>{try{admListRender()}catch(e){}},0)}
   PAGES.forEach(x=>{$("page-"+x).hidden=x!==pg;const tb=$("tab-"+x);if(tb)tb.setAttribute("aria-selected",x===pg)});
   try{bnavPaint();if(pg==="home")homePaint();if(pg==="patients")plPaint();if(pg==="history"){$("histFold").open=true;renderHist()}}catch(e){}
@@ -2932,7 +3000,7 @@ function renderHist(){
   const box=$("hist"),ch=$("chart");
   {const hs=$("histSum");if(hs)hs.textContent=hist.length?`${hist.length} รายการ`:"ยังไม่มีประวัติ"}
   if(!hist.length){box.innerHTML='<p class="empty">ยังไม่มีประวัติ กด "บันทึกลงประวัติ" เพื่อเริ่มติดตาม</p>';ch.innerHTML="";return}
-  const rows=[...hist].sort((a,b)=>a.date<b.date?1:-1);
+  const rows=hist.filter(h=>h.type!=="survey").sort((a,b)=>a.date<b.date?1:-1);
   box.innerHTML=`<table><thead><tr><th>วันที่</th><th>ผู้ป่วย</th><th>ระดับ</th><th style="text-align:right">Braden</th><th style="text-align:right">พื้นที่ cm²</th><th style="text-align:right">PUSH</th><th>ผู้บันทึก</th><th></th></tr></thead><tbody>${
     rows.map(r=>{const s=STAGES[r.stage];return `<tr><td>${r.date||"-"}</td><td>${(r.hn||"-").replace(/</g,"&lt;")}${r.ex?" <span class='note'>(ตัวอย่าง)</span>":""}${r.woundCount>1?`<small class='wsite'>แผลที่ ${r.woundNo} · ${esc(siteShort(r.site))}${r.side?" "+esc(r.side):""}</small>`:""}</td>
     <td>${r.type==="discharge"?`<span class="pill" style="--c:var(--indigo)">จำหน่าย · ${esc(r.dc&&r.dc.label||"")}</span>`:s?`<span class="pill" style="--c:var(${s.c})">${s.name.split(" (")[0]}</span>`:"-"}</td>
@@ -4508,7 +4576,7 @@ $("expXlsx").onclick=async()=>{
       .concat(reg.map(r=>[r.hn,siteShort(r.site),r.side,r.origin==="hapi"?"HAPI":r.origin==="poa"?"POA":"ไม่ระบุ",r.found||r.first,stageShort(r.stage),stageShort(r.last.stage),r.last.push,r.device?"ใช่":"",r.device?devText(r.last):"",r.origin==="poa"?poaText(r):""]));
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(s2),"ทะเบียนแผล");
     const s3=[["วันที่ประเมิน","HN/ผู้ป่วย","แผลที่","ตำแหน่ง","ด้าน","ระดับ","ยาว","กว้าง","ลึก","พื้นที่ cm²","สิ่งคัดหลั่ง","เนื้อเยื่อ","PUSH","Braden","ขอบแผล","ผิวรอบแผล","สัญญาณติดเชื้อ","แหล่งที่เกิด","ผู้บันทึก","ตำแหน่งผู้บันทึก","วันที่บันทึก","เวลา","MDRPI อุปกรณ์","วัสดุที่ใช้"]]
-      .concat(hist.filter(h=>!h.ex&&h.type!=="discharge").map(h=>[h.date,h.hn,h.woundNo||1,siteShort(h.site),h.side||"",stageShort(h.stage),h.L,h.W,h.D,h.a,(EXU.find(e=>e[1]===h.exu)||[""])[0],(TIS.find(e=>e[1]===h.tis)||[""])[0],h.push,h.braden??"",
+      .concat(hist.filter(h=>!h.ex&&h.type!=="discharge"&&h.type!=="survey").map(h=>[h.date,h.hn,h.woundNo||1,siteShort(h.site),h.side||"",stageShort(h.stage),h.L,h.W,h.D,h.a,(EXU.find(e=>e[1]===h.exu)||[""])[0],(TIS.find(e=>e[1]===h.tis)||[""])[0],h.push,h.braden??"",
         (h.edge||[]).map(k=>labelOf(EDGE,k)).join(", "),(h.peri||[]).map(k=>labelOf(PERI,k)).join(", "),(h.inf||[]).map(k=>labelOf(INF,k)).join(", "),h.origin==="hapi"?"HAPI":h.origin==="poa"?"POA":"",h.nurse||"",h.role||"",h.recDate||"",h.recTime||"",h.device?devText(h):"",(h.dressings||[]).join(", ")]));
     XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(s3),"การประเมินทั้งหมด");
     {const s4=[["วันที่จำหน่าย","เวลา","HN","ชื่อผู้ป่วย","ประเภท","Braden ล่าสุด","จำนวนแผลกดทับ","รายละเอียดแผล","หมายเหตุ","ผู้บันทึก","OT"]].concat(hist.filter(h=>!h.ex&&h.type==="discharge").map(h=>{const d=h.dc||{};return [h.date,d.time||"",h.hn,h.name||"",d.label||"",d.braden??"",(d.wounds||[]).length,(d.wounds||[]).map(w=>`แผลที่ ${w.no} ${w.site} ${stageShort(w.stage)}`).join("; "),d.note||"",h.nurse||"",h.ot||""]}));
@@ -5035,7 +5103,7 @@ $("hmGuide").onclick=()=>{const b=$("gdBody");if(!b.dataset.done){let h="";
     try{h+=`<h4>Medical Device-Related Pressure Injury (MDRPI)</h4><ul>${CARE.device.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
     b.insertAdjacentHTML("beforeend",h);b.dataset.done=1}sheetOpen("guideModal")};
 $("gdClose").onclick=()=>sheetClose("guideModal");
-function bnavPaint(){const pg=document.body.dataset.page,m={home:"home",patients:"patients",prevent:"assess",wound:"assess",plan:"plan",record:"more",discharge:"more",history:"more",trend:"report",ward:"more"};
+function bnavPaint(){const pg=document.body.dataset.page,m={home:"home",patients:"patients",prevent:"assess",wound:"assess",plan:"plan",qa:"report",record:"more",discharge:"more",history:"more",trend:"more",ward:"more"};
   const nav=$("bnav"),rb=nav.querySelector('[data-b="report"]');if(rb)rb.hidden=!isAdmin();
   nav.style.gridTemplateColumns=`repeat(${[...nav.querySelectorAll("button")].filter(b=>!b.hidden).length},1fr)`;
   document.querySelectorAll("#bnav button").forEach(b=>{if(b.dataset.b===m[pg])b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")})}
@@ -5043,19 +5111,21 @@ document.querySelectorAll("#bnav button").forEach(b=>b.onclick=()=>{const k=b.da
   if(k==="home"||k==="patients")return go(k);
   if(k==="assess"){const hn=realHN(),has=hn&&(wounds||[]).some(w=>w.stage&&w.stage!=="none");return needPt(has?"wound":"prevent")}
   if(k==="plan")return needPt("plan");
-  if(k==="report")return go("trend");
+  if(k==="report")return go("qa");
   const L=$("moreList"),adm=isAdmin(),items=[
     ["history","&#128203;","ประวัติการประเมิน","ผลประเมิน บันทึกที่ลงชื่อ และการจำหน่ายทั้งหมด","--indigo"],
     ["record","&#9998;","บันทึกการพยาบาล","Nurse's Note","--indigo"],
     ["discharge","&#8618;","จำหน่ายผู้ป่วย","กลับบ้าน ย้ายหอ ส่งต่อ","--sky"],
     ["guide","&#128214;","คู่มือ & แนวทางการดูแล","ระดับความเสี่ยง การพลิกตัว ระดับแผล","--sky"],
     ["handover","&#128203;","สรุปส่งเวร","Nursing Handover ผู้ป่วยทุกราย","--teal"],
-    ["trend","&#128200;","รายงานและสถิติ",adm?"ตัวชี้วัดคุณภาพ แนวโน้มแผล ส่งออก Excel/PDF":"เฉพาะผู้ดูแลระบบ","--teal"],
+    ["qa","&#128202;","Nursing Quality & Patient Safety Analytics",adm?"ตัวชี้วัดคุณภาพ ความปลอดภัย รายงานวิจัย":"เฉพาะผู้ดูแลระบบ","--teal"],
+    ["survey","&#11088;","ประเมินความพึงพอใจการใช้งาน","Nurse Satisfaction / Usability · ไม่ระบุชื่อ","--gold"],
+    ["trend","&#128200;","แนวโน้มแผลและรายงาน",adm?"ตัวชี้วัดคุณภาพ แนวโน้มแผล ส่งออก Excel/PDF":"เฉพาะผู้ดูแลระบบ","--teal"],
     ["ward","&#127973;","หอผู้ป่วยและระบบกลาง",adm?"ภาพรวมหอ ระบบกลาง บัญชีผู้ดูแล":"เฉพาะผู้ดูแลระบบ","--gold"],
     ["admin","&#128273;",adm?"ออกจากโหมดผู้ดูแล":"เข้าโหมดผู้ดูแล (Admin)","","--crit"],
     ["logout","&#8617;","ออกจากระบบ","","--s1"]];
   L.innerHTML="";items.forEach(([k2,ic,t,sub,c])=>{const x=document.createElement("button");x.type="button";if(k2==="logout")x.className="danger";x.style.setProperty("--c",`var(${c})`);x.innerHTML=`<i>${ic}</i><span>${t}${sub?`<small>${sub}</small>`:""}</span>`;
-    x.onclick=()=>{sheetClose("moreModal");if(k2==="guide")return $("hmGuide").onclick();if(k2==="handover")return hoOpen();if(k2==="admin")return $("admLock").onclick();if(k2==="logout")return doLogout();go(k2)};L.append(x)});
+    x.onclick=()=>{sheetClose("moreModal");if(k2==="guide")return $("hmGuide").onclick();if(k2==="handover")return hoOpen();if(k2==="survey")return svOpen();if(k2==="admin")return $("admLock").onclick();if(k2==="logout")return doLogout();go(k2)};L.append(x)});
   sheetOpen("moreModal")});
 $("moreClose").onclick=()=>sheetClose("moreModal");
 setTimeout(()=>{try{ptBarPaint();bnavPaint();if(document.body.dataset.page==="home")homePaint();if(document.body.dataset.page==="patients")plPaint()}catch(e){}},200);
@@ -5083,7 +5153,8 @@ $("dcBtn").onclick=()=>{const hn=$("hn").value.trim();if(!hn)return;
     (ws.length?`แผลกดทับขณะจำหน่าย ${ws.length} แผล: `+ws.map(w=>`แผลที่ ${w.no} ${w.site} ${stageShort(w.stage)}${w.push!=null?" PUSH "+w.push:""}`).join("; "):"ไม่มีแผลกดทับขณะจำหน่าย")+
     (note?`\nหมายเหตุ: ${note}`:"")+`\n\nผู้บันทึก: ${nurse} (${role})${ot?" OT "+ot:""}`;
   hist=hist.filter(h=>!h.ex);
-  hist.push({id:Date.now(),type:"discharge",hn,name:nm,date:d,dc:{kind,label:DCK[kind],time:t,note,wounds:ws,braden:bt},nurse,ot,role,recDate:d,recTime:t,noteText:text});
+  let dqa=null;try{savePatient();const r0=loadPatientRec(hn);dqa=qaOfPlan(r0&&r0.plan)}catch(e){}
+  hist.push({id:Date.now(),type:"discharge",hn,name:nm,date:d,dc:{kind,label:DCK[kind],time:t,note,wounds:ws,braden:bt,qa:dqa},nurse,ot,role,recDate:d,recTime:t,noteText:text});
   saveHist(hist);
   try{localStorage.removeItem(PT+hn);localStorage.removeItem("pi-turn-"+hn)}catch(e){}
   try{syncEnq("delpatient",hn,null)}catch(e){}
@@ -5126,7 +5197,7 @@ function planItems(){let items=[];try{items=chkItems()}catch(e){}const has=id=>i
   if(bradenTotal()==null)items.unshift({id:"reassess",text:"ประเมิน Braden Scale ของวันนี้",tag:"ยังไม่ประเมิน","c":"--accent"});
   return items}
 function planEntry(P,key){return (P||planState())[key||planKey()]||null}
-function planSet(id,v){const P=planState(),k=planKey(),e=P[k]||(P[k]={i:{}});e.i=e.i||{};if(v)e.i[id]=v;else delete e.i[id];planPrune(P);st.plan=P;try{savePatient()}catch(e){}planPaint()}
+function planSet(id,v){const P=planState(),k=planKey(),e=P[k]||(P[k]={i:{}});e.i=e.i||{};if(v)e.i[id]=v;else delete e.i[id];planPrune(P);try{qaTouch(P,k)}catch(x){}st.plan=P;try{savePatient()}catch(e){}planPaint()}
 function piStatus(v){return !v?{c:"wait",t:"🟠 รอดำเนินการ"}:v.s==="done"?{c:"done",t:"✅ เสร็จแล้ว"}:{c:"na",t:"⚪ ไม่ได้ดำเนินการ"}}
 function planCounts(e){const n=e&&e._n||0,i=e&&e.i||{},ids=e&&e._l||Object.keys(i);let done=0,na=0;ids.forEach(id=>{const v=i[id];if(v&&v.s==="done")done++;else if(v&&v.s==="na")na++});return {n,done,na,pend:Math.max(0,n-done-na)}}
 var planOpen=null;
@@ -5134,7 +5205,7 @@ function planPaint(){if(!$("page-plan"))return;riskSummaryPaint();
   const hn=realHN(),list=$("planList");$("planShift").textContent=`${SHIFT_TH[shiftNow()]} · ${new Date().toLocaleDateString("th-TH",{day:"numeric",month:"short"})}`;
   if(!hn){list.innerHTML='<div class="pl-empty">ยังไม่ได้เลือกผู้ป่วย</div>';$("planProg").innerHTML="";const sm=$("planSum");if(sm){sm.className="fs-m";sm.textContent=""}return}
   const items=planItems(),P=planState(),k=planKey(),e=P[k]||(P[k]={i:{}});
-  const ids=items.map(x=>x.id);if(e._n!==items.length||JSON.stringify(e._l||[])!==JSON.stringify(ids)){e._n=items.length;e._l=ids;st.plan=P;try{savePatient()}catch(x){}}
+  const ids=items.map(x=>x.id);if(e._n!==items.length||JSON.stringify(e._l||[])!==JSON.stringify(ids)){e._n=items.length;e._l=ids;try{qaTouch(P,k)}catch(x){}st.plan=P;try{savePatient()}catch(x){}}
   const C=planCounts(e),pct=C.n?Math.round((C.done+C.na)/C.n*100):0;
   {const sm=$("planSum");if(sm){sm.className="fs-m"+(C.n&&!C.pend?" done":C.pend?" warn":"");sm.textContent=C.n?(C.pend?`${C.done+C.na}/${C.n} · รอ ${C.pend}`:`ครบ ${C.n} กิจกรรม ✓`):""}}
   $("planProg").innerHTML=`<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div><small><span>บันทึกแล้ว ${C.done+C.na}/${C.n} กิจกรรม (${pct}%)</span><span>เสร็จ ${C.done} · ไม่ได้ทำ ${C.na} · รอ ${C.pend}</span></small>`;
@@ -5389,6 +5460,174 @@ function gdGo(i,smooth){const tr=$("gdBody").querySelector(".gd-track");if(!tr)r
 function gdPaint(){const b=$("gdBody");b.querySelectorAll(".gd-tabs button").forEach((x,i)=>{x.setAttribute("aria-selected",String(i===gdIdx));if(i===gdIdx){const T=x.parentNode,L=x.offsetLeft-T.offsetLeft,R=L+x.offsetWidth;if(L<T.scrollLeft)T.scrollTo({left:L-12,behavior:"smooth"});else if(R>T.scrollLeft+T.clientWidth)T.scrollTo({left:R-T.clientWidth+12,behavior:"smooth"})}});
   b.querySelectorAll(".cs-dots i").forEach((d,i)=>d.classList.toggle("on",i===gdIdx));gdFit()}
 $("hmGuide").onclick=()=>{gdIdx=0;gdBuild();sheetOpen("guideModal");try{$("gdBody").scrollTop=0}catch(e){};setTimeout(gdPaint,60)};
+
+/* ===== Nursing Quality & Patient Safety Analytics (admin) =====
+   Record once: every KPI below is computed from data nurses already record
+   (Braden/wound assessments in history, prevention-plan activities per shift, discharges, survey). */
+var QA_TAB=0;
+var QA_ITEM={turn:"พลิกตะแคงตัว",skin:"ประเมินผิวหนัง",device:"ตรวจผิวใต้อุปกรณ์การแพทย์",vent:"ตรวจผิวใต้ท่อช่วยหายใจ",o2skin:"ตรวจผิวใต้อุปกรณ์ออกซิเจน"};
+var QA_FIX={"ผู้ป่วยอาการไม่คงที่":"ใช้ small shift / ประเมินซ้ำเมื่ออาการคงที่ และบันทึกเหตุผล","แพทย์สั่ง/ข้อจำกัดการรักษา":"บันทึกคำสั่งแพทย์ ใช้วัสดุป้องกันและตรวจผิวถี่ขึ้นแทน","ผู้ป่วยปฏิเสธ":"ให้ข้อมูลความเสี่ยงแก่ผู้ป่วย/ญาติ บันทึกการปฏิเสธ","ไม่มีอุปกรณ์":"แจ้งหัวหน้าเวร เบิกหรือยืมอุปกรณ์ทดแทน"};
+var MDRPI_IDS=["device","vent","o2skin"];
+function qaName(id){return QA_ITEM[id]||(typeof CHK_SHORT!=="undefined"&&CHK_SHORT[id])||(typeof PX_SHORT!=="undefined"&&PX_SHORT[id])||id}
+function qaDay(off){return new Date(Date.now()+7*3600e3+off*864e5).toISOString().slice(0,10)}
+function qaSum(e){const ids=e._l||[],I=e.i||{},has=x=>ids.includes(x),stOf=x=>!has(x)?-1:!I[x]?0:I[x].s==="done"?1:2;
+  const m=ids.filter(x=>MDRPI_IDS.includes(x));
+  return {n:ids.length,d:ids.filter(x=>I[x]&&I[x].s==="done").length,na:ids.filter(x=>I[x]&&I[x].s==="na").length,t:stOf("turn"),s:stOf("skin"),
+    m:m.length?[m.filter(x=>I[x]&&I[x].s==="done").length,m.length-m.filter(x=>I[x]&&I[x].s==="na").length]:null,
+    p:ids.filter(x=>!I[x]),r:ids.filter(x=>I[x]&&I[x].s==="na").map(x=>[x,I[x].r||"",I[x].fix||""]),ids:ids.slice(),dn:ids.filter(x=>I[x]&&I[x].s==="done")}}
+function qaTouch(P,k){if(!P||!P[k]||!P[k]._l)return;P._qa=P._qa||{};const old=P._qa[k],s=qaSum(P[k]);
+  if(old&&old.r)s.r.forEach(r=>{const o=old.r.find(q=>q[0]===r[0]);if(o&&o[2]&&!r[2])r[2]=o[2]});P._qa[k]=s;
+  const lim=qaDay(-62);Object.keys(P._qa).forEach(x=>{if(x.slice(0,10)<lim)delete P._qa[x]})}
+function qaOfPlan(P){P=P||{};const Q=Object.assign({},P._qa||{});Object.keys(P).forEach(k=>{if(k!=="_qa"&&k.includes("|")&&P[k]&&P[k]._l&&!Q[k])Q[k]=qaSum(P[k])});return Q}
+function qaData(){const out=[],seen=new Set();
+  const add=(hn,Q,src)=>{Object.entries(Q||{}).forEach(([k,s])=>{const id=hn+"#"+k;if(seen.has(id)||!s)return;seen.add(id);out.push({hn,key:k,date:k.slice(0,10),sh:k.slice(11),s,src})})};
+  try{allPatients().filter(p=>p.hn&&p.hn!=="ตัวอย่าง").forEach(p=>add(p.hn,qaOfPlan(p.plan),{t:"pt"}))}catch(e){}
+  hist.filter(h=>!h.ex&&h.type==="discharge"&&h.dc&&h.dc.qa).forEach(h=>add(h.hn,h.dc.qa,{t:"dc",id:h.id}));
+  return out}
+function qaAssess(){return hist.filter(h=>!h.ex&&h.type!=="discharge"&&h.type!=="survey"&&h.hn&&h.hn!=="ตัวอย่าง")}
+function qaMonths(a,b){const out=[];let [y,m]=a.split("-").map(Number);const [y2,m2]=b.split("-").map(Number);while(y<y2||(y===y2&&m<=m2)){out.push(`${y}-${String(m).padStart(2,"0")}`);m++;if(m>12){m=1;y++}if(out.length>60)break}return out}
+function qaKPI(from,to){const inR=d=>!!d&&d>=from&&d<=to,ratio=(a,b)=>b?a/b:null;
+  const Q=qaData().filter(x=>inR(x.date)),A=qaAssess(),AM=A.filter(h=>inR(h.recDate||h.date));
+  const pdays=new Set();Q.forEach(x=>pdays.add(x.hn+"|"+x.date));AM.forEach(h=>pdays.add(h.hn+"|"+(h.recDate||h.date)));
+  const bdays=new Set(AM.filter(h=>h.braden!=null).map(h=>h.hn+"|"+(h.recDate||h.date)));
+  let sk=[0,0],tu=[0,0],bu=[0,0],it=[0,0],md=[0,0];const per={};
+  Q.forEach(({s})=>{if(s.s===1||s.s===0){sk[1]++;if(s.s===1)sk[0]++}if(s.t===1||s.t===0){tu[1]++;if(s.t===1)tu[0]++}
+    if(s.n){bu[1]++;if(s.d+s.na===s.n&&s.d>0)bu[0]++;it[0]+=s.d;it[1]+=s.n-s.na}
+    if(s.m){md[0]+=s.m[0];md[1]+=s.m[1]}
+    (s.ids||[]).forEach(id=>{const r=(s.r||[]).some(x=>x[0]===id);if(r)return;per[id]=per[id]||[0,0];per[id][1]++;if((s.dn||[]).includes(id))per[id][0]++})});
+  const docOK=h=>!!(h.nurse&&h.recDate&&h.recTime&&(h.braden!=null||h.stage)&&h.noteText&&h.noteText.length>20&&h.role);
+  const dm=AM.map(h=>+h.docMin).filter(v=>v>0);
+  let reg=[];try{reg=woundRegistry()}catch(e){}
+  const hapi=reg.filter(r=>r.origin==="hapi"&&inR((r.found||r.first||"")));const mdr=hapi.filter(r=>r.device);
+  const months=qaMonths(from.slice(0,7),to.slice(0,7));const pd=months.reduce((a,m)=>a+(pdGet(m)||0),0);
+  const byStage={};hapi.forEach(r=>{const k=stageShort(r.stage);byStage[k]=(byStage[k]||0)+1});
+  // wound outcomes: last two PUSH of each wound, last one in range
+  const G=new Map();A.filter(h=>h.push!=null&&h.stage&&h.stage!=="none").forEach(h=>{const k=h.hn+"|"+h.site+"|"+(h.side||"");if(!G.has(k))G.set(k,[]);G.get(k).push(h)});
+  let imp=0,same=0,worse=0,dPush=[];G.forEach(a=>{a.sort((x,y)=>(+x.id||0)-(+y.id||0));const c=a[a.length-1];if(a.length<2||!inR(c.recDate||c.date))return;const p=a[a.length-2];dPush.push(c.push-p.push);if(c.push<p.push)imp++;else if(c.push>p.push)worse++;else same++});
+  const SV=hist.filter(h=>!h.ex&&h.type==="survey"&&inR(h.date)),svAvg=SV.length?SV.reduce((a,h)=>a+(h.q||[]).reduce((x,y)=>x+y,0)/Math.max(1,(h.q||[]).length),0)/SV.length:null;
+  const svItem=[0,1,2,3,4].map(i=>{const v=SV.map(h=>(h.q||[])[i]).filter(x=>x>0);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null});
+  return {from,to,Q,AM,pdays:pdays.size,braden:ratio(bdays.size,pdays.size),bradenN:[bdays.size,pdays.size],skin:ratio(...sk),skinN:sk,turn:ratio(...tu),turnN:tu,bundle:ratio(...bu),bundleN:bu,items:ratio(...it),itemsN:it,
+    mdrpiPrev:ratio(...md),mdrpiPrevN:md,doc:ratio(AM.filter(docOK).length,AM.length),docN:[AM.filter(docOK).length,AM.length],time:dm.length?dm.reduce((a,b)=>a+b,0)/dm.length:null,timeN:dm.length,
+    hapi:hapi.length,mdrpi:mdr.length,pd,hapiRate:pd?hapi.length/pd*1000:null,mdrpiRate:pd?mdr.length/pd*1000:null,byStage,imp,same,worse,dPush:dPush.length?dPush.reduce((a,b)=>a+b,0)/dPush.length:null,
+    sv:svAvg,svN:SV.length,svItem,per}}
+function qaMonthRange(m){const [y,mo]=m.split("-").map(Number),last=new Date(y,mo,0).getDate();return [m+"-01",`${m}-${String(last).padStart(2,"0")}`]}
+const pct=v=>v==null?"–":Math.round(v*100)+"%";
+function qaStatus(v,good,warn,lower){if(v==null)return {c:"--muted",t:"ยังไม่มีข้อมูล"};const ok=lower?v<=good:v>=good,mid=lower?v<=warn:v>=warn;return ok?{c:"--ok",t:"ผ่านเป้าหมาย"}:mid?{c:"--gold",t:"เฝ้าระวัง"}:{c:"--s1",t:"ต่ำกว่าเป้าหมาย"}}
+function qaTile(label,type,val,sub,S,tgt){return `<div class="qa-k" style="--c:var(${S.c})"><div class="qa-kh"><small>${label}</small><span class="qa-ty">${type}</span></div><b>${val}</b><span class="qa-sub">${sub}</span><span class="qa-st">${S.t}${tgt?` · เป้า ${tgt}`:""}</span></div>`}
+function qaBars(rows){return `<div class="qa-bars">${rows.map(([l,v,n])=>`<div class="qa-br"><span class="qa-bl">${esc(l)}</span><span class="qa-bt"><i style="width:${v==null?0:Math.round(v*100)}%;background:var(${qaStatus(v,.9,.8).c})"></i></span><span class="qa-bv">${pct(v)}<small>${n||""}</small></span></div>`).join("")}</div>`}
+function qaChart(months,vals,label,fmt,target){if(!vals.some(v=>v))return `<figure class="qa-ch"><figcaption>${label}</figcaption><p class="qa-zero">ไม่มีรายการในช่วง 6 เดือน ✓</p></figure>`;const W=340,H=150,l=30,r=8,t=12,b=24,max=Math.max(target||0,...vals.map(v=>v||0))*1.2||1,bw=(W-l-r)/months.length,y=v=>t+(H-t-b)*(1-v/max);
+  let g=[0,max/2,max].map(v=>`<line x1="${l}" x2="${W-r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="${l-4}" y="${y(v)+3}" text-anchor="end">${fmt(v)}</text>`).join("");
+  months.forEach((m,i)=>{const cx=l+bw*i+bw/2,v=vals[i];if(v!=null)g+=`<rect x="${cx-bw*.28}" y="${y(v)}" width="${bw*.56}" height="${y(0)-y(v)}" rx="3" fill="var(--teal)"/><text x="${cx}" y="${y(v)-3}" text-anchor="middle" style="fill:var(--ink);font-weight:600">${fmt(v)}</text>`;else g+=`<text x="${cx}" y="${y(0)-4}" text-anchor="middle">–</text>`;g+=`<text x="${cx}" y="${H-7}" text-anchor="middle">${thMonth(m)}</text>`});
+  if(target!=null)g+=`<line x1="${l}" x2="${W-r}" y1="${y(target)}" y2="${y(target)}" stroke="var(--gold)" stroke-dasharray="5 4"/>`;
+  return `<figure class="qa-ch"><figcaption>${label}</figcaption><svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="${esc(label)}">${g}</svg></figure>`}
+function qaPaint(){if(!$("page-qa")||!isAdmin())return;if(!$("qaMonth").value)$("qaMonth").value=qaDay(0).slice(0,7);
+  const m=$("qaMonth").value;$("qaPD").value=pdGet(m)||"";
+  document.querySelectorAll("#qaTabs button").forEach((b,i)=>b.setAttribute("aria-selected",String(i===QA_TAB)));
+  document.querySelectorAll("#page-qa .qa-sec").forEach((s,i)=>s.hidden=i!==QA_TAB);
+  const [f,t]=qaMonthRange(m),K=qaKPI(f,t);
+  try{[qaS0,qaS1,qaS2,qaS3][QA_TAB](K,m)}catch(e){console.error(e);$("qaS"+QA_TAB).innerHTML='<p class="note">คำนวณไม่สำเร็จ</p>'}}
+function qaS0(K,m){const months=monthsBack(m,6),KS=months.map(x=>{const [a,b]=qaMonthRange(x);return qaKPI(a,b)});
+  const sv=$("qaS0");const tot=K.imp+K.same+K.worse;
+  sv.innerHTML=`<p class="qa-intro">ผลลัพธ์ทางคลินิก: อุบัติการณ์แผลกดทับที่เกิดในโรงพยาบาล (HAPI) แผลจากอุปกรณ์การแพทย์ (MDRPI) และผลการดูแลแผล</p><div class="qa-g">`+
+    qaTile("HAPI Incidence Rate","Outcome",K.hapiRate==null?K.hapi+" แผล":K.hapiRate.toFixed(2),K.hapiRate==null?"ใส่วันนอนรวมด้านบนเพื่อคิดอัตรา / 1,000 วันนอน":`ต่อ 1,000 วันนอน · ${K.hapi} แผล / ${K.pd} วันนอน`,K.hapiRate==null?{c:K.hapi?"--s1":"--ok",t:K.hapi?"มี HAPI รายใหม่":"ไม่มี HAPI รายใหม่"}:qaStatus(K.hapiRate,2,3,true),"≤ 2.0")+
+    qaTile("MDRPI Incidence Rate","Outcome",K.mdrpiRate==null?K.mdrpi+" แผล":K.mdrpiRate.toFixed(2),K.mdrpiRate==null?"แผลจากอุปกรณ์การแพทย์ที่เกิดในโรงพยาบาล":`ต่อ 1,000 วันนอน · ${K.mdrpi} แผล`,K.mdrpiRate==null?{c:K.mdrpi?"--s1":"--ok",t:K.mdrpi?"มี MDRPI รายใหม่":"ไม่มี MDRPI รายใหม่"}:qaStatus(K.mdrpiRate,1,2,true),"")+
+    qaTile("ผลการดูแลแผล (PUSH)","Outcome",tot?Math.round(K.imp/tot*100)+"%":"–",tot?`ดีขึ้น ${K.imp} · คงที่ ${K.same} · แย่ลง ${K.worse}${K.dPush!=null?` · PUSH เฉลี่ย ${K.dPush>0?"+":""}${K.dPush.toFixed(1)}`:""}`:"ต้องมีผลประเมินแผลอย่างน้อย 2 ครั้ง",tot?qaStatus(K.imp/tot,.7,.5):{c:"--muted",t:"ยังไม่มีข้อมูล"},"ดีขึ้น ≥ 70%")+`</div>`+
+    (Object.keys(K.byStage).length?`<p class="note">HAPI เดือนนี้แยกตามระดับ: ${Object.entries(K.byStage).map(([k,v])=>`${esc(k)} ${v}`).join(" · ")}</p>`:"")+
+    `<div class="qa-chs">${qaChart(months,KS.map(k=>k.hapiRate!=null?k.hapiRate:k.hapi),"HAPI ย้อนหลัง 6 เดือน ("+(KS.some(k=>k.hapiRate!=null)?"อัตรา/1,000 วันนอน":"จำนวนแผล")+")",v=>(+v).toFixed(v%1?1:0),KS.some(k=>k.hapiRate!=null)?2:null)}${qaChart(months,KS.map(k=>k.mdrpi),"MDRPI ย้อนหลัง 6 เดือน (จำนวนแผล)",v=>Math.round(v),null)}</div>`}
+function qaS1(K,m){const sv=$("qaS1");
+  sv.innerHTML=`<p class="qa-intro">ความครบถ้วนของการประเมินและการปฏิบัติตาม Prevention Bundle คำนวณจากการบันทึกปกติของพยาบาล (วันนอน/เวรที่มีการบันทึกในแอป)</p><div class="qa-g">`+
+    qaTile("Braden Assessment Compliance","Process",pct(K.braden),`ประเมินแล้ว ${K.bradenN[0]}/${K.bradenN[1]} วันนอน`,qaStatus(K.braden,.9,.8),"≥ 90%")+
+    qaTile("Skin Assessment Compliance","Process",pct(K.skin),`${K.skinN[0]}/${K.skinN[1]} เวร`,qaStatus(K.skin,.9,.8),"≥ 90%")+
+    qaTile("Prevention Bundle Compliance","Process",pct(K.bundle),`ครบทุกกิจกรรม ${K.bundleN[0]}/${K.bundleN[1]} เวร · รายกิจกรรม ${pct(K.items)}`,qaStatus(K.bundle,.9,.8),"≥ 90%")+
+    qaTile("Repositioning Compliance","Process",pct(K.turn),`พลิกตัวตามแผน ${K.turnN[0]}/${K.turnN[1]} เวร`,qaStatus(K.turn,.9,.8),"≥ 90%")+
+    qaTile("MDRPI Prevention Compliance","Process",pct(K.mdrpiPrev),K.mdrpiPrevN[1]?`${K.mdrpiPrevN[0]}/${K.mdrpiPrevN[1]} กิจกรรม`:"ยังไม่มีผู้ป่วยที่ใช้อุปกรณ์",qaStatus(K.mdrpiPrev,.9,.8),"≥ 90%")+
+    qaTile("Documentation Completeness","Process",pct(K.doc),`บันทึกครบ ${K.docN[0]}/${K.docN[1]} ครั้ง`,qaStatus(K.doc,.95,.85),"≥ 95%")+
+    qaTile("Average Assessment Time","Efficiency",K.time==null?"–":K.time.toFixed(1)+" นาที",K.timeN?`เฉลี่ยจาก ${K.timeN} การบันทึก (เปิดผู้ป่วย → บันทึก)`:"วัดอัตโนมัติเมื่อมีการบันทึก",K.time==null?{c:"--muted",t:"ยังไม่มีข้อมูล"}:qaStatus(K.time,10,15,true),"≤ 10 นาที")+
+    qaTile("Nurse Satisfaction / Usability","Innovation",K.sv==null?"–":K.sv.toFixed(2)+"/5",K.svN?`จาก ${K.svN} แบบประเมิน`:"เมนูเพิ่มเติม → ประเมินความพึงพอใจ",qaStatus(K.sv,4,3.5),"≥ 4.0")+`</div>`+
+    `<h3 class="qa-h">การปฏิบัติรายกิจกรรม (ไม่นับข้อที่ระบุเหตุผลว่าไม่เหมาะสม)</h3>`+
+    (Object.keys(K.per).length?qaBars(Object.entries(K.per).sort((a,b)=>b[1][1]-a[1][1]).map(([id,v])=>[qaName(id),v[1]?v[0]/v[1]:null,` ${v[0]}/${v[1]}`])):'<p class="note">ยังไม่มีการบันทึกกิจกรรมในหน้าแผนการดูแลของเดือนนี้</p>')}
+function qaS2(K,m){const sv=$("qaS2"),cur=planKey(),lim=qaDay(-3);
+  const now=alertItems();const all=qaData();
+  const pend=all.filter(x=>x.date>=lim&&x.key!==cur&&x.s.p&&x.s.p.length).sort((a,b)=>a.key<b.key?1:-1);
+  const na=K.Q.filter(x=>x.s.r&&x.s.r.length).flatMap(x=>x.s.r.map(r=>({x,id:r[0],why:r[1],fix:r[2]}))).sort((a,b)=>a.x.key<b.x.key?1:-1);
+  const cnt={};na.forEach(o=>{cnt[o.why||"ไม่ระบุ"]=(cnt[o.why||"ไม่ระบุ"]||0)+1});
+  const nm=hn=>{const p=loadPatientRec(hn);return `HN ${esc(hn)}${p&&p.name?" · "+esc(p.name):""}`},shTh=s=>({m:"เวรเช้า",a:"เวรบ่าย",n:"เวรดึก"}[s]||s);
+  let h=`<p class="qa-intro">ติดตามกิจกรรมที่ล่าช้าหรือยังไม่ดำเนินการ พร้อมเหตุผลและการแก้ไข</p>`;
+  h+=`<h3 class="qa-h">แจ้งเตือนขณะนี้ <span class="qa-n">${now.length}</span></h3>`+(now.length?`<div class="al-list">${now.slice(0,12).map(a=>`<div class="al-item" style="--c:var(${a.c})"><span><b>${esc(a.t)}</b><small>${esc(a.d)}</small></span></div>`).join("")}</div>`:'<p class="note">ไม่มีแจ้งเตือน</p>');
+  h+=`<h3 class="qa-h">กิจกรรมที่ยังไม่ได้บันทึก (เวรที่ผ่านมา 3 วัน) <span class="qa-n">${pend.reduce((a,x)=>a+x.s.p.length,0)}</span></h3>`+
+    (pend.length?`<div class="qa-tbl"><table><thead><tr><th>วัน/เวร</th><th>ผู้ป่วย</th><th>กิจกรรมที่ยังไม่บันทึก</th></tr></thead><tbody>${pend.slice(0,40).map(x=>`<tr><td>${thDate(x.date)}<small>${shTh(x.sh)}</small></td><td>${nm(x.hn)}</td><td>${x.s.p.map(id=>esc(qaName(id))).join(", ")}</td></tr>`).join("")}</tbody></table></div>`:'<p class="note">ไม่มีกิจกรรมค้าง</p>');
+  h+=`<h3 class="qa-h">กิจกรรมที่ไม่ได้ดำเนินการ พร้อมเหตุผล (เดือนที่เลือก) <span class="qa-n">${na.length}</span></h3>`;
+  if(Object.keys(cnt).length)h+=`<div class="qa-chips">${Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<span>${esc(k)} <b>${v}</b></span>`).join("")}</div>`;
+  h+=na.length?`<div class="qa-tbl"><table><thead><tr><th>วัน/เวร</th><th>ผู้ป่วย</th><th>กิจกรรม</th><th>เหตุผล</th><th>การแก้ไข</th></tr></thead><tbody>${na.slice(0,60).map((o,i)=>`<tr><td>${thDate(o.x.date)}<small>${shTh(o.x.sh)}</small></td><td>${nm(o.x.hn)}</td><td>${esc(qaName(o.id))}</td><td>${esc(o.why||"-")}</td><td>${o.fix?`<span class="qa-fix">✓ ${esc(o.fix)}</span>`:`<small class="qa-sug">แนะนำ: ${esc(QA_FIX[o.why]||"ทบทวนกับหัวหน้าเวรและวางแผนแก้ไข")}</small>`}<button type="button" class="btn sm qa-fixb" data-i="${i}">${o.fix?"แก้ไข":"บันทึกการแก้ไข"}</button></td></tr>`).join("")}</tbody></table></div>`:'<p class="note">ไม่มีรายการ</p>';
+  sv.innerHTML=h;
+  sv.querySelectorAll(".qa-fixb").forEach(b=>b.onclick=()=>{const o=na[+b.dataset.i];const txt=prompt("บันทึกการแก้ไข / การดำเนินการ",o.fix||QA_FIX[o.why]||"");if(txt==null)return;qaSetFix(o.x,o.id,txt.trim());qaPaint()})}
+function qaSetFix(x,id,txt){const who=(admGet()||{}).name||"";const t=txt?txt+(who?` (${who})`:""):"";
+  if(x.src&&x.src.t==="dc"){const h=hist.find(e=>e.id===x.src.id);if(!h||!h.dc||!h.dc.qa)return;const s=h.dc.qa[x.key];if(s&&s.r){const r=s.r.find(q=>q[0]===id);if(r)r[2]=t}saveHist(hist);try{syncEnq("hist",String(h.id),h)}catch(e){}return}
+  const rec=loadPatientRec(x.hn);if(!rec)return;rec.plan=rec.plan||{};rec.plan._qa=rec.plan._qa||qaOfPlan(rec.plan);const s=rec.plan._qa[x.key];if(s&&s.r){const r=s.r.find(q=>q[0]===id);if(r)r[2]=t}
+  if(rec.plan[x.key]&&rec.plan[x.key].i&&rec.plan[x.key].i[id])rec.plan[x.key].i[id].fix=t;rec.updated=Date.now();
+  try{localStorage.setItem(PT+x.hn,JSON.stringify(rec))}catch(e){}try{syncEnq("patient",x.hn,rec)}catch(e){}if(x.hn===curHN&&typeof st!=="undefined")st.planHN=null}
+function qaBase(){try{return JSON.parse(localStorage.getItem("pi-qa-base")||"{}")}catch(e){return {}}}
+function qaS3(K,m){const sv=$("qaS3"),months=monthsBack(m,6),KS=months.map(x=>{const [a,b]=qaMonthRange(x);return qaKPI(a,b)}),B=qaBase();
+  const gl=B.golive||"",A=gl?qaKPI(gl,qaDay(0)):null;
+  const row=(k)=>`<tr><td>${thMonth(k.from.slice(0,7))}</td><td class="num">${k.hapiRate!=null?k.hapiRate.toFixed(2):k.hapi}</td><td class="num">${k.mdrpi}</td><td class="num">${pct(k.braden)}</td><td class="num">${pct(k.skin)}</td><td class="num">${pct(k.bundle)}</td><td class="num">${pct(k.turn)}</td><td class="num">${pct(k.doc)}</td><td class="num">${k.time==null?"–":k.time.toFixed(1)}</td><td class="num">${k.AM.length}</td></tr>`;
+  const cmp=(label,base,after,fmt,lower)=>{const b=base===""||base==null?null:+base,a=after;let d="–",c="--muted";if(b!=null&&a!=null){const diff=a-b;d=(diff>0?"+":"")+fmt(diff);c=(lower?diff<0:diff>0)?"--ok":diff===0?"--muted":"--s1"}
+    return `<tr><td>${label}</td><td class="num">${b==null?"–":fmt(b)}</td><td class="num">${a==null?"–":fmt(a)}</td><td class="num" style="color:var(${c});font-weight:700">${d}</td></tr>`};
+  const p100=v=>Math.round(v*100)+"%",n2=v=>(+v).toFixed(2),n1=v=>(+v).toFixed(1);
+  sv.innerHTML=`<p class="qa-intro">สรุปผลรายเดือน เปรียบเทียบก่อน–หลังใช้นวัตกรรม และส่งออกข้อมูลที่ไม่ระบุตัวตนสำหรับวิเคราะห์วิจัย (R2R)</p>
+  <h3 class="qa-h">สรุปผลรายเดือน (6 เดือน)</h3>
+  <div class="qa-tbl"><table><thead><tr><th>เดือน</th><th>HAPI${KS.some(k=>k.hapiRate!=null)?" /1,000":""}</th><th>MDRPI</th><th>Braden</th><th>Skin</th><th>Bundle</th><th>Reposition</th><th>Doc.</th><th>เวลา (นาที)</th><th>บันทึก</th></tr></thead><tbody>${KS.map(row).join("")}</tbody></table></div>
+  <h3 class="qa-h">เปรียบเทียบก่อน–หลังใช้นวัตกรรม</h3>
+  <p class="note" style="margin:0 0 8px">ค่า "ก่อน" กรอกจากข้อมูลเดิมของหอ (เช่น audit ก่อนใช้ Skin Guard) ค่า "หลัง" แอปคำนวณอัตโนมัติตั้งแต่วันเริ่มใช้</p>
+  <div class="qa-base">
+    <label>วันเริ่มใช้ Skin Guard<input type="date" id="qbGo" value="${esc(gl)}"></label>
+    <label>HAPI ก่อน (/1,000 วันนอน)<input type="number" step="0.01" id="qbHapi" value="${B.hapi??""}"></label>
+    <label>Braden compliance ก่อน (%)<input type="number" id="qbBraden" value="${B.braden??""}"></label>
+    <label>Bundle compliance ก่อน (%)<input type="number" id="qbBundle" value="${B.bundle??""}"></label>
+    <label>Documentation ก่อน (%)<input type="number" id="qbDoc" value="${B.doc??""}"></label>
+    <label>เวลาบันทึกก่อน (นาที)<input type="number" step="0.1" id="qbTime" value="${B.time??""}"></label>
+  </div>
+  ${A?`<div class="qa-tbl"><table><thead><tr><th>ตัวชี้วัด</th><th>ก่อน</th><th>หลัง (ตั้งแต่ ${thDate(gl)})</th><th>เปลี่ยนแปลง</th></tr></thead><tbody>
+    ${cmp("HAPI Incidence Rate (/1,000 วันนอน)",B.hapi,A.hapiRate,n2,true)}
+    ${cmp("Braden Assessment Compliance (%)",B.braden,A.braden==null?null:A.braden*100,n1,false)}
+    ${cmp("Prevention Bundle Compliance (%)",B.bundle,A.bundle==null?null:A.bundle*100,n1,false)}
+    ${cmp("Documentation Completeness (%)",B.doc,A.doc==null?null:A.doc*100,n1,false)}
+    ${cmp("Average Assessment Time (นาที)",B.time,A.time,n1,true)}
+  </tbody></table></div>`:'<p class="note">กรอกวันเริ่มใช้ Skin Guard เพื่อดูการเปรียบเทียบ</p>'}
+  <h3 class="qa-h">ส่งออกข้อมูลสำหรับวิเคราะห์วิจัย</h3>
+  <div class="qa-exp"><button type="button" class="btn primary" id="qaExpA">ข้อมูลการประเมิน (ไม่ระบุตัวตน) .csv</button><button type="button" class="btn" id="qaExpK">KPI รายเดือน .csv</button><button type="button" class="btn" id="qaExpS">แบบประเมินความพึงพอใจ .csv</button></div>
+  <p class="note" style="margin:6px 0 0">ไฟล์ไม่มี HN ชื่อผู้ป่วย ชื่อพยาบาล เลข OT ข้อความบันทึก และภาพถ่าย ผู้ป่วยแต่ละรายแทนด้วยรหัส P001, P002 … ตาม พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล</p><p class="note" id="qaExpMsg" style="margin:4px 0 0"></p>`;
+  const save=()=>{const v=id=>$(id).value;const o={golive:v("qbGo"),hapi:v("qbHapi"),braden:v("qbBraden"),bundle:v("qbBundle"),doc:v("qbDoc"),time:v("qbTime")};try{localStorage.setItem("pi-qa-base",JSON.stringify(o))}catch(e){}qaPaint()};
+  sv.querySelectorAll(".qa-base input").forEach(i=>i.addEventListener("change",save));
+  $("qaExpA").onclick=qaExportAssess;$("qaExpK").onclick=()=>qaExportKPI(m);$("qaExpS").onclick=qaExportSurvey}
+function qaCSV(rows){return "﻿"+rows.map(r=>r.map(v=>{v=v==null?"":String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}).join(",")).join("\r\n")}
+function qaPid(){const map=new Map();let n=0;[...qaAssess(),...hist.filter(h=>!h.ex&&h.type==="discharge")].sort((a,b)=>(+a.id||0)-(+b.id||0)).forEach(h=>{if(h.hn&&!map.has(h.hn))map.set(h.hn,"P"+String(++n).padStart(3,"0"))});return map}
+async function qaSave(name,data){const msg=$("qaExpMsg");try{await saveFile(name,data);if(msg){msg.textContent="ส่งออก "+name+" แล้ว";msg.style.color="var(--ok)"}}catch(e){if(msg){msg.textContent="ส่งออกไม่สำเร็จ";msg.style.color="var(--s1)"}}}
+function qaExportAssess(){const P=qaPid(),rows=[["patient_id","date","month","braden_total","risk_level","wound_type","stage","device_related","site","push","area_cm2","exudate","tissue","origin","doc_minutes","nurse_role"]];
+  qaAssess().sort((a,b)=>(+a.id||0)-(+b.id||0)).forEach(h=>{const d=h.recDate||h.date||"";let lv="";try{lv=h.braden!=null?bradenRisk(h.braden):""}catch(e){}
+    rows.push([P.get(h.hn)||"",d,d.slice(0,7),h.braden??"",lv,h.stage?(h.wtype||"pi"):"",h.stage?stageShort(h.stage):"",h.device?1:0,h.site?siteShort(h.site):"",h.push??"",h.a??"",h.exu??"",h.tis??"",h.origin||"",h.docMin??"",h.role||""])});
+  hist.filter(h=>!h.ex&&h.type==="discharge").forEach(h=>{const d=h.date||"";rows.push([P.get(h.hn)||"",d,d.slice(0,7),h.dc&&h.dc.braden!=null?h.dc.braden:"","","discharge:"+(h.dc&&h.dc.kind||""),"","","",h.dc&&h.dc.wounds?h.dc.wounds.length+" wounds":"","","","","","",h.role||""])});
+  qaSave(`skinguard-deidentified-${qaDay(0)}.csv`,qaCSV(rows))}
+function qaExportKPI(m){const rows=[["month","patient_days","hapi_n","hapi_rate_per1000","mdrpi_n","mdrpi_rate_per1000","braden_compliance","skin_compliance","bundle_compliance","bundle_item_compliance","repositioning_compliance","mdrpi_prevention","documentation_completeness","avg_assessment_min","wound_improved","wound_stable","wound_worse","satisfaction_avg","satisfaction_n","assessments"]];
+  monthsBack(m,12).forEach(x=>{const [a,b]=qaMonthRange(x),k=qaKPI(a,b),r=v=>v==null?"":Math.round(v*1000)/10;
+    rows.push([x,k.pd||"",k.hapi,k.hapiRate==null?"":k.hapiRate.toFixed(2),k.mdrpi,k.mdrpiRate==null?"":k.mdrpiRate.toFixed(2),r(k.braden),r(k.skin),r(k.bundle),r(k.items),r(k.turn),r(k.mdrpiPrev),r(k.doc),k.time==null?"":k.time.toFixed(1),k.imp,k.same,k.worse,k.sv==null?"":k.sv.toFixed(2),k.svN,k.AM.length])});
+  qaSave(`skinguard-kpi-${m}.csv`,qaCSV(rows))}
+function qaExportSurvey(){const rows=[["date","role"].concat(SV_Q.map((q,i)=>"q"+(i+1)+"_"+q),["comment"])];
+  hist.filter(h=>!h.ex&&h.type==="survey").forEach(h=>rows.push([h.date,h.role||""].concat(SV_Q.map((q,i)=>(h.q||[])[i]??""),[h.c||""])));qaSave(`skinguard-satisfaction-${qaDay(0)}.csv`,qaCSV(rows))}
+document.querySelectorAll("#qaTabs button").forEach((b,i)=>b.onclick=()=>{QA_TAB=i;qaPaint();try{window.scrollTo({top:0,behavior:"smooth"})}catch(e){}});
+$("qaMonth").addEventListener("change",qaPaint);
+$("qaPD").addEventListener("change",()=>{pdSet($("qaMonth").value,$("qaPD").value);qaPaint()});
+
+/* --- Nurse satisfaction / usability survey (anonymous, all users) --- */
+var SV_Q=["ใช้งานง่าย เข้าใจได้เร็ว","ช่วยลดเวลาในการประเมินและบันทึก","ช่วยในการตัดสินใจให้การพยาบาล","ช่วยให้มั่นใจในการป้องกันแผลกดทับ","ความพึงพอใจโดยรวมต่อ Skin Guard"];
+var svAns=[];
+function svOpen(){svAns=SV_Q.map(()=>0);$("svC").value="";$("svErr").textContent="";
+  $("svQ").innerHTML=SV_Q.map((q,i)=>`<div class="sv-q"><span>${i+1}. ${esc(q)}</span><div class="sv-s" role="group" aria-label="${esc(q)}">${[1,2,3,4,5].map(v=>`<button type="button" data-q="${i}" data-v="${v}" aria-pressed="false">${v}</button>`).join("")}</div></div>`).join("")+'<p class="sv-leg">1 = น้อยที่สุด · 5 = มากที่สุด</p>';
+  $("svQ").querySelectorAll("button").forEach(b=>b.onclick=()=>{svAns[+b.dataset.q]=+b.dataset.v;$("svQ").querySelectorAll(`button[data-q="${b.dataset.q}"]`).forEach(x=>x.setAttribute("aria-pressed",String(x===b)))});
+  sheetOpen("svModal")}
+$("svClose").onclick=()=>sheetClose("svModal");
+$("svSave").onclick=()=>{if(svAns.some(v=>!v)){$("svErr").textContent="ตอบให้ครบทุกข้อ";return}
+  hist.push({id:Date.now(),type:"survey",date:qaDay(0),role:($("nurseRole")&&$("nurseRole").value)||"",q:svAns.slice(),c:$("svC").value.trim()});saveHist(hist);sheetClose("svModal");
+  advise("ขอบคุณสำหรับการประเมิน","คำตอบไม่ระบุชื่อ ใช้พัฒนาคุณภาพ Skin Guard","--ok","✓")};
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
