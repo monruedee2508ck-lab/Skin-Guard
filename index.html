@@ -5759,7 +5759,7 @@ function lvAsk(proceed){$("lvModal").hidden=false;document.body.classList.add("n
 function lvClose(){$("lvModal").hidden=true;document.body.classList.remove("noscroll")}
 {const _go2=go;go=function(pg,scroll){const cur=document.body.dataset.page;
   const run=()=>{const r=_go2(pg,scroll);if(pg==="overview")setTimeout(()=>{try{pvPaint()}catch(e){console.error(e)}},0);setTimeout(()=>{try{draftPaint()}catch(e){}},0);return r};
-  if(!lvBypass&&ASSESS_PAGES.includes(cur)&&!ASSESS_PAGES.includes(pg)&&pvDirty()){lvAsk(()=>{lvBypass=true;try{run()}finally{lvBypass=false}});return}
+  if(!lvBypass&&ASSESS_PAGES.includes(cur)&&!["prevent","wound","record","plan","overview"].includes(pg)&&pvDirty()){lvAsk(()=>{lvBypass=true;try{run()}finally{lvBypass=false}});return}
   return run()}}
 {const _lo=doLogout;doLogout=function(){if(!lvBypass&&pvDirty()){lvAsk(()=>{lvBypass=true;try{_lo()}finally{lvBypass=false}});return}return _lo.apply(this,arguments)}}
 window.addEventListener("beforeunload",e=>{try{if(pvDirty()&&ASSESS_PAGES.includes(document.body.dataset.page)){e.preventDefault();e.returnValue="";return ""}}catch(x){}});
