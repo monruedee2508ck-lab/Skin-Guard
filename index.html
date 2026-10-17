@@ -1481,6 +1481,25 @@ img.hm-nurse{border-radius:50%;object-fit:cover;border:3px solid var(--surface);
 .pg-sheet{position:relative}
 .pg-x{position:absolute;top:8px;right:10px;z-index:2;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:1.5rem;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0 0 2px}
 .pg-x:hover,.pg-x:focus-visible{color:var(--ink);border-color:var(--muted)}
+/* interactive guide */
+.gd-tip{margin:0 0 8px;font-size:.82rem;color:var(--teal);font-weight:600}
+.gd-acc{border-radius:14px;background:var(--surface);box-shadow:0 0 0 1px var(--line);margin:6px 0;overflow:hidden}
+.gd-acc>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;box-shadow:inset 4px 0 0 var(--c)}
+.gd-acc>summary::-webkit-details-marker{display:none}
+.gd-acc>summary::after{content:"";flex:none;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);margin:0 4px 4px auto;transition:transform .2s}
+.gd-acc[open]>summary::after{transform:rotate(-135deg);margin-bottom:-4px}
+.gd-acc[open]>summary{background:color-mix(in srgb,var(--c) 9%,var(--surface))}
+.gd-dot{flex:none;width:12px;height:12px;border-radius:50%;background:var(--c)}
+.gd-st-t{display:flex;flex-direction:column;min-width:0;flex:1}
+.gd-st-t b{font-size:.92rem;color:var(--ink)}
+.gd-st-t small{font-size:.76rem;color:var(--muted);line-height:1.35}
+.gd-acc>summary .st-svg{flex:none;width:72px;height:45px;border-radius:6px;border:1px solid var(--line);background:var(--surface)}
+.gd-pan{padding:4px 14px 14px;display:flex;flex-direction:column;gap:6px}
+.gd-pan .gd-h{margin:8px 0 2px;font-size:.88rem;color:var(--c);font-family:var(--font-display)}
+.gd-pan .gd-sub{font-weight:600;font-size:.84rem;margin-top:4px}
+.gd-pan ul{margin:0;padding-left:20px;font-size:.88rem;display:flex;flex-direction:column;gap:3px}
+.gd-role{font-size:.8rem;font-weight:700;color:var(--muted);margin-top:4px}
+.rm-ph{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:.72rem;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -5296,6 +5315,53 @@ window.addEventListener("resize",()=>{try{csGo(csIdx,false)}catch(e){}});
 $("pgX").onclick=()=>{$("ptGate").hidden=true;document.body.classList.remove("noscroll");gateNext=null;
   if(!realHN()&&["prevent","wound","record","plan","discharge"].includes(document.body.dataset.page))go("home")};
 $("ptGate").addEventListener("keydown",e=>{if(e.key==="Escape")$("pgX").onclick()});
+
+/* ===== Guide: tap a risk level / wound stage to see nursing care and materials ===== */
+var GD_R=["ปฏิบัติตาม Routine Care ทุกวัน","พลิกตะแคงตัวทุก 2 ชั่วโมง กระตุ้นให้ผู้ป่วยขยับตัวเอง","ประเมินผิวหนังบริเวณปุ่มกระดูกทุกเวร","ประเมิน Braden ซ้ำทุกวัน วันละ 1 ครั้ง"];
+var GD_M=GD_R.concat(["จัดท่าตะแคง 30 องศา ใช้หมอนรองหลังและระหว่างเข่า","ยกส้นเท้าให้ลอยพ้นที่นอน รองหมอนใต้น่อง","ใช้ผ้ายก/Pad Slide ทุกครั้งที่เคลื่อนย้าย ไม่ลากตัวผู้ป่วย","ติดตามปริมาณอาหาร/feed ที่ได้รับ"]);
+var GD_H=["ปฏิบัติตาม Routine Care ทุกวัน","<b>ใช้วัสดุ Soft Silicone/Foam ป้องกัน</b>ที่ Sacrum/Coccyx และส้นเท้า เปิดดูผิวใต้แผ่นทุกเวร","<b>พลิกตะแคงตัวทุก 2 ชั่วโมงตามนาฬิกาเตือน</b> (1 ซ้าย → 3 หงาย → 5 ขวา …)","ใช้ที่นอนลดแรงกด / ที่นอนลม","ตรวจผิวหนังทุกครั้งที่พลิกตัว ถ่ายภาพผิวหนังทุกวัน","จัดท่าตะแคง 30° ยกส้นเท้าลอย ยกหัวเตียงไม่เกิน 30° (ยกเว้นมีข้อห้าม)","ผิวเปียกชื้น: ทำความสะอาดแล้วทา Zinc paste หรือสเปรย์เคลือบผิวหลังขับถ่ายทุกครั้ง","ติดตามโภชนาการ รายงานเมื่อได้อาหารไม่ถึงเป้าหมาย"];
+var GD_VH=GD_H.concat(["<b>ใช้ที่นอนลม alternating pressure / low air loss ทันที</b>","ขยับเปลี่ยนจุดรับน้ำหนักเล็กน้อย (small shift) ระหว่างรอบพลิกตัว","ปรึกษานักโภชนาการและพยาบาลผู้เชี่ยวชาญด้านแผล (ET Nurse)","แจ้งหัวหน้าเวรและบันทึกใน Nurse's Note"]);
+var GD_LV={r:{acts:GD_R,mats:["pillow","vas"]},m:{acts:GD_M,mats:["pillow","vas","slide"]},h:{acts:GD_H,mats:["sacrum","border","foam","pillow","slide","vas","zinc","spray"]},vh:{acts:GD_VH,mats:["sacrum","border","foam","pillow","slide","vas","zinc","powder","spray"]}};
+function gdUl(items,html){const u=document.createElement("ul");items.forEach(t=>{const li=document.createElement("li");if(html)li.innerHTML=t;else li.textContent=t;u.append(li)});return u}
+function gdH(t){const h=document.createElement("h5");h.className="gd-h";h.textContent=t;return h}
+function gdMats(ids,why){return recMatsEl(ids.map(id=>({m:MATS.find(x=>x.id===id),why})).filter(x=>x.m))}
+function gdAcc(sum,color,build){const d=document.createElement("details");d.className="gd-acc";d.style.setProperty("--c",`var(${color})`);
+  const s=document.createElement("summary");s.innerHTML=sum;d.append(s);const p=document.createElement("div");p.className="gd-pan";d.append(p);
+  d.addEventListener("toggle",()=>{if(d.open&&!p.dataset.done){try{build(p)}catch(e){console.error(e);p.textContent="แสดงข้อมูลไม่ได้"}p.dataset.done=1}});return d}
+function gdDressing(k){const saved=curW;let plan={items:[],cautions:[]};
+  try{curW=()=>({});plan=dressingPlan({stage:k,exu:(k==="s1"||k==="dt")?0:1,tis:k==="us"?4:(k==="s3"||k==="s4")?2:k==="s2"?2:0,site:"",a:4})}catch(e){}finally{curW=saved}
+  const wrap=document.createElement("div");wrap.className="recmats";
+  ROLES.forEach(([r,label])=>{const its=plan.items.filter(x=>x.role===r);if(!its.length)return;
+    const h=document.createElement("div");h.className="gd-role";h.textContent=label;wrap.append(h);
+    its.forEach(it=>{const d=document.createElement("div");d.className="rm";const pic=it.img&&IMG[it.img]?`<img alt="" src="${IMG[it.img]}">`:`<span class="rm-ph">${esc(it.name.slice(0,4))}</span>`;
+      d.innerHTML=`<div class="rm-pic">${pic}</div><div class="rm-t"><b></b><small></small><span class="rm-use"></span></div>`;
+      d.querySelector("b").textContent=it.name;d.querySelector("small").textContent=it.why||"";d.querySelector(".rm-use").textContent=it.change?"เปลี่ยน: "+it.change:"";wrap.append(d)})});
+  if(plan.cautions&&plan.cautions.length){const c=document.createElement("div");c.className="dcaution";c.innerHTML="<b>ข้อควรระวัง</b>";c.append(gdUl(plan.cautions));wrap.append(c)}
+  return wrap}
+function gdBuild(){const b=$("gdBody");b.innerHTML='<h3 class="pg-hi" id="gdTitle">แนวทางป้องกันและดูแลแผลกดทับ</h3><p class="gd-tip">แตะแต่ละหัวข้อเพื่อดูการพยาบาลและวัสดุอุปกรณ์ที่แนะนำ</p>';
+  const sec=(t)=>{const h=document.createElement("h4");h.textContent=t;b.append(h)};
+  sec("ระดับความเสี่ยงตาม Braden Scale");
+  [...LEVELS].forEach(L=>{const G=GD_LV[L.k];if(!G)return;
+    b.append(gdAcc(`<span class="gd-dot"></span><span class="gd-st-t"><b>${L.name}</b><small>Braden ${L.range} คะแนน</small></span>`,L.c,p=>{
+      p.append(gdH("การพยาบาล"),gdUl(G.acts,true),gdH(`วัสดุและอุปกรณ์ป้องกัน (${G.mats.length})`),gdMats(G.mats,L.name))}))});
+  b.append(gdAcc(`<span class="gd-dot"></span><span class="gd-st-t"><b>Critical Risk</b><small>Braden ต่ำร่วมกับ Albumin ต่ำ / Hypoxia / Vasopressor</small></span>`,"--crit",p=>{
+    p.append(gdH("การพยาบาล (ป้องกันเชิงรุก)"),gdUl(critActions([{k:"alb"},{k:"hyp"},{k:"vp"}]),true),gdH("วัสดุและอุปกรณ์ป้องกัน"),gdMats(["sacrum","border","foam","pillow","slide","zinc","spray","gauze"],"Critical Risk"))}));
+  sec("ระดับแผลกดทับ (NPIAP) · การดูแลและวัสดุปิดแผล");
+  Object.entries(STAGES).forEach(([k,S])=>{
+    b.append(gdAcc(`${stageSvg(k)}<span class="gd-st-t"><b>${esc(S.name)}</b><small>${esc(S.d||"")}</small></span>`,S.c,p=>{
+      const wbp=k==="s3"||k==="s4"||k==="us";
+      p.append(gdH("การดูแลแผล"));
+      if(wbp){if(k==="us")p.append(Object.assign(document.createElement("p"),{className:"tag",textContent:"ต้องกำจัดเนื้อตายก่อนจึงจะประเมินความลึกและระยะของแผลได้"}));
+        CARE.wbp.forEach(g=>{const h=document.createElement("div");h.className="gd-sub";h.textContent=g.h;p.append(h,gdUl(g.items))})}
+      else if(CARE[k]){if(CARE[k].tag)p.append(Object.assign(document.createElement("p"),{className:"tag",textContent:CARE[k].tag}));p.append(gdUl(CARE[k].groups[0].items))}
+      p.append(gdH("วัสดุปิดแผล (Dressing) ที่แนะนำ"),gdDressing(k));
+      const pr=wbp?CARE.wbpProducts:(CARE[k]&&CARE[k].products)||[];if(pr.length)p.append(chips(pr));
+      p.append(gdH("การป้องกันแผลเพิ่ม / ป้องกันแผลใหม่"),gdUl(["พลิกตะแคงตัวทุก 2 ชั่วโมง ห้ามนอนทับแผล","ใช้วัสดุ Soft Silicone/Foam ป้องกันปุ่มกระดูกอื่นที่เสี่ยง","ประเมินผิวหนังและแผลทุกเวร ถ่ายภาพเปรียบเทียบ"]),chips(CARE.preventProducts))}))});
+  {const d=document.createElement("details");d.className="gd-acc";d.style.setProperty("--c","var(--teal)");d.innerHTML='<summary><span class="gd-dot"></span><span class="gd-st-t"><b>การดูแลพื้นฐานทุกราย (Routine care)</b><small>10 ข้อ</small></span></summary><div class="gd-pan"></div>';d.lastChild.append(gdUl(CARE.routine));b.append(d)}
+  {const d=document.createElement("details");d.className="gd-acc";d.style.setProperty("--c","var(--sky)");d.innerHTML='<summary><span class="gd-dot"></span><span class="gd-st-t"><b>การพลิกตัวและจัดท่า</b><small>ทุก 2 ชั่วโมง · ตะแคง 30°</small></span></summary><div class="gd-pan"></div>';d.lastChild.append(gdUl(["พลิกตะแคงตัวทุก 2 ชั่วโมง สลับ หงาย ตะแคงซ้าย ตะแคงขวา","ตะแคง 30 องศา ใช้หมอนรองหลังและระหว่างเข่า","ยกส้นเท้าให้ลอยพ้นที่นอน ไม่ไขหัวเตียงเกิน 30 องศาถ้าไม่มีข้อห้าม"]));b.append(d)}
+  {const d=document.createElement("details");d.className="gd-acc";d.style.setProperty("--c","var(--s1)");d.innerHTML='<summary><span class="gd-dot"></span><span class="gd-st-t"><b>Medical Device-Related Pressure Injury (MDRPI)</b><small>แผลจากอุปกรณ์การแพทย์</small></span></summary><div class="gd-pan"></div>';d.lastChild.append(gdUl(CARE.device),chips(["Gauze","Webril cotton","ชุดรองสาย HFNC"]));b.append(d)}
+}
+$("hmGuide").onclick=()=>{gdBuild();sheetOpen("guideModal");try{$("gdBody").scrollTop=0}catch(e){}};
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
