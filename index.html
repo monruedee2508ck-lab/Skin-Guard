@@ -1507,7 +1507,7 @@ img.hm-nurse{border-radius:50%;object-fit:cover;border:3px solid var(--surface);
 .gd-card{border-radius:14px;background:var(--surface);box-shadow:0 0 0 1px var(--line);padding:6px 14px 14px;display:flex;flex-direction:column;gap:6px;--c:var(--teal)}
 .gd-card ul{margin:0;padding-left:20px;font-size:.88rem;display:flex;flex-direction:column;gap:3px}
 .gd-card .gd-h{margin:8px 0 2px;font-size:.9rem;color:var(--c);font-family:var(--font-display)}
-.gd-tabs button{font-size:.76rem;padding:6px 10px}
+.gd-tabs button{font-size:.74rem;padding:6px 9px}
 </style>
 </head>
 <body>
@@ -5348,7 +5348,7 @@ function gdDressing(k){const saved=curW;let plan={items:[],cautions:[]};
   return wrap}
 var gdIdx=0;
 function gdBuild(){const b=$("gdBody");b.innerHTML='<h3 class="pg-hi" id="gdTitle">แนวทางป้องกันและดูแลแผลกดทับ</h3>';
-  const TABS=["ระดับความเสี่ยง","ระดับแผลกดทับ","ดูแลพื้นฐาน","MDRPI"];
+  const TABS=["ระดับความเสี่ยง","ระดับแผลกดทับ","การดูแลพื้นฐาน","MDRPI"];
   const tabs=document.createElement("div");tabs.className="cs-tabs gd-tabs";tabs.setAttribute("role","tablist");
   const track=document.createElement("div");track.className="cs-track gd-track";const dots=document.createElement("div");dots.className="cs-dots";
   const S=TABS.map((t,i)=>{const sl=document.createElement("div");sl.className="cs-slide gd-slide";sl.setAttribute("role","tabpanel");track.append(sl);
