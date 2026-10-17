@@ -1630,6 +1630,13 @@ body[data-page="overview"]{--pc:var(--teal);--pt:var(--teal-t)}
 body[data-page="wound"] #result{display:none!important}
 .wchip .wt .wsz{font-style:normal;font-size:.74rem;font-weight:600;color:var(--ink);margin-top:1px}
 .wb-list{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))!important}
+.bc{margin:8px 0 0}
+.bc svg{display:block;max-height:260px;font-family:var(--font-body)}
+.bc svg text{font-family:var(--font-body)}
+.bc .bc-ax{font-size:11px;fill:var(--muted)}.bc .bc-ax2{font-size:9.5px;fill:var(--muted)}
+.bc .bc-v{font-size:12px;font-weight:700;fill:var(--ink)}
+.bc .bc-band{font-size:10.5px;font-weight:600}
+.bc figcaption{font-size:.72rem;color:var(--muted);margin-top:2px}
 </style>
 </head>
 <body>
@@ -5729,12 +5736,12 @@ function pvPaint(){if(!$("page-overview"))return;const hn=realHN();
   const H=hist.filter(h=>!h.ex&&h.hn===hn&&h.braden!=null).sort((a,b)=>(+b.id||0)-(+a.id||0))[0],today=bkkDate();
   const BSN={sens:"รับความรู้สึก",mois:"ความชื้น",act:"กิจกรรม",mob:"การเคลื่อนไหว",nut:"โภชนาการ",fric:"แรงเสียดทาน"};const low=BRADEN.filter(([k])=>st.braden[k]>0&&st.braden[k]<=2).map(([k,n])=>BSN[k]||n.split(" (")[0]);
   const bdate=H?(H.recDate||H.date):"",due=t==null||(bdate&&bdate<today&&!pvDirty());
-  const brad=`<div class="pv-k" style="--c:var(${L?L.c:"--muted"})"><div class="pv-h"><span class="pv-ic">&#9636;</span>Braden Score ล่าสุด</div><b class="pv-big">${t??"–"}<i>/23</i></b><span class="pv-sub">${H?"บันทึกล่าสุด "+esc(thDate(bdate))+(H.recTime?" "+esc(H.recTime)+" น.":""):"ยังไม่มีการบันทึกลงประวัติ"}${low.length?" · ข้อที่ต่ำ: "+esc(low.join(", ")):""}</span>${due?'<span class="pv-due">ถึงเวลาประเมินวันนี้</span>':""}</div>`;
+  const brad=`<div class="pv-k pv-wide pv-brad" style="--c:var(${L?L.c:"--muted"})"><div class="pv-h"><span class="pv-ic">&#9636;</span>Braden Score ล่าสุด</div><b class="pv-big">${t??"–"}<i>/23</i></b><span class="pv-sub">${H?"บันทึกล่าสุด "+esc(thDate(bdate))+(H.recTime?" "+esc(H.recTime)+" น.":""):"ยังไม่มีการบันทึกลงประวัติ"}${low.length?" · ข้อที่ต่ำ: "+esc(low.join(", ")):""}</span>${due?'<span class="pv-due">ถึงเวลาประเมินวันนี้</span>':""}${bradenChart(hn,t)}</div>`;
   // skin
   const ws=(wounds||[]).map((w,i)=>({w,i})).filter(x=>x.w.stage&&x.w.stage!=="none");
   let skinRows=ws.map(({w,i})=>{let push=null;try{push=woundCalc(w).push}catch(e){}let worse=null;try{worse=woundWorse(w,hn)}catch(e){}let S=null;try{S=dressStatus(w)}catch(e){}
     return `<li><b>แผลที่ ${i+1}</b> ${esc(siteLabel(w))}${w.side?" "+esc(w.side):""} · ${esc(stageShort(w.stage))}${push!=null?" · PUSH "+push:""}${worse?' <span class="pv-tag bad">แย่ลง</span>':""}${S&&(S.cls==="over"||S.cls==="soon")?' <span class="pv-tag warn">ครบกำหนดทำแผล</span>':""}</li>`}).join("");
-  const skin=`<div class="pv-k pv-wide" style="--c:var(${ws.length?"--coral":"--ok"})"><div class="pv-h"><span class="pv-ic">&#9673;</span>Skin Status</div>${ws.length?`<b class="pv-big">${ws.length}<i> แผล</i></b><ul class="pv-ul">${skinRows}</ul>`:`<b class="pv-big pv-ok">ผิวหนังปกติ</b><span class="pv-sub">ไม่มีแผลกดทับ${$("sepsis").checked?" · มี sepsis/บวม/รอยแดง":""}</span>`}</div>`;
+  const skin=`<div class="pv-k" style="--c:var(${ws.length?"--coral":"--ok"})"><div class="pv-h"><span class="pv-ic">&#9673;</span>Skin Status</div>${ws.length?`<b class="pv-big">${ws.length}<i> แผล</i></b><ul class="pv-ul">${skinRows}</ul>`:`<b class="pv-big pv-ok">ผิวหนังปกติ</b><span class="pv-sub">ไม่มีแผลกดทับ${$("sepsis").checked?" · มี sepsis/บวม/รอยแดง":""}</span>`}</div>`;
   // turning
   const T=turnFor(hn),s=turnState();
   const turn=`<div class="pv-k" style="--c:var(${T.lt&&!T.done?"--s1":"--sky"})"><div class="pv-h"><span class="pv-ic">&#8635;</span>Repositioning Schedule</div><b class="pv-big">${T.done?"พลิกแล้ว ✓":"ท่า"+esc(T.pos)}</b><span class="pv-sub">${T.lt?"พลิกล่าสุด "+hhmm(T.lt)+" น. · ":""}รอบถัดไป ${hhmm(T.next)} น. ท่า${esc(s.nextPos)}</span>${T.done?"":`<button type="button" class="btn primary pv-turn" id="pvTurn">พลิกเป็นท่า${esc(T.pos)}แล้ว</button>`}</div>`;
@@ -5742,7 +5749,7 @@ function pvPaint(){if(!$("page-overview"))return;const hn=realHN();
   let items=[];try{items=planItems()}catch(e){}const P=planState(),k=planKey(),e=P[k]||{i:{}},pend=items.filter(it=>!(e.i||{})[it.id]);
   const tasks=`<div class="pv-k pv-wide" style="--c:var(${pend.length?"--gold":"--ok"})"><div class="pv-h"><span class="pv-ic">&#10003;</span>Pending Nursing Tasks · ${SHIFT_TH[shiftNow()]}<span class="pv-cnt">${items.length-pend.length}/${items.length}</span></div>
     ${pend.length?`<div class="pv-tasks">${pend.slice(0,6).map(it=>`<div class="pv-task"><span>${esc(it.text)}<small>${esc(it.tag)}</small></span><button type="button" class="btn sm primary" data-done="${esc(it.id)}" aria-label="ทำแล้ว: ${esc(it.text)}">✓ ทำแล้ว</button></div>`).join("")}</div>${pend.length>6?`<span class="pv-sub">และอีก ${pend.length-6} รายการ ในบันทึกการดูแล</span>`:""}`:'<b class="pv-big pv-ok">ครบทุกกิจกรรมของเวรนี้ ✓</b>'}</div>`;
-  $("pvGrid").innerHTML=risk+brad+skin+tasks;
+  $("pvGrid").innerHTML=risk+skin+brad;
   const tb=null;if(tb)tb.onclick=()=>{$("turnBtn").onclick();try{if(items.some(x=>x.id==="turn")&&!(e.i||{}).turn)planSet("turn",Object.assign({s:"done",t:Date.now()},pvBy()))}catch(x){}pvPaint()};
   $("pvGrid").querySelectorAll("[data-done]").forEach(b=>b.onclick=()=>{planSet(b.dataset.done,Object.assign({s:"done",t:Date.now()},pvBy()));pvPaint()});
   draftPaint()}
@@ -5811,6 +5818,24 @@ $("rmBack").onclick=()=>{if(rsActive()&&rsIdx>0)return rsGo(rsIdx-1,true);if(rmI
 window.addEventListener("resize",()=>{try{if(rsActive())rsGo(rsIdx,false)}catch(e){}});
 $("rmX").onclick=()=>closeRisk();$("riskModal").addEventListener("keydown",e=>{if(e.key==="Escape")closeRisk()});
 renderTurn=function(){};
+
+/* Braden trend chart for the patient overview */
+function bradenChart(hn,cur){const seen=new Set(),pts=[];
+  hist.filter(h=>!h.ex&&h.hn===hn&&h.braden!=null&&h.type!=="discharge").sort((a,b)=>(+a.id||0)-(+b.id||0)).forEach(h=>{const d=h.recDate||h.date||"",k=d+" "+(h.recTime||"")+"|"+h.braden;if(seen.has(k))return;seen.add(k);pts.push({v:+h.braden,d,tm:h.recTime||""})});
+  let P=pts.slice(-10);const unsaved=cur!=null&&(!P.length||pvDirty());if(unsaved)P=P.concat([{v:cur,d:bkkDate(),tm:"",now:1}]);
+  if(!P.length)return '<p class="pv-sub" style="margin-top:6px">ยังไม่มีคะแนน Braden · กด ประเมิน เพื่อเริ่ม</p>';
+  const cp=(window.innerWidth||800)<600,W=cp?360:640,H=cp?190:200,l=cp?26:34,r=cp?66:112,t=14,b=34,y0=6,y1=23,Y=v=>t+(H-t-b)*(1-(v-y0)/(y1-y0)),n=P.length,X=i=>n===1?(l+(W-l-r)/2):l+(W-l-r)*i/(n-1);
+  const bands=cp?[[y0,9,"--s4","Very High"],[9,12,"--s1","High"],[12,14,"--s2","Moderate"],[14,18,"--ok","Risk"],[18,y1,"--muted","ไม่เสี่ยง"]]:[[y0,9,"--s4","Very High ≤9"],[9,12,"--s1","High 10–12"],[12,14,"--s2","Moderate 13–14"],[14,18,"--ok","Risk 15–18"],[18,y1,"--muted","ไม่เสี่ยง ≥19"]];
+  let g=bands.map(([a,c,col,lb])=>`<rect x="${l}" y="${Y(c+.5>y1?y1:c+.5)}" width="${W-l-r}" height="${Y(a+.5<y0?y0:a+.5)-Y(c+.5>y1?y1:c+.5)}" fill="var(${col})" opacity=".09"/><text x="${W-r+6}" y="${(Y(a+.5<y0?y0:a+.5)+Y(c+.5>y1?y1:c+.5))/2+3}" class="bc-band" style="fill:var(${col})">${lb}</text>`).join("");
+  [9,12,14,18].forEach(v=>{g+=`<line x1="${l}" x2="${W-r}" y1="${Y(v+.5)}" y2="${Y(v+.5)}" stroke="var(--line)" stroke-dasharray="3 4"/>`});
+  [6,10,15,20,23].forEach(v=>{g+=`<text x="${l-6}" y="${Y(v)+3}" text-anchor="end" class="bc-ax">${v}</text>`});
+  const saved=P.filter(p=>!p.now);
+  if(saved.length>1)g+=`<polyline points="${saved.map((p,i)=>`${X(i)},${Y(p.v)}`).join(" ")}" fill="none" stroke="var(--teal)" stroke-width="2.5" stroke-linejoin="round"/>`;
+  if(unsaved&&saved.length)g+=`<line x1="${X(saved.length-1)}" y1="${Y(saved[saved.length-1].v)}" x2="${X(n-1)}" y2="${Y(cur)}" stroke="var(--teal)" stroke-width="2" stroke-dasharray="4 4"/>`;
+  P.forEach((p,i)=>{const L=levelOf(p.v),c=`var(${L.c})`;g+=`<circle cx="${X(i)}" cy="${Y(p.v)}" r="${p.now?6:5.5}" fill="${p.now?"var(--surface)":c}" stroke="${c}" stroke-width="2.5"/><text x="${X(i)}" y="${Y(p.v)-10}" text-anchor="middle" class="bc-v">${p.v}</text>`;
+    let dl="";try{dl=new Date(p.d+"T00:00:00").toLocaleDateString("th-TH",{day:"numeric",month:"short"})}catch(e){dl=p.d}
+    if(n<=(cp?5:6)||i%Math.ceil(n/(cp?4:6))===0||i===n-1)g+=`<text x="${X(i)}" y="${H-14}" text-anchor="middle" class="bc-ax">${p.now?"ปัจจุบัน":esc(dl)}</text>${p.now||!p.tm?"":`<text x="${X(i)}" y="${H-3}" text-anchor="middle" class="bc-ax2">${esc(p.tm)}</text>`}`});
+  return `<figure class="bc"><svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="กราฟคะแนน Braden ${P.map(p=>p.v).join(", ")}">${g}</svg>${unsaved?'<figcaption>จุดกลวง = คะแนนปัจจุบันที่ยังไม่ได้บันทึกลงประวัติ</figcaption>':""}</figure>`}
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
