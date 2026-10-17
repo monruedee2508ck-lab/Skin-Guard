@@ -1623,6 +1623,10 @@ body[data-page="overview"]{--pc:var(--teal);--pt:var(--teal-t)}
 .rs-card{border-radius:14px;background:var(--bg);padding:4px 12px 12px;box-shadow:0 0 0 1px var(--line)}
 .rs-card>h4:first-child{margin-top:8px}
 .rs-card ul{margin:4px 0 0}
+.rm-top{display:flex;align-items:center;gap:10px}
+.rm-top .rm-dots{margin-left:auto}
+.rm-x{flex:none;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:1.4rem;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0 0 2px}
+.rm-x:hover,.rm-x:focus-visible{color:var(--ink);border-color:var(--muted)}
 </style>
 </head>
 <body>
@@ -2360,7 +2364,7 @@ body[data-page="overview"]{--pc:var(--teal);--pt:var(--teal-t)}
   </div>
   <div class="modal" id="riskModal" hidden role="dialog" aria-modal="true" aria-label="คำแนะนำตามระดับความเสี่ยง">
     <div class="sheet">
-      <div class="rm-top"><div class="rm-kick" id="rmKick">ผลการประเมิน Braden Scale</div><div class="rm-dots" id="rmDots"></div></div>
+      <div class="rm-top"><div class="rm-kick" id="rmKick">ผลการประเมิน Braden Scale</div><div class="rm-dots" id="rmDots"></div><button type="button" class="rm-x" id="rmX" aria-label="ปิดหน้าต่างผลการประเมิน">&times;</button></div>
       <div class="rm-body"><div id="riskAlert"></div><div id="rmPane" hidden></div></div>
       <div class="rm-foot">
         <button class="btn" id="rmBack" type="button" hidden>ย้อนกลับ</button>
@@ -5803,6 +5807,7 @@ function rsFoot(){if(!rsActive())return;const n=rsN(),T=rsBuild.titles||[],last=
 $("rmOk").onclick=()=>{if(rsActive()&&rsIdx<rsN()-1)return rsGo(rsIdx+1,true);if(rmIdx<rmFlow.length-1)rmShow(rmIdx+1);else closeRisk()};
 $("rmBack").onclick=()=>{if(rsActive()&&rsIdx>0)return rsGo(rsIdx-1,true);if(rmIdx>0)rmShow(rmIdx-1)};
 window.addEventListener("resize",()=>{try{if(rsActive())rsGo(rsIdx,false)}catch(e){}});
+$("rmX").onclick=()=>closeRisk();$("riskModal").addEventListener("keydown",e=>{if(e.key==="Escape")closeRisk()});
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
