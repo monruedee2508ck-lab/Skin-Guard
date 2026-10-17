@@ -1683,6 +1683,21 @@ body[data-page="wound"] #result{display:none!important}
 .pv2-okskin b{display:block;font-size:1.05rem;color:var(--ok)}.pv2-okskin small{font-size:.78rem;color:var(--muted)}
 @media (min-width:760px){.pv2-row{grid-template-columns:1fr 1fr}.pv2-level{font-size:2.3rem}.pv2-hr{width:230px}}
 @media (max-width:480px){.pv2-hero{flex-direction:column;align-items:stretch}.pv2-hr{width:210px;align-self:center}.pv2-sub{grid-template-columns:104px 1fr 36px;font-size:.8rem}}
+/* ===== live cam v2 ===== */
+.lc-flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+.lc-flash.on{animation:lcSnap .35s ease-out}
+@keyframes lcSnap{0%{opacity:.85}100%{opacity:0}}
+.livecam.aim #liveRead,.livecam.aim .lc-scale,.livecam.aim .lc-mk,.livecam.aim .lc-avg,.livecam.aim #liveGrid,.livecam.aim #liveUse,.livecam.aim #liveRetake{display:none!important}
+.livecam.aim #liveOv{pointer-events:none}
+.livecam.aim .lc-btns{display:flex;justify-content:center}
+.livecam.aim .lc-tip{font-size:.9rem;text-align:center}
+.livecam.meas .lc-avg,.livecam.meas #liveShot{display:none!important}
+.livecam.meas .lc-btns{grid-template-columns:auto auto 1fr}
+.livecam.meas #liveUse{line-height:1.2;background:#22c55e;border-color:#22c55e;color:#06260f;font-weight:700}
+.livecam.meas #liveRetake:not([hidden]){display:inline-flex}
+#liveRetake[hidden]{display:none!important}
+.livecam.meas .lc-a{background:#ffd166!important;color:#1b2a44!important;font-weight:600}
+.livecam.meas .lc-a b{font-size:1.2rem}
 </style>
 </head>
 <body>
@@ -2377,10 +2392,10 @@ body[data-page="wound"] #result{display:none!important}
   <div class="livecam" id="liveCam" hidden role="dialog" aria-modal="true" aria-label="กล้องวัดแผลพร้อมไม้บรรทัด">
     <video id="liveVid" playsinline autoplay muted></video>
     <img id="liveImg" alt="ภาพแผลสำหรับวัดด้วยไม้บรรทัดบนจอ" hidden>
-    <canvas id="liveOv"></canvas>
+    <canvas id="liveOv"></canvas><div class="lc-flash" id="lcFlash" aria-hidden="true"></div>
     <div class="lc-top">
       <button type="button" class="lc-x" id="liveClose" aria-label="ปิดกล้อง">✕</button>
-      <div class="lc-read" id="liveRead"><span class="lc-l">ยาว <b id="liveL">–</b> cm</span><span class="lc-w">กว้าง <b id="liveW">–</b> cm</span><span class="lc-a">ยาว×กว้าง <b id="liveA">–</b> cm²</span></div>
+      <div class="lc-read" id="liveRead"><span class="lc-l">ยาว <b id="liveL">–</b> cm</span><span class="lc-w">กว้าง <b id="liveW">–</b> cm</span><span class="lc-a">พื้นที่ <b id="liveA">–</b> cm²</span></div>
       <button type="button" class="lc-lvl" id="liveLvl" hidden aria-label="ระดับความตั้งฉากของกล้อง แตะเพื่อตั้ง 0 องศาจากระนาบผิว"><span class="lv-ring" aria-hidden="true"><i id="liveLvlDot"></i></span><span class="lv-t"><b id="liveLvlDeg">–</b><small id="liveLvlMode">แนวราบ</small></span></button>
     </div>
     <div class="lc-bot">
@@ -2397,7 +2412,7 @@ body[data-page="wound"] #result{display:none!important}
         <button type="button" class="lc-clr" id="liveClr" hidden>ล้าง</button>
       </div>
       <div class="lc-btns">
-        <button type="button" class="btn" id="liveGrid" aria-pressed="false">ตาราง 1 cm</button>
+        <button type="button" class="btn" id="liveRetake" hidden>↺ ถ่ายใหม่</button><button type="button" class="btn" id="liveGrid" aria-pressed="false">ตาราง 1 cm</button>
         <button type="button" class="lc-shot" id="liveShot" aria-label="ถ่ายภาพ"><i></i></button>
         <button type="button" class="btn" id="liveUse">ใช้ค่าวัด</button>
       </div>
@@ -5918,6 +5933,40 @@ pvPaint=function(){if(!$("page-overview"))return;const hn=realHN();
   const trend=`<section class="pv2-card pv2-wide"><header><span class="pv2-ic" style="--c:var(--teal)">&#128200;</span><div><b>แนวโน้มคะแนน Braden</b><small>ล่าสุด 10 ครั้ง · สีพื้นหลังตามระดับความเสี่ยง</small></div></header>${bradenChart(hn,t)}</section>`;
   $("pvGrid").innerHTML=risk+`<div class="pv2-row">${brad}${skin}</div>`+trend;
   draftPaint()};
+/* ===== Live camera v2: shoot first (freeze), then drag lines, area auto ===== */
+var LC_TIP_AIM='เล็งกล้องให้เห็นทั้งแผลและไม้บรรทัด (หรือกระดาษ 2×2 cm) ที่วางชิดข้างแผล ถือกล้องตั้งฉากจนระดับน้ำเป็นสีเขียว แล้วกดปุ่มถ่ายภาพ';
+var LC_TIP_MEAS='① เทียบสเกล: แตะ "กระดาษอ้างอิง 2×2 cm" แล้วแตะกระดาษในภาพ หรือเลื่อน "ปรับสเกล" และลากไม้บรรทัดบนจอให้ขีดตรงกับไม้บรรทัดจริง ② ลากปลายเส้นชมพู (ยาวที่สุด) และเส้นฟ้า (กว้างที่สุด ตั้งฉากกัน) ไปที่ขอบแผล ③ ระบบคำนวณพื้นที่ให้อัตโนมัติ กด "ใช้ค่านี้"';
+function lcPhase(p){const c=$("liveCam");c.classList.toggle("aim",p==="aim");c.classList.toggle("meas",p==="meas");live.phase=p;
+  $("liveRetake").hidden=p!=="meas"||!live.stream;$("liveTip").textContent=p==="aim"?LC_TIP_AIM:LC_TIP_MEAS;$("liveTip").hidden=false;if(p==="meas")$("liveLvl").hidden=true;
+  $("liveShot").setAttribute("aria-label","ถ่ายภาพ");try{liveDraw()}catch(e){}}
+function liveFreeze(){const v=$("liveVid"),vw=v.videoWidth,vh=v.videoHeight;if(!vw){liveWarn("กล้องยังไม่พร้อม รอสักครู่แล้วกดใหม่");return}
+  const tilt=liveTilt();const c=document.createElement("canvas");c.width=vw;c.height=vh;c.getContext("2d").drawImage(v,0,0,vw,vh);try{v.pause()}catch(e){}
+  const fl=$("lcFlash");fl.classList.remove("on");void fl.offsetWidth;fl.classList.add("on");
+  c.toBlob(b=>{if(!b){liveWarn("ถ่ายภาพไม่สำเร็จ ลองใหม่");try{v.play()}catch(e){}return}
+    const f=new File([b],"wound.jpg",{type:"image/jpeg"}),url=URL.createObjectURL(f),im=$("liveImg");live.still={f,url,cam:1,tilt};
+    im.onload=()=>{v.hidden=true;im.hidden=false;liveResetMeas();live.h=null;setTimeout(()=>{liveLayout();lcPhase("meas")},30)};im.src=url},"image/jpeg",.92)}
+function liveRetake(){if(!live.stream){liveClose();return}const im=$("liveImg"),v=$("liveVid");if(live.still){const u=live.still.url;setTimeout(()=>URL.revokeObjectURL(u),1000);live.still=null}
+  im.hidden=true;im.removeAttribute("src");v.hidden=false;try{v.play()}catch(e){}liveResetMeas();live.h=null;lcPhase("aim");setTimeout(liveLayout,30)}
+{const _lo=liveOpen;liveOpen=async function(){live.phase="aim";$("liveCam").classList.add("aim");$("liveCam").classList.remove("meas");const r=await _lo.apply(this,arguments);if(live.stream)lcPhase("aim");return r}}
+{const _los=liveOpenStill;liveOpenStill=function(f){const r=_los.apply(this,arguments);if(live.still)lcPhase("meas");return r}}
+{const _lt=liveTilt;liveTilt=function(){if(live.still&&live.still.cam)return live.still.tilt;return _lt()}}
+{const _ld=liveDraw;liveDraw=function(){const ov=$("liveOv");if(!ov.width)return;
+  if(live.phase==="aim"){const g=ov.getContext("2d"),dpr=window.devicePixelRatio||1,W=ov.width/dpr,H=ov.height/dpr;g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+    const s=Math.min(W,H)*.62,x=(W-s)/2,y=H*.44-s/2,k=s*.16;g.strokeStyle="rgba(255,255,255,.9)";g.lineWidth=3;g.lineCap="round";g.beginPath();
+    [[x,y,1,1],[x+s,y,-1,1],[x,y+s,1,-1],[x+s,y+s,-1,-1]].forEach(([a,b,dx,dy])=>{g.moveTo(a,b+dy*k);g.lineTo(a,b);g.lineTo(a+dx*k,b)});g.stroke();
+    g.lineWidth=1.5;g.strokeStyle="rgba(255,255,255,.6)";g.beginPath();g.moveTo(W/2-10,H*.44);g.lineTo(W/2+10,H*.44);g.moveTo(W/2,H*.44-10);g.lineTo(W/2,H*.44+10);g.stroke();
+    g.font="600 13px system-ui,sans-serif";g.textAlign="center";g.fillStyle="rgba(0,0,0,.55)";const tx="จัดแผลและไม้บรรทัดให้อยู่ในกรอบ";const tw=g.measureText(tx).width+20;g.fillRect(W/2-tw/2,y-34,tw,24);g.fillStyle="#fff";g.fillText(tx,W/2,y-17);return}
+  _ld.apply(this,arguments);
+  if(live.phase==="meas"&&live.h){const g=ov.getContext("2d");const pill=(q,dy,c,t)=>{const mx=q[0],my=q[1]+dy;g.font="700 13px system-ui,sans-serif";const w=g.measureText(t).width+14;
+      g.fillStyle="rgba(0,0,0,.72)";g.beginPath();g.roundRect?g.roundRect(mx-w/2,my-24,w,20,10):g.rect(mx-w/2,my-24,w,20);g.fill();g.strokeStyle=c;g.lineWidth=1.5;g.stroke();g.fillStyle="#fff";g.textAlign="center";g.fillText(t,mx,my-9.5)};
+    if(!(live.drag&&live.drag.k==="h")){const H=live.h,lt=H[0][1]<H[1][1]?H[0]:H[1],wb=H[2][1]>H[3][1]?H[2]:H[3];pill([(H[0][0]+H[1][0])/2+(Math.abs(H[0][0]-H[1][0])>140?(H[1][0]-H[0][0])/4:0),Math.min(H[0][1],H[1][1])],-6,"#ff5d8f",`ยาว ${live.L.toFixed(1)} cm`);pill(wb,40,"#3fb8ff",`กว้าง ${live.W.toFixed(1)} cm`)}
+    const a=live.L*live.W;$("liveUse").textContent=a>0?`ใช้ค่านี้ · ${a.toFixed(1)} cm²`:"ใช้ค่านี้"}}}
+{const _shot=$("liveShot").onclick;$("liveShot").onclick=function(){if(live.phase==="aim"&&!live.still)return liveFreeze();return _shot.apply(this,arguments)}
+ $("liveUse").onclick=function(){if(!live.still){liveFreeze();return}
+   if(!liveGuard("use","ยังไม่ได้เทียบสเกลกับไม้บรรทัดหรือกระดาษอ้างอิงในภาพนี้ ค่าอาจคลาดเคลื่อน · กด \"ใช้ค่านี้\" อีกครั้งเพื่อใช้สเกลเดิม"))return;
+   const L=live.L,W=live.W;live.arm.shot=1;_shot.call($("liveShot"));
+   advise("ใส่ขนาดแผลจากภาพแล้ว",`ยาว ${L.toFixed(1)} × กว้าง ${W.toFixed(1)} cm · พื้นที่ ${(L*W).toFixed(1)} cm² (คำนวณอัตโนมัติ) ความลึกให้วัดด้วยไม้พันสำลีปลอดเชื้อ`)}}
+$("liveRetake").onclick=liveRetake;
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
