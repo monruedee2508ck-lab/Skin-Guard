@@ -1617,6 +1617,12 @@ body[data-page="overview"]{--pc:var(--teal);--pt:var(--teal-t)}
 #page-overview:not([hidden]){display:flex;flex-direction:column}
 #pvDraft{order:-2}
 @media (max-width:759px){.pv-actions{order:-1}}
+/* Braden result cards */
+.rs-tabs{margin:10px 0 6px}
+.rs-tabs button[aria-selected=true]{background:var(--teal);border-color:var(--teal);color:#fff}
+.rs-card{border-radius:14px;background:var(--bg);padding:4px 12px 12px;box-shadow:0 0 0 1px var(--line)}
+.rs-card>h4:first-child{margin-top:8px}
+.rs-card ul{margin:4px 0 0}
 </style>
 </head>
 <body>
@@ -1782,7 +1788,7 @@ body[data-page="overview"]{--pc:var(--teal);--pt:var(--teal-t)}
       <p class="rule">เกณฑ์: Albumin &lt; 3.5 g/dL · Hypoxia = SpO₂ &lt; 90% หรือ PaO₂ &lt; 60 mmHg · ได้รับ Vasopressor ใดๆ<br>Critical Risk = Braden ≤ 12 ร่วมกับปัจจัยอย่างน้อย 1 ข้อ หรือ Braden ≤ 18 ร่วมกับปัจจัยตั้งแต่ 2 ข้อขึ้นไป</p>
       </div>
     </details>
-    <button class="btn riskopen" id="riskOpen" type="button" hidden>ดูผลประเมิน · ภาพถ่ายผิวหนัง · การพยาบาล · ท่านอนตอนนี้</button>
+    <button class="btn riskopen" id="riskOpen" type="button" hidden>ดูผลประเมิน · ภาพถ่ายผิวหนัง · การพยาบาล</button>
   </section>
   <section class="card fold" id="skinCard" hidden>
    <details id="skinFold">
@@ -2880,8 +2886,8 @@ function renderRisk(t){
     cb.innerHTML=`<h4>⚠ ปรับระดับเป็น Critical Risk เพราะพบปัจจัยเสี่ยงร่วมทางคลินิก (Clinical Risk Factors)</h4><div class="crx-tag">${CR.f.map(x=>`<span>${x.name} · ${x.val}</span>`).join("")}</div><h4>แนวทางป้องกันเชิงรุก (ทำทันที)</h4><ul>${critActions(CR.f).map(x=>`<li>${x}</li>`).join("")}</ul>`;rb.append(cb)}
   else if(CR.f.length){const cb=document.createElement("div");cb.className="critbox";cb.innerHTML=`<h4>ปัจจัยเสี่ยงร่วมทางคลินิกที่พบ (ยังไม่เข้าเกณฑ์ Critical Risk)</h4><div class="crx-tag">${CR.f.map(x=>`<span>${x.name} · ${x.val}</span>`).join("")}</div>`;rb.append(cb)}
   const acts=[];
-  if(t!=null)acts.push("ปฏิบัติตาม Routine Care ทุกวัน (รายการด้านล่าง)");
-  if(needDressing)acts.push(`<b>ใช้วัสดุปิดผิวหนัง Soft Silicone/Foam ป้องกันในตำแหน่งที่เสี่ยงที่สุด เช่น Coccyx</b> (ดูวัสดุด้านล่าง)${sep&&!(t<=12)?" เพราะมีภาวะ sepsis/บวม/รอยแดง ต้องใช้ทุกรายไม่ว่าคะแนนเท่าใด":""}`);
+  if(t!=null)acts.push("ปฏิบัติตาม Routine Care ทุกวัน (ดูการ์ด Routine Care)");
+  if(needDressing)acts.push(`<b>ใช้วัสดุปิดผิวหนัง Soft Silicone/Foam ป้องกันในตำแหน่งที่เสี่ยงที่สุด เช่น Coccyx</b> (ดูการ์ดวัสดุและอุปกรณ์)${sep&&!(t<=12)?" เพราะมีภาวะ sepsis/บวม/รอยแดง ต้องใช้ทุกรายไม่ว่าคะแนนเท่าใด":""}`);
   acts.push("<b>พลิกตะแคงตัวทุก 2 ชั่วโมงตามนาฬิกาเตือนการพลิกตะแคงตัว</b> (1 ซ้าย → 3 หงาย → 5 ขวา → 7 หงาย → 9 ซ้าย → 11 หงาย) ใช้นาฬิกาด้านล่างช่วยเตือน");
   acts.push("ประเมินผิวหนังและถ่ายภาพซ้ำทุกเวร ถ้าพบรอยแดงที่กดแล้วไม่จาง ให้ไปประเมินในหน้าประเมินแผลทันที");
   acts.push("ผู้ป่วยแรกรับ ประเมินผิวหนังตั้งแต่ศีรษะถึงเท้าภายใน 1 ชั่วโมง และบันทึกใน Nurse's Note");
@@ -2965,7 +2971,7 @@ function go(pg,scroll){
 document.addEventListener("click",e=>{const b=e.target.closest("[data-go]");if(b)go(b.dataset.go)});
 $("alerts").addEventListener("click",e=>{const a=e.target.closest(".alert");if(a&&!a.dataset.go){go("prevent");if(a.querySelector(".crit-al"))setTimeout(openRisk,60);
   else if(/ภาพผิวหนัง/.test(a.textContent))setTimeout(()=>openRisk(true,"skin"),60);
-  else if(/พลิกตัว/.test(a.textContent))setTimeout(()=>openRisk(true,"turn"),60)}});
+  else if(/พลิกตัว/.test(a.textContent))setTimeout(()=>go("overview"),60)}});
 $("admLock").onclick=()=>{userMenu(false);if(isAdmin()){setAdmin(false);if(ADMIN_PAGES.includes(document.body.dataset.page))go("prevent");advise("ออกจากระบบผู้ดูแลแล้ว","หน้าแนวโน้มและข้อมูลหอผู้ป่วยถูกซ่อน")}else askAdmin(null)};
 $("admCancel").onclick=admClose;
 $("admTabIn").onclick=()=>admTab(false);$("admTabReg").onclick=()=>admTab(true);
@@ -3736,7 +3742,7 @@ function rmShow(i){rmIdx=i;const k=rmFlow[i],pn=$("rmPane");
   $("rmOk").textContent=last?"รับทราบ":`ถัดไป · ${RM_SHORT[rmFlow[i+1]]}`;
   $("rmNote").hidden=!last;
 }
-function openRisk(flow,start){advClose();rmFlow=flow===true?["risk","skin","care","turn"]:["risk"];const m=$("riskModal");m.hidden=false;document.body.classList.add("noscroll");rmShow(Math.max(0,rmFlow.indexOf(start)));$("rmOk").focus()}
+function openRisk(flow,start){advClose();rmFlow=flow===true?["risk","skin","care"]:["risk"];const m=$("riskModal");m.hidden=false;document.body.classList.add("noscroll");rmShow(Math.max(0,rmFlow.indexOf(start)));$("rmOk").focus()}
 function closeRisk(){rmRestore();$("rmPane").innerHTML="";$("riskModal").hidden=true;document.body.classList.remove("noscroll");try{update()}catch(e){}}
 $("rmOk").onclick=()=>{if(rmIdx<rmFlow.length-1)rmShow(rmIdx+1);else closeRisk()};
 $("rmBack").onclick=()=>{if(rmIdx>0)rmShow(rmIdx-1)};
@@ -5407,7 +5413,7 @@ function kpi3Paint(){const box=$("kpi3G");if(!box||!isAdmin())return;const d0=bk
 setTimeout(()=>{try{bnavPaint()}catch(e){}},120);
 
 /* --- table of contents inside the long assessment result sheet --- */
-function rmToc(){const m=$("riskModal");if(!m||m.hidden)return;const body=m.querySelector(".rm-body");if(!body)return;
+function rmToc(){const m=$("riskModal");if(!m||m.hidden)return;const body=m.querySelector(".rm-body");if(!body)return;if(body.querySelector(".rs-track")){const b0=$("rmToc");if(b0)b0.hidden=true;return}
   let bar=$("rmToc");const H=[...body.querySelectorAll("#riskAlert h4,#riskAlert details>summary,#rmPane h4,#rmPane details>summary")].filter(e=>e.offsetParent!==null&&e.textContent.trim());
   if(H.length<3){if(bar)bar.hidden=true;return}
   if(!bar){bar=document.createElement("nav");bar.id="rmToc";bar.className="rm-toc";bar.setAttribute("aria-label","สารบัญ");body.prepend(bar);body.addEventListener("scroll",rmTocSpy,{passive:true})}
@@ -5764,6 +5770,39 @@ function lvClose(){$("lvModal").hidden=true;document.body.classList.remove("nosc
 {const _lo=doLogout;doLogout=function(){if(!lvBypass&&pvDirty()){lvAsk(()=>{lvBypass=true;try{_lo()}finally{lvBypass=false}});return}return _lo.apply(this,arguments)}}
 window.addEventListener("beforeunload",e=>{try{if(pvDirty()&&ASSESS_PAGES.includes(document.body.dataset.page)){e.preventDefault();e.returnValue="";return ""}}catch(x){}});
 setTimeout(()=>{try{draftPaint()}catch(e){}},300);
+/* Braden result (step 1) as swipeable cards with back/next before moving to skin photos */
+var rsIdx=0;
+function rsBuild(){const rb=document.querySelector("#riskAlert .riskbox .rb");if(!rb||rb.querySelector(".rs-track"))return;
+  const kids=[...rb.children],secs=[];let cur=null;
+  kids.forEach(el=>{if(el.tagName==="H4"&&!el.closest(".critbox")){cur={title:el.textContent,els:[el]};secs.push(cur)}
+    else if(el.tagName==="DETAILS"&&el.classList.contains("routine")){const sm=el.querySelector("summary");const h=document.createElement("h4");h.textContent=(sm&&sm.textContent||"Routine Care").trim();const body=[...el.childNodes].filter(n=>n!==sm);cur={title:h.textContent,els:[h,...body]};secs.push(cur);el.remove()}
+    else if(cur)cur.els.push(el)});
+  if(secs.length<2)return;
+  const lab=t=>/สิ่งที่ต้องทำ/.test(t)?"สิ่งที่ต้องทำ":/วัสดุ/.test(t)?"วัสดุและอุปกรณ์":/Routine/i.test(t)?"Routine Care":/ระวัง/.test(t)?"จุดที่ต้องระวัง":t.replace(/\s*\(.*\)\s*$/,"");
+  const tabs=document.createElement("div");tabs.className="cs-tabs rs-tabs";tabs.setAttribute("role","tablist");
+  const track=document.createElement("div");track.className="cs-track rs-track";const dots=document.createElement("div");dots.className="cs-dots";
+  secs.forEach((sc,i)=>{const sl=document.createElement("div");sl.className="cs-slide rs-slide";sl.setAttribute("role","tabpanel");const card=document.createElement("div");card.className="rs-card";sc.els.forEach(e=>card.append(e));sl.append(card);track.append(sl);
+    const b=document.createElement("button");b.type="button";b.setAttribute("role","tab");b.textContent=`${i+1}. ${lab(sc.title)}`;b.onclick=()=>rsGo(i,true);tabs.append(b);dots.append(document.createElement("i"))});
+  rb.append(tabs,track,dots);rsBuild.titles=secs.map(s=>lab(s.title));
+  let tm=0;track.addEventListener("scroll",()=>{clearTimeout(tm);tm=setTimeout(()=>{const i=Math.round(track.scrollLeft/Math.max(1,track.clientWidth));if(i!==rsIdx){rsIdx=i;rsPaint()}},80)},{passive:true});
+  if(window.ResizeObserver){const ro=new ResizeObserver(()=>rsFit());[...track.children].forEach(s=>ro.observe(s))}
+  rsIdx=Math.min(rsIdx,secs.length-1);requestAnimationFrame(()=>{track.scrollLeft=rsIdx*track.clientWidth;rsPaint()})}
+function rsTrack(){return document.querySelector("#riskAlert .rs-track")}
+function rsN(){const t=rsTrack();return t?t.children.length:0}
+function rsFit(){const t=rsTrack();if(!t)return;const s=t.children[rsIdx];if(s)t.style.height=s.firstElementChild.offsetHeight+"px"}
+function rsGo(i,smooth){const t=rsTrack();if(!t)return;rsIdx=Math.max(0,Math.min(i,rsN()-1));t.scrollTo({left:rsIdx*t.clientWidth,behavior:smooth?"smooth":"auto"});rsPaint();
+  try{const tabs=document.querySelector("#riskAlert .rs-tabs");const body=$("riskModal").querySelector(".rm-body");if(tabs&&body){const y=tabs.getBoundingClientRect().top-body.getBoundingClientRect().top+body.scrollTop-8;if(body.scrollTop>y)body.scrollTo({top:y,behavior:"smooth"})}}catch(e){}}
+function rsPaint(){const box=$("riskAlert");if(!box)return;box.querySelectorAll(".rs-tabs button").forEach((b,i)=>{b.setAttribute("aria-selected",String(i===rsIdx));if(i===rsIdx){const T=b.parentNode,L=b.offsetLeft-T.offsetLeft,R=L+b.offsetWidth;if(L<T.scrollLeft)T.scrollTo({left:L-12,behavior:"smooth"});else if(R>T.scrollLeft+T.clientWidth)T.scrollTo({left:R-T.clientWidth+12,behavior:"smooth"})}});
+  box.querySelectorAll(".rb>.cs-dots i").forEach((d,i)=>d.classList.toggle("on",i===rsIdx));rsFit();rsFoot()}
+function rsActive(){return !$("riskModal").hidden&&rmFlow[rmIdx]==="risk"&&rsN()>1}
+function rsFoot(){if(!rsActive())return;const n=rsN(),T=rsBuild.titles||[],last=rmIdx===rmFlow.length-1;
+  $("rmBack").hidden=rsIdx===0&&rmIdx===0;
+  if(rsIdx<n-1)$("rmOk").textContent=`ถัดไป · ${T[rsIdx+1]||""}`;else $("rmOk").textContent=last?"รับทราบ":`ถัดไป · ${RM_SHORT[rmFlow[rmIdx+1]]}`}
+{const _rr=renderRisk;renderRisk=function(){const r=_rr.apply(this,arguments);try{rsBuild()}catch(e){console.error(e)}return r}}
+{const _rs=rmShow;rmShow=function(i){const prev=rmIdx,goingBack=typeof i==="number"&&i<prev;const r=_rs.apply(this,arguments);if(rmFlow[i]==="risk"){if(!goingBack)rsIdx=0;else rsIdx=Math.max(0,rsN()-1);setTimeout(()=>{const t=rsTrack();if(t){t.scrollLeft=rsIdx*t.clientWidth;rsPaint()}},40)}return r}}
+$("rmOk").onclick=()=>{if(rsActive()&&rsIdx<rsN()-1)return rsGo(rsIdx+1,true);if(rmIdx<rmFlow.length-1)rmShow(rmIdx+1);else closeRisk()};
+$("rmBack").onclick=()=>{if(rsActive()&&rsIdx>0)return rsGo(rsIdx-1,true);if(rmIdx>0)rmShow(rmIdx-1)};
+window.addEventListener("resize",()=>{try{if(rsActive())rsGo(rsIdx,false)}catch(e){}});
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
