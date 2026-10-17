@@ -1445,6 +1445,16 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
 @media (min-width:700px){.stages{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
   .stage-opt{flex-direction:column!important;gap:8px!important}
   .stage-opt .st-svg{width:100%;height:auto;aspect-ratio:240/150}}
+/* tappable care items */
+#care li.pick{list-style:none;position:relative;margin-left:-18px;padding:6px 8px 6px 32px;border-radius:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#care li.pick::before{content:"";position:absolute;left:7px;top:8px;width:16px;height:16px;border-radius:5px;border:1.6px solid var(--muted);background:var(--surface)}
+#care li.pick[aria-checked=true]{background:var(--teal-t)}
+#care li.pick[aria-checked=true]::before{background:var(--teal);border-color:var(--teal)}
+#care li.pick[aria-checked=true]::after{content:"";position:absolute;left:12.5px;top:10.5px;width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+@media (hover:hover){#care li.pick:hover{background:color-mix(in srgb,var(--teal-t) 60%,transparent)}}
+.cm-hint{margin:0 0 8px;font-size:.8rem;color:var(--teal);font-weight:600}
+#planCard .fs-t .h-en{display:block}
+#planCard .plan-h{justify-content:flex-end;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -1994,11 +2004,16 @@ body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
     <div class="fold-body"><div id="planRiskBody"></div></div>
    </details>
   </section>
-  <section class="card" id="planCard">
-    <div class="plan-h"><h2>แผนการป้องกันเฉพาะราย <small class="h-en">Personalized Prevention Plan</small></h2><span class="plan-shift" id="planShift"></span></div>
+  <section class="card fold" id="planCard">
+   <details id="planFold">
+    <summary><span class="fs-t">แผนการป้องกันเฉพาะราย<small class="h-en">Personalized Prevention Plan</small></span><span class="fs-m" id="planSum"></span></summary>
+    <div class="fold-body">
+    <div class="plan-h"><span class="plan-shift" id="planShift"></span></div>
     <div class="plan-prog" id="planProg"></div>
     <div class="plan-list" id="planList"></div>
     <p class="note" style="margin:0">กิจกรรมคำนวณจากคะแนน Braden ปัจจัยเสี่ยงทางคลินิก และแผลของผู้ป่วยรายนี้ บันทึกเวลาและผู้ทำทุกครั้ง ถ้ากิจกรรมใดไม่เหมาะสม ให้เลือกเหตุผล</p>
+    </div>
+   </details>
   </section>
   <section class="card plan-ho">
     <h2>ส่งเวร <small class="h-en">Nursing Handover</small></h2>
@@ -5069,10 +5084,11 @@ function planCounts(e){const n=e&&e._n||0,i=e&&e.i||{},ids=e&&e._l||Object.keys(
 var planOpen=null;
 function planPaint(){if(!$("page-plan"))return;riskSummaryPaint();
   const hn=realHN(),list=$("planList");$("planShift").textContent=`${SHIFT_TH[shiftNow()]} · ${new Date().toLocaleDateString("th-TH",{day:"numeric",month:"short"})}`;
-  if(!hn){list.innerHTML='<div class="pl-empty">ยังไม่ได้เลือกผู้ป่วย</div>';$("planProg").innerHTML="";return}
+  if(!hn){list.innerHTML='<div class="pl-empty">ยังไม่ได้เลือกผู้ป่วย</div>';$("planProg").innerHTML="";const sm=$("planSum");if(sm){sm.className="fs-m";sm.textContent=""}return}
   const items=planItems(),P=planState(),k=planKey(),e=P[k]||(P[k]={i:{}});
   const ids=items.map(x=>x.id);if(e._n!==items.length||JSON.stringify(e._l||[])!==JSON.stringify(ids)){e._n=items.length;e._l=ids;st.plan=P;try{savePatient()}catch(x){}}
   const C=planCounts(e),pct=C.n?Math.round((C.done+C.na)/C.n*100):0;
+  {const sm=$("planSum");if(sm){sm.className="fs-m"+(C.n&&!C.pend?" done":C.pend?" warn":"");sm.textContent=C.n?(C.pend?`${C.done+C.na}/${C.n} · รอ ${C.pend}`:`ครบ ${C.n} กิจกรรม ✓`):""}}
   $("planProg").innerHTML=`<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div><small><span>บันทึกแล้ว ${C.done+C.na}/${C.n} กิจกรรม (${pct}%)</span><span>เสร็จ ${C.done} · ไม่ได้ทำ ${C.na} · รอ ${C.pend}</span></small>`;
   list.innerHTML="";let turnDue=null;try{turnDue=turnFor(hn)}catch(x){}
   items.forEach(it=>{const v=e.i[it.id],S=piStatus(v),row=document.createElement("div");row.className="pi-row";row.style.setProperty("--c",`var(${v&&v.s==="done"?"--ok":v?"--line":it.c})`);
@@ -5212,6 +5228,27 @@ function rmTocSpy(){const bar=$("rmToc"),H=rmToc.H||[];if(!bar||bar.hidden||!H.l
   B.forEach((x,i)=>{if(i===k){if(!x.hasAttribute("aria-current")){x.setAttribute("aria-current","true");try{const L=x.offsetLeft-bar.offsetLeft,R=L+x.offsetWidth;if(L<bar.scrollLeft)bar.scrollTo({left:L-14,behavior:"smooth"});else if(R>bar.scrollLeft+bar.clientWidth)bar.scrollTo({left:R-bar.clientWidth+14,behavior:"smooth"})}catch(e){}}}else x.removeAttribute("aria-current")})}
 {const _rs=rmShow;rmShow=function(){const r=_rs.apply(this,arguments);setTimeout(()=>{try{const b=$("riskModal").querySelector(".rm-body");b.scrollTop=0;rmToc()}catch(e){}},30);return r}}
 {let tm=0;const mo=new MutationObserver(()=>{clearTimeout(tm);tm=setTimeout(()=>{try{rmToc()}catch(e){}},60)});["riskAlert","rmPane"].forEach(id=>{const e=$(id);if(e)mo.observe(e,{childList:true})})}
+
+/* care advice: tap items to add them to the Nurse's Note */
+var carePick=new Set();
+function carePickPaint(){const box=$("care");if(!box)return;
+  box.querySelectorAll("li").forEach(li=>{if(li.closest(".dress"))return;const t=li.textContent.trim();if(!t)return;
+    if(!li.classList.contains("pick")){li.classList.add("pick");li.setAttribute("role","checkbox");li.tabIndex=0;
+      const tog=()=>{if(carePick.has(t))carePick.delete(t);else carePick.add(t);carePickPaint()};
+      li.addEventListener("click",tog);li.addEventListener("keydown",e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();tog()}})}
+    li.setAttribute("aria-checked",String(carePick.has(t)))});
+  const n=carePick.size,b=$("cmNote");if(b){b.textContent=n?`เพิ่มใน Note (${n})`:"ไปบันทึก Nurse's Note";b.classList.toggle("primary",!!n)}
+  const ok=$("cmOk");if(ok)ok.classList.toggle("primary",!n);
+  let h=$("cmHint");if(!h){h=document.createElement("p");h.id="cmHint";h.className="cm-hint";box.parentNode.insertBefore(h,box)}
+  h.textContent=n?`เลือกแล้ว ${n} รายการ แตะ "เพิ่มลง Nurse's Note" เพื่อบันทึก`:"แตะข้อการพยาบาลที่ทำแล้ว เพื่อเพิ่มลง Nurse's Note ได้ทันที"}
+function careToNote(){const L=[...carePick];if(!L.length)return false;const n=new Date(),hm=`${String(n.getHours()).padStart(2,"0")}:${String(n.getMinutes()).padStart(2,"0")}`;
+  const block=`■ การพยาบาลที่ให้ (${hm} น.)\n`+L.map(x=>"- "+x).join("\n");
+  const ex=$("noteExtra");ex.value=(ex.value.trim()?ex.value.trim()+"\n":"")+block;
+  if(noteEdited)$("note").value=$("note").value.trimEnd()+"\n"+block;else update();try{savePatient()}catch(e){}
+  carePick.clear();return L.length}
+{const _rc=renderCare;renderCare=function(){const r=_rc.apply(this,arguments);try{carePickPaint()}catch(e){}return r}}
+$("cmNote").onclick=()=>{const n=careToNote();closeCare();go("record");if(n)setTimeout(()=>{advise("เพิ่มลง Nurse's Note แล้ว",`${n} รายการ · ตรวจทานแล้วกด "ลงชื่อและบันทึก"`,"--ok","✓");try{const e=$("note");e.scrollIntoView({block:"center"})}catch(x){}},250)};
+{const _oc=openCare;openCare=function(){const r=_oc.apply(this,arguments);try{carePickPaint()}catch(e){}return r}}
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
