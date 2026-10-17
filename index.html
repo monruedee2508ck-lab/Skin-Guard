@@ -1500,6 +1500,14 @@ img.hm-nurse{border-radius:50%;object-fit:cover;border:3px solid var(--surface);
 .gd-pan ul{margin:0;padding-left:20px;font-size:.88rem;display:flex;flex-direction:column;gap:3px}
 .gd-role{font-size:.8rem;font-weight:700;color:var(--muted);margin-top:4px}
 .rm-ph{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:.72rem;color:var(--muted)}
+/* guide tabs */
+.gd-tabs{position:sticky;top:-12px;z-index:3;margin:0 -16px 6px;padding:8px 16px;background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.gd-tabs button[aria-selected=true]{background:var(--teal);border-color:var(--teal);color:#fff}
+.gd-slide{padding:2px 1px}
+.gd-card{border-radius:14px;background:var(--surface);box-shadow:0 0 0 1px var(--line);padding:6px 14px 14px;display:flex;flex-direction:column;gap:6px;--c:var(--teal)}
+.gd-card ul{margin:0;padding-left:20px;font-size:.88rem;display:flex;flex-direction:column;gap:3px}
+.gd-card .gd-h{margin:8px 0 2px;font-size:.9rem;color:var(--c);font-family:var(--font-display)}
+.gd-tabs button{font-size:.76rem;padding:6px 10px}
 </style>
 </head>
 <body>
@@ -5338,17 +5346,26 @@ function gdDressing(k){const saved=curW;let plan={items:[],cautions:[]};
       d.querySelector("b").textContent=it.name;d.querySelector("small").textContent=it.why||"";d.querySelector(".rm-use").textContent=it.change?"เปลี่ยน: "+it.change:"";wrap.append(d)})});
   if(plan.cautions&&plan.cautions.length){const c=document.createElement("div");c.className="dcaution";c.innerHTML="<b>ข้อควรระวัง</b>";c.append(gdUl(plan.cautions));wrap.append(c)}
   return wrap}
-function gdBuild(){const b=$("gdBody");b.innerHTML='<h3 class="pg-hi" id="gdTitle">แนวทางป้องกันและดูแลแผลกดทับ</h3><p class="gd-tip">แตะแต่ละหัวข้อเพื่อดูการพยาบาลและวัสดุอุปกรณ์ที่แนะนำ</p>';
-  const sec=(t)=>{const h=document.createElement("h4");h.textContent=t;b.append(h)};
-  sec("ระดับความเสี่ยงตาม Braden Scale");
+var gdIdx=0;
+function gdBuild(){const b=$("gdBody");b.innerHTML='<h3 class="pg-hi" id="gdTitle">แนวทางป้องกันและดูแลแผลกดทับ</h3>';
+  const TABS=["ระดับความเสี่ยง","ระดับแผลกดทับ","ดูแลพื้นฐาน","MDRPI"];
+  const tabs=document.createElement("div");tabs.className="cs-tabs gd-tabs";tabs.setAttribute("role","tablist");
+  const track=document.createElement("div");track.className="cs-track gd-track";const dots=document.createElement("div");dots.className="cs-dots";
+  const S=TABS.map((t,i)=>{const sl=document.createElement("div");sl.className="cs-slide gd-slide";sl.setAttribute("role","tabpanel");track.append(sl);
+    const bt=document.createElement("button");bt.type="button";bt.setAttribute("role","tab");bt.textContent=t;bt.onclick=()=>gdGo(i,true);tabs.append(bt);dots.append(document.createElement("i"));return sl});
+  b.append(tabs,track,dots);
+  const tip=t=>{const p=document.createElement("p");p.className="gd-tip";p.textContent=t;return p};
+  // 1 risk levels
+  S[0].append(tip("แตะแต่ละระดับเพื่อดูการพยาบาลและวัสดุอุปกรณ์ป้องกัน"));
   [...LEVELS].forEach(L=>{const G=GD_LV[L.k];if(!G)return;
-    b.append(gdAcc(`<span class="gd-dot"></span><span class="gd-st-t"><b>${L.name}</b><small>Braden ${L.range} คะแนน</small></span>`,L.c,p=>{
+    S[0].append(gdAcc(`<span class="gd-dot"></span><span class="gd-st-t"><b>${L.name}</b><small>Braden ${L.range} คะแนน</small></span>`,L.c,p=>{
       p.append(gdH("การพยาบาล"),gdUl(G.acts,true),gdH(`วัสดุและอุปกรณ์ป้องกัน (${G.mats.length})`),gdMats(G.mats,L.name))}))});
-  b.append(gdAcc(`<span class="gd-dot"></span><span class="gd-st-t"><b>Critical Risk</b><small>Braden ต่ำร่วมกับ Albumin ต่ำ / Hypoxia / Vasopressor</small></span>`,"--crit",p=>{
+  S[0].append(gdAcc(`<span class="gd-dot"></span><span class="gd-st-t"><b>Critical Risk</b><small>Braden ต่ำร่วมกับ Albumin ต่ำ / Hypoxia / Vasopressor</small></span>`,"--crit",p=>{
     p.append(gdH("การพยาบาล (ป้องกันเชิงรุก)"),gdUl(critActions([{k:"alb"},{k:"hyp"},{k:"vp"}]),true),gdH("วัสดุและอุปกรณ์ป้องกัน"),gdMats(["sacrum","border","foam","pillow","slide","zinc","spray","gauze"],"Critical Risk"))}));
-  sec("ระดับแผลกดทับ (NPIAP) · การดูแลและวัสดุปิดแผล");
-  Object.entries(STAGES).forEach(([k,S])=>{
-    b.append(gdAcc(`${stageSvg(k)}<span class="gd-st-t"><b>${esc(S.name)}</b><small>${esc(S.d||"")}</small></span>`,S.c,p=>{
+  // 2 stages
+  S[1].append(tip("แตะแต่ละระดับแผลเพื่อดูการดูแลแผล วัสดุปิดแผล และการป้องกัน"));
+  Object.entries(STAGES).forEach(([k,St])=>{
+    S[1].append(gdAcc(`${stageSvg(k)}<span class="gd-st-t"><b>${esc(St.name)}</b><small>${esc(St.d||"")}</small></span>`,St.c,p=>{
       const wbp=k==="s3"||k==="s4"||k==="us";
       p.append(gdH("การดูแลแผล"));
       if(wbp){if(k==="us")p.append(Object.assign(document.createElement("p"),{className:"tag",textContent:"ต้องกำจัดเนื้อตายก่อนจึงจะประเมินความลึกและระยะของแผลได้"}));
@@ -5357,11 +5374,21 @@ function gdBuild(){const b=$("gdBody");b.innerHTML='<h3 class="pg-hi" id="gdTitl
       p.append(gdH("วัสดุปิดแผล (Dressing) ที่แนะนำ"),gdDressing(k));
       const pr=wbp?CARE.wbpProducts:(CARE[k]&&CARE[k].products)||[];if(pr.length)p.append(chips(pr));
       p.append(gdH("การป้องกันแผลเพิ่ม / ป้องกันแผลใหม่"),gdUl(["พลิกตะแคงตัวทุก 2 ชั่วโมง ห้ามนอนทับแผล","ใช้วัสดุ Soft Silicone/Foam ป้องกันปุ่มกระดูกอื่นที่เสี่ยง","ประเมินผิวหนังและแผลทุกเวร ถ่ายภาพเปรียบเทียบ"]),chips(CARE.preventProducts))}))});
-  {const d=document.createElement("details");d.className="gd-acc";d.style.setProperty("--c","var(--teal)");d.innerHTML='<summary><span class="gd-dot"></span><span class="gd-st-t"><b>การดูแลพื้นฐานทุกราย (Routine care)</b><small>10 ข้อ</small></span></summary><div class="gd-pan"></div>';d.lastChild.append(gdUl(CARE.routine));b.append(d)}
-  {const d=document.createElement("details");d.className="gd-acc";d.style.setProperty("--c","var(--sky)");d.innerHTML='<summary><span class="gd-dot"></span><span class="gd-st-t"><b>การพลิกตัวและจัดท่า</b><small>ทุก 2 ชั่วโมง · ตะแคง 30°</small></span></summary><div class="gd-pan"></div>';d.lastChild.append(gdUl(["พลิกตะแคงตัวทุก 2 ชั่วโมง สลับ หงาย ตะแคงซ้าย ตะแคงขวา","ตะแคง 30 องศา ใช้หมอนรองหลังและระหว่างเข่า","ยกส้นเท้าให้ลอยพ้นที่นอน ไม่ไขหัวเตียงเกิน 30 องศาถ้าไม่มีข้อห้าม"]));b.append(d)}
-  {const d=document.createElement("details");d.className="gd-acc";d.style.setProperty("--c","var(--s1)");d.innerHTML='<summary><span class="gd-dot"></span><span class="gd-st-t"><b>Medical Device-Related Pressure Injury (MDRPI)</b><small>แผลจากอุปกรณ์การแพทย์</small></span></summary><div class="gd-pan"></div>';d.lastChild.append(gdUl(CARE.device),chips(["Gauze","Webril cotton","ชุดรองสาย HFNC"]));b.append(d)}
-}
-$("hmGuide").onclick=()=>{gdBuild();sheetOpen("guideModal");try{$("gdBody").scrollTop=0}catch(e){}};
+  // 3 routine + turning
+  {const c=document.createElement("div");c.className="gd-card";c.append(gdH("การดูแลพื้นฐานทุกราย (Routine care)"),gdUl(CARE.routine),gdH("การพลิกตัวและจัดท่า"),
+    gdUl(["พลิกตะแคงตัวทุก 2 ชั่วโมง สลับ หงาย ตะแคงซ้าย ตะแคงขวา (1 ซ้าย → 3 หงาย → 5 ขวา …)","ตะแคง 30 องศา ใช้หมอนรองหลังและระหว่างเข่า","ยกส้นเท้าให้ลอยพ้นที่นอน ไม่ไขหัวเตียงเกิน 30 องศาถ้าไม่มีข้อห้าม"]),
+    gdH("วัสดุและอุปกรณ์พื้นฐาน"),gdMats(["pillow","vas","slide"],"Routine Care"));S[2].append(c)}
+  // 4 MDRPI
+  {const c=document.createElement("div");c.className="gd-card";c.style.setProperty("--c","var(--s1)");c.append(gdH("Medical Device-Related Pressure Injury (MDRPI)"),
+    Object.assign(document.createElement("p"),{className:"gd-tip",textContent:"แผลกดทับจากอุปกรณ์การแพทย์ เช่น ท่อช่วยหายใจ สาย NG, HFNC, สาย SpO₂, เฝือก"}),gdUl(CARE.device),gdH("วัสดุรองอุปกรณ์"),gdMats(["gauze","film","border"],"MDRPI"),chips(["Gauze","Webril cotton","ชุดรองสาย HFNC"]));S[3].append(c)}
+  let tm=0;track.addEventListener("scroll",()=>{clearTimeout(tm);tm=setTimeout(()=>{const i=Math.round(track.scrollLeft/Math.max(1,track.clientWidth));if(i!==gdIdx){gdIdx=i;gdPaint()}},80)},{passive:true});
+  if(window.ResizeObserver){const ro=new ResizeObserver(()=>gdFit());S.forEach(s=>ro.observe(s))}
+  requestAnimationFrame(()=>{track.scrollLeft=gdIdx*track.clientWidth;gdPaint()})}
+function gdFit(){const b=$("gdBody"),tr=b&&b.querySelector(".gd-track");if(!tr)return;const sl=tr.children[gdIdx];if(sl)tr.style.height=sl.scrollHeight+"px"}
+function gdGo(i,smooth){const tr=$("gdBody").querySelector(".gd-track");if(!tr)return;gdIdx=i;tr.scrollTo({left:i*tr.clientWidth,behavior:smooth?"smooth":"auto"});gdPaint();try{$("gdBody").scrollTo({top:0,behavior:"smooth"})}catch(e){}}
+function gdPaint(){const b=$("gdBody");b.querySelectorAll(".gd-tabs button").forEach((x,i)=>{x.setAttribute("aria-selected",String(i===gdIdx));if(i===gdIdx){const T=x.parentNode,L=x.offsetLeft-T.offsetLeft,R=L+x.offsetWidth;if(L<T.scrollLeft)T.scrollTo({left:L-12,behavior:"smooth"});else if(R>T.scrollLeft+T.clientWidth)T.scrollTo({left:R-T.clientWidth+12,behavior:"smooth"})}});
+  b.querySelectorAll(".cs-dots i").forEach((d,i)=>d.classList.toggle("on",i===gdIdx));gdFit()}
+$("hmGuide").onclick=()=>{gdIdx=0;gdBuild();sheetOpen("guideModal");try{$("gdBody").scrollTop=0}catch(e){};setTimeout(gdPaint,60)};
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
