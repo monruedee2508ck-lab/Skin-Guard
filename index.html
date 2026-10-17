@@ -1698,6 +1698,29 @@ body[data-page="wound"] #result{display:none!important}
 #liveRetake[hidden]{display:none!important}
 .livecam.meas .lc-a{background:#ffd166!important;color:#1b2a44!important;font-weight:600}
 .livecam.meas .lc-a b{font-size:1.2rem}
+/* ===== Braden method chooser + quick entry ===== */
+.bm2-choose{display:flex;flex-direction:column;gap:12px}
+.bm2-choose .bw-en{margin:0 0 4px}
+.bm2-opt{font:inherit;text-align:left;cursor:pointer;display:flex;gap:14px;align-items:center;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:18px;padding:16px}
+.bm2-opt:hover,.bm2-opt:focus-visible{border-color:var(--pc);background:var(--pt)}
+.bm2-opt b{display:block;font-size:1.05rem}.bm2-opt small{display:block;font-size:.84rem;color:var(--muted);line-height:1.5;margin-top:2px}
+.bm2-opt>span:nth-child(2){flex:1;min-width:0}
+.bm2-ic{flex:none;width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--pt);color:var(--pc);font-size:1.4rem}
+.bm2-ic.num{font-family:var(--font-num);font-size:.95rem;font-weight:700;letter-spacing:.02em}
+.bm2-go{flex:none;font-size:1.8rem;color:var(--muted);line-height:1}
+.bq2-list{display:flex;flex-direction:column;gap:8px}
+.bq2{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--bg);border:1.5px solid var(--line)}
+.bq2.done{border-color:color-mix(in srgb,var(--pc) 45%,var(--line))}
+.bq2-h{flex:1;min-width:0}.bq2-h b{display:block;font-size:.92rem;line-height:1.35}.bq2-h small{display:block;font-size:.78rem;color:var(--muted);margin-top:1px}
+.bq2.done .bq2-h small{color:var(--ink)}
+.bq2-n{display:flex;gap:6px;flex:none}
+.bq2-n button{width:46px;height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:700 1.1rem var(--font-num);cursor:pointer}
+.bq2-n button.on{color:#fff;border-color:transparent}
+.bq2-n button.on.v1{background:var(--s4)}.bq2-n button.on.v2{background:var(--s1)}.bq2-n button.on.v3{background:var(--s2)}.bq2-n button.on.v4{background:var(--ok)}
+.bq2[data-k="fric"] .bq2-n button.on.v3{background:var(--ok)}
+#bmModal .rm-foot .btn{flex:0 0 auto;min-width:96px}
+#bmFoot .bw-sum b{font-size:1.15rem}
+@media (max-width:480px){.bq2{flex-direction:column;align-items:stretch;gap:8px}.bq2-n button{flex:1;width:auto}}
 </style>
 </head>
 <body>
@@ -2415,6 +2438,25 @@ body[data-page="wound"] #result{display:none!important}
         <button type="button" class="btn" id="liveRetake" hidden>↺ ถ่ายใหม่</button><button type="button" class="btn" id="liveGrid" aria-pressed="false">ตาราง 1 cm</button>
         <button type="button" class="lc-shot" id="liveShot" aria-label="ถ่ายภาพ"><i></i></button>
         <button type="button" class="btn" id="liveUse">ใช้ค่าวัด</button>
+      </div>
+    </div>
+  </div>
+  <div class="modal" id="bmModal" hidden role="dialog" aria-modal="true" aria-labelledby="bmKick">
+    <div class="sheet bw-sheet">
+      <div class="rm-top"><div class="rm-kick" id="bmKick">Braden Scale</div><button type="button" class="rm-x" id="bmX" aria-label="ปิด">&times;</button></div>
+      <div class="rm-body">
+        <div id="bmChoose" class="bm2-choose">
+          <h3 class="bw-t">ต้องการประเมินแบบไหน</h3>
+          <p class="bw-en">เลือกได้ทั้ง 2 วิธี ผลคะแนนและข้อแนะนำเหมือนกัน</p>
+          <button type="button" class="bm2-opt" id="bmStep"><span class="bm2-ic" aria-hidden="true">&#9776;</span><span><b>เลือกตามข้อ</b><small id="bmStepS"></small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
+          <button type="button" class="bm2-opt" id="bmQuick"><span class="bm2-ic num" aria-hidden="true">123</span><span><b>กรอกคะแนนเป็นตัวเลข</b><small>รู้คะแนนแต่ละด้านแล้ว แตะตัวเลข 1–4 ทั้ง 6 ด้านในหน้าเดียว ระบบรวมคะแนนให้ทันที</small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
+        </div>
+        <div id="bmForm" hidden><div class="bq2-list" id="bmRows"></div></div>
+      </div>
+      <div class="rm-foot" id="bmFoot" hidden>
+        <button class="btn" id="bmBack" type="button">ย้อนกลับ</button>
+        <span class="bw-sum" id="bmSum"></span>
+        <button class="btn primary" id="bmOk" type="button" disabled>ยืนยันคะแนน</button>
       </div>
     </div>
   </div>
@@ -5967,6 +6009,29 @@ function liveRetake(){if(!live.stream){liveClose();return}const im=$("liveImg"),
    const L=live.L,W=live.W;live.arm.shot=1;_shot.call($("liveShot"));
    advise("ใส่ขนาดแผลจากภาพแล้ว",`ยาว ${L.toFixed(1)} × กว้าง ${W.toFixed(1)} cm · พื้นที่ ${(L*W).toFixed(1)} cm² (คำนวณอัตโนมัติ) ความลึกให้วัดด้วยไม้พันสำลีปลอดเชื้อ`)}}
 $("liveRetake").onclick=liveRetake;
+/* ===== Braden start: choose step-by-step or quick number entry ===== */
+var bm={d:{},fresh:false};
+function bmOpen(){const done=BRADEN.filter(([k])=>st.braden[k]>0).length;bm.fresh=done===6;
+  $("bmChoose").hidden=false;$("bmForm").hidden=true;$("bmFoot").hidden=true;$("bmKick").textContent="Braden Scale · เลือกวิธีประเมิน";
+  $("bmStepS").textContent=done&&done<6?`ทำต่อจากข้อ ${done+1}/6 · อ่านคำอธิบายแต่ละระดับแล้วแตะเลือก`:"อ่านคำอธิบายแต่ละระดับแล้วแตะเลือก เหมาะเมื่อประเมินผู้ป่วยตรงหน้า";
+  $("bmModal").hidden=false;document.body.classList.add("noscroll")}
+function bmClose(){$("bmModal").hidden=true;if($("bwModal").hidden&&$("riskModal").hidden&&$("stepModal").hidden)document.body.classList.remove("noscroll")}
+function bmQuick(){bm.d=bm.fresh?{}:Object.assign({},st.braden);$("bmChoose").hidden=true;$("bmForm").hidden=false;$("bmFoot").hidden=false;$("bmKick").textContent="Braden Scale · กรอกคะแนน";
+  $("bmRows").innerHTML=BRADEN.map(([k,t,opts])=>{const [th]=t.split(" (");return `<div class="bq2" data-k="${k}"><div class="bq2-h"><b>${esc(th)}</b><small id="bqd_${k}"></small></div>
+    <div class="bq2-n" role="radiogroup" aria-label="${esc(th)}">${opts.map((o,j)=>`<button type="button" role="radio" data-v="${j+1}" title="${esc(o)}">${j+1}</button>`).join("")}</div></div>`}).join("");
+  $("bmRows").querySelectorAll(".bq2-n button").forEach(b=>b.onclick=()=>{const k=b.closest(".bq2").dataset.k;bm.d[k]=+b.dataset.v;bmPaint()});
+  bmPaint();$("bmModal").querySelector(".rm-body").scrollTop=0}
+function bmPaint(){let tot=0,n=0;BRADEN.forEach(([k])=>{const v=bm.d[k],row=$("bmRows").querySelector(`.bq2[data-k="${k}"]`);if(!row)return;
+    row.classList.toggle("done",!!v);row.querySelectorAll("button").forEach(b=>{const on=+b.dataset.v===v;b.setAttribute("aria-checked",on);b.className=on?"on v"+v:""});
+    $("bqd_"+k).textContent=v?SHORT[k][v-1]:"แตะตัวเลข";if(v){tot+=v;n++}});
+  const L=n===6?levelOf(tot):null,s=$("bmSum");
+  s.innerHTML=n===6?`รวม <b style="color:var(${L.c})">${tot}</b> · <span style="color:var(${L.c})">${esc(L.name)}</span>`:`กรอกแล้ว ${n}/6${n?` · ${tot} คะแนน`:""}`;
+  $("bmOk").disabled=n<6}
+$("bmX").onclick=bmClose;$("bmModal").addEventListener("click",e=>{if(e.target.id==="bmModal")bmClose()});
+$("bmBack").onclick=()=>{$("bmChoose").hidden=false;$("bmForm").hidden=true;$("bmFoot").hidden=true;$("bmKick").textContent="Braden Scale · เลือกวิธีประเมิน"};
+$("bmQuick").onclick=bmQuick;
+{const _start=$("bwStart").onclick;$("bmStep").onclick=()=>{bmClose();_start()};$("bwStart").onclick=bmOpen}
+$("bmOk").onclick=()=>{if(BRADEN.some(([k])=>!bm.d[k]))return;st.braden=Object.assign({},bm.d);renderBraden();update();bmClose();const lk=BRADEN[BRADEN.length-1][0];bradenAdvice(lk,st.braden[lk],true)};
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
