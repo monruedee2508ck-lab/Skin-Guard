@@ -6,12 +6,15 @@
  */
 const KEY = 'CHANGE-ME-TO-A-LONG-SECRET';
 const PHOTO_FOLDER = 'SkinGuard-Photos';
+const KEEP_DAYS = 7;            // ลบภาพอัตโนมัติเมื่อครบ 7 วันนับจากวันที่ถ่าย
+const VIEW_TAB = 'ภาพรายเวร';    // แท็บสำหรับเปิดดูภาพ วันที่ เวลา และเวร
+const TZ = 'Asia/Bangkok';
 
 const SHEETS = {
   patients: ['hn', 'updated', 'ot', 'deleted', 'json'],
   history:  ['id', 'hn', 'date', 'updated', 'ot', 'deleted', 'json'],
   turns:    ['hn', 'updated', 'ot', 't'],
-  photos:   ['id', 'store', 'hn', 'date', 'site', 'updated', 'ot', 'deleted', 'fileId', 'meta'],
+  photos:   ['id', 'store', 'hn', 'date', 'site', 'updated', 'ot', 'deleted', 'fileId', 'meta', 'time', 'shift', 'kind', 'expires'],
   log:      ['time', 'ot', 'action', 'key'],
   admins:   ['email', 'name', 'salt', 'hash', 'status', 'created', 'approvedBy', 'token', 'tokenExp']
 };
@@ -49,6 +52,9 @@ function setup() {
   const first = ss.getSheetByName('Sheet1') || ss.getSheetByName('ชีต1');
   if (first && first.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(first);
   const f = folder();
+  viewSheet();
+  ensureCleanupTrigger();
+  Logger.log('ตั้งเวลาลบภาพอัตโนมัติทุกวัน 01:00 น. (ภาพครบ ' + KEEP_DAYS + ' วัน หรือผู้ป่วยจำหน่ายแล้ว)');
   Logger.log('พร้อมใช้งาน: สร้างแท็บ ' + Object.keys(SHEETS).join(', ') + ' และโฟลเดอร์ภาพ ' + f.getName() + ' แล้ว');
   Logger.log('สเปรดชีต: ' + ss.getName() + ' ' + ss.getUrl());
   Logger.log('ขั้นต่อไป: Deploy > New deployment > Web app > Execute as: Me > Who has access: Anyone');
@@ -65,7 +71,7 @@ function doPost(e) {
   if (!lock.tryLock(25000)) return out({ ok: false, error: 'busy' });
   try {
     if (req.action === 'ping') return out({ ok: true, time: Date.now() });
-    if (req.action === 'push') return out(push(req));
+    if (req.action === 'push') { const r = push(req); try { maybeCleanup(); } catch (e) {} return out(r); }
     if (req.action === 'pull') return out(pull(req));
     if (req.action === 'photo') return out(getPhoto(req.id));
     if (req.action === 'adminRegister') return out(adminRegister(req));
@@ -86,6 +92,7 @@ function sheet(name) {
   const ss = book();
   let sh = ss.getSheetByName(name);
   if (!sh) { sh = ss.insertSheet(name); sh.appendRow(SHEETS[name]); sh.setFrozenRows(1); }
+  else if (sh.getLastColumn() < SHEETS[name].length) sh.getRange(1, 1, 1, SHEETS[name].length).setValues([SHEETS[name]]).setFontWeight('bold').setFontColor('#ffffff').setBackground('#132b4f');
   return sh;
 }
 
@@ -126,13 +133,16 @@ function push(req) {
         const blob = Utilities.newBlob(Utilities.base64Decode(m[2]), m[1], it.key + '.jpg');
         fileId = folder().createFile(blob).getId();
       }
-      const meta = Object.assign({}, rec); delete meta.img;
-      upsert(F, fi, it.key, [it.key, it.store || '', rec.hn || '', rec.date || '', rec.site || '', now, ot, '', fileId, JSON.stringify(meta)]);
+      const view = rec._view || {}, thumb = view.thumb || '';
+      const meta = Object.assign({}, rec); delete meta.img; delete meta._view;
+      const time = String(rec.time || ''), sh = shiftOf(time), exp = addDays(dstr(rec.date), KEEP_DAYS);
+      upsert(F, fi, it.key, ["'" + it.key, it.store || '', "'" + (rec.hn || ''), "'" + dstr(rec.date), rec.site || '', now, ot, '', fileId, JSON.stringify(meta), "'" + time, sh, view.kind || rec.kind || it.store || '', "'" + exp]);
+      try { viewAdd(it.key, rec, view, thumb, sh, exp, ot, fileId); } catch (e) {}
     }
     else if (it.type === 'delphoto') {
       const r = fi[String(it.key)];
-      if (r) { const fid = F.getRange(r, 9).getValue(); if (fid) { try { DriveApp.getFileById(fid).setTrashed(true); } catch (e) {} } }
-      upsert(F, fi, it.key, [it.key, it.store || '', '', '', '', now, ot, 'y', '', '']);
+      if (r) photoGone(F, r, now, ot);
+      else upsert(F, fi, it.key, ["'" + it.key, it.store || '', '', '', '', now, ot, 'y', '', '', '', '', '', '']);
     }
     else return;
     L.appendRow([new Date(now), ot, it.type, String(it.key)]);
@@ -223,4 +233,93 @@ function adminSet(req) {
   else return { ok: false, error: 'bad_op' };
   sheet('log').appendRow([new Date(), a.u.email, 'admin:' + req.op, email]);
   return { ok: true };
+}
+
+/* ---------- ภาพรายเวร + ลบภาพอัตโนมัติ ---------- */
+const VIEW_HEAD = ['วันที่', 'เวลา', 'เวร', 'HN', 'ประเภทภาพ', 'ตำแหน่ง', 'สภาพผิว / ขนาดแผล', 'บันทึกเพิ่มเติม', 'ผู้บันทึก (OT)', 'ภาพ', 'ลิงก์ภาพ (Google Drive)', 'ลบอัตโนมัติวันที่', 'id'];
+function dstr(d) {
+  if (d instanceof Date) return Utilities.formatDate(d, TZ, 'yyyy-MM-dd');
+  const m = String(d || '').match(/\d{4}-\d{2}-\d{2}/); return m ? m[0] : '';
+}
+function addDays(d, n) {
+  if (!d) return '';
+  const x = new Date(d + 'T00:00:00Z'); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10);
+}
+function today() { return Utilities.formatDate(new Date(), TZ, 'yyyy-MM-dd'); }
+function shiftOf(t) {
+  const h = parseInt(String(t || '').slice(0, 2), 10);
+  if (isNaN(h)) return '';
+  return h >= 8 && h < 16 ? 'เวรเช้า' : h >= 16 ? 'เวรบ่าย' : 'เวรดึก';
+}
+function viewSheet() {
+  const ss = book();
+  let sh = ss.getSheetByName(VIEW_TAB);
+  if (!sh) {
+    sh = ss.insertSheet(VIEW_TAB, 0);
+    sh.getRange(1, 1, 1, VIEW_HEAD.length).setValues([VIEW_HEAD]).setFontWeight('bold').setFontColor('#ffffff').setBackground('#0f766e');
+    sh.setFrozenRows(1);
+    sh.setColumnWidth(10, 130); sh.setColumnWidth(7, 220); sh.setColumnWidth(11, 160); sh.hideColumns(13);
+  }
+  return sh;
+}
+function viewFind(sh, id) {
+  if (sh.getLastRow() < 2) return 0;
+  const c = sh.getRange(2, 13, sh.getLastRow() - 1, 1).createTextFinder(String(id)).matchEntireCell(true).findNext();
+  return c ? c.getRow() : 0;
+}
+function viewAdd(id, rec, view, thumb, sh, exp, ot, fileId) {
+  const V = viewSheet();
+  let r = viewFind(V, id);
+  const row = ["'" + dstr(rec.date), "'" + String(rec.time || ''), sh, "'" + (rec.hn || ''), view.kind || '', view.site || rec.site || '', view.what || '', view.note || '', "'" + ot, '',
+    fileId ? 'https://drive.google.com/file/d/' + fileId + '/view' : '', "'" + exp, "'" + id];
+  if (!r) { V.appendRow(row); r = V.getLastRow(); } else V.getRange(r, 1, 1, row.length).setValues([row]);
+  V.setRowHeight(r, 96);
+  if (thumb && /^data:image\//.test(thumb)) {
+    try { V.getRange(r, 10).setValue(SpreadsheetApp.newCellImage().setSourceUrl(thumb).setAltTextTitle(view.site || 'ภาพ').build()); }
+    catch (e) { V.getRange(r, 10).setValue('ดูที่ลิงก์'); }
+  }
+  // เรียงใหม่: ล่าสุดอยู่บน
+  if (V.getLastRow() > 2) V.getRange(2, 1, V.getLastRow() - 1, VIEW_HEAD.length).sort([{ column: 1, ascending: false }, { column: 2, ascending: false }]);
+}
+function viewRemove(id) {
+  const V = book().getSheetByName(VIEW_TAB); if (!V) return;
+  const r = viewFind(V, id); if (r) V.deleteRow(r);
+}
+function photoGone(F, r, now, ot) {
+  const row = F.getRange(r, 1, 1, 10).getValues()[0], fid = row[8];
+  if (fid) { try { DriveApp.getFileById(fid).setTrashed(true); } catch (e) {} }
+  F.getRange(r, 6, 1, 5).setValues([[now, ot, 'y', '', '']]);
+  try { viewRemove(row[0]); } catch (e) {}
+}
+/** ลบภาพที่ครบ KEEP_DAYS วัน และภาพของผู้ป่วยที่จำหน่ายแล้ว (ทำงานอัตโนมัติทุกวัน และทุกครั้งที่มีการส่งข้อมูล ไม่เกินชั่วโมงละครั้ง) */
+function cleanupPhotos() {
+  const F = sheet('photos'), last = F.getLastRow();
+  if (last < 2) return 0;
+  const gone = {}, P = sheet('patients');
+  if (P.getLastRow() > 1) P.getRange(2, 1, P.getLastRow() - 1, 4).getValues().forEach(r => { if (r[3] === 'y') gone[String(r[0])] = 1; });
+  const rows = F.getRange(2, 1, last - 1, 10).getValues(), t = today(), now = Date.now();
+  let n = 0;
+  rows.forEach((r, i) => {
+    if (r[7] === 'y') return;
+    const d = dstr(r[3]), exp = addDays(d, KEEP_DAYS);
+    if ((exp && exp <= t) || gone[String(r[2])]) { photoGone(F, i + 2, now, 'auto'); n++; }
+  });
+  // แถวในแท็บภาพรายเวรที่ไม่มีภาพแล้ว
+  const V = book().getSheetByName(VIEW_TAB);
+  if (V && V.getLastRow() > 1) {
+    const vr = V.getRange(2, 1, V.getLastRow() - 1, VIEW_HEAD.length).getValues();
+    for (let i = vr.length - 1; i >= 0; i--) { const exp = dstr(vr[i][11]); if ((exp && exp <= t) || gone[String(vr[i][3])]) V.deleteRow(i + 2); }
+  }
+  if (n) sheet('log').appendRow([new Date(now), 'auto', 'cleanupPhotos', n + ' ภาพ']);
+  return n;
+}
+function maybeCleanup() {
+  const p = PropertiesService.getScriptProperties(), last = Number(p.getProperty('LAST_CLEAN') || 0);
+  if (Date.now() - last < 3600e3) return;
+  p.setProperty('LAST_CLEAN', String(Date.now()));
+  cleanupPhotos();
+}
+function ensureCleanupTrigger() {
+  const has = ScriptApp.getProjectTriggers().some(t => t.getHandlerFunction() === 'cleanupPhotos');
+  if (!has) ScriptApp.newTrigger('cleanupPhotos').timeBased().everyDays(1).atHour(1).inTimezone(TZ).create();
 }

@@ -1721,6 +1721,15 @@ body[data-page="wound"] #result{display:none!important}
 #bmModal .rm-foot .btn{flex:0 0 auto;min-width:96px}
 #bmFoot .bw-sum b{font-size:1.15rem}
 @media (max-width:480px){.bq2{flex-direction:column;align-items:stretch;gap:8px}.bq2-n button{flex:1;width:auto}}
+/* daily skin date/time */
+.skdt{display:flex;flex-direction:column;gap:8px;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--sky,#3fb8ff) 9%,var(--surface));border:1px solid color-mix(in srgb,var(--sky,#3fb8ff) 30%,var(--line))}
+.skdt[hidden]{display:none!important}
+.skdt-h b{display:block;font-size:.9rem}.skdt-h small{display:block;font-size:.76rem;color:var(--muted)}
+.skdt-f{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
+.skdt-f label{display:flex;flex-direction:column;gap:3px;font-size:.8rem;color:var(--muted);margin:0}
+.skdt-f input{min-width:0}
+@media (max-width:480px){.skdt-f{grid-template-columns:1fr 1fr}.skdt-f .btn{grid-column:1/-1}}
+.skday h4 .skexp{font-size:.72rem;font-weight:500;color:var(--muted);margin-left:8px}
 </style>
 </head>
 <body>
@@ -1900,6 +1909,14 @@ body[data-page="wound"] #result{display:none!important}
       </div>
       <span class="skinprog" id="skinProg"></span>
     </div>
+    <div class="skdt" id="skDT" hidden>
+      <div class="skdt-h"><b>วันที่และเวลาที่ถ่ายภาพประจำวัน</b><small id="skDTs">บันทึกพร้อมภาพทุกภาพ แก้ไขได้ถ้าถ่ายไว้ก่อนแล้ว</small></div>
+      <div class="skdt-f">
+        <label for="skDate">วันที่<input id="skDate" type="date"></label>
+        <label for="skTime">เวลา<input id="skTime" type="time"></label>
+        <button type="button" class="btn sm" id="skNow">ใช้เวลาปัจจุบัน</button>
+      </div>
+    </div>
     <div>
       <div class="lbl skl">ตำแหน่งที่ถ่าย <span class="rec-key">จุดเหลือง = ตำแหน่งที่ควรถ่ายทุกวัน</span></div>
       <div class="sitechips" id="siteChips"></div>
@@ -1926,7 +1943,7 @@ body[data-page="wound"] #result{display:none!important}
     </div>
     <p class="skmsg" id="skinMsg" aria-live="polite"></p>
     <div id="skinGallery" class="skgal"></div>
-    <p class="note" id="skinStoreNote" style="margin:0">ภาพเก็บไว้ในเครื่องนี้เท่านั้น แยกตาม HN ไม่ส่งไปที่อื่น ถ้าล้างข้อมูลเบราว์เซอร์ภาพจะหายไป</p>
+    <p class="note" id="skinStoreNote" style="margin:0">ภาพเก็บในเครื่องนี้แยกตาม HN และส่งเข้า Google Sheet/Drive ของหน่วยงานเมื่อเชื่อมระบบกลาง (บันทึกวันที่ เวลา และเวร) ภาพจะถูกลบอัตโนมัติเมื่อจำหน่ายผู้ป่วย หรือเมื่อครบ 7 วัน</p>
     </div>
    </details>
   </section>
@@ -3238,7 +3255,7 @@ $("save").onclick=()=>{const c=current();
   if(!$("recDate").value||!$("recTime").value)recNow();
   hist=hist.filter(h=>!h.ex);{const sig={braden:bt,nurse:$("nurseName").value.trim(),ot:(otGet()||{}).ot||"",role:$("nurseRole").value,recDate:$("recDate").value,recTime:$("recTime").value,noteText:fullNote(),docMin:docMinutes()},base=Date.now();ptOpenAt=Date.now();
     const ws=(wounds||[]).filter(w=>w.stage);
-    if(ws.length)ws.forEach((w,i)=>{const x=woundCalc(w);hist.push({...c,...x,...sig,woundNo:wounds.indexOf(w)+1,woundCount:wounds.length,id:base+i});if(w.photo){wpPut({id:String(base+i),hn:c.hn,site:w.site,side:w.side||"",date:c.date,img:w.photo,push:x.push,a:x.a}).then(()=>{try{syncEnq("photo",String(base+i),{store:"wound"})}catch(e){}})}});
+    if(ws.length)ws.forEach((w,i)=>{const x=woundCalc(w);hist.push({...c,...x,...sig,woundNo:wounds.indexOf(w)+1,woundCount:wounds.length,id:base+i});if(w.photo){wpPut({id:String(base+i),hn:c.hn,site:w.site,side:w.side||"",date:sig.recDate||c.date,time:sig.recTime||"",kind:"wound",stage:w.stage||"",img:w.photo,push:x.push,a:x.a}).then(()=>{try{syncEnq("photo",String(base+i),{store:"wound"})}catch(e){}})}});
     else hist.push({...c,...sig,id:base})}
   toast(saveHist(hist)?"บันทึกแล้ว":"บันทึกไม่ได้ เบราว์เซอร์นี้ปิดการเก็บข้อมูล");renderHist()};
 
@@ -3674,11 +3691,11 @@ function skRender(){
   days.forEach(day=>{
     const rows=list.filter(r=>r.date===day),admit=rows.some(r=>r.kind==="admit");
     const sec=document.createElement("div");sec.className="skday";
-    const h=document.createElement("h4");h.textContent=thDate(day)+(day===d?" (วันนี้)":"");
+    const h=document.createElement("h4");h.textContent=thDate(day)+(day===d?" (วันนี้)":"");{const xe=document.createElement("small");xe.className="skexp";xe.textContent="ลบอัตโนมัติ "+thDate(phExpire(day));h.append(xe)}
     const kp=document.createElement("span");kp.className="kpill"+(admit?"":" daily");kp.textContent=admit?"แรกรับ":"ประจำวัน";h.append(kp);
     const grid=document.createElement("div");grid.className="skgrid";
     rows.forEach(r=>{const S=skSt(r.status);const f=document.createElement("figure");
-      f.innerHTML=`<button type="button" class="th" aria-label="ขยายภาพ"><img alt="" src="${r.img}"></button><figcaption><span class="sdot" style="--c:var(${S.c})"></span><span class="r"><span></span><span>${r.time} น.</span></span><span class="r"><span></span><button type="button" class="del">ลบ</button></span></figcaption>`;
+      f.innerHTML=`<button type="button" class="th" aria-label="ขยายภาพ"><img alt="" src="${r.img}"></button><figcaption><span class="sdot" style="--c:var(${S.c})"></span><span class="r"><span></span><span>${r.time} น. · ${phShiftTH(r.time)}</span></span><span class="r"><span></span><button type="button" class="del">ลบ</button></span></figcaption>`;
       f.querySelector(".sdot").textContent=S.t;
       f.querySelector(".r span").textContent=skSite(r.site)[1];
       f.querySelectorAll(".r")[1].firstChild.textContent=r.note||"";
@@ -3702,7 +3719,7 @@ async function skLoad(f){
 }
 function skDraftRender(){
   if(!skinDraft)return;
-  $("skinDraftTitle").textContent=`${skSite(skinSite)[1]} · ${skKindNow()==="admit"?"ภาพแรกรับ":"ภาพประจำวัน"}`;
+  $("skinDraftTitle").textContent=`${skSite(skinSite)[1]} · ${skKindNow()==="admit"?"ภาพแรกรับ":"ภาพประจำวัน · "+(($("skDate").value?thDate($("skDate").value):"")+($("skTime").value?" "+$("skTime").value+" น.":""))}`;
   const box=$("skinStatus");box.innerHTML="";
   SK_ST.forEach(S=>{const b=document.createElement("button");b.type="button";b.style.setProperty("--c",`var(${S.c})`);b.textContent=S.t;
     b.setAttribute("aria-pressed",skinSel===S.k);b.onclick=()=>{skinSel=S.k;skDraftRender()};box.append(b)});
@@ -3714,9 +3731,10 @@ function skDraftRender(){
 async function skSave(){
   if(!skinDraft)return;
   if(!skinSel){skMsg("เลือกสภาพผิวหนังก่อนบันทึก",true);return}
-  const now=new Date(),rec={id:now.getTime()+"-"+Math.random().toString(36).slice(2,7),hn:skHN(),date:skDay(),
-    time:String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0"),
-    kind:skKindNow(),site:skinSite,status:skinSel,note:$("skinNote").value.trim(),img:skinDraft.url,
+  const now=new Date(),kd=skKindNow(),wh=kd==="daily"?skWhen():null;if(kd==="daily"&&!wh)return;
+  const rec={id:now.getTime()+"-"+Math.random().toString(36).slice(2,7),hn:skHN(),date:wh?wh.date:skDay(),
+    time:wh?wh.time:String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0"),
+    kind:kd,site:skinSite,status:skinSel,note:$("skinNote").value.trim(),img:skinDraft.url,
     ai:skinDraftAI?{status:skinDraftAI.status,finding:skinDraftAI.finding}:null};
   const ok=await skPut(rec);skinCache.push(rec);try{syncEnq("photo",rec.id,{store:"skin"})}catch(e){}
   const S=skSt(rec.status),file=skinDraft.file,site=skSite(rec.site);
@@ -6032,6 +6050,42 @@ $("bmBack").onclick=()=>{$("bmChoose").hidden=false;$("bmForm").hidden=true;$("b
 $("bmQuick").onclick=bmQuick;
 {const _start=$("bwStart").onclick;$("bmStep").onclick=()=>{bmClose();_start()};$("bwStart").onclick=bmOpen}
 $("bmOk").onclick=()=>{if(BRADEN.some(([k])=>!bm.d[k]))return;st.braden=Object.assign({},bm.d);renderBraden();update();bmClose();const lk=BRADEN[BRADEN.length-1][0];bradenAdvice(lk,st.braden[lk],true)};
+/* ===== daily skin photo: record date & time ===== */
+var skDTedit=false;
+function skNowFill(){const n=new Date();$("skDate").value=skDay();$("skTime").value=String(n.getHours()).padStart(2,"0")+":"+String(n.getMinutes()).padStart(2,"0");skDTedit=false;$("skDate").max=new Date(Date.now()+7*3600e3).toISOString().slice(0,10)}
+function skWhen(){const d=$("skDate").value,t=$("skTime").value;
+  if(!d||!t){skMsg("ใส่วันที่และเวลาที่ถ่ายภาพประจำวันก่อนบันทึก",true);$(d?"skTime":"skDate").focus();return null}
+  if(new Date(d+"T"+t+":00+07:00").getTime()>Date.now()+5*60e3){skMsg("วันที่/เวลาที่ถ่ายต้องไม่เกินเวลาปัจจุบัน",true);$("skTime").focus();return null}
+  return {date:d,time:t}}
+function skDTpaint(){const on=skKindNow()==="daily";$("skDT").hidden=!on;if(on&&(!$("skDate").value||!skDTedit))skNowFill()}
+{const _r=skRender;skRender=function(){const x=_r.apply(this,arguments);try{skDTpaint()}catch(e){}return x}}
+{const _l=skLoad;skLoad=async function(){if(!skDTedit)try{skNowFill()}catch(e){}return _l.apply(this,arguments)}}
+["skDate","skTime"].forEach(id=>$(id).addEventListener("input",()=>{skDTedit=true;if(skinDraft)skDraftRender()}));
+$("skNow").onclick=()=>{skNowFill();if(skinDraft)skDraftRender()};
+{const _sv=skSave;skSave=async function(){const r=await _sv.apply(this,arguments);if($("skinDraft").hidden){skDTedit=false}return r};$("skinSave").onclick=skSave}
+/* ===== Photo retention: shift label, Google Sheet view, auto-delete after 7 days ===== */
+var PH_KEEP_DAYS=7;
+function phShift(t){const h=parseInt(String(t||"").slice(0,2),10);if(isNaN(h))return "";return h>=8&&h<16?"m":h>=16?"a":"n"}
+function phShiftTH(t){const k=phShift(t);return k?SHIFT_TH[k]:""}
+function phExpire(d){try{const x=new Date(String(d).slice(0,10)+"T00:00:00Z");x.setUTCDate(x.getUTCDate()+PH_KEEP_DAYS);return x.toISOString().slice(0,10)}catch(e){return ""}}
+function phToday(){return new Date(Date.now()+7*3600e3).toISOString().slice(0,10)}
+function phThumb(url,max){return new Promise(res=>{try{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.7))};im.onerror=()=>res("");im.src=url}catch(e){res("")}})}
+function phView(store,rec){const sk=store==="skin";let site="",what="";
+  if(sk){site=skSite(rec.site)[1];what=skSt(rec.status).t}
+  else{site=(rec.site||"")+(rec.side?" "+rec.side:"");const S=(typeof STAGES!=="undefined"&&STAGES[rec.stage])||null;what=[S?stageShort(rec.stage):"",rec.a>0?(+rec.a).toFixed(1)+" cm²":"",rec.push!=null?"PUSH "+rec.push:""].filter(Boolean).join(" · ")}
+  return {kind:sk?(rec.kind==="admit"?"ภาพผิวหนังแรกรับ":"ภาพผิวหนังประจำวัน"):"ภาพแผล",site,what,shift:phShiftTH(rec.time),expires:phExpire(rec.date),note:rec.note||""}}
+/* push: add readable fields + small thumbnail for the Google Sheet */
+{const _call=syncCall;syncCall=async function(req){try{if(req&&req.action==="push"&&req.items)for(const it of req.items){if(it.type==="photo"&&it.data&&it.data.img&&!it.data._view){
+  const d=Object.assign({},it.data);d._view=phView(it.store,d);d._view.thumb=await phThumb(d.img,220);it.data=d}}}catch(e){}return _call.apply(this,arguments)}}
+/* local auto-delete: photos older than 7 days */
+function phAllStore(db){return new Promise(res=>{try{const q=db.transaction("p").objectStore("p").getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])}catch(e){res([])}})}
+async function photosExpire(){const today=phToday();let n=0;
+  try{if(!skinTried){skinTried=true;skinDB=await skOpen()}const all=(skinDB?await phAllStore(skinDB):[]).concat(skinMem);
+    for(const r of all){if(r&&r.date&&phExpire(r.date)<=today){await skDel(r.id);try{syncEnq("delphoto",r.id,{store:"skin"})}catch(e){}n++}}}catch(e){}
+  try{const db=await wpReady();if(db)for(const r of await phAllStore(db)){if(r&&r.date&&phExpire(r.date)<=today){await wpDel(r.id);try{syncEnq("delphoto",r.id,{store:"wound"})}catch(e){}n++}}}catch(e){}
+  if(n){try{skinCache=await skAll(skHN());skRender()}catch(e){}}return n}
+setTimeout(()=>{photosExpire()},1500);setInterval(()=>{photosExpire()},3600e3);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")photosExpire()});
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
