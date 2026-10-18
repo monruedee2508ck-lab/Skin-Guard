@@ -1784,6 +1784,19 @@ body[data-page="wound"] #result{display:none!important}
 .ph-sh{display:flex;gap:6px;margin-top:5px}
 .ph-sh span{font-size:.7rem;font-weight:600;border-radius:999px;padding:1px 9px;background:var(--bg);color:var(--muted);border:1px solid var(--line)}
 .ph-sh span.ok{background:#e2f6ee;color:#13795b;border-color:transparent}.ph-sh span.now{border-color:var(--sky,#3fb8ff);color:var(--ink)}
+/* Braden total entry */
+.bt-wrap{display:flex;flex-direction:column;gap:10px}
+.bt-lv{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.bt-lv button{font:inherit;cursor:pointer;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:10px 8px;display:flex;flex-direction:column;gap:2px;align-items:center;text-align:center;box-shadow:inset 0 4px 0 var(--c)}
+.bt-lv b{font-size:.86rem;color:var(--c)}.bt-lv small{font-size:.74rem;color:var(--muted)}
+.bt-lv button[aria-pressed=true]{background:var(--c);border-color:var(--c)}.bt-lv button[aria-pressed=true] b,.bt-lv button[aria-pressed=true] small{color:#fff}
+.bt-num{display:flex;flex-wrap:wrap;gap:8px}
+.bt-num button{width:56px;height:56px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:700 1.3rem var(--font-num);cursor:pointer}
+.bt-num button[aria-pressed=true]{background:var(--c);border-color:var(--c);color:#fff}
+.bt-in{display:flex;align-items:center;gap:10px;margin:0;font-size:.86rem;color:var(--muted)}
+.bt-in input{width:110px;font-size:1.2rem;font-weight:700;text-align:center}
+.bt-note{margin:0;font-size:.76rem;color:var(--muted);line-height:1.5}
+@media (max-width:600px){.bt-lv{grid-template-columns:1fr 1fr}.bt-lv button:last-child{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -2526,11 +2539,13 @@ body[data-page="wound"] #result{display:none!important}
       <div class="rm-body">
         <div id="bmChoose" class="bm2-choose">
           <h3 class="bw-t">ต้องการประเมินแบบไหน</h3>
-          <p class="bw-en">เลือกได้ทั้ง 2 วิธี ผลคะแนนและข้อแนะนำเหมือนกัน</p>
+          <p class="bw-en">เลือกวิธีที่สะดวก ผลการประเมินและข้อแนะนำเหมือนกัน</p>
           <button type="button" class="bm2-opt" id="bmStep"><span class="bm2-ic" aria-hidden="true">&#9776;</span><span><b>เลือกตามข้อ</b><small id="bmStepS"></small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
+          <button type="button" class="bm2-opt" id="bmTotal"><span class="bm2-ic num" aria-hidden="true">Σ</span><span><b>กรอกคะแนนรวม / ระดับความเสี่ยง</b><small>ไม่ต้องเลือกตามข้อ แตะระดับความเสี่ยงแล้วเลือกคะแนนรวม หรือพิมพ์คะแนนรวม 6–23 ได้เลย</small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
           <button type="button" class="bm2-opt" id="bmQuick"><span class="bm2-ic num" aria-hidden="true">123</span><span><b>กรอกคะแนนเป็นตัวเลข</b><small>รู้คะแนนแต่ละด้านแล้ว แตะตัวเลข 1–4 ทั้ง 6 ด้านในหน้าเดียว ระบบรวมคะแนนให้ทันที</small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
         </div>
         <div id="bmForm" hidden><div class="bq2-list" id="bmRows"></div></div>
+        <div id="bmTot" hidden class="bt-wrap"></div>
       </div>
       <div class="rm-foot" id="bmFoot" hidden>
         <button class="btn" id="bmBack" type="button">ย้อนกลับ</button>
@@ -2852,7 +2867,7 @@ function current(){
 }
 /* Braden + care plan */
 st.braden=st.braden||{};
-function bradenTotal(){const v=BRADEN.map(b=>st.braden[b[0]]);return v.every(x=>x>0)?v.reduce((a,b)=>a+b,0):null}
+function bradenTotal(){const v=BRADEN.map(b=>st.braden[b[0]]);if(v.every(x=>x>0))return v.reduce((a,b)=>a+b,0);const t=+st.braden._t;return t>=6&&t<=23?t:null}
 function bradenRisk(t){return t<=9?"Very High Risk":t<=12?"High Risk":t<=14?"Moderate Risk":"Risk"}
 var VP_LIST=["Norepinephrine","Epinephrine","Dopamine","Vasopressin","Phenylephrine"],crWasCrit=null;
 function crData(){return (typeof st!=="undefined"&&st&&st.cr)||{}}
@@ -5241,7 +5256,7 @@ $("poaFrom").addEventListener("input",()=>{const w=curW();if(w){w.poaFrom=$("poa
 /* ================= Per-patient storage & switching ================= */
 var curHN=null,ptReady=false;
 const PT="pi-pt:";
-function riskOf(b){const v=BRADEN.map(x=>b&&b[x[0]]);return v.every(x=>x>0)?v.reduce((a,c)=>a+c,0):null}
+function riskOf(b){const v=BRADEN.map(x=>b&&b[x[0]]);if(v.every(x=>x>0))return v.reduce((a,c)=>a+c,0);const t=+(b&&b._t);return t>=6&&t<=23?t:null}
 function savePatient(){
   if(!ptReady||!curHN)return;
   const rec={hn:curHN,name:$("ptName").value.trim(),bed:$("bed").value.trim(),braden:st.braden||{},sepsis:$("sepsis").checked,cr:st.cr||{},wActive:wActive||0,
@@ -6040,7 +6055,8 @@ pvPaint=function(){if(!$("page-overview"))return;const hn=realHN();
     <div class="pv2-hr">${pvGauge(t)}<div class="pv2-score"><b>${t??"–"}</b><small>/23 คะแนน Braden</small></div></div></section>`;
   // Braden subscales
   const BSN={sens:"การรับความรู้สึก",mois:"ความเปียกชื้น",act:"การทำกิจกรรม",mob:"การเคลื่อนไหว",nut:"โภชนาการ",fric:"แรงเสียดทาน"};
-  const subs=BRADEN.map(([k])=>{const v=st.braden[k]||0,max=k==="fric"?3:4,col=!v?"--line":v===1?"--s4":v===2?"--s1":v===3&&max===4?"--s2":"--ok";
+  const totOnly=st.braden._t&&!BRADEN.some(([k])=>st.braden[k]>0);
+  const subs=totOnly?`<p class="pv2-note" style="font-size:.84rem;color:var(--ink)">ประเมินแบบกรอกคะแนนรวม ${st.braden._t} คะแนน · ไม่มีคะแนนรายด้าน</p>`:BRADEN.map(([k])=>{const v=st.braden[k]||0,max=k==="fric"?3:4,col=!v?"--line":v===1?"--s4":v===2?"--s1":v===3&&max===4?"--s2":"--ok";
     return `<div class="pv2-sub${v&&v<=2?" low":""}"><span class="n">${BSN[k]}</span><span class="bar"><i style="width:${v/max*100}%;background:var(${col})"></i></span><span class="v">${v||"–"}<small>/${max}</small></span></div>`}).join("");
   const H=hist.filter(h=>!h.ex&&h.hn===hn&&h.braden!=null).sort((a,b)=>(+b.id||0)-(+a.id||0))[0];
   const brad=`<section class="pv2-card"><header><span class="pv2-ic" style="--c:var(--indigo)">&#9636;</span><div><b>คะแนน Braden รายด้าน</b><small>${H?"บันทึกล่าสุด "+esc(thDate(H.recDate||H.date))+(H.recTime?" "+esc(H.recTime)+" น.":""):"ยังไม่มีการบันทึกลงประวัติ"}</small></div></header>
@@ -6284,6 +6300,29 @@ function phRemind(){if(!phReady)return;const miss=phMissing();if(!miss.length)re
 {const _sv=skSave;skSave=async function(){const r=await _sv.apply(this,arguments);phShiftRefresh();return r};$("skinSave").onclick=skSave}
 setTimeout(phShiftRefresh,1200);setInterval(phShiftRefresh,60000);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")phShiftRefresh()});
+/* ===== Braden: enter total score / risk level directly ===== */
+var BT_LV=[{n:"Very High Risk",r:[6,9],c:"--s4"},{n:"High Risk",r:[10,12],c:"--s1"},{n:"Moderate Risk",r:[13,14],c:"--s2"},{n:"Risk",r:[15,18],c:"--ok"},{n:"ไม่มีความเสี่ยง",r:[19,23],c:"--teal"}];
+var bt={v:null,lv:null};
+function btOpen(){const cur=bm.fresh?null:bradenTotal();bt.v=cur;bt.lv=cur!=null?BT_LV.findIndex(l=>cur>=l.r[0]&&cur<=l.r[1]):null;
+  $("bmChoose").hidden=true;$("bmForm").hidden=true;$("bmTot").hidden=false;$("bmFoot").hidden=false;$("bmKick").textContent="Braden Scale · กรอกคะแนนรวม";btPaint();$("bmModal").querySelector(".rm-body").scrollTop=0}
+function btPaint(){const L=bt.lv!=null?BT_LV[bt.lv]:null;
+  let h=`<div class="lbl">1. แตะระดับความเสี่ยง</div><div class="bt-lv">${BT_LV.map((l,i)=>`<button type="button" style="--c:var(${l.c})" aria-pressed="${bt.lv===i}" data-lv="${i}"><b>${l.n}</b><small>${l.r[0]===l.r[1]?l.r[0]:l.r[0]+"–"+l.r[1]} คะแนน</small></button>`).join("")}</div>`;
+  if(L){const nums=[];for(let v=L.r[0];v<=L.r[1];v++)nums.push(v);h+=`<div class="lbl">2. เลือกคะแนนรวม</div><div class="bt-num" style="--c:var(${L.c})">${nums.map(v=>`<button type="button" aria-pressed="${bt.v===v}" data-v="${v}">${v}</button>`).join("")}</div>`}
+  h+=`<label class="bt-in" for="btInput"><span>หรือพิมพ์คะแนนรวม</span><input id="btInput" type="number" inputmode="numeric" min="6" max="23" step="1" placeholder="6–23" value="${bt.v??""}"></label>
+    <p class="bt-note">ใช้เมื่อประเมินตามแบบฟอร์มกระดาษหรือรับคะแนนจากเวรก่อนแล้ว ระบบจะไม่มีคะแนนรายด้าน ถ้าต้องการข้อแนะนำเฉพาะด้านที่ต่ำ ให้เลือกตามข้อหรือกรอกตัวเลขรายด้าน</p>`;
+  $("bmTot").innerHTML=h;
+  $("bmTot").querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{bt.lv=+b.dataset.lv;const l=BT_LV[bt.lv];if(!(bt.v>=l.r[0]&&bt.v<=l.r[1]))bt.v=l.r[0]===l.r[1]?l.r[0]:null;btPaint()});
+  $("bmTot").querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{bt.v=+b.dataset.v;btPaint()});
+  const inp=$("btInput");inp.oninput=()=>{const v=parseInt(inp.value,10);if(v>=6&&v<=23){bt.v=v;bt.lv=BT_LV.findIndex(l=>v>=l.r[0]&&v<=l.r[1]);btSum();$("bmTot").querySelectorAll("[data-lv]").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.lv===bt.lv)))}else{bt.v=null;btSum()}};
+  inp.onchange=()=>btPaint();btSum()}
+function btSum(){const s=$("bmSum");if(bt.v!=null){const L=levelOf(bt.v);s.innerHTML=`รวม <b style="color:var(${L.c})">${bt.v}</b> · <span style="color:var(${L.c})">${esc(L.name)}</span>`}else s.textContent=bt.lv!=null?"เลือกคะแนนรวม":"เลือกระดับหรือพิมพ์คะแนน";$("bmOk").disabled=bt.v==null}
+$("bmTotal").onclick=()=>{bmUI="tot";btOpen()};
+var bmUI="";
+{const _q=$("bmQuick").onclick;$("bmQuick").onclick=()=>{bmUI="sub";$("bmTot").hidden=true;_q()}}
+{const _b=$("bmBack").onclick;$("bmBack").onclick=()=>{bmUI="";$("bmTot").hidden=true;_b()}}
+{const _o=bmOpen;bmOpen=function(){bmUI="";$("bmTot").hidden=true;const r=_o.apply(this,arguments);if(st.braden._t&&!BRADEN.some(([k])=>st.braden[k]>0))bm.fresh=true;return r};$("bwStart").onclick=bmOpen}
+{const _ok=$("bmOk").onclick;$("bmOk").onclick=()=>{if(bmUI!=="tot")return _ok();if(bt.v==null)return;st.braden={_t:bt.v};renderBraden();update();bmClose();bradenAdvice("_t",bt.v,true)}}
+{const _bp=bwBtnPaint;bwBtnPaint=function(){const r=_bp.apply(this,arguments);try{const b=$("bwStart");if(st.braden._t&&!BRADEN.some(([k])=>st.braden[k]>0)){b.textContent=`คะแนนรวม ${st.braden._t} (กรอกเอง) · ประเมิน Braden ใหม่`;b.classList.add("ghost");b.classList.remove("primary");const e=$("bwEdit");if(e)e.hidden=true}}catch(e){}return r}}
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
