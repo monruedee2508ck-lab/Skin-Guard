@@ -1881,6 +1881,7 @@ body[data-page="wound"] #result{display:none!important}
 #loginGate label[hidden]{display:none!important}
 #nurseName[readonly]{background:var(--bg);color:var(--ink);cursor:default}
 label[for=nurseRole][hidden]{display:none!important}
+label[for=qaPD][hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -2456,7 +2457,7 @@ label[for=nurseRole][hidden]{display:none!important}
 
   <div class="page" id="page-qa" hidden>
   <div class="qa-head"><h2>Nursing Quality &amp; Patient Safety Analytics</h2><p class="qa-lead">บันทึกการดูแลครั้งเดียว Skin Guard คำนวณตัวชี้วัด แดชบอร์ด และรายงานคุณภาพให้อัตโนมัติ · เฉพาะผู้ดูแลระบบ</p></div>
-  <div class="qa-bar"><label for="qaMonth">เดือน<input id="qaMonth" type="month"></label><label for="qaPD">วันนอนรวมของหอ (patient-days)<input id="qaPD" type="number" inputmode="numeric" min="0" placeholder="ใช้คิดอัตราต่อ 1,000 วันนอน"></label></div>
+  <div class="qa-bar"><label for="qaMonth">เดือน<input id="qaMonth" type="month"></label><label for="qaPD" hidden>วันนอนรวมของหอ (patient-days)<input id="qaPD" type="number" inputmode="numeric" min="0" placeholder="ใช้คิดอัตราต่อ 1,000 วันนอน"></label></div>
   <div class="cs-tabs qa-tabs" id="qaTabs" role="tablist"><button type="button" role="tab">Clinical Outcomes</button><button type="button" role="tab">Nursing Performance</button><button type="button" role="tab">Patient Safety Alerts</button><button type="button" role="tab">QI &amp; Research</button></div>
   <section class="card qa-sec" id="qaS0"></section>
   <section class="card qa-sec" id="qaS1" hidden></section>
@@ -5491,7 +5492,7 @@ $("hmAlert").onclick=()=>{const A=alertItems(),box=$("alList");box.innerHTML=A.l
 $("alClose").onclick=()=>sheetClose("alModal");
 $("hmGuide").onclick=()=>{const b=$("gdBody");if(!b.dataset.done){let h="";
     try{h+=`<h4>ระดับความเสี่ยงตาม Braden Scale</h4><div class="gd-row">${LEVELS.map(r=>`<span style="--c:var(${r.c})">${r.name} · ${r.range}</span>`).join("")}</div>`}catch(e){}
-    try{h+=`<h4>การดูแลพื้นฐานทุกราย (Routine care)</h4><ul>${CARE.routine.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
+    try{h+=`<h4>รูทีนแคร์ทุกราย (Routine Care)</h4><ul>${CARE.routine.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
     h+=`<h4>การพลิกตัวและจัดท่า</h4><ul><li>พลิกตะแคงตัวทุก 2 ชั่วโมง สลับ หงาย ตะแคงซ้าย ตะแคงขวา</li><li>ตะแคง 30 องศา ใช้หมอนรองหลังและระหว่างเข่า</li><li>ยกส้นเท้าให้ลอยพ้นที่นอน ไม่ไขหัวเตียงเกิน 30 องศาถ้าไม่มีข้อห้าม</li></ul>`;
     try{h+=`<h4>ระดับแผลกดทับ (NPIAP)</h4>${Object.entries(STAGES).map(([k,x])=>`<div class="gd-st">${stageSvg(k)}<div><b>${x.name}</b>${x.d?"<br>"+x.d:""}</div></div>`).join("")}`}catch(e){}
     try{h+=`<h4>Medical Device-Related Pressure Injury (MDRPI)</h4><ul>${CARE.device.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
@@ -5812,7 +5813,7 @@ function gdDressing(k){const saved=curW;let plan={items:[],cautions:[]};
   return wrap}
 var gdIdx=0;
 function gdBuild(){const b=$("gdBody");b.innerHTML='<h3 class="pg-hi" id="gdTitle">แนวทางป้องกันและดูแลแผลกดทับ</h3>';
-  const TABS=["ระดับความเสี่ยง","ระดับแผลกดทับ","การดูแลพื้นฐาน","MDRPI"];
+  const TABS=["ระดับความเสี่ยง","ระดับแผลกดทับ","รูทีนแคร์","MDRPI"];
   const tabs=document.createElement("div");tabs.className="cs-tabs gd-tabs";tabs.setAttribute("role","tablist");
   const track=document.createElement("div");track.className="cs-track gd-track";const dots=document.createElement("div");dots.className="cs-dots";
   const S=TABS.map((t,i)=>{const sl=document.createElement("div");sl.className="cs-slide gd-slide";sl.setAttribute("role","tabpanel");track.append(sl);
@@ -5839,7 +5840,7 @@ function gdBuild(){const b=$("gdBody");b.innerHTML='<h3 class="pg-hi" id="gdTitl
       const pr=wbp?CARE.wbpProducts:(CARE[k]&&CARE[k].products)||[];if(pr.length)p.append(chips(pr));
       p.append(gdH("การป้องกันแผลเพิ่ม / ป้องกันแผลใหม่"),gdUl(["พลิกตะแคงตัวทุก 2 ชั่วโมง ห้ามนอนทับแผล","ใช้วัสดุ Soft Silicone/Foam ป้องกันปุ่มกระดูกอื่นที่เสี่ยง","ประเมินผิวหนังและแผลทุกเวร ถ่ายภาพเปรียบเทียบ"]),chips(CARE.preventProducts))}))});
   // 3 routine + turning
-  {const c=document.createElement("div");c.className="gd-card";c.append(gdH("การดูแลพื้นฐานทุกราย (Routine care)"),gdUl(CARE.routine),gdH("การพลิกตัวและจัดท่า"),
+  {const c=document.createElement("div");c.className="gd-card";c.append(gdH("รูทีนแคร์ทุกราย (Routine Care)"),gdUl(CARE.routine),gdH("การพลิกตัวและจัดท่า"),
     gdUl(["พลิกตะแคงตัวทุก 2 ชั่วโมง สลับ หงาย ตะแคงซ้าย ตะแคงขวา สลับท่า หงาย ตะแคงซ้าย ตะแคงขวา","ตะแคง 30 องศา ใช้หมอนรองหลังและระหว่างเข่า","ยกส้นเท้าให้ลอยพ้นที่นอน ไม่ไขหัวเตียงเกิน 30 องศาถ้าไม่มีข้อห้าม"]),
     gdH("วัสดุและอุปกรณ์พื้นฐาน"),gdMats(["pillow","vas","slide"],"Routine Care"));S[2].append(c)}
   // 4 MDRPI
@@ -5901,7 +5902,7 @@ function qaKPI(from,to){const inR=d=>!!d&&d>=from&&d<=to,ratio=(a,b)=>b?a/b:null
   const svItem=[0,1,2,3,4].map(i=>{const v=SV.map(h=>(h.q||[])[i]).filter(x=>x>0);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null});
   return {from,to,Q,AM,pdays:pdays.size,braden:ratio(bdays.size,pdays.size),bradenN:[bdays.size,pdays.size],skin:ratio(...sk),skinN:sk,turn:ratio(...tu),turnN:tu,bundle:ratio(...bu),bundleN:bu,items:ratio(...it),itemsN:it,
     mdrpiPrev:ratio(...md),mdrpiPrevN:md,doc:ratio(AM.filter(docOK).length,AM.length),docN:[AM.filter(docOK).length,AM.length],time:dm.length?dm.reduce((a,b)=>a+b,0)/dm.length:null,timeN:dm.length,
-    hapi:hapi.length,mdrpi:mdr.length,pd,hapiRate:pd?hapi.length/pd*1000:null,mdrpiRate:pd?mdr.length/pd*1000:null,byStage,imp,same,worse,dPush:dPush.length?dPush.reduce((a,b)=>a+b,0)/dPush.length:null,
+    hapi:hapi.length,mdrpi:mdr.length,hapiPts:new Set(hapi.map(r=>r.hn)).size,mdrpiPts:new Set(mdr.map(r=>r.hn)).size,pd,hapiRate:pd?hapi.length/pd*1000:null,mdrpiRate:pd?mdr.length/pd*1000:null,byStage,imp,same,worse,dPush:dPush.length?dPush.reduce((a,b)=>a+b,0)/dPush.length:null,
     sv:svAvg,svN:SV.length,svItem,per}}
 function qaMonthRange(m){const [y,mo]=m.split("-").map(Number),last=new Date(y,mo,0).getDate();return [m+"-01",`${m}-${String(last).padStart(2,"0")}`]}
 const pct=v=>v==null?"–":Math.round(v*100)+"%";
@@ -5922,11 +5923,11 @@ function qaPaint(){if(!$("page-qa")||!isAdmin())return;if(!$("qaMonth").value)$(
 function qaS0(K,m){const months=monthsBack(m,6),KS=months.map(x=>{const [a,b]=qaMonthRange(x);return qaKPI(a,b)});
   const sv=$("qaS0");const tot=K.imp+K.same+K.worse;
   sv.innerHTML=`<p class="qa-intro">ผลลัพธ์ทางคลินิก: อุบัติการณ์แผลกดทับที่เกิดในโรงพยาบาล (HAPI) แผลจากอุปกรณ์การแพทย์ (MDRPI) และผลการดูแลแผล</p><div class="qa-g">`+
-    qaTile("HAPI Incidence Rate","Outcome",K.hapiRate==null?K.hapi+" แผล":K.hapiRate.toFixed(2),K.hapiRate==null?"ใส่วันนอนรวมด้านบนเพื่อคิดอัตรา / 1,000 วันนอน":`ต่อ 1,000 วันนอน · ${K.hapi} แผล / ${K.pd} วันนอน`,K.hapiRate==null?{c:K.hapi?"--s1":"--ok",t:K.hapi?"มี HAPI รายใหม่":"ไม่มี HAPI รายใหม่"}:qaStatus(K.hapiRate,2,3,true),"≤ 2.0")+
-    qaTile("MDRPI Incidence Rate","Outcome",K.mdrpiRate==null?K.mdrpi+" แผล":K.mdrpiRate.toFixed(2),K.mdrpiRate==null?"แผลจากอุปกรณ์การแพทย์ที่เกิดในโรงพยาบาล":`ต่อ 1,000 วันนอน · ${K.mdrpi} แผล`,K.mdrpiRate==null?{c:K.mdrpi?"--s1":"--ok",t:K.mdrpi?"มี MDRPI รายใหม่":"ไม่มี MDRPI รายใหม่"}:qaStatus(K.mdrpiRate,1,2,true),"")+
+    qaTile("HAPI (ผู้ป่วยที่เกิดแผลกดทับในโรงพยาบาล)","Outcome",K.hapiPts+" คน",K.hapi?`${K.hapi} แผล ในผู้ป่วย ${K.hapiPts} คน`:"ไม่มีผู้ป่วยเกิดแผลกดทับรายใหม่",{c:K.hapiPts?"--s1":"--ok",t:K.hapiPts?"มีผู้ป่วยเกิด HAPI":"ไม่มี HAPI รายใหม่"},"0 คน")+
+    qaTile("MDRPI (แผลจากอุปกรณ์การแพทย์)","Outcome",K.mdrpiPts+" คน",K.mdrpi?`${K.mdrpi} แผล ในผู้ป่วย ${K.mdrpiPts} คน`:"ไม่มีผู้ป่วยเกิด MDRPI รายใหม่",{c:K.mdrpiPts?"--s1":"--ok",t:K.mdrpiPts?"มีผู้ป่วยเกิด MDRPI":"ไม่มี MDRPI รายใหม่"},"0 คน")+
     qaTile("ผลการดูแลแผล (PUSH)","Outcome",tot?Math.round(K.imp/tot*100)+"%":"–",tot?`ดีขึ้น ${K.imp} · คงที่ ${K.same} · แย่ลง ${K.worse}${K.dPush!=null?` · PUSH เฉลี่ย ${K.dPush>0?"+":""}${K.dPush.toFixed(1)}`:""}`:"ต้องมีผลประเมินแผลอย่างน้อย 2 ครั้ง",tot?qaStatus(K.imp/tot,.7,.5):{c:"--muted",t:"ยังไม่มีข้อมูล"},"ดีขึ้น ≥ 70%")+`</div>`+
     (Object.keys(K.byStage).length?`<p class="note">HAPI เดือนนี้แยกตามระดับ: ${Object.entries(K.byStage).map(([k,v])=>`${esc(k)} ${v}`).join(" · ")}</p>`:"")+
-    `<div class="qa-chs">${qaChart(months,KS.map(k=>k.hapiRate!=null?k.hapiRate:k.hapi),"HAPI ย้อนหลัง 6 เดือน ("+(KS.some(k=>k.hapiRate!=null)?"อัตรา/1,000 วันนอน":"จำนวนแผล")+")",v=>(+v).toFixed(v%1?1:0),KS.some(k=>k.hapiRate!=null)?2:null)}${qaChart(months,KS.map(k=>k.mdrpi),"MDRPI ย้อนหลัง 6 เดือน (จำนวนแผล)",v=>Math.round(v),null)}</div>`}
+    `<div class="qa-chs">${qaChart(months,KS.map(k=>k.hapiPts),"HAPI ย้อนหลัง 6 เดือน (จำนวนผู้ป่วย คน)",v=>Math.round(v),null)}${qaChart(months,KS.map(k=>k.mdrpiPts),"MDRPI ย้อนหลัง 6 เดือน (จำนวนผู้ป่วย คน)",v=>Math.round(v),null)}</div>`}
 function qaS1(K,m){const sv=$("qaS1");
   sv.innerHTML=`<p class="qa-intro">ความครบถ้วนของการประเมินและการปฏิบัติตาม Prevention Bundle คำนวณจากการบันทึกปกติของพยาบาล (วันนอน/เวรที่มีการบันทึกในแอป)</p><div class="qa-g">`+
     qaTile("Braden Assessment Compliance","Process",pct(K.braden),`ประเมินแล้ว ${K.bradenN[0]}/${K.bradenN[1]} วันนอน`,qaStatus(K.braden,.9,.8),"≥ 90%")+
@@ -5962,25 +5963,25 @@ function qaSetFix(x,id,txt){const who=(admGet()||{}).name||"";const t=txt?txt+(w
 function qaBase(){try{return JSON.parse(localStorage.getItem("pi-qa-base")||"{}")}catch(e){return {}}}
 function qaS3(K,m){const sv=$("qaS3"),months=monthsBack(m,6),KS=months.map(x=>{const [a,b]=qaMonthRange(x);return qaKPI(a,b)}),B=qaBase();
   const gl=B.golive||"",A=gl?qaKPI(gl,qaDay(0)):null;
-  const row=(k)=>`<tr><td>${thMonth(k.from.slice(0,7))}</td><td class="num">${k.hapiRate!=null?k.hapiRate.toFixed(2):k.hapi}</td><td class="num">${k.mdrpi}</td><td class="num">${pct(k.braden)}</td><td class="num">${pct(k.skin)}</td><td class="num">${pct(k.bundle)}</td><td class="num">${pct(k.turn)}</td><td class="num">${pct(k.doc)}</td><td class="num">${k.time==null?"–":k.time.toFixed(1)}</td><td class="num">${k.AM.length}</td></tr>`;
+  const row=(k)=>`<tr><td>${thMonth(k.from.slice(0,7))}</td><td class="num">${k.hapiPts}</td><td class="num">${k.mdrpiPts}</td><td class="num">${pct(k.braden)}</td><td class="num">${pct(k.skin)}</td><td class="num">${pct(k.bundle)}</td><td class="num">${pct(k.turn)}</td><td class="num">${pct(k.doc)}</td><td class="num">${k.time==null?"–":k.time.toFixed(1)}</td><td class="num">${k.AM.length}</td></tr>`;
   const cmp=(label,base,after,fmt,lower)=>{const b=base===""||base==null?null:+base,a=after;let d="–",c="--muted";if(b!=null&&a!=null){const diff=a-b;d=(diff>0?"+":"")+fmt(diff);c=(lower?diff<0:diff>0)?"--ok":diff===0?"--muted":"--s1"}
     return `<tr><td>${label}</td><td class="num">${b==null?"–":fmt(b)}</td><td class="num">${a==null?"–":fmt(a)}</td><td class="num" style="color:var(${c});font-weight:700">${d}</td></tr>`};
   const p100=v=>Math.round(v*100)+"%",n2=v=>(+v).toFixed(2),n1=v=>(+v).toFixed(1);
   sv.innerHTML=`<p class="qa-intro">สรุปผลรายเดือน เปรียบเทียบก่อน–หลังใช้นวัตกรรม และส่งออกข้อมูลที่ไม่ระบุตัวตนสำหรับวิเคราะห์วิจัย (R2R)</p>
   <h3 class="qa-h">สรุปผลรายเดือน (6 เดือน)</h3>
-  <div class="qa-tbl"><table><thead><tr><th>เดือน</th><th>HAPI${KS.some(k=>k.hapiRate!=null)?" /1,000":""}</th><th>MDRPI</th><th>Braden</th><th>Skin</th><th>Bundle</th><th>Reposition</th><th>Doc.</th><th>เวลา (นาที)</th><th>บันทึก</th></tr></thead><tbody>${KS.map(row).join("")}</tbody></table></div>
+  <div class="qa-tbl"><table><thead><tr><th>เดือน</th><th>HAPI (คน)</th><th>MDRPI (คน)</th><th>Braden</th><th>Skin</th><th>Bundle</th><th>Reposition</th><th>Doc.</th><th>เวลา (นาที)</th><th>บันทึก</th></tr></thead><tbody>${KS.map(row).join("")}</tbody></table></div>
   <h3 class="qa-h">เปรียบเทียบก่อน–หลังใช้นวัตกรรม</h3>
   <p class="note" style="margin:0 0 8px">ค่า "ก่อน" กรอกจากข้อมูลเดิมของหอ (เช่น audit ก่อนใช้ Skin Guard) ค่า "หลัง" แอปคำนวณอัตโนมัติตั้งแต่วันเริ่มใช้</p>
   <div class="qa-base">
     <label>วันเริ่มใช้ Skin Guard<input type="date" id="qbGo" value="${esc(gl)}"></label>
-    <label>HAPI ก่อน (/1,000 วันนอน)<input type="number" step="0.01" id="qbHapi" value="${B.hapi??""}"></label>
+    <label>HAPI ก่อน (จำนวนผู้ป่วย คน)<input type="number" step="1" min="0" id="qbHapi" value="${B.hapi??""}"></label>
     <label>Braden compliance ก่อน (%)<input type="number" id="qbBraden" value="${B.braden??""}"></label>
     <label>Bundle compliance ก่อน (%)<input type="number" id="qbBundle" value="${B.bundle??""}"></label>
     <label>Documentation ก่อน (%)<input type="number" id="qbDoc" value="${B.doc??""}"></label>
     <label>เวลาบันทึกก่อน (นาที)<input type="number" step="0.1" id="qbTime" value="${B.time??""}"></label>
   </div>
   ${A?`<div class="qa-tbl"><table><thead><tr><th>ตัวชี้วัด</th><th>ก่อน</th><th>หลัง (ตั้งแต่ ${thDate(gl)})</th><th>เปลี่ยนแปลง</th></tr></thead><tbody>
-    ${cmp("HAPI Incidence Rate (/1,000 วันนอน)",B.hapi,A.hapiRate,n2,true)}
+    ${cmp("HAPI (จำนวนผู้ป่วย คน)",B.hapi,A.hapiPts,v=>String(Math.round(v)),true)}
     ${cmp("Braden Assessment Compliance (%)",B.braden,A.braden==null?null:A.braden*100,n1,false)}
     ${cmp("Prevention Bundle Compliance (%)",B.bundle,A.bundle==null?null:A.bundle*100,n1,false)}
     ${cmp("Documentation Completeness (%)",B.doc,A.doc==null?null:A.doc*100,n1,false)}
@@ -6675,7 +6676,7 @@ function qaExport(m){m=m||qaDay(0).slice(0,7);const [f,t]=qaMonthRange(m),K=qaKP
   [["Clinical Outcomes",qaS0],["Nursing Performance",qaS1],["QA & Research",qaS3]].forEach(([n,fn])=>{QA_CAP=[];try{fn(K,m)}catch(e){}out[n]=QA_CAP;QA_CAP=null});
   if(Object.keys(K.byStage||{}).length)out["Clinical Outcomes"].push(["HAPI แยกตามระดับแผล","Outcome",String(K.hapi),Object.entries(K.byStage).map(([k,v])=>k+" "+v).join(" · "),"",""]);
   out["QA & Research"]=monthsBack(m,6).map(x=>{const [a,b]=qaMonthRange(x),k=qaKPI(a,b),pc=v=>v==null?"–":Math.round(v*100)+"%";
-    return ["สรุปเดือน "+thMonth(x),"รายเดือน",k.hapiRate!=null?k.hapiRate.toFixed(2)+" /1,000":String(k.hapi)+" แผล",`HAPI ${k.hapi} · MDRPI ${k.mdrpi} · Braden ${pc(k.braden)} · Skin ${pc(k.skin)} · Bundle ${pc(k.bundle)} · Reposition ${pc(k.turn)} · Doc ${pc(k.doc)} · เวลา ${k.time==null?"–":k.time.toFixed(1)+" นาที"} · บันทึก ${k.AM.length}`,"",""]}).concat(out["QA & Research"]);
+    return ["สรุปเดือน "+thMonth(x),"รายเดือน",String(k.hapiPts)+" คน",`HAPI ${k.hapiPts} คน (${k.hapi} แผล) · MDRPI ${k.mdrpiPts} คน · Braden ${pc(k.braden)} · Skin ${pc(k.skin)} · Bundle ${pc(k.bundle)} · Reposition ${pc(k.turn)} · Doc ${pc(k.doc)} · เวลา ${k.time==null?"–":k.time.toFixed(1)+" นาที"} · บันทึก ${k.AM.length}`,"",""]}).concat(out["QA & Research"]);
   out["Nursing Performance"]=out["Nursing Performance"].concat(qaCoreRows(K).map(([n,v,x])=>["รายกิจกรรม: "+n,"Process",v==null?"–":Math.round(v*100)+"%",x.trim(),"",""]));
   }finally{tmp.forEach(x=>x.remove());ids.forEach(id=>{if(real[id])real[id].id=id})}
   return {month:m,from:f,to:t,sections:out,at:Date.now()}}
