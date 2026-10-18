@@ -1881,7 +1881,6 @@ body[data-page="wound"] #result{display:none!important}
 #loginGate label[hidden]{display:none!important}
 #nurseName[readonly]{background:var(--bg);color:var(--ink);cursor:default}
 label[for=nurseRole][hidden]{display:none!important}
-label[for=qaPD][hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -2457,7 +2456,7 @@ label[for=qaPD][hidden]{display:none!important}
 
   <div class="page" id="page-qa" hidden>
   <div class="qa-head"><h2>Nursing Quality &amp; Patient Safety Analytics</h2><p class="qa-lead">บันทึกการดูแลครั้งเดียว Skin Guard คำนวณตัวชี้วัด แดชบอร์ด และรายงานคุณภาพให้อัตโนมัติ · เฉพาะผู้ดูแลระบบ</p></div>
-  <div class="qa-bar"><label for="qaMonth">เดือน<input id="qaMonth" type="month"></label><label for="qaPD" hidden>วันนอนรวมของหอ (patient-days)<input id="qaPD" type="number" inputmode="numeric" min="0" placeholder="ใช้คิดอัตราต่อ 1,000 วันนอน"></label></div>
+  <div class="qa-bar"><label for="qaMonth">เดือน<input id="qaMonth" type="month"></label><label for="qaPD">วันนอนรวมของหอ (patient-days)<input id="qaPD" type="number" inputmode="numeric" min="0" placeholder="ใช้คิดอัตราต่อ 1,000 วันนอน"></label></div>
   <div class="cs-tabs qa-tabs" id="qaTabs" role="tablist"><button type="button" role="tab">Clinical Outcomes</button><button type="button" role="tab">Nursing Performance</button><button type="button" role="tab">Patient Safety Alerts</button><button type="button" role="tab">QI &amp; Research</button></div>
   <section class="card qa-sec" id="qaS0"></section>
   <section class="card qa-sec" id="qaS1" hidden></section>
@@ -5923,8 +5922,8 @@ function qaPaint(){if(!$("page-qa")||!isAdmin())return;if(!$("qaMonth").value)$(
 function qaS0(K,m){const months=monthsBack(m,6),KS=months.map(x=>{const [a,b]=qaMonthRange(x);return qaKPI(a,b)});
   const sv=$("qaS0");const tot=K.imp+K.same+K.worse;
   sv.innerHTML=`<p class="qa-intro">ผลลัพธ์ทางคลินิก: อุบัติการณ์แผลกดทับที่เกิดในโรงพยาบาล (HAPI) แผลจากอุปกรณ์การแพทย์ (MDRPI) และผลการดูแลแผล</p><div class="qa-g">`+
-    qaTile("HAPI (ผู้ป่วยที่เกิดแผลกดทับในโรงพยาบาล)","Outcome",K.hapiPts+" คน",K.hapi?`${K.hapi} แผล ในผู้ป่วย ${K.hapiPts} คน`:"ไม่มีผู้ป่วยเกิดแผลกดทับรายใหม่",{c:K.hapiPts?"--s1":"--ok",t:K.hapiPts?"มีผู้ป่วยเกิด HAPI":"ไม่มี HAPI รายใหม่"},"0 คน")+
-    qaTile("MDRPI (แผลจากอุปกรณ์การแพทย์)","Outcome",K.mdrpiPts+" คน",K.mdrpi?`${K.mdrpi} แผล ในผู้ป่วย ${K.mdrpiPts} คน`:"ไม่มีผู้ป่วยเกิด MDRPI รายใหม่",{c:K.mdrpiPts?"--s1":"--ok",t:K.mdrpiPts?"มีผู้ป่วยเกิด MDRPI":"ไม่มี MDRPI รายใหม่"},"0 คน")+
+    qaTile("HAPI (ผู้ป่วยที่เกิดแผลกดทับในโรงพยาบาล)","Outcome",K.hapiPts+" คน",(K.hapi?`${K.hapi} แผล ในผู้ป่วย ${K.hapiPts} คน`:"ไม่มีผู้ป่วยเกิดแผลกดทับรายใหม่")+(K.hapiRate!=null?` · ${K.hapiRate.toFixed(2)} ต่อ 1,000 วันนอน (${K.pd} วันนอน)`:""),{c:K.hapiPts?"--s1":"--ok",t:K.hapiPts?"มีผู้ป่วยเกิด HAPI":"ไม่มี HAPI รายใหม่"},"0 คน")+
+    qaTile("MDRPI (แผลจากอุปกรณ์การแพทย์)","Outcome",K.mdrpiPts+" คน",(K.mdrpi?`${K.mdrpi} แผล ในผู้ป่วย ${K.mdrpiPts} คน`:"ไม่มีผู้ป่วยเกิด MDRPI รายใหม่")+(K.mdrpiRate!=null?` · ${K.mdrpiRate.toFixed(2)} ต่อ 1,000 วันนอน`:""),{c:K.mdrpiPts?"--s1":"--ok",t:K.mdrpiPts?"มีผู้ป่วยเกิด MDRPI":"ไม่มี MDRPI รายใหม่"},"0 คน")+
     qaTile("ผลการดูแลแผล (PUSH)","Outcome",tot?Math.round(K.imp/tot*100)+"%":"–",tot?`ดีขึ้น ${K.imp} · คงที่ ${K.same} · แย่ลง ${K.worse}${K.dPush!=null?` · PUSH เฉลี่ย ${K.dPush>0?"+":""}${K.dPush.toFixed(1)}`:""}`:"ต้องมีผลประเมินแผลอย่างน้อย 2 ครั้ง",tot?qaStatus(K.imp/tot,.7,.5):{c:"--muted",t:"ยังไม่มีข้อมูล"},"ดีขึ้น ≥ 70%")+`</div>`+
     (Object.keys(K.byStage).length?`<p class="note">HAPI เดือนนี้แยกตามระดับ: ${Object.entries(K.byStage).map(([k,v])=>`${esc(k)} ${v}`).join(" · ")}</p>`:"")+
     `<div class="qa-chs">${qaChart(months,KS.map(k=>k.hapiPts),"HAPI ย้อนหลัง 6 เดือน (จำนวนผู้ป่วย คน)",v=>Math.round(v),null)}${qaChart(months,KS.map(k=>k.mdrpiPts),"MDRPI ย้อนหลัง 6 เดือน (จำนวนผู้ป่วย คน)",v=>Math.round(v),null)}</div>`}
