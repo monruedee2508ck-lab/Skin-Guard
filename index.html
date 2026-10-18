@@ -4092,16 +4092,22 @@ function meshArt(svg,stroke,streak){if(!svg)return;const W=1000,H=1000;svg.setAt
   svg.innerHTML=`<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${streak||stroke}" stop-opacity="0"/><stop offset=".5" stop-color="${streak||stroke}" stop-opacity=".7"/><stop offset="1" stop-color="${streak||stroke}" stop-opacity="0"/></linearGradient></defs>`+g}
 meshArt($("lgArt"),"#4fd1b8","#7ff5dd");meshArt($("appBg"),"currentColor","currentColor");
 /* ---------- OT login gate ---------- */
+/* allowed OT numbers (stored hashed, no names in the app) */
+var OT_ALLOW=new Set(["y90u7z6pml","13lbfta63nt","20vqlw7ao6w","2f66cgh3rhy","mevrrmeqij","1pd7j8pd6me","263r7v4vkjh","12dguam0jam","1o6p9hi55qs","gf81dqmrge","2pn6mbzteo","49tpcg1cwp","rbgvafwyk1","1honjvqw2s8","1h3blixrlls","cheyk5k0u8","1dn4jkve9tc","1ie5ygvw17z","1pg8urosgn7","2cctdcchu3r","17spng4d2ky","wla1tpsnpe","1dtqqypl6j7","myjj2xqryo","9nifqkmgha","2ae9ox5sg4k","17o7o3pi4j4","b872yljobs","12d743m68tm","dw7cwdfr8o","1muelqnfuyk","2cab034ylmn","1nxfaffz4j9","clrb6hcbtj","kszj7fz9n4"]);
+function otHash(str,seed){seed=seed||7;let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677)}
+  h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);return (4294967296*(2097151&h2)+(h1>>>0)).toString(36)}
+function otAllowed(ot){ot=String(ot||"").trim().replace(/^0+(?=\d)/,"");return OT_ALLOW.has(otHash("SkinGuard-OT-v1|"+ot))}
 var otUser=null;
-function otGet(){if(otUser)return otUser;try{const v=sessionStorage.getItem("pi-ot");if(v)return JSON.parse(v)}catch(e){}return null}
+function otGet(){if(otUser)return otAllowed(otUser.ot)?otUser:null;try{const v=sessionStorage.getItem("pi-ot");if(v){const u=JSON.parse(v);if(u&&otAllowed(u.ot))return u;sessionStorage.removeItem("pi-ot")}}catch(e){}return null}
 function userInit(n){n=String(n||"").replace(/^(พว\.|พย\.|นส\.|นาย|นาง(สาว)?|ผช\.|ดร\.)\s*/,"").trim();return n?n.slice(0,1):"?"}
 function otPaint(){const u=otGet(),gate=$("loginGate");gate.hidden=!!u;document.body.classList.toggle("locked",!u);
   $("userBtn").hidden=!u;if(!u)userMenu(false);
   if(u){const nm=u.name||("OT "+u.ot);$("userName").textContent=nm;$("userAv").textContent=userInit(u.name)||"?";$("umAv").textContent=userInit(u.name);$("umName").textContent=nm;
     $("umSub").textContent=`OT ${u.ot}`+(isAdmin()?" · ผู้ดูแลระบบ":"");if(u.name&&!$("nurseName").value.trim()){$("nurseName").value=u.name}}
-  else{try{const l=JSON.parse(localStorage.getItem("pi-ot-last")||"null");if(l){$("lgOT").value=l.ot||"";$("lgName").value=l.name||""}}catch(e){}setTimeout(()=>{try{($("lgOT").value?$("lgName"):$("lgOT")).focus()}catch(e){}},80)}}
+  else{try{const l=JSON.parse(localStorage.getItem("pi-ot-last")||"null");if(l&&otAllowed(l.ot)){$("lgOT").value=l.ot||"";$("lgName").value=l.name||""}else if(l)localStorage.removeItem("pi-ot-last")}catch(e){}setTimeout(()=>{try{($("lgOT").value?$("lgName"):$("lgOT")).focus()}catch(e){}},80)}}
 $("lgForm").addEventListener("submit",e=>{e.preventDefault();try{setAdmin(false)}catch(x){}const ot=$("lgOT").value.trim().replace(/\s+/g,""),name=$("lgName").value.trim();
   if(!/^[0-9A-Za-z\-]{3,12}$/.test(ot)){$("lgErr").textContent="ใส่เลข OT 3–12 หลัก (ตัวเลขหรือตัวอักษร)";$("lgOT").focus();return}
+  if(!otAllowed(ot)){$("lgErr").textContent="เลข OT นี้ไม่มีสิทธิ์เข้าใช้ระบบ ติดต่อหัวหน้าหอผู้ป่วยเพื่อเพิ่มสิทธิ์";$("lgOT").focus();$("lgOT").select();return}
   if(name.length<2){$("lgErr").textContent="ใส่ชื่อ-สกุล";$("lgName").focus();return}
   otUser={ot,name,at:Date.now()};try{sessionStorage.setItem("pi-ot",JSON.stringify(otUser));localStorage.setItem("pi-ot-last",JSON.stringify({ot,name}))}catch(e){}
   if(name){$("nurseName").value=name;try{localStorage.setItem("pi-nurse",name)}catch(e){}}
