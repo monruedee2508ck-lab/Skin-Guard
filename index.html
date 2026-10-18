@@ -5367,10 +5367,12 @@ $("pgForm").addEventListener("submit",e=>{e.preventDefault();const hn=$("pgHN").
   if(!hn){$("pgErr").textContent="ใส่ HN ผู้ป่วย";$("pgHN").focus();return}
   if(hn==="ตัวอย่าง"){$("pgErr").textContent="ใส่ HN ของผู้ป่วยจริง";$("pgHN").focus();return}
   if(nm.length<2){$("pgErr").textContent="ใส่ชื่อ-สกุลผู้ป่วย";$("pgName").focus();return}
+  const isNew=!loadPatientRec(hn);
   if(hn!==curHN){if(!loadPatientRec(hn))blankPatientForm();changePatient(hn)}
   $("hn").value=hn;$("ptName").value=nm;if($("pgDate").value)$("date").value=$("pgDate").value;
   try{savePatient()}catch(e){}update();try{dcPaint()}catch(e){}try{ptBarPaint()}catch(e){}
-  $("ptGate").hidden=true;document.body.classList.remove("noscroll");const nx=gateNext||"overview";gateNext=null;go(nx);window.scrollTo(0,0)});
+  $("ptGate").hidden=true;document.body.classList.remove("noscroll");const nx=isNew?"prevent":(gateNext||"overview");gateNext=null;go(nx);window.scrollTo(0,0);
+  if(isNew&&bradenTotal()==null)setTimeout(()=>{try{$("bwStart").onclick()}catch(x){}},250)});
 
 /* read-only patient bar */
 function ptBarPaint(){const bar=$("ptBar");if(!bar)return;const hn=$("hn").value.trim(),nm=$("ptName").value.trim(),d=$("date").value;
