@@ -1877,6 +1877,10 @@ body[data-page="wound"] #result{display:none!important}
 .al-x{position:absolute;top:50%;right:8px;transform:translateY(-50%);width:30px;height:30px;margin:0;border:0;border-radius:50%;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--ink);font-size:1.15rem;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0 0 2px}
 .al-x:hover,.al-x:focus-visible{background:color-mix(in srgb,var(--c) 28%,transparent)}
 .alert.al-out{opacity:0;transform:translateY(-4px);transition:.2s}
+.lg-who{margin:0;min-height:1.3em;font-size:.95rem;font-weight:600}.lg-who.ok{color:var(--ok)}.lg-who.no{color:var(--s1)}
+#loginGate label[hidden]{display:none!important}
+#nurseName[readonly]{background:var(--bg);color:var(--ink);cursor:default}
+label[for=nurseRole][hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -1905,7 +1909,7 @@ body[data-page="wound"] #result{display:none!important}
       </div>
       <form class="lg-card" id="lgForm" autocomplete="off">
         <label for="lgOT">เลข OT<input id="lgOT" type="text" inputmode="numeric" autocomplete="username" maxlength="12" placeholder="เช่น 12345" required></label>
-        <label for="lgName">ชื่อ-สกุล<input id="lgName" type="text" autocomplete="name" placeholder="เช่น พว.มลฤดี แสงศรีจันทร์" required></label>
+        <label for="lgName" hidden>ชื่อ-สกุล<input id="lgName" type="text" autocomplete="off" tabindex="-1"></label><p class="lg-who" id="lgWho" aria-live="polite"></p>
         <p class="lg-err" id="lgErr" aria-live="polite"></p>
         <button class="lg-btn" type="submit">เข้าสู่ระบบ</button>
         <p class="lg-note">เลข OT ใช้ระบุผู้ประเมินและผู้บันทึก</p>
@@ -2519,8 +2523,8 @@ body[data-page="wound"] #result{display:none!important}
     <div class="signbox">
       <div class="lbl sign-t">ลงชื่อผู้บันทึก</div>
       <div class="grid sign-g">
-        <label for="nurseName">ชื่อ-สกุลพยาบาล<input id="nurseName" type="text" autocomplete="name" placeholder="เช่น พว.มลฤดี แสงศรีจันทร์"></label>
-        <label for="nurseRole">ตำแหน่ง
+        <label for="nurseName">ชื่อ-สกุลพยาบาล<input id="nurseName" type="text" autocomplete="name" placeholder="ชื่อตามเลข OT ที่เข้าสู่ระบบ"></label>
+        <label for="nurseRole" hidden>ตำแหน่ง
           <select id="nurseRole"><option>พยาบาลวิชาชีพ</option><option>พยาบาลเทคนิค</option><option>ผู้ช่วยพยาบาล</option><option>นักศึกษาพยาบาล</option></select>
         </label>
         <label for="recDate">วันที่บันทึก<input id="recDate" type="date"></label>
@@ -2567,7 +2571,7 @@ body[data-page="wound"] #result{display:none!important}
         <label for="admPass">รหัสผ่าน<input id="admPass" type="password" autocomplete="current-password" placeholder="รหัสผ่าน"></label>
       </div>
       <div id="admPaneReg" hidden>
-        <label for="regName">ชื่อ-สกุล<input id="regName" type="text" autocomplete="name" placeholder="เช่น พว.มลฤดี แสงศรีจันทร์"></label>
+        <label for="regName">ชื่อ-สกุล<input id="regName" type="text" autocomplete="name" placeholder="ชื่อตามเลข OT ที่เข้าสู่ระบบ"></label>
         <label for="regEmail">อีเมล<input id="regEmail" type="email" autocomplete="email" placeholder="name@example.com"></label>
         <label for="regPass">ตั้งรหัสผ่าน (อย่างน้อย 6 ตัว)<input id="regPass" type="password" autocomplete="new-password"></label>
         <label for="regPass2">ยืนยันรหัสผ่าน<input id="regPass2" type="password" autocomplete="new-password"></label>
@@ -4093,22 +4097,24 @@ function meshArt(svg,stroke,streak){if(!svg)return;const W=1000,H=1000;svg.setAt
 meshArt($("lgArt"),"#4fd1b8","#7ff5dd");meshArt($("appBg"),"currentColor","currentColor");
 /* ---------- OT login gate ---------- */
 /* allowed OT numbers (stored hashed, no names in the app) */
-var OT_ALLOW=new Set(["y90u7z6pml","13lbfta63nt","20vqlw7ao6w","2f66cgh3rhy","mevrrmeqij","1pd7j8pd6me","263r7v4vkjh","12dguam0jam","1o6p9hi55qs","gf81dqmrge","2pn6mbzteo","49tpcg1cwp","rbgvafwyk1","1honjvqw2s8","1h3blixrlls","cheyk5k0u8","1dn4jkve9tc","1ie5ygvw17z","1pg8urosgn7","2cctdcchu3r","17spng4d2ky","wla1tpsnpe","1dtqqypl6j7","myjj2xqryo","9nifqkmgha","2ae9ox5sg4k","17o7o3pi4j4","b872yljobs","12d743m68tm","dw7cwdfr8o","1muelqnfuyk","2cab034ylmn","1nxfaffz4j9","clrb6hcbtj","kszj7fz9n4"]);
+var OT_DIR={"y90u7z6pml":"9kdaRiDxTAibnCVfbyO75qItcO0bpX+LePBBiSYzlRGqrcwv0L25IYtSsBMngcIwUQk=","13lbfta63nt":"Rj95rLPRr7FMMtzmIl6pRUlVrYrc21Xm2Vmc5UU8fa7ipQNvyyUisKGHb5qPw5ilmnN4qhUj1V0YSsFbgMY=","20vqlw7ao6w":"vcCaH2dZDdBrciIxD1dKkHvtt1P4YKgnBQomPUcG6KQqdV+LbRJ6+n/Ll/LD9dIa9C7qRuRIniIJutg=","2f66cgh3rhy":"cwlFPlEodZR7Md3KxCJGq3QIXUiNEOq4C05dmv1M/3XcgvMTR7CT5z8rDdXhtLOVrM8=","mevrrmeqij":"qyvGgmJIK03weLi6mX1jonaeFL5eSH6fneZCr+1kMjE01azFlq01ZWb29FrY0KTIUfz/aQwmF26DtzE=","1pd7j8pd6me":"XR/Hww6+V1lHWspQp1n0PApc/68uYVGI60StlieGgyC9ODqD7k8YDZF/7H3nVdIz1sxADH9tib+wPI35Rpop9/iEIHxSs8FGJT8=","263r7v4vkjh":"gD8FJraQQqigRGPtYSG6od4UFAGuxd4+ek2zm2lrPExjdepJBkvI5XWf9SNWSfuesTBzFTlXVjE=","12dguam0jam":"+qe0hRfQjZuM+7HpGd6HBS+SvpyXj8nVVjWa8jgbmKzD95r+lVUby1F7UnEfKb/dBsCpzSkULrC6aCaWoilI3jaU9msZU363GyI=","1o6p9hi55qs":"RyHlmyX1pcBfwsjL/tMhRM0UQih1BOTlombgNyMVf8nxSexuWD07nwIfbOZy8LEeefhS4twHCdjb9LFBTssu/rDankPI3IFEEtE=","gf81dqmrge":"9uEhc5fCZupHh2+cNyKXrtFYGu4/MdfIE7HzSTifpByabq8grQgXXEyWhKujkuK6weBwrsVRVA9hUobb7VYWeDj/d+/4wZc=","2pn6mbzteo":"pddVzLwOMUBVxMw3K06ysISHIMgQaZG2q45I5DExKyyQit1Ey1QLq6QZzSf6YytkoXJ+Wr3H18n8bOkvaDmICdM=","49tpcg1cwp":"tnO9kAFGfXODa10I8dYCqKXVKYmArwn3FhBoDm9RM2vDK89F7T+VGdihrWm6hh8a/BZ7wJ6IlYtNaXskNmtPJ+00G6SZ/ajzsStix74=","rbgvafwyk1":"Y1YgFdEVF3+i3Pf8hIEVc35Z7PRfcAy+YrJdlmeoQZCZyTKP3oZjskzAXSWK2HaAcKCbRQtsPdza3JI=","1honjvqw2s8":"X87A24U+2eEUVVSMtiE146+FKmyqYmHP7VXfWHnpREr0VW36IzAxOPxXFrRNYW448SnK2tV3vMhgcCUxVDfGJ+8=","1h3blixrlls":"Q1E9947nmqxPrUio4Jmt19ihYPZTtVkTMcZbBJnTRgtJIQmVTs/zJ5nZo7bg6wdpHPTW5nNlYLf8ohBnzhhWQksL6eO58CA=","cheyk5k0u8":"2AlP4zj6oMS8HCGxVAdISGtnLcEctUz4t9nqq8BqPFltlcHFjHwOqTY591ffGydS/MT2KkjJXMtbJq8=","1dn4jkve9tc":"Y6P/o5d1uY7cu/+8eqJr1YXNU1kh58f6Qd6H8fjscnJ/60ilaYwBiJrDnidoVx0SvYOeiXfdhUgzxjbkoH66NTOdLFjsAYHKdzeStjLoGJJEp4aV","1ie5ygvw17z":"480CBZjqKRcJN360eZrlHuY5mohLjU3kIcIfDNMtMYJ88PcA4oDUvePwqgFz4vE2MW2Zyo68Q1oNZa8=","1pg8urosgn7":"NhoIMZ3MCy4oeluhDrqamAf5LgDJOINA+vDnXhVja2FmlGaAV7I3u/1RgV5xn47wwrshplajtcDuRlv6NpgRNMCgQaCYMlA=","2cctdcchu3r":"HoPtYUydteTo+NGiOxiAkbitWNg1+lDFw5/nKgysHg5vRZ0khW7e1fw3gQFxOSOWWFDFAH9MGfV38VM=","17spng4d2ky":"hQ4GH5iK2PPvCiYeufwal25kuhACO1H9Djid18mrclRWmOz0e+VqEc0ts7wSnfTidyMT9aEkhNmFdHE=","wla1tpsnpe":"YRGJR/Gdl0ZTRSoD+KTC3c0ysLYqk3MNn5DH/7sE6lB40e+urpKEM3VigGbEof3LJz/kWp1NBVxVlO8nigbZYUmhXVYo9W4Cx3Qu0e033Tc=","1dtqqypl6j7":"HF9Wl6txvlh69mYAPZVmSlvaE+uDeTnVevYtxthzzrskBI58kRLzw2cHM6/HSRcXnDAtEolgkNIpJpFf5JA3XxZ7YrGk4+L1D7U=","myjj2xqryo":"TODFvcz8WpYueuS5xRy+q9r4LAHM2SdH/b4zzx5DfVKuXrmZoB6z/NlPQBzE70g=","9nifqkmgha":"USTI7BSPrLvYCLcJUqyl3jXJV3XmfH+FtCGU/bXDZeWOp2C7hz9ArvFaph8roMlOQX7JqfD34BLqN8M=","2ae9ox5sg4k":"rUzOadgwaO6gpIdUPdI6xP5o7IQimohqaMCjc3U0dogrqTzeILsm0v4u5liJddlXqTwb8TRhjJFXDIw=","17o7o3pi4j4":"4fqAjsFsM1uPx9LQksPZFT+1sP60pGz/gcsDR8aFWUMdPJkiJdXzavrgZCf0QVYbPYH5QBd7qH4xRL5OHpd2pGvEK2k=","b872yljobs":"Y1PzAyXpztshWr9f4OkZUesg2TRRPaG5znjrPbK85lChIoYU9tNHYS4stDGIgGrc7Lxl7No=","12d743m68tm":"YxBOXoCT+VaqgoBEuf9Ou0YtzqsXXNxv3V3dxqFGw2cM5K6udTTI7zMqwbp78V+m/xcd3F9kXgF5yO0=","dw7cwdfr8o":"kR91U8e0dFQMeLQfGE12ChVLZFNgzFziNDzilMxmDPaY1PovD3eRUIvqhw/ZRzTqPewBeUrW8w9p9J2o4bdA3CrJ393fEIU4Onh3Ptk=","1muelqnfuyk":"iyKof4dP4Die/XridsTxbFP8f+HWCHheoW2Pf5pXsdJ+UF0yjBtlR5YAOQGAG5ds4bUcREU=","2cab034ylmn":"dzvhRvZ1WRpWIP6497gPUEMnrZLVyiTZ5z6RzOcmrp88+T5cduNZ+5wXgFAYpCh8WpvJHR8VlsVHKTfNB//tXTaIjOJMqNc=","1nxfaffz4j9":"LkXZekO5bfHP7JXgCQR4mVbvzFnxYs7sVYuWf157U0wSk14Z3+Uh6gUMyrVJcro=","clrb6hcbtj":"y8F3vbN6Awk8md/H6KngUp2SDO8QJB+0zgoecuu932xH9YsDij4LB1ykcsgBiUq9Z46Fv3+44EyC5W2BfqPOcLo=","kszj7fz9n4":"zecYdtPZv6TS4nHAon++AOHDqUrfwzG7F5ukWPQu7INEMR+e/egpvZkDK/f2ry9aj0Hbrk1yDd/8JP+8W84qSlUndgVdy+8="};
 function otHash(str,seed){seed=seed||7;let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677)}
   h1=Math.imul(h1^(h1>>>16),2246822507);h1^=Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507);h2^=Math.imul(h1^(h1>>>13),3266489909);return (4294967296*(2097151&h2)+(h1>>>0)).toString(36)}
-function otAllowed(ot){ot=String(ot||"").trim().replace(/^0+(?=\d)/,"");return OT_ALLOW.has(otHash("SkinGuard-OT-v1|"+ot))}
+function otAllowed(ot){ot=String(ot||"").trim().replace(/^0+(?=\d)/,"");return Object.prototype.hasOwnProperty.call(OT_DIR,otHash("SkinGuard-OT-v1|"+ot))}
+function otName(ot){ot=String(ot||"").trim().replace(/^0+(?=\d)/,"");const e=OT_DIR[otHash("SkinGuard-OT-v1|"+ot)];if(!e)return "";try{let h=2166136261;const k="SkinGuard-NAME-v1|"+ot;for(let i=0;i<k.length;i++){h^=k.charCodeAt(i);h=Math.imul(h,16777619)}let a=h>>>0;
+  const r=()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return ((t^t>>>14)>>>0)};const b=atob(e),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i)^(r()&255);return new TextDecoder().decode(u)}catch(x){return ""}}
 var otUser=null;
 function otGet(){if(otUser)return otAllowed(otUser.ot)?otUser:null;try{const v=sessionStorage.getItem("pi-ot");if(v){const u=JSON.parse(v);if(u&&otAllowed(u.ot))return u;sessionStorage.removeItem("pi-ot")}}catch(e){}return null}
 function userInit(n){n=String(n||"").replace(/^(พว\.|พย\.|นส\.|นาย|นาง(สาว)?|ผช\.|ดร\.)\s*/,"").trim();return n?n.slice(0,1):"?"}
 function otPaint(){const u=otGet(),gate=$("loginGate");gate.hidden=!!u;document.body.classList.toggle("locked",!u);
   $("userBtn").hidden=!u;if(!u)userMenu(false);
   if(u){const nm=u.name||("OT "+u.ot);$("userName").textContent=nm;$("userAv").textContent=userInit(u.name)||"?";$("umAv").textContent=userInit(u.name);$("umName").textContent=nm;
-    $("umSub").textContent=`OT ${u.ot}`+(isAdmin()?" · ผู้ดูแลระบบ":"");if(u.name&&!$("nurseName").value.trim()){$("nurseName").value=u.name}}
-  else{try{const l=JSON.parse(localStorage.getItem("pi-ot-last")||"null");if(l&&otAllowed(l.ot)){$("lgOT").value=l.ot||"";$("lgName").value=l.name||""}else if(l)localStorage.removeItem("pi-ot-last")}catch(e){}setTimeout(()=>{try{($("lgOT").value?$("lgName"):$("lgOT")).focus()}catch(e){}},80)}}
-$("lgForm").addEventListener("submit",e=>{e.preventDefault();try{setAdmin(false)}catch(x){}const ot=$("lgOT").value.trim().replace(/\s+/g,""),name=$("lgName").value.trim();
+    $("umSub").textContent=`OT ${u.ot}`+(isAdmin()?" · ผู้ดูแลระบบ":"");if(u.name){$("nurseName").value=u.name;$("nurseName").readOnly=true;$("nurseName").title="ลงชื่อตามผู้ใช้ที่เข้าสู่ระบบ (เลข OT "+u.ot+")"}}
+  else{try{$("nurseName").readOnly=false}catch(e){}try{const l=JSON.parse(localStorage.getItem("pi-ot-last")||"null");if(l&&otAllowed(l.ot)){$("lgOT").value=l.ot||"";try{lgWhoPaint()}catch(x){}}else if(l)localStorage.removeItem("pi-ot-last")}catch(e){}setTimeout(()=>{try{$("lgOT").focus()}catch(e){}},80)}}
+$("lgForm").addEventListener("submit",e=>{e.preventDefault();try{setAdmin(false)}catch(x){}const ot=$("lgOT").value.trim().replace(/\s+/g,"");let name="";
   if(!/^[0-9A-Za-z\-]{3,12}$/.test(ot)){$("lgErr").textContent="ใส่เลข OT 3–12 หลัก (ตัวเลขหรือตัวอักษร)";$("lgOT").focus();return}
   if(!otAllowed(ot)){$("lgErr").textContent="เลข OT นี้ไม่มีสิทธิ์เข้าใช้ระบบ ติดต่อหัวหน้าหอผู้ป่วยเพื่อเพิ่มสิทธิ์";$("lgOT").focus();$("lgOT").select();return}
-  if(name.length<2){$("lgErr").textContent="ใส่ชื่อ-สกุล";$("lgName").focus();return}
+  name=otName(ot)||("OT "+ot);
   otUser={ot,name,at:Date.now()};try{sessionStorage.setItem("pi-ot",JSON.stringify(otUser));localStorage.setItem("pi-ot-last",JSON.stringify({ot,name}))}catch(e){}
   if(name){$("nurseName").value=name;try{localStorage.setItem("pi-nurse",name)}catch(e){}}
   $("lgErr").textContent="";try{sessionStorage.removeItem("pi-dd-seen")}catch(e){}otPaint();try{update()}catch(e){}go("home");setTimeout(()=>ddPop(),500)});
@@ -4217,7 +4223,7 @@ function fullNote(){
   const extra=$("noteExtra").value.trim(),name=$("nurseName").value.trim();
   const d=$("recDate").value,t=$("recTime").value;
   return $("note").value.trim()+
-    `\n\nผู้บันทึก: ${name||"................................"} (${$("nurseRole").value})${(otGet()||{}).ot?" OT "+otGet().ot:""}\nวันที่ ${d?thDateLong(d):"..........."} เวลา ${t||"......"} น.`;
+    `\n\nผู้บันทึก: ${name||"................................"}${(otGet()||{}).ot?" OT "+otGet().ot:""}\nวันที่ ${d?thDateLong(d):"..........."} เวลา ${t||"......"} น.`;
 }
 $("note").addEventListener("input",()=>{if($("note").value!==lastAutoNote){noteEdited=true;$("noteState").textContent="แก้ไขข้อความแล้ว ผลประเมินที่เปลี่ยนภายหลังจะไม่ทับข้อความนี้";$("noteRegen").hidden=false}});
 $("noteRegen").onclick=()=>{noteEdited=false;$("note").value=lastAutoNote;$("noteRegen").hidden=true;$("noteState").textContent="ข้อความสร้างจากผลประเมินอัตโนมัติ แก้ไขหรือพิมพ์เพิ่มได้"};
@@ -5446,7 +5452,7 @@ function ptList(){let a=[];try{a=allPatients().filter(p=>p.hn&&p.hn!=="ตัว
   const ws=(p.wounds||[]).filter(w=>w.stage&&w.stage!=="none");let push=null;ws.forEach(w=>{try{const v=woundCalc(w).push;if(push==null||v>push)push=v}catch(e){}});
   let due=0;ws.forEach(w=>{try{const S=dressStatus(w);if(S.cls==="over"||S.cls==="soon")due++}catch(e){}});let turn=null;try{turn=turnFor(p.hn)}catch(e){}
   return {p,t,crit,high:crit||(t!=null&&t<=12),ws,push,due,turn}}).sort((a,b)=>(b.p.updated||0)-(a.p.updated||0))}
-function homePaint(){const u=otGet()||{};$("hmName").textContent=u.name?"คุณ"+u.name.replace(/^(พว\.|พยาบาล|นาย|นาง|นางสาว|น\.ส\.)\s*/,""):"คุณพยาบาล";
+function homePaint(){const u=otGet()||{};$("hmName").textContent=u.name?"คุณ"+(u.name.replace(/^(พว\.|พยาบาล|นางสาว|นาง|นาย|น\.ส\.)\s*/,"").split(/\s+/)[0]||u.name):"คุณพยาบาล";
   const L=ptList(),high=L.filter(x=>x.high).length,wound=L.filter(x=>x.ws.length).length,due=L.reduce((a,x)=>a+x.due,0);
   const st=(c,ic,lbl,v,unit,f)=>`<button type="button" class="hm-stat" style="--c:var(${c})" data-f="${f}"><span class="si">${ic}</span><span><small>${lbl}</small><b>${v}<i>${unit}</i></b></span></button>`;
   $("hmStats").innerHTML=st("--teal","&#128100;","ผู้ป่วยทั้งหมด",L.length,"ราย","all")+st("--coral","&#9888;","มีความเสี่ยงสูง",high,"ราย","high")+st("--indigo","&#9673;","มีแผลกดทับ",wound,"ราย","wound")+st("--gold","&#9201;","ครบกำหนดทำแผล",due,"แผล","due");
@@ -6694,6 +6700,10 @@ function alDismiss(key){try{const k=phShiftKey(),o=JSON.parse(localStorage.getIt
   $("alerts").querySelectorAll(".alert").forEach(a=>{const k=alKey(a);if(D[k]){a.remove();return}if(a.querySelector(".al-x"))return;
     const x=document.createElement("button");x.type="button";x.className="al-x";x.setAttribute("aria-label","ปิดการแจ้งเตือนนี้");x.innerHTML="&times;";
     x.onclick=e=>{e.stopPropagation();e.preventDefault();alDismiss(k);a.classList.add("al-out");setTimeout(()=>a.remove(),200)};a.append(x)})}catch(e){}return r}}
+/* login preview: show the name of this OT before entering */
+function lgWhoPaint(){const ot=$("lgOT").value.trim(),w=$("lgWho");if(!w)return;if(!ot){w.textContent="";w.className="lg-who";return}
+  if(otAllowed(ot)){w.textContent="ผู้ใช้งาน: "+otName(ot);w.className="lg-who ok"}else if(ot.length>=4){w.textContent="ไม่พบเลข OT นี้ในรายชื่อผู้มีสิทธิ์";w.className="lg-who no"}else{w.textContent="";w.className="lg-who"}}
+$("lgOT").addEventListener("input",()=>{$("lgErr").textContent="";lgWhoPaint()});
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
