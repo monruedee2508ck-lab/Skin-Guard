@@ -6566,7 +6566,17 @@ $("expCsv").onclick=async()=>{
 </script>
 
 <script>
-if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",()=>{navigator.serviceWorker.register("sw.js").catch(()=>{})})}
+/* auto-update: check for a new version whenever the app comes back to the screen */
+if("serviceWorker" in navigator&&location.protocol!=="file:"){window.addEventListener("load",()=>{
+  const had=!!navigator.serviceWorker.controller;let reloading=false;
+  navigator.serviceWorker.register("sw.js",{updateViaCache:"none"}).then(reg=>{
+    const chk=()=>{try{reg.update()}catch(e){}};document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")chk()});setInterval(chk,15*60000);chk()}).catch(()=>{});
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{if(!had||reloading)return;
+    const safe=()=>{let dirty=false;try{dirty=typeof pvDirty==="function"&&pvDirty()}catch(e){}return !dirty&&![...document.querySelectorAll(".modal,.livecam")].some(m=>!m.hidden)};
+    if(safe()){reloading=true;location.reload();return}
+    const b=document.createElement("button");b.type="button";b.className="upd-bar";b.textContent="มี Skin Guard เวอร์ชันใหม่ · แตะเพื่ออัปเดต (ร่างที่ยังไม่บันทึกเก็บไว้แล้ว)";
+    b.onclick=()=>{reloading=true;location.reload()};document.body.append(b)})})}
 </script>
+<style>.upd-bar{position:fixed;left:50%;transform:translateX(-50%);top:calc(10px + env(safe-area-inset-top,0px));z-index:9999;border:0;border-radius:999px;background:#0f766e;color:#fff;font:600 .9rem system-ui,sans-serif;padding:10px 18px;box-shadow:0 6px 20px rgba(0,0,0,.25);cursor:pointer;max-width:calc(100vw - 32px)}</style>
 </body>
 </html>

@@ -1,5 +1,5 @@
 // Skin Guard service worker: ใช้งานแบบออฟไลน์ได้หลังเปิดครั้งแรก
-const VERSION = "skin-guard-v90";
+const VERSION = "skin-guard-v91";
 const CORE = ["./", "./index.html", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./apple-touch-icon.png", "./favicon.png"];
 const CDN = /^(https:\/\/cdnjs\.cloudflare\.com|https:\/\/fonts\.googleapis\.com|https:\/\/fonts\.gstatic\.com)/;
@@ -17,7 +17,7 @@ self.addEventListener("fetch", e => {
   const url = new URL(req.url);
   // หน้าแอป: ใช้เวอร์ชันล่าสุดจากเน็ตก่อน ถ้าออฟไลน์ใช้ที่เก็บไว้
   if (req.mode === "navigate") {
-    e.respondWith(fetch(req).then(r => { const cp = r.clone(); caches.open(VERSION).then(c => c.put("./index.html", cp)); return r; })
+    e.respondWith(fetch(req, { cache: "no-store" }).then(r => { const cp = r.clone(); caches.open(VERSION).then(c => c.put("./index.html", cp)); return r; })
       .catch(() => caches.match("./index.html")));
     return;
   }
