@@ -1798,6 +1798,39 @@ body[data-page="wound"] #result{display:none!important}
 .bt-in input{width:110px;font-size:1.2rem;font-weight:700;text-align:center}
 .bt-note{margin:0;font-size:.76rem;color:var(--muted);line-height:1.5}
 @media (max-width:600px){.bt-lv{grid-template-columns:1fr 1fr}.bt-lv button:last-child{grid-column:1/-1}}
+/* ===== Repositioning v2 ===== */
+.rp-lim.ok{color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,var(--surface))}
+.rp-ban{border-radius:12px;padding:8px 12px;background:color-mix(in srgb,var(--c) 11%,var(--surface));box-shadow:inset 4px 0 0 var(--c)}
+.rp-ban b{display:block;font-size:.86rem;color:var(--c)}.rp-ban small{display:block;font-size:.78rem;color:var(--ink)}
+.rp-def{color:#9a6400!important;font-weight:600}
+.rp-log span.def{background:#fff1d6;color:#9a6400}.rp-log span.bad{background:var(--coral-t);color:var(--crit)}
+.rp-btns .btn:not(.primary){font-size:.8rem}
+.rp-post{border-top:1px dashed var(--line);padding-top:6px}
+.rp-post summary{cursor:pointer;font-size:.8rem;font-weight:600;color:var(--c);list-style:none}
+.rp-post summary::-webkit-details-marker{display:none}.rp-post summary::before{content:"▸ "}.rp-post[open] summary::before{content:"▾ "}
+.rp-post>div{display:flex;flex-direction:column;gap:2px;margin-top:6px}.rp-post b{font-size:.82rem;margin-top:4px}
+.rp-post ul,.rp-q ul,.rt-alt{margin:2px 0 0;padding-left:18px;font-size:.8rem;color:var(--ink);line-height:1.55}
+.rp-sum{display:flex;flex-wrap:wrap;gap:6px}.rp-sum span{font-size:.8rem;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px 10px}.rp-sum span.bad{color:var(--crit);border-color:color-mix(in srgb,var(--crit) 40%,var(--line))}
+.rp-gs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rp-g{font:inherit;text-align:left;cursor:pointer;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:10px 12px;box-shadow:inset 4px 0 0 var(--c)}
+.rp-g b{display:block;font-size:.88rem}.rp-g small{display:block;font-size:.74rem;color:var(--muted);line-height:1.4;margin-top:2px}
+.rp-g[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--surface))}
+.rp-sub{background:var(--bg);border-radius:14px;padding:10px 12px}
+.rp-nop,.rt-chk{display:flex;flex-wrap:wrap;gap:6px}
+.rp-nop button,.rt-chk button,.rp-md,.rt-bad{font:inherit;font-size:.84rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:7px 10px;text-align:left}
+.bx{width:18px;height:18px;flex:none;border-radius:5px;border:2px solid var(--line);display:inline-grid;place-items:center}
+[aria-pressed=true]>.bx{background:var(--pc);border-color:var(--pc)}[aria-pressed=true]>.bx::after{content:"✓";color:#fff;font-size:.72rem;font-weight:700}
+.rp-nop button[aria-pressed=true],.rt-chk button[aria-pressed=true],.rp-md[aria-pressed=true]{border-color:var(--pc);background:var(--pt)}
+.rt-chk{flex-direction:column}.rt-chk button{width:100%}
+.rt-bad{width:100%;justify-content:center;color:var(--s1);border-color:color-mix(in srgb,var(--s1) 35%,var(--line))}.rt-bad[aria-pressed=true]{background:var(--s1);color:#fff;border-color:var(--s1)}
+.rp-md{width:100%}
+.rp-q{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px}
+.rp-q>li{font-size:.86rem}.rp-q>li>b{display:block;font-size:.9rem;margin-bottom:2px}.rp-q>li>span{font-size:.84rem}.rp-q small{font-size:.76rem;color:var(--muted)}
+.rp-q .pill{display:inline-block;font-weight:700;color:#fff;background:var(--c);border-radius:999px;padding:2px 10px;font-size:.8rem}
+.rp-conf{border-radius:16px;padding:12px 14px;background:color-mix(in srgb,var(--c) 9%,var(--surface));display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.rp-conf dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.84rem}.rp-conf dt{color:var(--muted)}.rp-conf dd{margin:0;font-weight:600}
+#rpModal .rm-dots i{width:22px}
+@media (max-width:520px){.rp-gs{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -2527,11 +2560,18 @@ body[data-page="wound"] #result{display:none!important}
       </div>
     </div>
   </div>
+  <div class="modal" id="rtModal" hidden role="dialog" aria-modal="true" aria-labelledby="rtKick">
+    <div class="sheet bw-sheet rp-sheet">
+      <div class="rm-top"><div class="rm-kick" id="rtKick">บันทึกการเปลี่ยนท่า</div><button type="button" class="rm-x" id="rtX" aria-label="ปิด">&times;</button></div>
+      <div class="rm-body" id="rtBody"></div>
+      <div class="rm-foot"><button class="btn" id="rtCancel" type="button">ยกเลิก</button><span class="bw-sum rp-msg" id="rtMsg" role="alert"></span><button class="btn primary" id="rtOk" type="button">บันทึก</button></div>
+    </div>
+  </div>
   <div class="modal" id="rpModal" hidden role="dialog" aria-modal="true" aria-labelledby="rpKick">
     <div class="sheet bw-sheet rp-sheet">
-      <div class="rm-top"><div class="rm-kick" id="rpKick">Individualized Repositioning Plan</div><button type="button" class="rm-x" id="rpX" aria-label="ปิด">&times;</button></div>
+      <div class="rm-top"><div class="rm-kick" id="rpKick">Individualized Repositioning Plan</div><div class="rm-dots" id="rpDots"></div><button type="button" class="rm-x" id="rpX" aria-label="ปิด">&times;</button></div>
       <div class="rm-body" id="rpBody"></div>
-      <div class="rm-foot"><button class="btn" id="rpCancel" type="button">ยกเลิก</button><span class="bw-sum rp-msg" id="rpMsg" role="alert"></span><button class="btn primary" id="rpOk" type="button">บันทึกแผน</button></div>
+      <div class="rm-foot"><button class="btn" id="rpCancel" type="button">ยกเลิก</button><span class="bw-sum rp-msg" id="rpMsg" role="alert"></span><button class="btn primary" id="rpOk" type="button">ถัดไป</button></div>
     </div>
   </div>
   <div class="modal" id="bmModal" hidden role="dialog" aria-modal="true" aria-labelledby="bmKick">
@@ -6165,104 +6205,227 @@ async function photosExpire(){const today=phToday();let n=0;
   if(n){try{skinCache=await skAll(skHN());skRender()}catch(e){}}return n}
 setTimeout(()=>{photosExpire()},1500);setInterval(()=>{photosExpire()},3600e3);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")photosExpire()});
-/* ===== Individualized Repositioning Plan + per-patient turning clock ===== */
+/* ===== Individualized Repositioning Plan v2: 4-step decision support + per-patient turning clock ===== */
 var RP_PLANS={
-  q2:{n:"Every 2 Hours",th:"ทุก 2 ชั่วโมง",d:"ตามแผนที่กำหนด สำหรับผู้ป่วยเสี่ยงสูง มีแผล หรือยังไม่มีพื้นผิวกระจายแรงกด",c:"--teal",every:120},
-  q3:{n:"Every 3 Hours",th:"ทุก 3 ชั่วโมง",d:"เมื่อผ่านการประเมินว่าเหมาะสม: นอนบนที่นอนกระจายแรงกด ผิวหนังปกติ และ Braden ≥ 13",c:"--sky",every:180},
+  q2:{n:"Every 2 Hours",th:"ทุก 2 ชั่วโมง",d:"แผนเริ่มต้น ปรับตามผิวหนัง การเคลื่อนไหว ความทนต่อท่า และพื้นผิวรองรับ",c:"--teal",every:120},
+  q3:{n:"Every 3 Hours",th:"ทุก 3 ชั่วโมง",d:"เมื่อประเมินว่าเหมาะสม: ที่นอนกระจายแรงกด ผิวปกติ Braden ≥ 13 ไม่มีข้อจำกัด",c:"--sky",every:180},
   custom:{n:"Custom Schedule",th:"กำหนดเอง",d:"พยาบาลกำหนดเวลาและท่าเป็นรายบุคคล",c:"--indigo",every:120},
-  mod:{n:"Modified Repositioning",th:"ปรับท่าแบบจำกัด",d:"เปลี่ยนท่าหรือขยับลดแรงกดเล็กน้อยตามข้อจำกัด เช่น micro-shift ตะแคง 10–15° ยกส้นเท้า",c:"--gold",every:60},
-  hold:{n:"Clinical Hold",th:"งดพลิกตัวชั่วคราว",d:"มีข้อจำกัดทางคลินิก ต้องบันทึกเหตุผล วิธีลดแรงกดที่ปลอดภัย และทบทวนแผนตามเวลา",c:"--s1",every:120}};
-var RP_LIM=[["hemo","Hemodynamic instability","MAP < 65, ปรับ Vasopressor หรือ BP ตกเมื่อพลิกตัว"],["resp","Oxygenation ไม่คงที่","SpO₂ ลดลงเมื่อพลิกตัว / Severe ARDS / Prone"],
-  ["icp","ICP สูง / Head injury","ต้องจัดศีรษะตรง ศีรษะสูง 30°"],["spine","Spine precaution","กระดูกสันหลังไม่มั่นคง ต้อง Log roll"],
-  ["line","ECMO / สายสำคัญเลื่อนหลุดง่าย","เช่น ECMO, IABP, CRRT, EVD"],["postop","หลังผ่าตัด flap / graft","ห้ามกดทับบริเวณผ่าตัด"],
-  ["pain","ปวดมากเมื่อพลิกตัว","ให้ยาแก้ปวดก่อนพลิกตามแผนการรักษา"],["pall","Palliative / Comfort care","เน้นความสุขสบายตามความต้องการผู้ป่วย"]];
-var RP_METHODS=["ขยับสะโพก/ไหล่เล็กน้อย (micro-shift)","ตะแคง 10–15° ด้วยหมอนหรือโฟมรอง","ยกส้นเท้าให้ลอยพ้นที่นอน","ขยับตำแหน่งศีรษะ/ใบหู และท่อที่กดทับ","ใช้ที่นอนลม/ปรับแรงดันที่นอน","ตรวจผิวใต้อุปกรณ์ทุกครั้งที่ขยับ"];
-var RP_POS=["หงาย","ตะแคงซ้าย 30°","ตะแคงขวา 30°","คว่ำ (Prone)"];
-var rpUI={d:null};
+  mod:{n:"Modified Repositioning",th:"ปรับท่าแบบจำกัด",d:"ขยับลดแรงกดทีละน้อยตามข้อจำกัด เช่น micro-shift ตะแคง 10–15° ยกส้นเท้า",c:"--gold",every:60},
+  prone:{n:"Prone Position Mode",th:"ดูแลท่านอนคว่ำ",d:"สลับตำแหน่งศีรษะและแขน (Swimmer) และดูแลจุดกดทับของท่าคว่ำ แทนการพลิกซ้าย–ขวา",c:"--indigo",every:120},
+  hold:{n:"Clinical Hold",th:"งดเปลี่ยนท่าชั่วคราว",d:"มีข้อจำกัดทางคลินิก บันทึกเหตุผล วิธีลดแรงกดที่ปลอดภัย และทบทวนแผนตามเวลา",c:"--s1",every:120}};
+var RP_G=[
+  ["hemo","Hemodynamic instability","MAP < 65, กำลังปรับ Vasopressor หรือ BP ตกเมื่อเปลี่ยนท่า","--s1"],
+  ["resp","Respiratory instability / Severe ARDS","SpO₂ ลดลงเมื่อเปลี่ยนท่า, FiO₂/PEEP สูง หรือ Prone","--sky"],
+  ["neuro","Increased ICP / Brain injury","Intracranial hypertension, TBI, EVD หรือจำกัดการจัดแนวศีรษะ","--indigo"],
+  ["postop","Postoperative / Flap / Graft","มีตำแหน่งที่ห้ามรับแรงกดหลังผ่าตัด","--gold"],
+  ["spine","Spine precaution","กระดูกสันหลังไม่มั่นคง ต้อง Log roll","--s2"],
+  ["pall","Palliative / Comfort care","เน้นความสุขสบายตามความต้องการผู้ป่วย","--ok"]];
+var RP_NOP=[["head","ศีรษะ"],["back","หลัง"],["sacrum","ก้นกบ"],["hipL","สะโพกซ้าย"],["hipR","สะโพกขวา"],["legL","ขาซ้าย"],["legR","ขาขวา"],["other","ตำแหน่งอื่น ๆ"]];
+var RP_SURG=["Skin graft","Free flap","Spinal surgery","Abdominal surgery","Orthopedic surgery"];
+var RP_METHODS=["ขยับสะโพก/ไหล่เล็กน้อย (micro-shift)","ตะแคง 10–15° ด้วยหมอนหรือโฟมรอง","ยกส้นเท้าให้ลอยพ้นที่นอน","ขยับตำแหน่งศีรษะ/ใบหู และท่อที่กดทับ","ใช้ที่นอนลม/ปรับแรงดันที่นอน","ปิดแผ่นโฟมซิลิโคนป้องกันที่ก้นกบและส้นเท้า"];
+/* base positions and the areas they load */
+var RP_PS={sup:{n:"หงาย",load:["head","back","sacrum"]},l30:{n:"ตะแคงซ้าย 30°",load:["hipL","legL"]},r30:{n:"ตะแคงขวา 30°",load:["hipR","legR"]}};
+var rpUI={d:null,step:1};
 function rpGet(){return st.rp||null}
 function rpSave(rp){st.rp=rp;try{savePatient()}catch(e){}try{rpPaintAll()}catch(e){}}
-function rpLims(rp){return (rp&&rp.lim)||[]}
-function rpAutoLims(){const cr=crData(),x=cr.x||[],f=crFactors(cr).map(z=>z.k),L=[];if(f.includes("vp")||x.includes("perf"))L.push("hemo");if(f.includes("hyp"))L.push("resp");return L}
-function rpSuggest(lim,surf){const t=bradenTotal(),ws=(wounds||[]).some(w=>w.stage&&w.stage!=="none"),sep=$("sepsis").checked;let R=null;try{R=compoundRisk(t,crData())}catch(e){}
-  const why=[],has=k=>lim.includes(k);
-  if(has("hemo")||has("resp")||has("line")){why.push(lim.filter(k=>["hemo","resp","line"].includes(k)).map(k=>RP_LIM.find(z=>z[0]===k)[1]).join(", ")+" → ขยับลดแรงกดทีละน้อยแทนการพลิกเต็มท่า และทบทวนร่วมกับทีมรักษา ถ้าขยับไม่ได้เลยให้เลือก Clinical Hold");return {k:"mod",why}}
-  if(has("icp")){why.push("ICP สูง → จัดศีรษะตรง ศีรษะสูง 30° ตะแคงได้เล็กน้อย");return {k:"mod",why}}
-  if(has("spine")){why.push("Spine precaution → พลิกแบบ Log roll ทุก 2 ชั่วโมง ใช้ผู้ช่วยอย่างน้อย 3 คน");return {k:"custom",why}}
-  if(t!=null&&t<=12)why.push(`Braden ${t} (เสี่ยงสูง)`);if(ws)why.push("มีแผลกดทับอยู่");if(sep)why.push("มี sepsis/บวม/รอยแดง");if(R&&R.crit)why.push("Critical Risk");
-  if(why.length)return {k:"q2",why:[why.join(" · ")+" → พลิกทุก 2 ชั่วโมง"]};
-  if(t!=null&&t>=13&&surf)return {k:"q3",why:[`Braden ${t} ผิวหนังปกติ และนอนบนที่นอนกระจายแรงกด → พลิกทุก 3 ชั่วโมงได้`]};
-  return {k:"q2",why:[t==null?"ยังไม่ได้ประเมิน Braden":`Braden ${t}${surf?"":" ยังไม่ได้ใช้ที่นอนกระจายแรงกด"}`+" → พลิกทุก 2 ชั่วโมง"]}}
-function rpPosList(rp){if(!rp)return RP_POS.slice(0,3);const L=rpLims(rp);
-  if(rp.k==="custom"&&rp.pos&&rp.pos.length)return rp.pos;
-  if(rp.k==="mod")return L.includes("icp")?["ศีรษะตรง ตะแคงซ้ายเล็กน้อย 15°","ศีรษะตรง หงาย ศีรษะสูง 30°","ศีรษะตรง ตะแคงขวาเล็กน้อย 15°"]:["ตะแคงซ้าย 10–15°","หงาย ขยับสะโพก/ไหล่","ตะแคงขวา 10–15°"];
-  if(L.includes("spine"))return ["หงาย (Log roll)","ตะแคงซ้าย (Log roll)","ตะแคงขวา (Log roll)"];
-  return RP_POS.slice(0,3)}
+function rpGroups(rp){if(!rp)return [];if(rp.g)return rp.g;return (rp.lim||[]).map(k=>k==="icp"?"neuro":k).filter(k=>RP_G.some(z=>z[0]===k))}
+function rpLims(rp){return rpGroups(rp)}
+function rpAutoG(){const cr=crData(),x=cr.x||[],f=crFactors(cr).map(z=>z.k),G=[];if(f.includes("vp")||x.includes("perf"))G.push("hemo");if(f.includes("hyp"))G.push("resp");return G}
+function rpAllowed(d){const nop=d.nop||[];return Object.entries(RP_PS).filter(([k,p])=>!p.load.some(a=>nop.includes(a))).map(([k])=>k)}
+function rpLabel(k,d){const G=d.g||[],sp=G.includes("spine"),ne=G.includes("neuro"),re=G.includes("resp")&&!d.prone;
+  if(k==="sup")return ne?"หงาย ศีรษะสูง 30° แนวศีรษะตรง":re?"หงาย ศีรษะสูงตามข้อบ่งชี้ระบบหายใจ":sp?"หงาย (Log roll)":"หงาย";
+  const side=k==="l30"?"ซ้าย":"ขวา";return ne?`ตะแคง${side} 15–30° คอตรง`:re?`ตะแคง${side} 30° (ถ้าทนได้)`:sp?`ตะแคง${side} (Log roll)`:`ตะแคง${side} 30°`}
+/* the decision engine: answers the 6 questions */
+function rpAdvise(d){const t=bradenTotal(),ws=(wounds||[]).some(w=>w.stage&&w.stage!=="none"),sep=$("sepsis").checked,G=d.g||[],has=k=>G.includes(k);
+  const A={k:"q2",every:120,can:"ได้",canC:"--ok",why:[],pos:[],eq:[],post:[],alt:[],banner:[]};
+  const allow=rpAllowed(d);A.pos=allow.map(k=>rpLabel(k,d));
+  // priority
+  if(has("resp")&&d.prone){A.k="prone";A.every=120;A.can="ได้ · ใช้ Prone Position Mode";A.canC="--indigo";A.why.push("นอนคว่ำ (Prone) → สลับศีรษะและแขนแทนการพลิกซ้าย–ขวา ตามแนวทางของหน่วยงาน");
+    A.pos=["ศีรษะหันขวา · แขนขวายกขึ้น (Swimmer)","ศีรษะหันซ้าย · แขนซ้ายยกขึ้น (Swimmer)"];
+    A.banner.push(["--indigo","🔵 Prone Position Mode","แสดงแผนดูแลจุดเสี่ยงของท่านอนคว่ำแทนตารางพลิกซ้าย–ขวา"])}
+  else if(has("hemo")){A.k="mod";A.every=60;A.can="ได้แบบจำกัด";A.canC="--s2";A.why.push("Hemodynamic instability → ขยับลดแรงกดทีละน้อย (micro-shift) ทุก 1 ชม. แทนการพลิกเต็มท่า เปลี่ยนท่าเต็มเมื่อความดันคงที่ ถ้าขยับไม่ได้เลยให้ใช้ Clinical Hold");
+    A.pos=["ตะแคงซ้าย 10–15°","หงาย ขยับสะโพก/ไหล่","ตะแคงขวา 10–15°"].filter((p,i)=>i===1||allow.includes(i?"r30":"l30"))}
+  else if(has("pall")){A.k="custom";A.every=180;A.why.push("Palliative / Comfort care → ปรับเวลาตามความสุขสบายและความต้องการของผู้ป่วยและญาติ")}
+  else{const risky=(t!=null&&t<=12)||ws||sep;
+    if(has("neuro"))A.why.push("Increased ICP → เปลี่ยนท่าภายใต้การติดตาม ICP/CPP รักษาแนวศีรษะและคอให้ตรง");
+    if(has("resp"))A.why.push("Respiratory instability (นอนหงาย) → ตะแคง 30° เมื่อทนได้ ประเมิน SpO₂ และเครื่องช่วยหายใจทุกครั้ง");
+    if(has("spine"))A.why.push("Spine precaution → พลิกแบบ Log roll ใช้ผู้ช่วยอย่างน้อย 3 คน");
+    if(has("postop"))A.why.push("หลังผ่าตัด → ใช้เฉพาะท่าที่ไม่ลงน้ำหนักบริเวณที่ห้ามกด");
+    if(d.red){A.k="custom";A.every=90;A.why.push("มีรอยแดงไม่จางหลังเปลี่ยนท่า → ลดช่วงเวลาเป็นทุก 1.5 ชม. และทบทวนที่นอน")}
+    else if(!G.length&&d.surf&&t!=null&&t>=13&&!ws&&!sep){A.k="q3";A.every=180;A.why.push(`Stable · Braden ${t} ผิวปกติ นอนบนที่นอนกระจายแรงกด → เปลี่ยนท่าทุก 3 ชม. ได้`)}
+    else{A.k=G.some(k=>["neuro","spine","postop"].includes(k))&&!["sup","l30","r30"].every(k=>allow.includes(k))?"custom":"q2";A.every=120;
+      if(!G.length)A.why.push(`Stable Patient${t!=null?` · Braden ${t}`:""}${risky?" เสี่ยงสูง":""} → เริ่มที่ทุก 2 ชม. เป็นแผนเริ่มต้น ไม่ใช่ข้อกำหนดตายตัว`)}
+    if(allow.length<2){A.k="mod";A.every=60;A.can="ได้แบบจำกัด";A.canC="--s2";A.why.push("ท่าที่ไม่ขัดกับข้อจำกัดเหลือน้อยกว่า 2 ท่า → ขยับลดแรงกดแบบจำกัด และปรึกษาแพทย์เรื่องท่าที่ปลอดภัย")}}
+  if(has("neuro"))A.banner.push(["--s1","⚠️ Neuro Precaution","ผู้ป่วยมีข้อจำกัดด้าน ICP กรุณาตรวจสอบคำสั่งรักษาและประเมิน ICP/CPP ก่อนเปลี่ยนท่า"]);
+  if(has("postop"))A.banner.push(["--gold","ยืนยันกับคำสั่งแพทย์","ท่าที่แสดงคัดจากตำแหน่งที่ห้ามรับแรงกด ต้องตรวจสอบกับคำสั่งแพทย์ก่อนใช้งาน"]);
+  // 4. equipment & precautions
+  A.eq.push("หมอน/โฟมรองจัดท่าตะแคง 30° ลดแรงกด Sacrum","ยกส้นเท้าให้ลอย (หมอนใต้น่องหรืออุปกรณ์ยกส้นเท้า)");
+  if(d.surf)A.eq.push("ที่นอนลม/ที่นอนกระจายแรงกด: ตรวจแรงดันและการทำงานทุกเวร");else if((t!=null&&t<=12)||has("hemo"))A.eq.push("พิจารณาขอที่นอนลม/ที่นอนกระจายแรงกด");
+  if((t!=null&&t<=12)||has("hemo")||ws)A.eq.push("แผ่นโฟมซิลิโคนป้องกันที่ก้นกบและส้นเท้า");
+  if(has("hemo"))A.eq.push("เปลี่ยนท่าช้า ๆ ทีละขั้น เตรียมพร้อมปรับยาตามแผนการรักษา");
+  if(has("resp"))A.eq.push(d.prone?"อุปกรณ์รองใบหน้า/หมอนเจล และแผ่นโฟมที่หน้าอก เข่า":"ระวังท่อช่วยหายใจและสายเครื่องช่วยหายใจตึงหรือหัก");
+  if(d.prone)A.eq.push("ตรวจตำแหน่ง ETT และสายอุปกรณ์ทุกครั้งที่ขยับ");
+  if(has("neuro"))A.eq.push("ยกศีรษะเตียงตามคำสั่งรักษา (มักประมาณ 30°) หลีกเลี่ยงหมุน/ก้มคอ","ปิด/ปรับระดับ EVD ตามแนวทางก่อนและหลังเปลี่ยนท่า");
+  if(has("spine"))A.eq.push("Log roll ใช้ผู้ช่วยอย่างน้อย 3 คน และอุปกรณ์ประคองแนวกระดูกสันหลัง");
+  if(has("postop"))A.eq.push("หลีกเลี่ยงการลงน้ำหนักบริเวณ: "+((d.nop||[]).map(k=>(RP_NOP.find(z=>z[0]===k)||[])[1]).filter(Boolean).concat(d.other?[d.other]:[]).join(", ")||"ตามคำสั่งแพทย์"));
+  // 5. after repositioning
+  A.post.push("ผิวหนังบริเวณที่เพิ่งรับแรงกด (รอยแดงจางภายใน 30 นาทีหรือไม่)","ส้นเท้าลอยพ้นที่นอน และไม่มีสาย/ท่อกดทับผิว");
+  if(has("hemo"))A.post.push("MAP / HR / BP ก่อนและหลังเปลี่ยนท่า 5–10 นาที");
+  if(has("resp"))A.post.push("SpO₂, RR และค่าเครื่องช่วยหายใจ (Vt, Peak pressure)");
+  if(d.prone)A.post.push("ผิวหนังใบหน้า หน้าผาก คาง หน้าอก เข่า และนิ้วเท้า","ตำแหน่ง ETT และสายอุปกรณ์ทั้งหมด");
+  if(has("neuro"))A.post.push("ICP / CPP, ระดับ EVD, GCS และรูม่านตา");
+  if(has("postop"))A.post.push("แผลผ่าตัด/flap: สี อุณหภูมิ capillary refill และสายระบาย","ผิวหนังบริเวณที่ต้องรับน้ำหนักทดแทน");
+  if(has("spine"))A.post.push("แนวกระดูกสันหลัง และการรับความรู้สึก/กำลังแขนขา");
+  // 6. if repositioning is not possible
+  A.alt=["ขยับลดแรงกดเล็กน้อย (micro-shift) ทุก 1–2 ชม. ตามที่ผู้ป่วยทนได้","ยกส้นเท้าให้ลอยตลอดเวลา","ใช้ที่นอนลม/ปรับแรงดันที่นอน","ปิดแผ่นโฟมซิลิโคนป้องกันที่ก้นกบ ส้นเท้า และใต้อุปกรณ์","บันทึกเหตุผลและทบทวนแผนเมื่ออาการคงที่ หรืออย่างน้อยทุกเวร"];
+  return A}
+function rpPosList(rp){if(!rp)return [RP_PS.sup.n,RP_PS.l30.n,RP_PS.r30.n];if(rp.pos&&rp.pos.length)return rp.pos;const A=rpAdvise(Object.assign({g:rpGroups(rp)},rp));return A.pos.length?A.pos:[RP_PS.sup.n]}
 function rpEvery(rp){return rp?(+rp.every||RP_PLANS[rp.k].every):120}
-function rpState(rp,now){now=now||Date.now();if(!rp)return null;const P=RP_PLANS[rp.k]||RP_PLANS.q2,pos=rpPosList(rp),i=(+rp.idx||0)%pos.length;
+function rpState(rp,now){now=now||Date.now();if(!rp||!RP_PLANS[rp.k])return null;const P=RP_PLANS[rp.k],pos=rpPosList(rp),i=(+rp.idx||0)%pos.length;
   if(rp.k==="hold"){const due=(rp.at||now)+(+rp.review||120)*60000;return {hold:1,due,left:due-now,over:now>due,P,cur:"",next:"",lt:rp.lt||0,span:(+rp.review||120)*60000}}
-  const ev=rpEvery(rp)*60000,lt=rp.lt||0,due=lt?lt+ev:0;return {due,left:due?due-now:0,over:!!due&&now>due,P,cur:lt?pos[i]:"",next:lt?pos[(i+1)%pos.length]:pos[i],lt,span:ev,first:!lt}}
+  const ev=rpEvery(rp)*60000,lt=rp.lt||0;let due=lt?lt+ev:0,def=null;if(rp.defer&&rp.defer.until>due&&rp.defer.at>=lt){due=rp.defer.until;def=rp.defer}
+  return {due,left:due?due-now:0,over:!!due&&now>due,P,cur:lt?pos[i]:"",next:lt?pos[(i+1)%pos.length]:pos[i],lt,span:def?(def.until-def.at):ev,first:!lt,def}}
 function rpFmtLeft(ms){const m=Math.round(Math.abs(ms)/60000),h=Math.floor(m/60);return (h?h+" ชม. ":"")+(m%60)+" นาที"}
 function rpRing(S){const R=46,C=2*Math.PI*R;let frac=S&&S.due&&S.span?Math.max(0,Math.min(1,S.left/S.span)):0;const col=!S||S.first?"var(--line)":S.over?"var(--s1)":S.left<15*60000?"var(--s2)":"var(--c)";
-  const mid=!S?"–":S.first?"เริ่ม":S.over?"เลย":Math.max(0,Math.ceil(S.left/60000))>=60?(S.left/3600000).toFixed(1).replace(/\.0$/,""):String(Math.max(0,Math.ceil(S.left/60000)));
-  const unit=!S||S.first?"":S.over?rpFmtLeft(S.left):Math.ceil(S.left/60000)>=60?"ชั่วโมง":"นาที";
+  const mins=S?Math.max(0,Math.ceil(S.left/60000)):0,mid=!S?"–":S.first?"เริ่ม":S.over?"เลย":mins>=60?(S.left/3600000).toFixed(1).replace(/\.0$/,""):String(mins);
+  const unit=!S||S.first?"":S.over?rpFmtLeft(S.left):mins>=60?"ชั่วโมง":"นาที";
   return `<svg class="rp-ring" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="${R}" fill="none" stroke="var(--line)" stroke-width="10"/><circle cx="60" cy="60" r="${R}" fill="none" stroke="${col}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${(C*(S&&S.over?1:frac)).toFixed(1)} ${C.toFixed(1)}" transform="rotate(-90 60 60)"/>
     <text x="60" y="${unit?60:66}" text-anchor="middle" class="rp-rn" style="fill:${S&&S.over?"var(--s1)":"var(--ink)"}">${mid}</text>${unit?`<text x="60" y="80" text-anchor="middle" class="rp-ru">${unit}</text>`:""}</svg>`}
-function rpCardHTML(rp,where){const t=bradenTotal();
-  if(!rp){const sg=rpSuggest(rpAutoLims(),false),P=RP_PLANS[sg.k];
-    return `<div class="rp-card rp-empty" style="--c:var(${P.c})"><div class="rp-ic" aria-hidden="true">&#9200;</div><div class="rp-tx"><b>นาฬิกาพลิกตะแคงตัวรายบุคคล</b><small>${t==null?"ประเมิน Braden ให้ครบก่อน แล้วตั้งแผนให้เหมาะกับโรคของผู้ป่วย":`แนะนำ: <b>${P.n}</b> (${P.th}) · ${esc(sg.why[0])}`}</small></div><button type="button" class="btn primary rp-set" data-rp="set">ตั้งแผนพลิกตัว</button></div>`}
-  const S=rpState(rp),P=S.P,lim=rpLims(rp).map(k=>(RP_LIM.find(z=>z[0]===k)||[])[1]).filter(Boolean);
-  const head=`<div class="rp-top"><span class="rp-plan">${P.n}<small>${rp.k==="custom"||rp.k==="mod"?"ทุก "+(rpEvery(rp)/60).toString().replace(/\.5$/,".5")+" ชม.":P.th}</small></span>${lim.length?`<span class="rp-lim">⚠ ${esc(lim.join(" · "))}</span>`:""}<button type="button" class="rp-edit" data-rp="set">ปรับแผน</button></div>`;
+function rpEveryTxt(m){return m<60?m+" นาที":(m/60)+" ชม."}
+function rpCardHTML(rp){const t=bradenTotal();
+  if(!rp){const A=rpAdvise({g:rpAutoG(),nop:[]}),P=RP_PLANS[A.k];
+    return `<div class="rp-card rp-empty" style="--c:var(${P.c})"><div class="rp-ic" aria-hidden="true">&#9200;</div><div class="rp-tx"><b>แผนการเปลี่ยนท่ารายบุคคล</b><small>${t==null?"ประเมิน Braden ให้ครบก่อน แล้วตั้งแผนให้เหมาะกับโรคและข้อจำกัดของผู้ป่วย":`4 ขั้นตอน: ประเมินข้อจำกัด → ระบบเสนอแผน → พยาบาลตรวจสอบ → ยืนยันและเริ่มนาฬิกา`}</small></div><button type="button" class="btn primary rp-set" data-rp="set">ตั้งแผนเปลี่ยนท่า</button></div>`}
+  const S=rpState(rp);if(!S)return "";const P=S.P,G=rpGroups(rp),A=rpAdvise(Object.assign({g:G},rp));
+  const gl=G.map(k=>(RP_G.find(z=>z[0]===k)||[])[1]).filter(Boolean);
+  const head=`<div class="rp-top"><span class="rp-plan">${P.n}<small>${rp.k==="hold"?P.th:"ทุก "+rpEveryTxt(rpEvery(rp))}</small></span>${gl.length?`<span class="rp-lim">${esc(gl.join(" · "))}</span>`:'<span class="rp-lim ok">Stable Patient</span>'}<button type="button" class="rp-edit" data-rp="set">ปรับแผน</button></div>`;
+  const ban=A.banner.filter(b=>b[1]!=="ยืนยันกับคำสั่งแพทย์").map(b=>`<div class="rp-ban" style="--c:var(${b[0]})"><b>${esc(b[1])}</b><small>${esc(b[2])}</small></div>`).join("");
   let main;
-  if(S.hold)main=`<div class="rp-tx"><b>${S.over?"ถึงเวลาทบทวนแผน":"งดพลิกตัวชั่วคราว"}</b><small>เหตุผล: ${esc(rp.reason||"-")}${rp.with?" · ร่วมกับ "+esc(rp.with):""}</small><small>ทบทวนภายใน ${hhmm(S.due)} น.${S.over?" · เลยมา "+rpFmtLeft(S.left):" · อีก "+rpFmtLeft(S.left)}</small>${(rp.meth||[]).length?`<small>ลดแรงกดโดย: ${esc(rp.meth.join(", "))}</small>`:""}</div><div class="rp-btns"><button type="button" class="btn primary" data-rp="relief">ขยับลดแรงกดแล้ว</button><button type="button" class="btn" data-rp="set">ทบทวนแผน</button></div>`;
-  else main=`<div class="rp-tx">${S.first?`<b>เริ่มนับเวลา: จัดท่า${esc(S.next)}</b><small>กดบันทึกเมื่อจัดท่าแล้ว ระบบจะนับเวลารอบถัดไปให้</small>`:`<b>${S.over?"ถึงเวลาพลิกตัวแล้ว":"รอบถัดไป "+hhmm(S.due)+" น."}</b><small>ตอนนี้: ${esc(S.cur)} · ถัดไป: <b>${esc(S.next)}</b></small><small>พลิกล่าสุด ${hhmm(S.lt)} น.${rp.log&&rp.log.length&&rp.log[rp.log.length-1].by?" โดย "+esc(rp.log[rp.log.length-1].by):""}${S.over?" · เลยเวลามา "+rpFmtLeft(S.left):""}</small>`}
-    ${rp.k==="mod"&&(rp.meth||[]).length?`<small>วิธี: ${esc(rp.meth.join(", "))}</small>`:""}</div><div class="rp-btns"><button type="button" class="btn primary${S.over?" pulse":""}" data-rp="turn">${S.first?"จัดท่าแล้ว":rp.k==="mod"?"ขยับแล้ว → "+esc(S.next):"พลิกแล้ว → "+esc(S.next)}</button></div>`;
-  return `<div class="rp-card${S.over?" over":""}" style="--c:var(${P.c})">${head}<div class="rp-body">${rpRing(S)}${main}</div>${rp.log&&rp.log.length?`<div class="rp-log">${rp.log.slice(-4).reverse().map(l=>`<span>${hhmm(l.t)} ${esc(l.pos)}</span>`).join("")}</div>`:""}</div>`}
-function rpBind(root){root.querySelectorAll("[data-rp]").forEach(b=>b.onclick=()=>{const a=b.dataset.rp;if(a==="set")rpOpen();else if(a==="turn")rpTurn();else if(a==="relief")rpTurn(true)})}
-function rpTurn(relief){const rp=Object.assign({},rpGet());if(!rp.k)return;const S=rpState(rp),now=Date.now(),by=pvBy();
-  const pos=relief?"ขยับลดแรงกด":S.first?S.next:S.next;
-  if(!relief&&!S.first)rp.idx=((+rp.idx||0)+1)%rpPosList(rp).length;
-  if(!relief)rp.lt=now;rp.log=(rp.log||[]).concat([{t:now,pos,by:by.by,ot:by.ot,k:rp.k}]).slice(-30);
+  if(S.hold)main=`<div class="rp-tx"><b>${S.over?"ถึงเวลาทบทวนแผน":"งดเปลี่ยนท่าชั่วคราว"}</b><small>เหตุผล: ${esc(rp.reason||"-")}${rp.with?" · ร่วมกับ "+esc(rp.with):""}</small><small>ทบทวนภายใน ${hhmm(S.due)} น.${S.over?" · เลยมา "+rpFmtLeft(S.left):" · อีก "+rpFmtLeft(S.left)}</small>${(rp.meth||[]).length?`<small>ลดแรงกดโดย: ${esc(rp.meth.join(", "))}</small>`:""}</div><div class="rp-btns"><button type="button" class="btn primary" data-rp="relief">ขยับลดแรงกดแล้ว</button><button type="button" class="btn" data-rp="set">ทบทวนแผน</button></div>`;
+  else main=`<div class="rp-tx">${S.first?`<b>เริ่มนับเวลา: จัดท่า${esc(S.next)}</b><small>กดบันทึกเมื่อจัดท่าแล้ว ระบบจะนับเวลารอบถัดไปให้</small>`:`<b>${S.over?(rp.k==="prone"?"ถึงเวลาสลับศีรษะ/แขน":"ถึงเวลาเปลี่ยนท่าแล้ว"):"รอบถัดไป "+hhmm(S.due)+" น."}</b><small>ตอนนี้: ${esc(S.cur)} · ถัดไป: <b>${esc(S.next)}</b></small><small>เปลี่ยนท่าล่าสุด ${hhmm(S.lt)} น.${rp.log&&rp.log.length&&rp.log[rp.log.length-1].by?" โดย "+esc(rp.log[rp.log.length-1].by):""}${S.over?" · เลยเวลามา "+rpFmtLeft(S.left):""}</small>${S.def?`<small class="rp-def">เลื่อนตามข้อจำกัดทางคลินิก: ${esc(S.def.r)} (ถึง ${hhmm(S.def.until)} น.)</small>`:""}`}
+    </div><div class="rp-btns"><button type="button" class="btn primary${S.over?" pulse":""}" data-rp="turn">${S.first?"จัดท่าแล้ว":rp.k==="mod"?"ขยับแล้ว":rp.k==="prone"?"สลับแล้ว":"เปลี่ยนท่าแล้ว"}</button>${S.first?"":'<button type="button" class="btn" data-rp="defer">เลื่อน (ข้อจำกัดทางคลินิก)</button>'}</div>`;
+  const post=`<details class="rp-post"><summary>ประเมินหลังเปลี่ยนท่า · อุปกรณ์ · ถ้าเปลี่ยนท่าไม่ได้</summary><div><b>ประเมินหลังเปลี่ยนท่า</b><ul>${A.post.map(x=>`<li>${esc(x)}</li>`).join("")}</ul><b>อุปกรณ์และข้อควรระวัง</b><ul>${A.eq.map(x=>`<li>${esc(x)}</li>`).join("")}</ul><b>ถ้าเปลี่ยนท่าไม่ได้</b><ul>${A.alt.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div></details>`;
+  return `<div class="rp-card${S.over?" over":""}" style="--c:var(${P.c})">${head}${ban}<div class="rp-body">${rpRing(S)}${main}</div>${rp.log&&rp.log.length?`<div class="rp-log">${rp.log.slice(-4).reverse().map(l=>`<span class="${l.def?"def":l.bad?"bad":""}">${hhmm(l.t)} ${esc(l.pos)}</span>`).join("")}</div>`:""}${post}</div>`}
+function rpBind(root){root.querySelectorAll("[data-rp]").forEach(b=>b.onclick=()=>{const a=b.dataset.rp;if(a==="set")rpOpen();else if(a==="turn")rtOpen("turn");else if(a==="relief")rtOpen("relief");else if(a==="defer")rtOpen("defer")})}
+/* --- record a turn / relief / deferral --- */
+var rtUI={};
+function rtOpen(mode){const rp=rpGet();if(!rp)return;const S=rpState(rp),A=rpAdvise(Object.assign({g:rpGroups(rp)},rp)),pos=rpPosList(rp);
+  rtUI={mode,pos:mode==="turn"?S.next:"",chk:[],bad:false,r:"",min:30,note:""};
+  const box=$("rtBody");$("rtKick").textContent=mode==="defer"?"เลื่อนการเปลี่ยนท่าตามข้อจำกัดทางคลินิก":mode==="relief"?"บันทึกการลดแรงกด":"บันทึกการเปลี่ยนท่า";
+  if(mode==="defer"){const R=["MAP ต่ำ / กำลังปรับยา","SpO₂ ลดลง / ไม่คงที่","ICP สูง / CPP ต่ำ","กำลังทำหัตถการ/ส่งตรวจ","ผู้ป่วยไม่ทนต่อท่า","อื่น ๆ"];
+    box.innerHTML=`<p class="note" style="margin:0">ใช้เมื่อเปลี่ยนท่าไม่ได้ด้วยเหตุผลทางคลินิก การเลื่อนที่มีเหตุผลจะไม่ถูกนับเป็นการไม่ปฏิบัติตามแผน แต่ต้องประเมินซ้ำ</p>
+      <div class="lbl">เหตุผล (จำเป็น)</div><div class="rp-chips">${R.map(x=>`<button type="button" class="rp-chip sm" aria-pressed="false" data-r="${esc(x)}"><b>${esc(x)}</b></button>`).join("")}</div>
+      <input id="rtNote" type="text" placeholder="รายละเอียด เช่น MAP 58 mmHg ขณะเพิ่ม Norepinephrine">
+      <div class="lbl">ประเมินซ้ำภายใน</div><div class="rp-seg">${[15,30,60].map(m=>`<button type="button" aria-pressed="${m===30}" data-min="${m}">${m} นาที</button>`).join("")}</div>
+      <div class="lbl">ระหว่างนี้ลดแรงกดโดย</div><ul class="rt-alt">${A.alt.slice(0,4).map(x=>`<li>${esc(x)}</li>`).join("")}</ul>`}
+  else box.innerHTML=`${mode==="turn"?`<div class="lbl">${rpGet().k==="prone"?"ตำแหน่งศีรษะ/แขนตอนนี้":"ท่าที่จัดตอนนี้"}</div><div class="rp-chips">${pos.map(p=>`<button type="button" class="rp-chip sm" aria-pressed="${p===rtUI.pos}" data-p="${esc(p)}"><b>${esc(p)}</b></button>`).join("")}</div>`:""}
+    <div class="lbl">ประเมินหลังเปลี่ยนท่า (แตะเมื่อประเมินแล้ว)</div><div class="rt-chk">${A.post.map((x,i)=>`<button type="button" aria-pressed="false" data-c="${i}"><span class="bx" aria-hidden="true"></span>${esc(x)}</button>`).join("")}</div>
+    <button type="button" class="rt-bad" aria-pressed="false" id="rtBad">ผู้ป่วยไม่ทนต่อท่า / พบความผิดปกติหลังเปลี่ยนท่า</button>
+    <input id="rtNote" type="text" placeholder="บันทึกเพิ่มเติม (ถ้ามี) เช่น SpO₂ ลดเหลือ 88% กลับท่าเดิม">`;
+  box.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{rtUI.pos=b.dataset.p;box.querySelectorAll("[data-p]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))});
+  box.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{const on=b.getAttribute("aria-pressed")!=="true";b.setAttribute("aria-pressed",String(on))});
+  box.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{rtUI.r=b.dataset.r;box.querySelectorAll("[data-r]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))});
+  box.querySelectorAll("[data-min]").forEach(b=>b.onclick=()=>{rtUI.min=+b.dataset.min;box.querySelectorAll("[data-min]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)))});
+  const bad=$("rtBad");if(bad)bad.onclick=()=>{rtUI.bad=!rtUI.bad;bad.setAttribute("aria-pressed",String(rtUI.bad))};
+  $("rtMsg").textContent="";$("rtOk").textContent=mode==="defer"?"บันทึกการเลื่อน":"บันทึก";$("rtModal").hidden=false;document.body.classList.add("noscroll")}
+function rtClose(){$("rtModal").hidden=true;if($("riskModal").hidden&&$("bwModal").hidden&&$("rpModal").hidden)document.body.classList.remove("noscroll")}
+$("rtX").onclick=rtClose;$("rtCancel").onclick=rtClose;$("rtModal").addEventListener("click",e=>{if(e.target.id==="rtModal")rtClose()});
+$("rtOk").onclick=()=>{const rp=Object.assign({},rpGet()),now=Date.now(),by=pvBy(),note=($("rtNote")&&$("rtNote").value.trim())||"",A=rpAdvise(Object.assign({g:rpGroups(rp)},rp));
+  if(rtUI.mode==="defer"){if(!rtUI.r){$("rtMsg").textContent="เลือกเหตุผลก่อนบันทึก";return}
+    const r=rtUI.r+(note?" · "+note:"");{const S0=rpState(rp);rp.defer={at:now,until:Math.max(now,S0&&S0.due||now)+rtUI.min*60000,r}}rp.log=(rp.log||[]).concat([{t:now,pos:"เลื่อน: "+rtUI.r,def:1,r,by:by.by,ot:by.ot}]).slice(-30);
+    try{const P=planState(),e=P[planKey()],cur=e&&e.i&&e.i.turn;if(!cur||cur.s!=="done")planSet("turn",Object.assign({s:"na",t:now,r:"เลื่อนตามข้อจำกัดทางคลินิก: "+r},by))}catch(x){}
+    rpSave(rp);rtClose();advise("บันทึกการเลื่อนแล้ว",[`เหตุผล: ${r}`,`ประเมินซ้ำภายใน ${hhmm(rp.defer.until)} น.`,"ระหว่างนี้ยกส้นเท้าและขยับลดแรงกดเล็กน้อยตามที่ทนได้"],"--gold","⏸");return}
+  const relief=rtUI.mode==="relief",S=rpState(rp),pos=relief?"ขยับลดแรงกด":(rtUI.pos||S.next),L=rpPosList(rp);
+  const chk=[...$("rtBody").querySelectorAll("[data-c]")].filter(b=>b.getAttribute("aria-pressed")==="true").map(b=>A.post[+b.dataset.c]);
+  if(!relief){const i=L.indexOf(pos);rp.idx=i>=0?i:((+rp.idx||0)+1)%L.length;rp.lt=now;delete rp.defer}
+  rp.log=(rp.log||[]).concat([{t:now,pos,by:by.by,ot:by.ot,k:rp.k,chk,bad:rtUI.bad?1:0,note}]).slice(-30);
   try{localStorage.setItem("pi-turn-"+realHN(),String(now));syncEnq("turn",realHN(),{t:now})}catch(e){}
   try{const it=planItems();if(it.some(x=>x.id==="turn"))planSet("turn",Object.assign({s:"done",t:now},by))}catch(e){}
-  rpSave(rp);const S2=rpState(rp);
-  advise(relief?"บันทึกการลดแรงกดแล้ว":"บันทึกการพลิกตัวแล้ว",relief?[`เวลา ${hhmm(now)} น.`,`ทบทวนแผนภายใน ${hhmm(S2.due)} น.`]:[`ท่าปัจจุบัน: ${S2.cur}`,`รอบถัดไป ${hhmm(S2.due)} น. · ท่า${S2.next}`],"--teal","✓")}
-/* --- plan editor --- */
-function rpOpen(){const cur=rpGet();rpUI.d=cur?JSON.parse(JSON.stringify(cur)):{k:null,lim:rpAutoLims(),surf:false,every:120,pos:RP_POS.slice(0,3),meth:[],review:120,reason:"",with:""};
-  rpUI.d.lim=rpUI.d.lim||[];rpUI.d.meth=rpUI.d.meth||[];rpEdPaint();$("rpModal").hidden=false;document.body.classList.add("noscroll");$("rpModal").querySelector(".rm-body").scrollTop=0}
+  rpSave(rp);rtClose();const S2=rpState(rp);
+  advise(relief?"บันทึกการลดแรงกดแล้ว":"บันทึกการเปลี่ยนท่าแล้ว",(relief?[`เวลา ${hhmm(now)} น.`,`ทบทวนแผนภายใน ${hhmm(S2.due)} น.`]:[`ท่าปัจจุบัน: ${S2.cur}`,`รอบถัดไป ${hhmm(S2.due)} น. · ${S2.next}`]).concat(rtUI.bad?["พบว่าผู้ป่วยไม่ทนต่อท่า: พิจารณาปรับแผน (Modified Repositioning / Clinical Hold) และรายงานแพทย์"]:[]),rtUI.bad?"--s2":"--teal",rtUI.bad?"!":"✓")};
+/* --- plan editor: 4 steps --- */
+var RP_STEPS=["ประเมินความเสี่ยงและข้อจำกัด","ระบบเสนอแผนเฉพาะราย","พยาบาลตรวจสอบและปรับแผน","ยืนยันแผนและเริ่มนาฬิกา"];
+function rpOpen(){const cur=rpGet();const d=cur?JSON.parse(JSON.stringify(cur)):{k:null,g:rpAutoG(),nop:[],surg:[],other:"",surf:false,red:false,prone:false,meth:[],review:120,reason:"",with:"",mdOk:false};
+  d.g=rpGroups(d);d.nop=d.nop||[];d.surg=d.surg||[];d.meth=d.meth||[];delete d.lim;rpUI.d=d;rpUI.step=1;rpUI.startPos=null;rpUI.start=!cur||!cur.lt;rpEdPaint();$("rpModal").hidden=false;document.body.classList.add("noscroll")}
 function rpClose(){$("rpModal").hidden=true;if($("riskModal").hidden&&$("bwModal").hidden)document.body.classList.remove("noscroll")}
-function rpEdPaint(){const d=rpUI.d,sg=rpSuggest(d.lim,d.surf);if(!d.k){d.k=sg.k;d.every=RP_PLANS[d.k].every}
+function rpApplyAdvice(){const d=rpUI.d,A=rpAdvise(d);d.k=A.k;d.every=A.every;d.pos=A.pos.slice();if((d.k==="mod"||d.k==="hold")&&!d.meth.length)d.meth=RP_METHODS.slice(0,3);return A}
+function rpEdPaint(){const d=rpUI.d,s=rpUI.step,B=$("rpBody");
+  $("rpKick").textContent=`ขั้นที่ ${s}/4 · ${RP_STEPS[s-1]}`;$("rpDots").innerHTML=RP_STEPS.map((x,i)=>`<i class="${i+1===s?"on":i+1<s?"done":""}"></i>`).join("");
   const chip=(on,attr,txt,sub)=>`<button type="button" class="rp-chip" aria-pressed="${on}" ${attr}><b>${esc(txt)}</b>${sub?`<small>${esc(sub)}</small>`:""}</button>`;
-  let h=`<h3 class="bw-t">แผนการพลิกตะแคงตัวรายบุคคล</h3><p class="bw-en">ปรับตามสภาพและโรคของผู้ป่วย ทบทวนแผนทุกเวร</p>
-  <div class="rp-sec"><div class="lbl">ข้อจำกัดทางคลินิก (เลือกได้หลายข้อ)</div><div class="rp-chips">${RP_LIM.map(([k,n,s])=>chip(d.lim.includes(k),`data-lim="${k}"`,n,s)).join("")}</div></div>
-  <div class="rp-sec"><div class="lbl">พื้นผิวรองรับ</div><div class="rp-chips">${chip(!!d.surf,'data-surf="1"',"นอนบนที่นอนลม / ที่นอนกระจายแรงกด","Pressure-redistribution surface")}</div></div>
-  <div class="rp-sug" style="--c:var(${RP_PLANS[sg.k].c})"><b>ระบบแนะนำ: ${RP_PLANS[sg.k].n} (${RP_PLANS[sg.k].th})</b><small>${esc(sg.why.join(" · "))}</small></div>
-  <div class="rp-sec"><div class="lbl">เลือกแผน</div><div class="rp-plans">${Object.entries(RP_PLANS).map(([k,P])=>`<button type="button" class="rp-pl" style="--c:var(${P.c})" aria-pressed="${d.k===k}" data-k="${k}"><b>${P.n}${k===sg.k?' <i>แนะนำ</i>':""}</b><small>${esc(P.d)}</small></button>`).join("")}</div></div>`;
-  if(d.k==="q3"){const t=bradenTotal(),ws=(wounds||[]).some(w=>w.stage&&w.stage!=="none"),ok=[[!!d.surf,"นอนบนที่นอนกระจายแรงกด"],[t!=null&&t>=13,"Braden ≥ 13"],[!ws,"ไม่มีแผลกดทับ"],[!$("sepsis").checked,"ไม่มี sepsis/บวม/รอยแดง"],[!d.lim.length,"ไม่มีข้อจำกัดทางคลินิก"]];
-    h+=`<div class="rp-sec rp-q3"><div class="lbl">เกณฑ์ความเหมาะสมของการพลิกทุก 3 ชั่วโมง</div>${ok.map(([v,tx])=>`<span class="${v?"ok":"no"}">${v?"✓":"✗"} ${tx}</span>`).join("")}${ok.some(x=>!x[0])?'<p class="rp-warn">ยังไม่ผ่านเกณฑ์ทุกข้อ ควรพลิกทุก 2 ชั่วโมง หรือปรับแผนร่วมกับทีม</p>':""}</div>`}
-  if(d.k==="custom"||d.k==="mod"){const opts=d.k==="mod"?[30,60,90,120]:[60,90,120,150,180,240];if(!opts.includes(+d.every))d.every=d.k==="mod"?60:120;
-    h+=`<div class="rp-sec"><div class="lbl">${d.k==="mod"?"ขยับลดแรงกดทุก":"พลิกตัวทุก"}</div><div class="rp-seg">${opts.map(m=>`<button type="button" aria-pressed="${+d.every===m}" data-ev="${m}">${m<60?m+" นาที":(m/60)+" ชม."}</button>`).join("")}</div></div>`}
-  if(d.k==="custom")h+=`<div class="rp-sec"><div class="lbl">ท่าที่ใช้หมุนเวียน (แตะเรียงลำดับ)</div><div class="rp-chips">${RP_POS.concat(["หงาย (Log roll)","ตะแคงซ้าย (Log roll)","ตะแคงขวา (Log roll)"]).map(p=>{const i=d.pos.indexOf(p);return `<button type="button" class="rp-chip sm" aria-pressed="${i>=0}" data-pos="${esc(p)}"><b>${i>=0?(i+1)+". ":""}${esc(p)}</b></button>`}).join("")}</div></div>`;
-  if(d.k==="mod"||d.k==="hold")h+=`<div class="rp-sec"><div class="lbl">วิธีลดแรงกดที่ปลอดภัย</div><div class="rp-chips">${RP_METHODS.map(m=>chip(d.meth.includes(m),`data-m="${esc(m)}"`,m)).join("")}</div></div>`;
-  if(d.k==="hold")h+=`<div class="rp-sec"><label for="rpReason" class="lbl">เหตุผลที่งดพลิกตัว (จำเป็น)</label><input id="rpReason" type="text" value="${esc(d.reason||"")}" placeholder="เช่น MAP 58 ขณะปรับ Norepinephrine, SpO₂ ลดลงเหลือ 85% เมื่อพลิกตัว">
-    <label for="rpWith" class="lbl">ตกลงแผนร่วมกับ</label><input id="rpWith" type="text" value="${esc(d.with||"")}" placeholder="เช่น แพทย์เวร / หัวหน้าเวร">
-    <div class="lbl">ทบทวนแผนภายใน</div><div class="rp-seg">${[60,120,240,480].map(m=>`<button type="button" aria-pressed="${+d.review===m}" data-rv="${m}">${m===480?"ทุกเวร (8 ชม.)":(m/60)+" ชม."}</button>`).join("")}</div></div>`;
-  $("rpBody").innerHTML=h;const B=$("rpBody");
-  B.querySelectorAll("[data-lim]").forEach(b=>b.onclick=()=>{const k=b.dataset.lim;d.lim=d.lim.includes(k)?d.lim.filter(x=>x!==k):d.lim.concat([k]);d.k=null;rpEdPaint()});
-  B.querySelectorAll("[data-surf]").forEach(b=>b.onclick=()=>{d.surf=!d.surf;d.k=null;rpEdPaint()});
-  B.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{d.k=b.dataset.k;d.every=RP_PLANS[d.k].every;rpEdPaint()});
-  B.querySelectorAll("[data-ev]").forEach(b=>b.onclick=()=>{d.every=+b.dataset.ev;rpEdPaint()});
-  B.querySelectorAll("[data-rv]").forEach(b=>b.onclick=()=>{d.review=+b.dataset.rv;rpEdPaint()});
-  B.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>{const m=b.dataset.m;d.meth=d.meth.includes(m)?d.meth.filter(x=>x!==m):d.meth.concat([m]);rpEdPaint()});
-  B.querySelectorAll("[data-pos]").forEach(b=>b.onclick=()=>{const p=b.dataset.pos;d.pos=d.pos.includes(p)?d.pos.filter(x=>x!==p):d.pos.concat([p]);rpEdPaint()});
-  ["rpReason","rpWith"].forEach(id=>{const e=$(id);if(e)e.oninput=()=>{d[id==="rpReason"?"reason":"with"]=e.value}});
-  $("rpMsg").textContent=""}
-$("rpX").onclick=rpClose;$("rpCancel").onclick=rpClose;$("rpModal").addEventListener("click",e=>{if(e.target.id==="rpModal")rpClose()});
-$("rpOk").onclick=()=>{const d=rpUI.d,old=rpGet(),by=pvBy();
-  if(d.k==="hold"&&!(d.reason||"").trim()){$("rpMsg").textContent="ใส่เหตุผลที่งดพลิกตัวก่อนบันทึก";$("rpReason").focus();return}
-  if(d.k==="custom"&&d.pos.length<2){$("rpMsg").textContent="เลือกท่าหมุนเวียนอย่างน้อย 2 ท่า";return}
-  const rp=Object.assign({},d,{at:Date.now(),by:by.by,ot:by.ot});if(!(d.k==="custom"||d.k==="mod"))rp.every=RP_PLANS[d.k].every;
-  if(old&&old.k!==d.k)rp.idx=0;rp.log=(old&&old.log)||[];rp.lt=(old&&old.lt)||0;rp.hist=((old&&old.hist)||[]).concat([{t:rp.at,k:d.k,by:by.by}]).slice(-20);
-  rpSave(rp);rpClose();advise("บันทึกแผนการพลิกตัวแล้ว",[`${RP_PLANS[d.k].n} · ${RP_PLANS[d.k].th}`,d.k==="hold"?`ทบทวนแผนภายใน ${hhmm(rp.at+(+rp.review)*60000)} น.`:(rp.lt?`รอบถัดไป ${hhmm(rpState(rp).due)} น.`:"กด \"จัดท่าแล้ว\" เพื่อเริ่มนับเวลา")],"--teal","✓")};
+  let h="";const t=bradenTotal();let R=null;try{R=compoundRisk(t,crData())}catch(e){}
+  if(s===1){const ws=(wounds||[]).filter(w=>w.stage&&w.stage!=="none").length,stable=!d.g.length;
+    h=`<div class="rp-sum"><span>Braden <b>${t??"–"}</b>${t!=null?" · "+esc(bradenRisk(t)):""}</span>${R&&R.crit?'<span class="bad">Critical Risk</span>':""}${ws?`<span class="bad">มีแผลกดทับ ${ws} แผล</span>`:""}${$("sepsis").checked?'<span class="bad">sepsis/บวม/รอยแดง</span>':""}</div>
+    <div class="rp-sec"><div class="lbl">ผู้ป่วยอยู่กลุ่มใด (เลือกได้หลายข้อ)</div><div class="rp-gs">
+      <button type="button" class="rp-g" style="--c:var(--ok)" aria-pressed="${stable}" data-stable="1"><b>Stable Patient</b><small>สัญญาณชีพคงที่ ไม่มีข้อจำกัดในการเปลี่ยนท่า</small></button>
+      ${RP_G.map(([k,n,sub,c])=>`<button type="button" class="rp-g" style="--c:var(${c})" aria-pressed="${d.g.includes(k)}" data-g="${k}"><b>${esc(n)}</b><small>${esc(sub)}</small></button>`).join("")}</div></div>`;
+    if(d.g.includes("resp"))h+=`<div class="rp-sec rp-sub"><div class="lbl">Respiratory: ท่าของผู้ป่วยตอนนี้</div><div class="rp-seg"><button type="button" aria-pressed="${!d.prone}" data-prone="0">A. นอนหงาย</button><button type="button" aria-pressed="${!!d.prone}" data-prone="1">B. นอนคว่ำ (Prone)</button></div></div>`;
+    if(d.g.includes("postop"))h+=`<div class="rp-sec rp-sub"><div class="lbl">ชนิดการผ่าตัด</div><div class="rp-chips">${RP_SURG.map(x=>chip(d.surg.includes(x),`data-surg="${esc(x)}"`,x)).join("")}</div>
+      <div class="lbl">ตำแหน่งที่ห้ามรับแรงกด</div><div class="rp-nop">${RP_NOP.map(([k,n])=>`<button type="button" aria-pressed="${d.nop.includes(k)}" data-nop="${k}"><span class="bx" aria-hidden="true"></span>${esc(n)}</button>`).join("")}</div>
+      ${d.nop.includes("other")?`<input id="rpOther" type="text" value="${esc(d.other||"")}" placeholder="ระบุตำแหน่งอื่น ๆ">`:""}</div>`;
+    h+=`<div class="rp-sec"><div class="lbl">ปัจจัยที่ใช้ปรับความถี่</div><div class="rp-chips">${chip(!!d.surf,'data-surf="1"',"นอนบนที่นอนลม / ที่นอนกระจายแรงกด","Pressure-redistribution surface")}${chip(!!d.red,'data-red="1"',"รอยแดงไม่จางภายใน 30 นาทีหลังเปลี่ยนท่า","ผิวหนังทนต่อแรงกดได้น้อย")}</div></div>`}
+  if(s===2){const A=rpAdvise(d),P=RP_PLANS[A.k];
+    h=`${A.banner.map(b=>`<div class="rp-ban" style="--c:var(${b[0]})"><b>${esc(b[1])}</b><small>${esc(b[2])}</small></div>`).join("")}
+    <div class="rp-sug" style="--c:var(${P.c})"><b>แผนที่ระบบเสนอ: ${P.n} · ${A.k==="hold"?P.th:"ทุก "+rpEveryTxt(A.every)}</b><small>${esc(A.why.join(" · "))}</small></div>
+    <ol class="rp-q">
+      <li><b>เปลี่ยนท่าได้หรือไม่</b><span class="pill" style="--c:var(${A.canC})">${esc(A.can)}</span></li>
+      <li><b>ท่าที่ปลอดภัย</b><ul>${A.pos.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>${d.g.includes("postop")&&(d.nop||[]).length?`<small>คัดท่าที่ลงน้ำหนักบริเวณ ${esc(d.nop.map(k=>(RP_NOP.find(z=>z[0]===k)||[])[1]).join(", "))} ออกแล้ว</small>`:""}</li>
+      <li><b>ความถี่</b><span>${A.k==="prone"?"สลับศีรษะ/แขนทุก "+rpEveryTxt(A.every)+" ตามแนวทางหน่วยงาน":A.k==="mod"?"ขยับลดแรงกดทุก "+rpEveryTxt(A.every):"เปลี่ยนท่าทุก "+rpEveryTxt(A.every)} · ปรับตามผิวหนังและความทนต่อท่า</span></li>
+      <li><b>อุปกรณ์และข้อควรระวัง</b><ul>${A.eq.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></li>
+      <li><b>ประเมินหลังเปลี่ยนท่า</b><ul>${A.post.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></li>
+      <li><b>ถ้าเปลี่ยนท่าไม่ได้</b><ul>${A.alt.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></li></ol>`}
+  if(s===3){const A=rpAdvise(d);
+    h=`<div class="rp-sec"><div class="lbl">แผน (ระบบเสนอ: ${RP_PLANS[A.k].n})</div><div class="rp-plans">${Object.entries(RP_PLANS).filter(([k])=>k!=="prone"||d.prone).map(([k,P])=>`<button type="button" class="rp-pl" style="--c:var(${P.c})" aria-pressed="${d.k===k}" data-k="${k}"><b>${P.n}${k===A.k?' <i>แนะนำ</i>':""}</b><small>${esc(P.d)}</small></button>`).join("")}</div></div>`;
+    if(d.k!=="hold"){const opts=d.k==="mod"?[30,60,90,120]:[60,90,120,150,180,240];if(!opts.includes(+d.every))d.every=opts.includes(A.every)?A.every:(d.k==="mod"?60:120);
+      h+=`<div class="rp-sec"><div class="lbl">${d.k==="mod"?"ขยับลดแรงกดทุก":d.k==="prone"?"สลับศีรษะ/แขนทุก":"เปลี่ยนท่าทุก"}</div><div class="rp-seg">${opts.map(m=>`<button type="button" aria-pressed="${+d.every===m}" data-ev="${m}">${rpEveryTxt(m)}</button>`).join("")}</div></div>`;
+      const cand=[...new Set(A.pos.concat(d.k==="mod"?[]:Object.keys(RP_PS).filter(k=>rpAllowed(d).includes(k)).map(k=>rpLabel(k,d))))];
+      h+=`<div class="rp-sec"><div class="lbl">ท่าที่ใช้หมุนเวียน (แตะเพื่อเลือก/ตัดออก เรียงตามลำดับที่แตะ)</div><div class="rp-chips">${cand.map(p=>{const i=d.pos.indexOf(p);return `<button type="button" class="rp-chip sm" aria-pressed="${i>=0}" data-pos="${esc(p)}"><b>${i>=0?(i+1)+". ":""}${esc(p)}</b></button>`}).join("")}</div></div>`}
+    if(d.k==="mod"||d.k==="hold")h+=`<div class="rp-sec"><div class="lbl">วิธีลดแรงกดที่ปลอดภัย</div><div class="rp-chips">${RP_METHODS.map(m=>chip(d.meth.includes(m),`data-m="${esc(m)}"`,m)).join("")}</div></div>`;
+    if(d.k==="hold")h+=`<div class="rp-sec"><label for="rpReason" class="lbl">เหตุผลที่งดเปลี่ยนท่า (จำเป็น)</label><input id="rpReason" type="text" value="${esc(d.reason||"")}" placeholder="เช่น MAP 58 ขณะปรับ Norepinephrine, SpO₂ ลดลงเหลือ 85% เมื่อพลิกตัว">
+      <label for="rpWith" class="lbl">ตกลงแผนร่วมกับ</label><input id="rpWith" type="text" value="${esc(d.with||"")}" placeholder="เช่น แพทย์เวร / หัวหน้าเวร">
+      <div class="lbl">ทบทวนแผนภายใน</div><div class="rp-seg">${[60,120,240,480].map(m=>`<button type="button" aria-pressed="${+d.review===m}" data-rv="${m}">${m===480?"ทุกเวร (8 ชม.)":(m/60)+" ชม."}</button>`).join("")}</div></div>`;
+    if(d.g.includes("postop")||d.g.includes("neuro"))h+=`<button type="button" class="rp-md" aria-pressed="${!!d.mdOk}" id="rpMd"><span class="bx" aria-hidden="true"></span>ตรวจสอบกับคำสั่งแพทย์แล้ว${d.g.includes("neuro")?" (ระดับศีรษะเตียง, เป้าหมาย ICP/CPP)":""}${d.g.includes("postop")?" (ท่าและตำแหน่งที่ห้ามกด)":""}</button>`}
+  if(s===4){const P=RP_PLANS[d.k],L=d.k==="hold"?[]:(d.pos&&d.pos.length?d.pos:rpPosList(d)),cur=rpGet();
+    if(rpUI.startPos==null)rpUI.startPos=L[0]||"";
+    h=`<div class="rp-conf" style="--c:var(${P.c})"><span class="rp-plan">${P.n}<small>${d.k==="hold"?P.th:"ทุก "+rpEveryTxt(+d.every)}</small></span>
+      <dl><dt>กลุ่มผู้ป่วย</dt><dd>${esc(d.g.length?d.g.map(k=>(RP_G.find(z=>z[0]===k)||[])[1]).join(", ")+(d.g.includes("resp")?(d.prone?" (Prone)":" (นอนหงาย)"):""):"Stable Patient")}</dd>
+      ${L.length?`<dt>${d.k==="prone"?"ลำดับศีรษะ/แขน":"ลำดับท่า"}</dt><dd>${esc(L.join(" → "))}</dd>`:""}
+      ${d.k==="hold"?`<dt>เหตุผล</dt><dd>${esc(d.reason)}</dd><dt>ทบทวนภายใน</dt><dd>${hhmm(Date.now()+(+d.review)*60000)} น.</dd>`:""}
+      ${(d.k==="mod"||d.k==="hold")&&d.meth.length?`<dt>วิธีลดแรงกด</dt><dd>${esc(d.meth.join(", "))}</dd>`:""}
+      ${d.g.includes("postop")&&d.nop.length?`<dt>ห้ามรับแรงกด</dt><dd>${esc(d.nop.map(k=>k==="other"?(d.other||"อื่น ๆ"):(RP_NOP.find(z=>z[0]===k)||[])[1]).join(", "))}</dd>`:""}</dl></div>`;
+    if(d.k!=="hold"){h+=`<div class="rp-sec"><div class="lbl">${d.k==="prone"?"ตำแหน่งศีรษะ/แขนตอนนี้":"ผู้ป่วยอยู่ท่าไหนตอนนี้"} (เริ่มนับเวลาจากตอนนี้)</div><div class="rp-chips">${L.map(p=>`<button type="button" class="rp-chip sm" aria-pressed="${p===rpUI.startPos}" data-sp="${esc(p)}"><b>${esc(p)}</b></button>`).join("")}</div></div>`;
+      if(cur&&cur.lt)h+=`<button type="button" class="rp-md" aria-pressed="${!!rpUI.start}" id="rpRestart"><span class="bx" aria-hidden="true"></span>เริ่มนับเวลาใหม่จากตอนนี้ (ถ้าไม่เลือก จะนับต่อจากการเปลี่ยนท่าครั้งล่าสุด ${hhmm(cur.lt)} น.)</button>`;
+      h+=`<p class="note" style="margin:0">รอบแรกครบกำหนด ${hhmm((rpUI.start||!cur||!cur.lt?Date.now():cur.lt)+(+d.every)*60000)} น. · ทบทวนแผนทุกเวร หรือเมื่ออาการเปลี่ยน</p>`}}
+  B.innerHTML=h;B.scrollTop=0;
+  $("rpCancel").textContent=s===1?"ยกเลิก":"ย้อนกลับ";$("rpOk").textContent=s===4?(d.k==="hold"?"ยืนยันแผน":"ยืนยันแผนและเริ่มนาฬิกา"):s===2?"ตรวจสอบและปรับแผน":"ถัดไป";$("rpMsg").textContent="";
+  const q=(sel,fn)=>B.querySelectorAll(sel).forEach(b=>b.onclick=()=>{fn(b);rpEdPaint()});
+  q("[data-stable]",()=>{d.g=[];d.prone=false;d.nop=[]});
+  q("[data-g]",b=>{const k=b.dataset.g;d.g=d.g.includes(k)?d.g.filter(x=>x!==k):d.g.concat([k]);if(k==="resp"&&!d.g.includes("resp"))d.prone=false;if(k==="postop"&&!d.g.includes("postop"))d.nop=[]});
+  q("[data-prone]",b=>{d.prone=b.dataset.prone==="1"});
+  q("[data-surg]",b=>{const x=b.dataset.surg;d.surg=d.surg.includes(x)?d.surg.filter(z=>z!==x):d.surg.concat([x])});
+  q("[data-nop]",b=>{const x=b.dataset.nop;d.nop=d.nop.includes(x)?d.nop.filter(z=>z!==x):d.nop.concat([x])});
+  q("[data-surf]",()=>{d.surf=!d.surf});q("[data-red]",()=>{d.red=!d.red});
+  q("[data-k]",b=>{d.k=b.dataset.k;const A=rpAdvise(d);d.every=d.k===A.k?A.every:(RP_PLANS[d.k].every);if(d.k===A.k)d.pos=A.pos.slice();else if(d.k==="mod")d.pos=["ตะแคงซ้าย 10–15°","หงาย ขยับสะโพก/ไหล่","ตะแคงขวา 10–15°"];else if(!d.pos||!d.pos.length)d.pos=A.pos.slice();if((d.k==="mod"||d.k==="hold")&&!d.meth.length)d.meth=RP_METHODS.slice(0,3)});
+  q("[data-ev]",b=>{d.every=+b.dataset.ev});q("[data-rv]",b=>{d.review=+b.dataset.rv});
+  q("[data-m]",b=>{const m=b.dataset.m;d.meth=d.meth.includes(m)?d.meth.filter(x=>x!==m):d.meth.concat([m])});
+  q("[data-pos]",b=>{const p=b.dataset.pos;d.pos=d.pos.includes(p)?d.pos.filter(x=>x!==p):d.pos.concat([p])});
+  q("[data-sp]",b=>{rpUI.startPos=b.dataset.sp});
+  const md=$("rpMd");if(md)md.onclick=()=>{d.mdOk=!d.mdOk;rpEdPaint()};const rs=$("rpRestart");if(rs)rs.onclick=()=>{rpUI.start=!rpUI.start;rpEdPaint()};
+  [["rpReason","reason"],["rpWith","with"],["rpOther","other"]].forEach(([id,k])=>{const e=$(id);if(e)e.oninput=()=>{d[k]=e.value}})}
+$("rpX").onclick=rpClose;$("rpModal").addEventListener("click",e=>{if(e.target.id==="rpModal")rpClose()});
+$("rpCancel").onclick=()=>{if(rpUI.step>1){rpUI.step--;rpEdPaint()}else rpClose()};
+$("rpOk").onclick=()=>{const d=rpUI.d,s=rpUI.step,msg=m=>{$("rpMsg").textContent=m};
+  if(s===1){if(d.g.includes("postop")&&!d.nop.length)return msg("เลือกตำแหน่งที่ห้ามรับแรงกดอย่างน้อย 1 ตำแหน่ง");if(d.nop.includes("other")&&!(d.other||"").trim())return msg("ระบุตำแหน่งอื่น ๆ");rpApplyAdvice();rpUI.step=2;return rpEdPaint()}
+  if(s===2){rpUI.step=3;return rpEdPaint()}
+  if(s===3){if(d.k==="hold"&&!(d.reason||"").trim()){msg("ใส่เหตุผลที่งดเปลี่ยนท่าก่อน");const e=$("rpReason");if(e)e.focus();return}
+    if(d.k!=="hold"&&(!d.pos||d.pos.length<(d.k==="prone"?2:d.k==="mod"?1:2)))return msg(d.k==="mod"?"เลือกท่าอย่างน้อย 1 ท่า":"เลือกท่าหมุนเวียนอย่างน้อย 2 ท่า");
+    if((d.g.includes("postop")||d.g.includes("neuro"))&&!d.mdOk)return msg("ยืนยันว่าตรวจสอบกับคำสั่งแพทย์แล้ว");rpUI.step=4;rpUI.startPos=null;return rpEdPaint()}
+  // step 4: save + start clock
+  const old=rpGet(),by=pvBy(),now=Date.now();const rp=Object.assign({},d,{at:now,by:by.by,ot:by.ot});if(d.k==="hold")rp.every=RP_PLANS.hold.every;
+  rp.log=(old&&old.log)||[];rp.hist=((old&&old.hist)||[]).concat([{t:now,k:d.k,g:d.g.slice(),by:by.by}]).slice(-20);delete rp.defer;
+  if(d.k!=="hold"){const L=rp.pos&&rp.pos.length?rp.pos:rpPosList(rp),i=Math.max(0,L.indexOf(rpUI.startPos));
+    if(rpUI.start||!old||!old.lt){rp.lt=now;rp.idx=i;rp.log=rp.log.concat([{t:now,pos:L[i],by:by.by,ot:by.ot,k:d.k,start:1}]).slice(-30);try{localStorage.setItem("pi-turn-"+realHN(),String(now));syncEnq("turn",realHN(),{t:now})}catch(e){}}
+    else{rp.lt=old.lt;rp.idx=i}}else{rp.lt=(old&&old.lt)||0}
+  rpSave(rp);rpClose();const S=rpState(rp);
+  advise("ยืนยันแผนการเปลี่ยนท่าแล้ว",[`${RP_PLANS[d.k].n} · ${d.k==="hold"?RP_PLANS.hold.th:"ทุก "+rpEveryTxt(+rp.every)}`,d.k==="hold"?`ทบทวนแผนภายใน ${hhmm(S.due)} น.`:`ตอนนี้: ${S.cur} · รอบถัดไป ${hhmm(S.due)} น. → ${S.next}`],"--teal","✓")};
 /* --- placement: right after the Braden section, and on the patient status page --- */
 function rpPaintAll(){const hn=realHN(),box=$("rpWrap");if(box){const show=!!hn&&(bradenTotal()!=null||!!rpGet());box.hidden=!show;if(show){box.innerHTML=rpCardHTML(rpGet());rpBind(box)}}
   const ov=$("pvRp");if(ov){ov.innerHTML=hn?rpCardHTML(rpGet()):"";rpBind(ov)}}
@@ -6273,9 +6436,10 @@ setInterval(()=>{try{rpPaintAll();const rp=rpGet(),S=rpState(rp);if(S&&S.over&&r
 document.addEventListener("pointerdown",()=>{try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)()}catch(e){}},{once:true});
 /* overdue turning in the ward alert list */
 {const _ai=alertItems;alertItems=function(){const out=_ai.apply(this,arguments);try{ptList().forEach(x=>{const rp=x.p.hn===realHN()?rpGet():x.p.rp,S=rpState(rp);if(S&&S.over)out.unshift({c:"--s1",hn:x.p.hn,t:S.hold?"ถึงเวลาทบทวนแผนงดพลิกตัว (Clinical Hold)":`ถึงเวลาพลิกตัว → ${S.next}`,d:`HN ${x.p.hn}${x.p.name?" · "+x.p.name:""} · ครบกำหนด ${hhmm(S.due)} น.`,go:"overview"})})}catch(e){}return out}}
-function rpPlanText(){const rp=st.rp;if(!rp||!rp.k)return "พลิกตะแคงตัวทุก 2 ชั่วโมง สลับท่า หงาย ตะแคงซ้าย ตะแคงขวา";const P=RP_PLANS[rp.k];
-  if(rp.k==="hold")return "Clinical Hold: งดพลิกตัวชั่วคราว ลดแรงกดตามแผนและทบทวนแผนตามเวลา";if(rp.k==="mod")return `ขยับลดแรงกดทุก ${rpEvery(rp)<60?rpEvery(rp)+" นาที":rpEvery(rp)/60+" ชั่วโมง"} (Modified Repositioning)`;
-  return `พลิกตะแคงตัวทุก ${rpEvery(rp)/60} ชั่วโมง ตามแผนรายบุคคล (${P.n})`}
+function rpPlanText(){const rp=st.rp;if(!rp||!rp.k||!RP_PLANS[rp.k])return "เปลี่ยนท่าตามแผนรายบุคคล (เริ่มต้นทุก 2 ชั่วโมง) ตะแคง 30° ลดแรงกด Sacrum และ Heel";const P=RP_PLANS[rp.k];
+  if(rp.k==="hold")return "Clinical Hold: งดเปลี่ยนท่าชั่วคราว ลดแรงกดตามแผนและทบทวนแผนตามเวลา";if(rp.k==="mod")return `ขยับลดแรงกดทุก ${rpEveryTxt(rpEvery(rp))} (Modified Repositioning)`;
+  if(rp.k==="prone")return `Prone Position Mode: สลับศีรษะ/แขนทุก ${rpEveryTxt(rpEvery(rp))} ดูแลจุดกดทับท่าคว่ำ`;
+  return `เปลี่ยนท่าทุก ${rpEveryTxt(rpEvery(rp))} ตามแผนรายบุคคล (${P.n})`}
 /* ===== Per-shift skin photo reminders (เวรเช้า / บ่าย / ดึก) ===== */
 var phShots={},phReady=false;
 function phShiftKey(){return phToday()+"|"+shiftNow()}
@@ -6286,7 +6450,7 @@ function phHas(hn,k){return !!(phShots[hn]&&phShots[hn][k||phShiftKey()])}
 function phMissing(){return phReady?ptList().filter(x=>!phHas(x.p.hn)):[]}
 {const _ai=alertItems;alertItems=function(){const out=_ai.apply(this,arguments);try{if(phReady){const s=SHIFT_TH[shiftNow()];phMissing().forEach(x=>out.push({c:"--sky",hn:x.p.hn,t:`ถ่ายภาพผิวหนัง${s}`,d:`HN ${x.p.hn}${x.p.name?" · "+x.p.name:""} · ยังไม่มีภาพของเวรนี้ในคลังภาพ`,go:"skinshot"}))}}catch(e){}return out}}
 {const _sa=skAlert;skAlert=function(add){const hn=realHN();_sa(function(c,html){if(/ยังไม่ได้ถ่ายภาพผิวหนังประจำวัน/.test(html))return;return add.apply(this,arguments)});
-  if(hn&&phReady&&!phHas(hn))add("--sky",`<span><b>ยังไม่ได้ถ่ายภาพผิวหนัง${SHIFT_TH[shiftNow()]}</b> ถ่ายภาพปุ่มกระดูกที่เสี่ยงแล้วบันทึกเข้าคลังภาพ</span>`,"skinshot","ถ่ายภาพ ›")}}
+  if(hn&&phReady&&!phHas(hn))add("--sky",`<span><b>ยังไม่ได้ถ่ายภาพผิวหนัง${SHIFT_TH[shiftNow()]}</b> ถ่ายภาพปุ่มกระดูกที่เสี่ยงแล้วบันทึกเข้าคลังภาพ</span>`,"skinshot","ถ่ายภาพ")}}
 {const _g=go;go=function(pg){if(pg==="skinshot"){_g.call(this,"prevent");setTimeout(()=>{try{if(skKindNow()!=="admit")skinKind="daily";openRisk(true,"skin")}catch(e){console.error(e)}},120);return}return _g.apply(this,arguments)}}
 function phOvPaint(){const box=$("pvPh");if(!box)return;const hn=realHN();if(!hn){box.innerHTML="";return}const k=phShiftKey(),s=SHIFT_TH[shiftNow()],ok=phHas(hn,k),tm=ok&&phShots[hn].t?phShots[hn].t[k]:"";
   const sh=["n","m","a"].map(x=>{const kk=phToday()+"|"+x,has=phHas(hn,kk);return `<span class="${has?"ok":x===shiftNow()?"now":""}">${SHIFT_TH[x].replace("เวร","")}${has?" ✓":""}</span>`}).join("");
