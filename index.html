@@ -1872,6 +1872,11 @@ body[data-page="wound"] #result{display:none!important}
 #mSeed[hidden],#liveRedraw[hidden]{display:none!important}
 .livecam.meas .lc-btns{grid-template-columns:auto auto auto 1fr}
 @media (max-width:520px){.livecam.meas #liveGrid{display:none!important}.livecam.meas .lc-btns{grid-template-columns:auto auto 1fr}}
+.alert{position:relative}
+.alert:has(.al-x){padding-right:46px}
+.al-x{position:absolute;top:50%;right:8px;transform:translateY(-50%);width:30px;height:30px;margin:0;border:0;border-radius:50%;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--ink);font-size:1.15rem;line-height:1;cursor:pointer;display:grid;place-items:center;padding:0 0 2px}
+.al-x:hover,.al-x:focus-visible{background:color-mix(in srgb,var(--c) 28%,transparent)}
+.alert.al-out{opacity:0;transform:translateY(-4px);transition:.2s}
 </style>
 </head>
 <body>
@@ -6675,6 +6680,14 @@ function woundEnq(){const hn=realHN();if(!hn||!syncCfg())return;const d=phToday(
     syncEnq("wound",hn+"|"+d+"|"+(w.id||i),{hn,name:nm,date:d,time:hhmm(Date.now()),no:i+1,site:siteLabel(w)+(w.side?" "+w.side:""),wtype:w.device?"MDRPI":(w.wtype||"pi")==="pi"?"Pressure injury":String(w.wtype).toUpperCase(),
       stage:stageShort(w.stage),L:+w.L||0,W:+w.W||0,D:+w.D||0,area:x.a!=null?+(+x.a).toFixed(2):null,exu:w.exu,tis:w.tis,push:x.push??null,dress:(w.dressings||[]).join(", "),dressAt:w.dressAt?new Date(w.dressAt).toLocaleString("th-TH",{dateStyle:"short",timeStyle:"short"}):"",nurse:by,ot:u.ot||""})})}
 {const _u=update;update=function(){const r=_u.apply(this,arguments);clearTimeout(dailyT);dailyT=setTimeout(()=>{try{dailyEnq()}catch(e){}try{woundEnq()}catch(e){}},4000);return r}}
+/* ===== Alert strip: × to dismiss (hidden for this patient until the next shift) ===== */
+function alKey(el){return (realHN()||"_")+"|"+(el.textContent||"").replace(/\s+/g," ").trim().slice(0,90)}
+function alDismissed(){try{const o=JSON.parse(localStorage.getItem("pi-al-x")||"{}"),k=phShiftKey();return o[k]||{}}catch(e){return {}}}
+function alDismiss(key){try{const k=phShiftKey(),o=JSON.parse(localStorage.getItem("pi-al-x")||"{}"),n={};n[k]=Object.assign({},o[k]||{},{[key]:1});localStorage.setItem("pi-al-x",JSON.stringify(n))}catch(e){}}
+{const _ra=renderAlerts;renderAlerts=function(){const r=_ra.apply(this,arguments);try{const D=alDismissed();
+  $("alerts").querySelectorAll(".alert").forEach(a=>{const k=alKey(a);if(D[k]){a.remove();return}if(a.querySelector(".al-x"))return;
+    const x=document.createElement("button");x.type="button";x.className="al-x";x.setAttribute("aria-label","ปิดการแจ้งเตือนนี้");x.innerHTML="&times;";
+    x.onclick=e=>{e.stopPropagation();e.preventDefault();alDismiss(k);a.classList.add("al-out");setTimeout(()=>a.remove(),200)};a.append(x)})}catch(e){}return r}}
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
