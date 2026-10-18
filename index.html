@@ -2542,7 +2542,7 @@ body[data-page="wound"] #result{display:none!important}
           <h3 class="bw-t">ต้องการประเมินแบบไหน</h3>
           <p class="bw-en">เลือกวิธีที่สะดวก ผลการประเมินและข้อแนะนำเหมือนกัน</p>
           <button type="button" class="bm2-opt" id="bmStep"><span class="bm2-ic" aria-hidden="true">&#9776;</span><span><b>เลือกตามข้อ</b><small id="bmStepS"></small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
-          <button type="button" class="bm2-opt" id="bmTotal"><span class="bm2-ic num" aria-hidden="true">Σ</span><span><b>กรอกคะแนนรวม / ระดับความเสี่ยง</b><small>ไม่ต้องเลือกตามข้อ แตะระดับความเสี่ยงแล้วเลือกคะแนนรวม หรือพิมพ์คะแนนรวม 6–23 ได้เลย</small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
+          <button type="button" class="bm2-opt" id="bmTotal" hidden><span class="bm2-ic num" aria-hidden="true">Σ</span><span><b>กรอกคะแนนรวม / ระดับความเสี่ยง</b><small>ไม่ต้องเลือกตามข้อ แตะระดับความเสี่ยงแล้วเลือกคะแนนรวม หรือพิมพ์คะแนนรวม 6–23 ได้เลย</small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
           <button type="button" class="bm2-opt" id="bmQuick" hidden><span class="bm2-ic num" aria-hidden="true">123</span><span><b>กรอกคะแนนเป็นตัวเลข</b><small>รู้คะแนนแต่ละด้านแล้ว แตะตัวเลข 1–4 ทั้ง 6 ด้านในหน้าเดียว ระบบรวมคะแนนให้ทันที</small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
         </div>
         <div id="bmForm" hidden><div class="bq2-list" id="bmRows"></div></div>
@@ -6324,6 +6324,8 @@ var bmUI="";
 {const _o=bmOpen;bmOpen=function(){bmUI="";$("bmTot").hidden=true;const r=_o.apply(this,arguments);if(st.braden._t&&!BRADEN.some(([k])=>st.braden[k]>0))bm.fresh=true;return r};$("bwStart").onclick=bmOpen}
 {const _ok=$("bmOk").onclick;$("bmOk").onclick=()=>{if(bmUI!=="tot")return _ok();if(bt.v==null)return;st.braden={_t:bt.v};renderBraden();update();bmClose();bradenAdvice("_t",bt.v,true)}}
 {const _bp=bwBtnPaint;bwBtnPaint=function(){const r=_bp.apply(this,arguments);try{const b=$("bwStart");if(st.braden._t&&!BRADEN.some(([k])=>st.braden[k]>0)){b.textContent=`คะแนนรวม ${st.braden._t} (กรอกเอง) · ประเมิน Braden ใหม่`;b.classList.add("ghost");b.classList.remove("primary");const e=$("bwEdit");if(e)e.hidden=true}}catch(e){}return r}}
+/* Braden: start goes straight to the item-by-item wizard (other entry methods removed) */
+$("bmTotal").hidden=true;$("bwStart").onclick=()=>{bmUI="";$("bmStep").onclick()};
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
