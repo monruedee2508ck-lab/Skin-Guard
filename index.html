@@ -6216,12 +6216,10 @@ var RP_PLANS={
   prone:{n:"Prone Position Mode",th:"ดูแลท่านอนคว่ำ",d:"สลับตำแหน่งศีรษะและแขน (Swimmer) และดูแลจุดกดทับของท่าคว่ำ แทนการพลิกซ้าย–ขวา",c:"--indigo",every:120},
   hold:{n:"Clinical Hold",th:"งดเปลี่ยนท่าชั่วคราว",d:"มีข้อจำกัดทางคลินิก บันทึกเหตุผล วิธีลดแรงกดที่ปลอดภัย และทบทวนแผนตามเวลา",c:"--s1",every:120}};
 var RP_G=[
-  ["hemo","Hemodynamic instability","MAP < 65, กำลังปรับ Vasopressor หรือ BP ตกเมื่อเปลี่ยนท่า","--s1"],
   ["resp","Respiratory instability / Severe ARDS","SpO₂ ลดลงเมื่อเปลี่ยนท่า, FiO₂/PEEP สูง หรือ Prone","--sky"],
   ["neuro","Increased ICP / Brain injury","Intracranial hypertension, TBI, EVD หรือจำกัดการจัดแนวศีรษะ","--indigo"],
   ["postop","Postoperative / Flap / Graft","มีตำแหน่งที่ห้ามรับแรงกดหลังผ่าตัด","--gold"],
-  ["spine","Spine precaution","กระดูกสันหลังไม่มั่นคง ต้อง Log roll","--s2"],
-  ["pall","Palliative / Comfort care","เน้นความสุขสบายตามความต้องการผู้ป่วย","--ok"]];
+  ["supine","Supine position","ต้องนอนหงายตามคำสั่งแพทย์ ห้ามตะแคง เช่น femoral sheath, IABP, pelvic fracture","--s2"]];
 var RP_NOP=[["head","ศีรษะ"],["back","หลัง"],["sacrum","ก้นกบ"],["hipL","สะโพกซ้าย"],["hipR","สะโพกขวา"],["legL","ขาซ้าย"],["legR","ขาขวา"],["other","ตำแหน่งอื่น ๆ"]];
 var RP_SURG=["Skin graft","Free flap","Spinal surgery","Abdominal surgery","Orthopedic surgery"];
 var RP_METHODS=["ขยับสะโพก/ไหล่เล็กน้อย (micro-shift)","ตะแคง 10–15° ด้วยหมอนหรือโฟมรอง","ยกส้นเท้าให้ลอยพ้นที่นอน","ขยับตำแหน่งศีรษะ/ใบหู และท่อที่กดทับ","ใช้ที่นอนลม/ปรับแรงดันที่นอน","ปิดแผ่นโฟมซิลิโคนป้องกันที่ก้นกบและส้นเท้า"];
@@ -6232,7 +6230,7 @@ function rpGet(){return st.rp||null}
 function rpSave(rp){st.rp=rp;try{savePatient()}catch(e){}try{rpPaintAll()}catch(e){}}
 function rpGroups(rp){if(!rp)return [];if(rp.g)return rp.g;return (rp.lim||[]).map(k=>k==="icp"?"neuro":k).filter(k=>RP_G.some(z=>z[0]===k))}
 function rpLims(rp){return rpGroups(rp)}
-function rpAutoG(){const cr=crData(),x=cr.x||[],f=crFactors(cr).map(z=>z.k),G=[];if(f.includes("vp")||x.includes("perf"))G.push("hemo");if(f.includes("hyp"))G.push("resp");return G}
+function rpAutoG(){const cr=crData(),f=crFactors(cr).map(z=>z.k),G=[];if(f.includes("hyp"))G.push("resp");return G}
 function rpAllowed(d){const nop=d.nop||[];return Object.entries(RP_PS).filter(([k,p])=>!p.load.some(a=>nop.includes(a))).map(([k])=>k)}
 function rpLabel(k,d){const G=d.g||[],sp=G.includes("spine"),ne=G.includes("neuro"),re=G.includes("resp")&&!d.prone;
   if(k==="sup")return ne?"หงาย ศีรษะสูง 30° แนวศีรษะตรง":re?"หงาย ศีรษะสูงตามข้อบ่งชี้ระบบหายใจ":sp?"หงาย (Log roll)":"หงาย";
@@ -6245,6 +6243,9 @@ function rpAdvise(d){const t=bradenTotal(),ws=(wounds||[]).some(w=>w.stage&&w.st
   if(has("resp")&&d.prone){A.k="prone";A.every=120;A.can="ได้ · ใช้ Prone Position Mode";A.canC="--indigo";A.why.push("นอนคว่ำ (Prone) → สลับศีรษะและแขนแทนการพลิกซ้าย–ขวา ตามแนวทางของหน่วยงาน");
     A.pos=["ศีรษะหันขวา · แขนขวายกขึ้น (Swimmer)","ศีรษะหันซ้าย · แขนซ้ายยกขึ้น (Swimmer)"];
     A.banner.push(["--indigo","🔵 Prone Position Mode","แสดงแผนดูแลจุดเสี่ยงของท่านอนคว่ำแทนตารางพลิกซ้าย–ขวา"])}
+  else if(has("supine")){A.k="mod";A.every=60;A.can="ได้แบบจำกัด · นอนหงายเท่านั้น";A.canC="--s2";A.why.push("Supine position → ห้ามตะแคงตามคำสั่งแพทย์ ลดแรงกดด้วยการขยับเล็กน้อย (micro-shift) ทุก 1 ชม. ยกส้นเท้า และใช้ที่นอนกระจายแรงกด");
+    A.pos=["หงาย ขยับสะโพก/ไหล่ (micro-shift)","หงาย ปรับระดับศีรษะเตียงไม่เกิน 30°","หงาย รองหมอนเอียง 10–15° (ถ้าแพทย์อนุญาต)"];
+    A.banner.push(["--s2","Supine position","ห้ามตะแคงตามคำสั่งแพทย์ ตรวจสอบคำสั่งก่อนจัดท่า และตรวจผิวหนังด้านหลังทั้งหมดทุกเวร"])}
   else if(has("hemo")){A.k="mod";A.every=60;A.can="ได้แบบจำกัด";A.canC="--s2";A.why.push("Hemodynamic instability → ขยับลดแรงกดทีละน้อย (micro-shift) ทุก 1 ชม. แทนการพลิกเต็มท่า เปลี่ยนท่าเต็มเมื่อความดันคงที่ ถ้าขยับไม่ได้เลยให้ใช้ Clinical Hold");
     A.pos=["ตะแคงซ้าย 10–15°","หงาย ขยับสะโพก/ไหล่","ตะแคงขวา 10–15°"].filter((p,i)=>i===1||allow.includes(i?"r30":"l30"))}
   else if(has("pall")){A.k="custom";A.every=180;A.why.push("Palliative / Comfort care → ปรับเวลาตามความสุขสบายและความต้องการของผู้ป่วยและญาติ")}
@@ -6259,6 +6260,7 @@ function rpAdvise(d){const t=bradenTotal(),ws=(wounds||[]).some(w=>w.stage&&w.st
       if(!G.length)A.why.push(`Stable Patient${t!=null?` · Braden ${t}`:""}${risky?" เสี่ยงสูง":""} → เริ่มที่ทุก 2 ชม. เป็นแผนเริ่มต้น ไม่ใช่ข้อกำหนดตายตัว`)}
     if(allow.length<2){A.k="mod";A.every=60;A.can="ได้แบบจำกัด";A.canC="--s2";A.why.push("ท่าที่ไม่ขัดกับข้อจำกัดเหลือน้อยกว่า 2 ท่า → ขยับลดแรงกดแบบจำกัด และปรึกษาแพทย์เรื่องท่าที่ปลอดภัย")}}
   if(has("neuro"))A.banner.push(["--s1","⚠️ Neuro Precaution","ผู้ป่วยมีข้อจำกัดด้าน ICP กรุณาตรวจสอบคำสั่งรักษาและประเมิน ICP/CPP ก่อนเปลี่ยนท่า"]);
+  if(has("supine"))A.eq.push("ยกส้นเท้าให้ลอยตลอดเวลา และรองหมอนใต้น่อง","ปิดแผ่นโฟมซิลิโคนป้องกันที่ก้นกบ ส้นเท้า และท้ายทอย","ที่นอนลม/ที่นอนกระจายแรงกด","ไม่ยกศีรษะเตียงเกิน 30° เพื่อลดแรงเฉือนที่ก้นกบ (ยกเว้นมีข้อบ่งชี้)");
   if(has("postop"))A.banner.push(["--gold","ยืนยันกับคำสั่งแพทย์","ท่าที่แสดงคัดจากตำแหน่งที่ห้ามรับแรงกด ต้องตรวจสอบกับคำสั่งแพทย์ก่อนใช้งาน"]);
   // 4. equipment & precautions
   A.eq.push("หมอน/โฟมรองจัดท่าตะแคง 30° ลดแรงกด Sacrum","ยกส้นเท้าให้ลอย (หมอนใต้น่องหรืออุปกรณ์ยกส้นเท้า)");
@@ -6277,6 +6279,7 @@ function rpAdvise(d){const t=bradenTotal(),ws=(wounds||[]).some(w=>w.stage&&w.st
   if(d.prone)A.post.push("ผิวหนังใบหน้า หน้าผาก คาง หน้าอก เข่า และนิ้วเท้า","ตำแหน่ง ETT และสายอุปกรณ์ทั้งหมด");
   if(has("neuro"))A.post.push("ICP / CPP, ระดับ EVD, GCS และรูม่านตา");
   if(has("postop"))A.post.push("แผลผ่าตัด/flap: สี อุณหภูมิ capillary refill และสายระบาย","ผิวหนังบริเวณที่ต้องรับน้ำหนักทดแทน");
+  if(has("supine"))A.post.push("ผิวหนังด้านหลัง: ท้ายทอย สะบัก ข้อศอก ก้นกบ และส้นเท้า","ตำแหน่งที่ใส่อุปกรณ์ (เช่น femoral sheath): เลือดออก ชีพจรปลายเท้า");
   if(has("spine"))A.post.push("แนวกระดูกสันหลัง และการรับความรู้สึก/กำลังแขนขา");
   // 6. if repositioning is not possible
   A.alt=["ขยับลดแรงกดเล็กน้อย (micro-shift) ทุก 1–2 ชม. ตามที่ผู้ป่วยทนได้","ยกส้นเท้าให้ลอยตลอดเวลา","ใช้ที่นอนลม/ปรับแรงดันที่นอน","ปิดแผ่นโฟมซิลิโคนป้องกันที่ก้นกบ ส้นเท้า และใต้อุปกรณ์","บันทึกเหตุผลและทบทวนแผนเมื่ออาการคงที่ หรืออย่างน้อยทุกเวร"];
@@ -6363,7 +6366,7 @@ function rpEdPaint(){const d=rpUI.d,s=rpUI.step,B=$("rpBody");
     if(d.g.includes("postop"))h+=`<div class="rp-sec rp-sub"><div class="lbl">ชนิดการผ่าตัด</div><div class="rp-chips">${RP_SURG.map(x=>chip(d.surg.includes(x),`data-surg="${esc(x)}"`,x)).join("")}</div>
       <div class="lbl">ตำแหน่งที่ห้ามรับแรงกด</div><div class="rp-nop">${RP_NOP.map(([k,n])=>`<button type="button" aria-pressed="${d.nop.includes(k)}" data-nop="${k}"><span class="bx" aria-hidden="true"></span>${esc(n)}</button>`).join("")}</div>
       ${d.nop.includes("other")?`<input id="rpOther" type="text" value="${esc(d.other||"")}" placeholder="ระบุตำแหน่งอื่น ๆ">`:""}</div>`;
-    h+=`<div class="rp-sec"><div class="lbl">ปัจจัยที่ใช้ปรับความถี่</div><div class="rp-chips">${chip(!!d.surf,'data-surf="1"',"นอนบนที่นอนลม / ที่นอนกระจายแรงกด","Pressure-redistribution surface")}${chip(!!d.red,'data-red="1"',"รอยแดงไม่จางภายใน 30 นาทีหลังเปลี่ยนท่า","ผิวหนังทนต่อแรงกดได้น้อย")}</div></div>`}
+    }
   if(s===2){const A=rpAdvise(d),P=RP_PLANS[A.k];
     h=`${A.banner.map(b=>`<div class="rp-ban" style="--c:var(${b[0]})"><b>${esc(b[1])}</b><small>${esc(b[2])}</small></div>`).join("")}
     <div class="rp-sug" style="--c:var(${P.c})"><b>แผนที่ระบบเสนอ: ${P.n} · ${A.k==="hold"?P.th:"ทุก "+rpEveryTxt(A.every)}</b><small>${esc(A.why.join(" · "))}</small></div>
@@ -6384,7 +6387,7 @@ function rpEdPaint(){const d=rpUI.d,s=rpUI.step,B=$("rpBody");
     if(d.k==="hold")h+=`<div class="rp-sec"><label for="rpReason" class="lbl">เหตุผลที่งดเปลี่ยนท่า (จำเป็น)</label><input id="rpReason" type="text" value="${esc(d.reason||"")}" placeholder="เช่น MAP 58 ขณะปรับ Norepinephrine, SpO₂ ลดลงเหลือ 85% เมื่อพลิกตัว">
       <label for="rpWith" class="lbl">ตกลงแผนร่วมกับ</label><input id="rpWith" type="text" value="${esc(d.with||"")}" placeholder="เช่น แพทย์เวร / หัวหน้าเวร">
       <div class="lbl">ทบทวนแผนภายใน</div><div class="rp-seg">${[60,120,240,480].map(m=>`<button type="button" aria-pressed="${+d.review===m}" data-rv="${m}">${m===480?"ทุกเวร (8 ชม.)":(m/60)+" ชม."}</button>`).join("")}</div></div>`;
-    if(d.g.includes("postop")||d.g.includes("neuro"))h+=`<button type="button" class="rp-md" aria-pressed="${!!d.mdOk}" id="rpMd"><span class="bx" aria-hidden="true"></span>ตรวจสอบกับคำสั่งแพทย์แล้ว${d.g.includes("neuro")?" (ระดับศีรษะเตียง, เป้าหมาย ICP/CPP)":""}${d.g.includes("postop")?" (ท่าและตำแหน่งที่ห้ามกด)":""}</button>`}
+    if(d.g.includes("postop")||d.g.includes("neuro")||d.g.includes("supine"))h+=`<button type="button" class="rp-md" aria-pressed="${!!d.mdOk}" id="rpMd"><span class="bx" aria-hidden="true"></span>ตรวจสอบกับคำสั่งแพทย์แล้ว${d.g.includes("neuro")?" (ระดับศีรษะเตียง, เป้าหมาย ICP/CPP)":""}${d.g.includes("postop")?" (ท่าและตำแหน่งที่ห้ามกด)":""}${d.g.includes("supine")?" (ห้ามตะแคง/ระดับศีรษะเตียง)":""}</button>`}
   if(s===4){const P=RP_PLANS[d.k],L=d.k==="hold"?[]:(d.pos&&d.pos.length?d.pos:rpPosList(d)),cur=rpGet();
     if(rpUI.startPos==null)rpUI.startPos=L[0]||"";
     h=`<div class="rp-conf" style="--c:var(${P.c})"><span class="rp-plan">${P.n}<small>${d.k==="hold"?P.th:"ทุก "+rpEveryTxt(+d.every)}</small></span>
@@ -6419,7 +6422,7 @@ $("rpOk").onclick=()=>{const d=rpUI.d,s=rpUI.step,msg=m=>{$("rpMsg").textContent
   if(s===2){rpUI.step=3;return rpEdPaint()}
   if(s===3){if(d.k==="hold"&&!(d.reason||"").trim()){msg("ใส่เหตุผลที่งดเปลี่ยนท่าก่อน");const e=$("rpReason");if(e)e.focus();return}
     if(d.k!=="hold"&&(!d.pos||d.pos.length<(d.k==="prone"?2:d.k==="mod"?1:2)))return msg(d.k==="mod"?"เลือกท่าอย่างน้อย 1 ท่า":"เลือกท่าหมุนเวียนอย่างน้อย 2 ท่า");
-    if((d.g.includes("postop")||d.g.includes("neuro"))&&!d.mdOk)return msg("ยืนยันว่าตรวจสอบกับคำสั่งแพทย์แล้ว");rpUI.step=4;rpUI.startPos=null;return rpEdPaint()}
+    if((d.g.includes("postop")||d.g.includes("neuro")||d.g.includes("supine"))&&!d.mdOk)return msg("ยืนยันว่าตรวจสอบกับคำสั่งแพทย์แล้ว");rpUI.step=4;rpUI.startPos=null;return rpEdPaint()}
   // step 4: save + start clock
   const old=rpGet(),by=pvBy(),now=Date.now();const rp=Object.assign({},d,{at:now,by:by.by,ot:by.ot});if(d.k==="hold")rp.every=RP_PLANS.hold.every;
   rp.log=(old&&old.log)||[];rp.hist=((old&&old.hist)||[]).concat([{t:now,k:d.k,g:d.g.slice(),by:by.by}]).slice(-20);delete rp.defer;
