@@ -5492,7 +5492,7 @@ $("hmAlert").onclick=()=>{const A=alertItems(),box=$("alList");box.innerHTML=A.l
 $("alClose").onclick=()=>sheetClose("alModal");
 $("hmGuide").onclick=()=>{const b=$("gdBody");if(!b.dataset.done){let h="";
     try{h+=`<h4>ระดับความเสี่ยงตาม Braden Scale</h4><div class="gd-row">${LEVELS.map(r=>`<span style="--c:var(${r.c})">${r.name} · ${r.range}</span>`).join("")}</div>`}catch(e){}
-    try{h+=`<h4>รูทีนแคร์ทุกราย (Routine Care)</h4><ul>${CARE.routine.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
+    try{h+=`<h4>การดูแลพื้นฐาน (Routine Care)</h4><ul>${CARE.routine.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
     h+=`<h4>การพลิกตัวและจัดท่า</h4><ul><li>พลิกตะแคงตัวทุก 2 ชั่วโมง สลับ หงาย ตะแคงซ้าย ตะแคงขวา</li><li>ตะแคง 30 องศา ใช้หมอนรองหลังและระหว่างเข่า</li><li>ยกส้นเท้าให้ลอยพ้นที่นอน ไม่ไขหัวเตียงเกิน 30 องศาถ้าไม่มีข้อห้าม</li></ul>`;
     try{h+=`<h4>ระดับแผลกดทับ (NPIAP)</h4>${Object.entries(STAGES).map(([k,x])=>`<div class="gd-st">${stageSvg(k)}<div><b>${x.name}</b>${x.d?"<br>"+x.d:""}</div></div>`).join("")}`}catch(e){}
     try{h+=`<h4>Medical Device-Related Pressure Injury (MDRPI)</h4><ul>${CARE.device.map(x=>`<li>${x}</li>`).join("")}</ul>`}catch(e){}
@@ -5813,7 +5813,7 @@ function gdDressing(k){const saved=curW;let plan={items:[],cautions:[]};
   return wrap}
 var gdIdx=0;
 function gdBuild(){const b=$("gdBody");b.innerHTML='<h3 class="pg-hi" id="gdTitle">แนวทางป้องกันและดูแลแผลกดทับ</h3>';
-  const TABS=["ระดับความเสี่ยง","ระดับแผลกดทับ","รูทีนแคร์","MDRPI"];
+  const TABS=["ระดับความเสี่ยง","ระดับแผลกดทับ","การดูแลพื้นฐาน","MDRPI"];
   const tabs=document.createElement("div");tabs.className="cs-tabs gd-tabs";tabs.setAttribute("role","tablist");
   const track=document.createElement("div");track.className="cs-track gd-track";const dots=document.createElement("div");dots.className="cs-dots";
   const S=TABS.map((t,i)=>{const sl=document.createElement("div");sl.className="cs-slide gd-slide";sl.setAttribute("role","tabpanel");track.append(sl);
@@ -5840,7 +5840,7 @@ function gdBuild(){const b=$("gdBody");b.innerHTML='<h3 class="pg-hi" id="gdTitl
       const pr=wbp?CARE.wbpProducts:(CARE[k]&&CARE[k].products)||[];if(pr.length)p.append(chips(pr));
       p.append(gdH("การป้องกันแผลเพิ่ม / ป้องกันแผลใหม่"),gdUl(["พลิกตะแคงตัวทุก 2 ชั่วโมง ห้ามนอนทับแผล","ใช้วัสดุ Soft Silicone/Foam ป้องกันปุ่มกระดูกอื่นที่เสี่ยง","ประเมินผิวหนังและแผลทุกเวร ถ่ายภาพเปรียบเทียบ"]),chips(CARE.preventProducts))}))});
   // 3 routine + turning
-  {const c=document.createElement("div");c.className="gd-card";c.append(gdH("รูทีนแคร์ทุกราย (Routine Care)"),gdUl(CARE.routine),gdH("การพลิกตัวและจัดท่า"),
+  {const c=document.createElement("div");c.className="gd-card";c.append(gdH("การดูแลพื้นฐาน (Routine Care)"),gdUl(CARE.routine),gdH("การพลิกตัวและจัดท่า"),
     gdUl(["พลิกตะแคงตัวทุก 2 ชั่วโมง สลับ หงาย ตะแคงซ้าย ตะแคงขวา สลับท่า หงาย ตะแคงซ้าย ตะแคงขวา","ตะแคง 30 องศา ใช้หมอนรองหลังและระหว่างเข่า","ยกส้นเท้าให้ลอยพ้นที่นอน ไม่ไขหัวเตียงเกิน 30 องศาถ้าไม่มีข้อห้าม"]),
     gdH("วัสดุและอุปกรณ์พื้นฐาน"),gdMats(["pillow","vas","slide"],"Routine Care"));S[2].append(c)}
   // 4 MDRPI
