@@ -1701,6 +1701,7 @@ body[data-page="wound"] #result{display:none!important}
 /* ===== Braden method chooser + quick entry ===== */
 .bm2-choose{display:flex;flex-direction:column;gap:12px}
 .bm2-choose .bw-en{margin:0 0 4px}
+.bm2-opt[hidden]{display:none!important}
 .bm2-opt{font:inherit;text-align:left;cursor:pointer;display:flex;gap:14px;align-items:center;background:var(--bg);color:var(--ink);border:1.5px solid var(--line);border-radius:18px;padding:16px}
 .bm2-opt:hover,.bm2-opt:focus-visible{border-color:var(--pc);background:var(--pt)}
 .bm2-opt b{display:block;font-size:1.05rem}.bm2-opt small{display:block;font-size:.84rem;color:var(--muted);line-height:1.5;margin-top:2px}
@@ -2542,7 +2543,7 @@ body[data-page="wound"] #result{display:none!important}
           <p class="bw-en">เลือกวิธีที่สะดวก ผลการประเมินและข้อแนะนำเหมือนกัน</p>
           <button type="button" class="bm2-opt" id="bmStep"><span class="bm2-ic" aria-hidden="true">&#9776;</span><span><b>เลือกตามข้อ</b><small id="bmStepS"></small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
           <button type="button" class="bm2-opt" id="bmTotal"><span class="bm2-ic num" aria-hidden="true">Σ</span><span><b>กรอกคะแนนรวม / ระดับความเสี่ยง</b><small>ไม่ต้องเลือกตามข้อ แตะระดับความเสี่ยงแล้วเลือกคะแนนรวม หรือพิมพ์คะแนนรวม 6–23 ได้เลย</small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
-          <button type="button" class="bm2-opt" id="bmQuick"><span class="bm2-ic num" aria-hidden="true">123</span><span><b>กรอกคะแนนเป็นตัวเลข</b><small>รู้คะแนนแต่ละด้านแล้ว แตะตัวเลข 1–4 ทั้ง 6 ด้านในหน้าเดียว ระบบรวมคะแนนให้ทันที</small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
+          <button type="button" class="bm2-opt" id="bmQuick" hidden><span class="bm2-ic num" aria-hidden="true">123</span><span><b>กรอกคะแนนเป็นตัวเลข</b><small>รู้คะแนนแต่ละด้านแล้ว แตะตัวเลข 1–4 ทั้ง 6 ด้านในหน้าเดียว ระบบรวมคะแนนให้ทันที</small></span><span class="bm2-go" aria-hidden="true">&rsaquo;</span></button>
         </div>
         <div id="bmForm" hidden><div class="bq2-list" id="bmRows"></div></div>
         <div id="bmTot" hidden class="bt-wrap"></div>
@@ -6309,7 +6310,7 @@ function btPaint(){const L=bt.lv!=null?BT_LV[bt.lv]:null;
   let h=`<div class="lbl">1. แตะระดับความเสี่ยง</div><div class="bt-lv">${BT_LV.map((l,i)=>`<button type="button" style="--c:var(${l.c})" aria-pressed="${bt.lv===i}" data-lv="${i}"><b>${l.n}</b><small>${l.r[0]===l.r[1]?l.r[0]:l.r[0]+"–"+l.r[1]} คะแนน</small></button>`).join("")}</div>`;
   if(L){const nums=[];for(let v=L.r[0];v<=L.r[1];v++)nums.push(v);h+=`<div class="lbl">2. เลือกคะแนนรวม</div><div class="bt-num" style="--c:var(${L.c})">${nums.map(v=>`<button type="button" aria-pressed="${bt.v===v}" data-v="${v}">${v}</button>`).join("")}</div>`}
   h+=`<label class="bt-in" for="btInput"><span>หรือพิมพ์คะแนนรวม</span><input id="btInput" type="number" inputmode="numeric" min="6" max="23" step="1" placeholder="6–23" value="${bt.v??""}"></label>
-    <p class="bt-note">ใช้เมื่อประเมินตามแบบฟอร์มกระดาษหรือรับคะแนนจากเวรก่อนแล้ว ระบบจะไม่มีคะแนนรายด้าน ถ้าต้องการข้อแนะนำเฉพาะด้านที่ต่ำ ให้เลือกตามข้อหรือกรอกตัวเลขรายด้าน</p>`;
+    <p class="bt-note">ใช้เมื่อประเมินตามแบบฟอร์มกระดาษหรือรับคะแนนจากเวรก่อนแล้ว ระบบจะไม่มีคะแนนรายด้าน ถ้าต้องการข้อแนะนำเฉพาะด้านที่ต่ำ ให้เลือกตามข้อ</p>`;
   $("bmTot").innerHTML=h;
   $("bmTot").querySelectorAll("[data-lv]").forEach(b=>b.onclick=()=>{bt.lv=+b.dataset.lv;const l=BT_LV[bt.lv];if(!(bt.v>=l.r[0]&&bt.v<=l.r[1]))bt.v=l.r[0]===l.r[1]?l.r[0]:null;btPaint()});
   $("bmTot").querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{bt.v=+b.dataset.v;btPaint()});
