@@ -52,7 +52,7 @@ function setup() {
   const first = ss.getSheetByName('Sheet1') || ss.getSheetByName('ชีต1');
   if (first && first.getLastRow() === 0 && ss.getSheets().length > 1) ss.deleteSheet(first);
   const f = folder();
-  viewSheet();
+  viewSheet(); dailySheet(); woundSheet(); KPI_TABS.forEach(kpiSheet);
   ensureCleanupTrigger();
   Logger.log('ตั้งเวลาลบภาพอัตโนมัติทุกวัน 01:00 น. (ภาพครบ ' + KEEP_DAYS + ' วัน หรือผู้ป่วยจำหน่ายแล้ว)');
   Logger.log('พร้อมใช้งาน: สร้างแท็บ ' + Object.keys(SHEETS).join(', ') + ' และโฟลเดอร์ภาพ ' + f.getName() + ' แล้ว');
@@ -139,6 +139,9 @@ function push(req) {
       upsert(F, fi, it.key, ["'" + it.key, it.store || '', "'" + (rec.hn || ''), "'" + dstr(rec.date), rec.site || '', now, ot, '', fileId, JSON.stringify(meta), "'" + time, sh, view.kind || rec.kind || it.store || '', "'" + exp]);
       try { viewAdd(it.key, rec, view, thumb, sh, exp, ot, fileId); } catch (e) {}
     }
+    else if (it.type === 'kpi') { kpiWrite(it.key, it.data || {}, ot); }
+    else if (it.type === 'daily') { dailyWrite(it.key, it.data || {}, ot); }
+    else if (it.type === 'wound') { woundWrite(it.key, it.data || {}, ot); }
     else if (it.type === 'delphoto') {
       const r = fi[String(it.key)];
       if (r) photoGone(F, r, now, ot);
@@ -322,4 +325,74 @@ function maybeCleanup() {
 function ensureCleanupTrigger() {
   const has = ScriptApp.getProjectTriggers().some(t => t.getHandlerFunction() === 'cleanupPhotos');
   if (!has) ScriptApp.newTrigger('cleanupPhotos').timeBased().everyDays(1).atHour(1).inTimezone(TZ).create();
+}
+
+/* ---------- ตัวชี้วัดคุณภาพ (Clinical Outcomes / Nursing Performance / QA & Research) ---------- */
+const KPI_TABS = ['Clinical Outcomes', 'Nursing Performance', 'QA & Research'];
+const KPI_HEAD = ['เดือน', 'ตัวชี้วัด', 'ประเภท', 'ค่า', 'รายละเอียด', 'สถานะ', 'เป้าหมาย', 'อัปเดตล่าสุด'];
+function kpiSheet(name) {
+  const ss = book();
+  let sh = ss.getSheetByName(name);
+  if (!sh) {
+    sh = ss.insertSheet(name);
+    sh.getRange(1, 1, 1, KPI_HEAD.length).setValues([KPI_HEAD]).setFontWeight('bold').setFontColor('#ffffff').setBackground('#1d4ed8');
+    sh.setFrozenRows(1); sh.setColumnWidth(2, 260); sh.setColumnWidth(5, 320);
+  }
+  return sh;
+}
+function kpiWrite(month, data, ot) {
+  const secs = data.sections || {}, now = new Date();
+  KPI_TABS.forEach(name => {
+    const rows = secs[name]; if (!rows || !rows.length) return;
+    const sh = kpiSheet(name), last = sh.getLastRow();
+    if (last > 1) {
+      const ms = sh.getRange(2, 1, last - 1, 1).getDisplayValues();
+      for (let i = ms.length - 1; i >= 0; i--) if (String(ms[i][0]) === String(month)) sh.deleteRow(i + 2);
+    }
+    const out = rows.map(r => ["'" + month, r[0], r[1], "'" + r[2], r[3], r[4], r[5], now]);
+    sh.getRange(sh.getLastRow() + 1, 1, out.length, KPI_HEAD.length).setValues(out);
+  });
+}
+/* ---------- Braden รายวัน: HN ชื่อ คะแนน Braden ของแต่ละวัน ---------- */
+const DAILY_TAB = 'Braden รายวัน';
+const DAILY_HEAD = ['วันที่', 'เวลา', 'HN', 'ชื่อ-สกุล', 'Braden', 'ระดับความเสี่ยง', 'การรับความรู้สึก', 'ความเปียกชื้น', 'การทำกิจกรรม', 'การเคลื่อนไหว', 'โภชนาการ', 'แรงเสียดทาน', 'จำนวนแผล', 'PUSH สูงสุด', 'ผู้ประเมิน', 'OT', 'key'];
+function dailySheet() {
+  const ss = book();
+  let sh = ss.getSheetByName(DAILY_TAB);
+  if (!sh) {
+    sh = ss.insertSheet(DAILY_TAB, 1);
+    sh.getRange(1, 1, 1, DAILY_HEAD.length).setValues([DAILY_HEAD]).setFontWeight('bold').setFontColor('#ffffff').setBackground('#0f766e');
+    sh.setFrozenRows(1); sh.hideColumns(DAILY_HEAD.length);
+  }
+  return sh;
+}
+function dailyWrite(key, d, ot) {
+  const sh = dailySheet(), b = d.sub || {}, n = v => (v === undefined || v === null || v === '') ? '' : v;
+  const row = ["'" + (d.date || ''), "'" + (d.time || ''), "'" + (d.hn || ''), d.name || '', n(d.braden), d.level || '', n(b.sens), n(b.mois), n(b.act), n(b.mob), n(b.nut), n(b.fric), n(d.wounds), n(d.push), d.nurse || '', "'" + (d.ot || ot || ''), "'" + key];
+  let r = 0;
+  if (sh.getLastRow() > 1) { const c = sh.getRange(2, DAILY_HEAD.length, sh.getLastRow() - 1, 1).createTextFinder(String(key)).matchEntireCell(true).findNext(); if (c) r = c.getRow(); }
+  if (r) sh.getRange(r, 1, 1, row.length).setValues([row]); else sh.appendRow(row);
+  if (sh.getLastRow() > 2) sh.getRange(2, 1, sh.getLastRow() - 1, DAILY_HEAD.length).sort([{ column: 1, ascending: false }, { column: 3, ascending: true }]);
+}
+
+/* ---------- แผลกดทับ: ตำแหน่ง ขนาด ระดับ PUSH และวัสดุปิดแผล (1 แถวต่อแผลต่อวัน) ---------- */
+const WOUND_TAB = 'แผลกดทับ';
+const WOUND_HEAD = ['วันที่', 'เวลา', 'HN', 'ชื่อ-สกุล', 'แผลที่', 'ตำแหน่งแผล', 'ชนิดแผล', 'ระดับแผล', 'ยาว (cm)', 'กว้าง (cm)', 'ลึก (cm)', 'พื้นที่ (cm²)', 'สิ่งคัดหลั่ง (คะแนน)', 'เนื้อเยื่อ (คะแนน)', 'คะแนน PUSH', 'วัสดุที่ใช้ปิดแผล', 'เปลี่ยนวัสดุล่าสุด', 'ผู้ประเมิน', 'OT', 'key'];
+function woundSheet() {
+  const ss = book();
+  let sh = ss.getSheetByName(WOUND_TAB);
+  if (!sh) {
+    sh = ss.insertSheet(WOUND_TAB, 2);
+    sh.getRange(1, 1, 1, WOUND_HEAD.length).setValues([WOUND_HEAD]).setFontWeight('bold').setFontColor('#ffffff').setBackground('#b4234a');
+    sh.setFrozenRows(1); sh.setColumnWidth(16, 260); sh.hideColumns(WOUND_HEAD.length);
+  }
+  return sh;
+}
+function woundWrite(key, d, ot) {
+  const sh = woundSheet(), n = v => (v === undefined || v === null || v === '') ? '' : v;
+  const row = ["'" + (d.date || ''), "'" + (d.time || ''), "'" + (d.hn || ''), d.name || '', n(d.no), d.site || '', d.wtype || '', d.stage || '', n(d.L), n(d.W), n(d.D), n(d.area), n(d.exu), n(d.tis), n(d.push), d.dress || '', d.dressAt || '', d.nurse || '', "'" + (d.ot || ot || ''), "'" + key];
+  let r = 0;
+  if (sh.getLastRow() > 1) { const c = sh.getRange(2, WOUND_HEAD.length, sh.getLastRow() - 1, 1).createTextFinder(String(key)).matchEntireCell(true).findNext(); if (c) r = c.getRow(); }
+  if (r) sh.getRange(r, 1, 1, row.length).setValues([row]); else sh.appendRow(row);
+  if (sh.getLastRow() > 2) sh.getRange(2, 1, sh.getLastRow() - 1, WOUND_HEAD.length).sort([{ column: 1, ascending: false }, { column: 3, ascending: true }, { column: 5, ascending: true }]);
 }

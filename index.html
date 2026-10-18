@@ -4121,7 +4121,7 @@ function syncQ(){try{return JSON.parse(localStorage.getItem("pi-sync-q")||"[]")}
 function syncQSet(q){try{localStorage.setItem("pi-sync-q",JSON.stringify(q))}catch(e){}}
 function syncSkipHN(hn){return !hn||hn==="ตัวอย่าง"||hn==="_"}
 function syncEnq(type,key,data){if(!syncCfg())return;key=String(key);
-  if((type==="patient"||type==="delpatient"||type==="turn")&&syncSkipHN(key))return;
+  if((type==="patient"||type==="delpatient"||type==="turn")&&syncSkipHN(key))return;if((type==="daily"||type==="wound")&&syncSkipHN(String(key).split("|")[0]))return;
   const q=syncQ().filter(x=>!(x.key===key&&(x.type===type||(type.startsWith("del")&&x.type===type.slice(3))||(x.type.startsWith("del")&&type===x.type.slice(3)))));
   q.push({type,key,data,ot:(typeof otGet==="function"&&otGet()||{}).ot||"",at:Date.now()});syncQSet(q);syncPaint();syncSoon(1500)}
 function syncHistNew(h){if(!syncCfg())return;let ids;try{ids=new Set(JSON.parse(localStorage.getItem("pi-sync-hids")||"[]"))}catch(e){ids=new Set()}
@@ -6645,6 +6645,36 @@ $("liveCam").addEventListener("pointerdown",e=>{if(e.target!==$("liveOv")||live.
   setTimeout(liveDraw,0)},true));
 $("liveRedraw").onclick=()=>{lcHideLines();liveDraw()};
 {const _use=$("liveUse").onclick;$("liveUse").onclick=function(){if(live.still&&live.phase==="meas"&&!(live.vis[0]&&live.vis[1])){liveWarn(!live.vis[0]?"ลากเส้นแนวยาวที่สุดของแผลก่อน":"ลากเส้นแนวกว้างที่สุดของแผลก่อน");return}return _use.apply(this,arguments)}}
+/* ===== Nursing Performance: per-activity list limited to the 8 core activities ===== */
+var QA_CORE=[["turn","พลิกตะแคงตัว"],["skin","ประเมินผิวหนัง"],["heel","ยกส้นเท้า"],["hob","หัวเตียงน้อยกว่า 30°"],["sens","ตรวจผิวทุกครั้งที่พลิก"],["pos","จัดท่าตะแคง 30°"],["dress","ตรวจแผ่นป้องกัน"],["braden","ประเมิน Braden"]];
+function qaCoreRows(K){return QA_CORE.map(([id,n])=>{if(id==="braden")return [n,K.braden,` ${K.bradenN[0]}/${K.bradenN[1]} วัน`];const v=K.per[id];return [n,v&&v[1]?v[0]/v[1]:null,v?` ${v[0]}/${v[1]}`:" ยังไม่มีข้อมูล"]})}
+{const _s1=qaS1;qaS1=function(K,m){const r=_s1.apply(this,arguments);try{const sv=$("qaS1"),bars=sv.querySelector(".qa-bars")||sv.querySelector(".qa-h+p.note");const h=document.createElement("div");h.innerHTML=qaBars(qaCoreRows(K));
+  if(bars)bars.replaceWith(h.firstChild);else sv.append(h.firstChild);const hd=sv.querySelector(".qa-h");if(hd)hd.textContent="การปฏิบัติรายกิจกรรม (ไม่นับข้อที่ระบุเหตุผลว่าไม่เหมาะสม)"}catch(e){console.error(e)}return r}}
+/* ===== Send to Google Sheet: KPI tabs + daily Braden per patient ===== */
+var QA_CAP=null;{const _t=qaTile;qaTile=function(label,type,val,sub,S,tgt){if(QA_CAP)QA_CAP.push([label,type,String(val),String(sub).replace(/<[^>]+>/g,""),S&&S.t||"",tgt||""]);return _t.apply(this,arguments)}}
+function qaExport(m){m=m||qaDay(0).slice(0,7);const [f,t]=qaMonthRange(m),K=qaKPI(f,t),out={},ids=["qaS0","qaS1","qaS3"],real={},tmp=[];
+  ids.forEach(id=>{const el=document.getElementById(id);if(el){real[id]=el;el.id=id+"_live"}const t=document.createElement("div");t.id=id;t.hidden=true;document.body.append(t);tmp.push(t)});
+  try{
+  [["Clinical Outcomes",qaS0],["Nursing Performance",qaS1],["QA & Research",qaS3]].forEach(([n,fn])=>{QA_CAP=[];try{fn(K,m)}catch(e){}out[n]=QA_CAP;QA_CAP=null});
+  if(Object.keys(K.byStage||{}).length)out["Clinical Outcomes"].push(["HAPI แยกตามระดับแผล","Outcome",String(K.hapi),Object.entries(K.byStage).map(([k,v])=>k+" "+v).join(" · "),"",""]);
+  out["QA & Research"]=monthsBack(m,6).map(x=>{const [a,b]=qaMonthRange(x),k=qaKPI(a,b),pc=v=>v==null?"–":Math.round(v*100)+"%";
+    return ["สรุปเดือน "+thMonth(x),"รายเดือน",k.hapiRate!=null?k.hapiRate.toFixed(2)+" /1,000":String(k.hapi)+" แผล",`HAPI ${k.hapi} · MDRPI ${k.mdrpi} · Braden ${pc(k.braden)} · Skin ${pc(k.skin)} · Bundle ${pc(k.bundle)} · Reposition ${pc(k.turn)} · Doc ${pc(k.doc)} · เวลา ${k.time==null?"–":k.time.toFixed(1)+" นาที"} · บันทึก ${k.AM.length}`,"",""]}).concat(out["QA & Research"]);
+  out["Nursing Performance"]=out["Nursing Performance"].concat(qaCoreRows(K).map(([n,v,x])=>["รายกิจกรรม: "+n,"Process",v==null?"–":Math.round(v*100)+"%",x.trim(),"",""]));
+  }finally{tmp.forEach(x=>x.remove());ids.forEach(id=>{if(real[id])real[id].id=id})}
+  return {month:m,from:f,to:t,sections:out,at:Date.now()}}
+function qaPush(force){if(!syncCfg())return;const m=qaDay(0).slice(0,7);let last=0;try{last=+localStorage.getItem("pi-kpi-at")||0}catch(e){}
+  if(!force&&Date.now()-last<3*3600e3)return;try{syncEnq("kpi",m,qaExport(m));localStorage.setItem("pi-kpi-at",String(Date.now()))}catch(e){console.error(e)}}
+{const _qp=qaPaint;qaPaint=function(){const r=_qp.apply(this,arguments);try{if(isAdmin())setTimeout(()=>qaPush(true),300)}catch(e){}return r}}
+setTimeout(()=>qaPush(false),8000);
+var dailyT=0;
+function dailyEnq(){const hn=realHN(),t=bradenTotal();if(!hn||t==null||!syncCfg())return;const d=phToday(),L=levelOf(t);let R=null;try{R=compoundRisk(t,crData())}catch(e){}
+  const ws=(wounds||[]).filter(w=>w.stage&&w.stage!=="none");let pmax=null;ws.forEach(w=>{try{const v=woundCalc(w).push;if(pmax==null||v>pmax)pmax=v}catch(e){}});
+  const u=otGet()||{};syncEnq("daily",hn+"|"+d,{hn,name:$("ptName").value.trim(),date:d,time:hhmm(Date.now()),braden:t,level:R&&R.crit?"Critical Risk":L.name,sub:Object.assign({},st.braden),wounds:ws.length,push:pmax,ot:u.ot||"",nurse:$("nurseName")&&$("nurseName").value.trim()||u.name||""})}
+function woundEnq(){const hn=realHN();if(!hn||!syncCfg())return;const d=phToday(),u=otGet()||{},nm=$("ptName").value.trim(),by=$("nurseName")&&$("nurseName").value.trim()||u.name||"";
+  (wounds||[]).forEach((w,i)=>{if(!w.stage||w.stage==="none")return;let x={};try{x=woundCalc(w)}catch(e){}
+    syncEnq("wound",hn+"|"+d+"|"+(w.id||i),{hn,name:nm,date:d,time:hhmm(Date.now()),no:i+1,site:siteLabel(w)+(w.side?" "+w.side:""),wtype:w.device?"MDRPI":(w.wtype||"pi")==="pi"?"Pressure injury":String(w.wtype).toUpperCase(),
+      stage:stageShort(w.stage),L:+w.L||0,W:+w.W||0,D:+w.D||0,area:x.a!=null?+(+x.a).toFixed(2):null,exu:w.exu,tis:w.tis,push:x.push??null,dress:(w.dressings||[]).join(", "),dressAt:w.dressAt?new Date(w.dressAt).toLocaleString("th-TH",{dateStyle:"short",timeStyle:"short"}):"",nurse:by,ot:u.ot||""})})}
+{const _u=update;update=function(){const r=_u.apply(this,arguments);clearTimeout(dailyT);dailyT=setTimeout(()=>{try{dailyEnq()}catch(e){}try{woundEnq()}catch(e){}},4000);return r}}
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
