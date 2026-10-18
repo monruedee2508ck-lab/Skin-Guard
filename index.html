@@ -1869,6 +1869,9 @@ body[data-page="wound"] #result{display:none!important}
 .rp-chk button.bad{color:var(--s1)}.rp-chk button.bad[aria-pressed=true]{background:var(--s1);color:#fff;border-color:var(--s1)}
 @media (max-width:700px){.rp-ts{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:420px){.rp-ts{grid-template-columns:1fr 1fr}.rp-st{min-width:96px}}
+#mSeed[hidden],#liveRedraw[hidden]{display:none!important}
+.livecam.meas .lc-btns{grid-template-columns:auto auto auto 1fr}
+@media (max-width:520px){.livecam.meas #liveGrid{display:none!important}.livecam.meas .lc-btns{grid-template-columns:auto auto 1fr}}
 </style>
 </head>
 <body>
@@ -2242,8 +2245,8 @@ body[data-page="wound"] #result{display:none!important}
     <div id="photoTools" class="photo" hidden>
       <div class="tabs" role="tablist">
         <button role="tab" id="mCal" aria-selected="true">1 ปรับเทียบ</button>
-        <button role="tab" id="mSeed" aria-selected="false">2 ตรวจจับขอบอัตโนมัติ</button>
-        <button role="tab" id="mTrace" aria-selected="false">3 แก้ขอบเอง</button>
+        <button role="tab" id="mSeed" aria-selected="false" hidden>2 ตรวจจับขอบอัตโนมัติ</button>
+        <button role="tab" id="mTrace" aria-selected="false">2 กำหนดขอบแผลเอง</button>
       </div>
       <div class="status" id="autoStatus" hidden></div>
       <p class="hint" id="hint"></p>
@@ -2592,7 +2595,7 @@ body[data-page="wound"] #result{display:none!important}
         <button type="button" class="lc-clr" id="liveClr" hidden>ล้าง</button>
       </div>
       <div class="lc-btns">
-        <button type="button" class="btn" id="liveRetake" hidden>↺ ถ่ายใหม่</button><button type="button" class="btn" id="liveGrid" aria-pressed="false">ตาราง 1 cm</button>
+        <button type="button" class="btn" id="liveRetake" hidden>↺ ถ่ายใหม่</button><button type="button" class="btn" id="liveRedraw" hidden>ลากเส้นใหม่</button><button type="button" class="btn" id="liveGrid" aria-pressed="false">ตาราง 1 cm</button>
         <button type="button" class="lc-shot" id="liveShot" aria-label="ถ่ายภาพ"><i></i></button>
         <button type="button" class="btn" id="liveUse">ใช้ค่าวัด</button>
       </div>
@@ -3501,7 +3504,7 @@ cv.addEventListener("pointerup",e=>{
   const p=toCanvas(e);if(drag){drag=null;downAt=null;return}
   if(!downAt||dist(downAt,p)>12*pxScale()){downAt=null;return}downAt=null;
   if(mode==="seed"){cvDetect(p);return}
-  if(mode==="cal"){if(cal.length>=2)cal=[];cal.push(p);if(cal.length===2)setTimeout(()=>setMode(poly.length?"trace":"seed"),350)}
+  if(mode==="cal"){if(cal.length>=2)cal=[];cal.push(p);if(cal.length===2)setTimeout(()=>setMode("trace"),350)}
   else poly.push(p);
   hint();measure();
 });
@@ -3691,12 +3694,12 @@ $("liveShot").onclick=()=>{if(!liveGuard("shot","ยังไม่ได้เ�
   const mid=toImg([(live.h[0][0]+live.h[1][0])/2,(live.h[0][1]+live.h[1][1])/2]);
   const go=fileObj=>{liveApplySize();liveClose();
     loadPhoto(fileObj,sc=>{
-      if(MK){const sd=MK.side*sc,cx=MK.cx*sc,cy=MK.cy*sc;cal=[[cx-sd/2,cy],[cx+sd/2,cy]];$("calcm").value=2;setMode("seed");measure();
-        setStatus(`ปรับเทียบจากกระดาษอ้างอิง 2×2 cm แล้ว (1 cm = ${(sd/2).toFixed(0)} px) กำลังหาขอบแผลและคำนวณพื้นที่…`);
-        const sp=[Math.min(cv.width-3,Math.max(2,mid[0]*sc)),Math.min(cv.height-3,Math.max(2,mid[1]*sc))];setTimeout(()=>{try{cvDetect(sp)}catch(e){}},120);return}
+      if(MK){const sd=MK.side*sc,cx=MK.cx*sc,cy=MK.cy*sc;cal=[[cx-sd/2,cy],[cx+sd/2,cy]];$("calcm").value=2;setMode("trace");measure();
+        setStatus(`ปรับเทียบจากกระดาษอ้างอิง 2×2 cm แล้ว (1 cm = ${(sd/2).toFixed(0)} px) ใส่ขนาดจากเส้นที่ลากแล้ว`);
+        return}
       const p=ppcImg*sc,x0=Math.min(cv.width-p*5-4,Math.max(4,r0[0]*sc)),y0=Math.min(cv.height-6,Math.max(6,r0[1]*sc));
-      cal=[[x0,y0],[x0+p*5,y0]];$("calcm").value=5;setMode("seed");measure();
-      setStatus(`ปรับเทียบจากไม้บรรทัดบนจอแล้ว (1 cm = ${p.toFixed(0)} px) แตะกลางแผลเพื่อตรวจจับขอบอัตโนมัติ`)})};
+      cal=[[x0,y0],[x0+p*5,y0]];$("calcm").value=5;setMode("trace");measure();
+      setStatus(`ปรับเทียบจากไม้บรรทัดบนจอแล้ว (1 cm = ${p.toFixed(0)} px) ใส่ขนาดจากเส้นที่ลากแล้ว`)})};
   if(f.file)go(f.file);else c.toBlob(b=>{if(b)go(new File([b],"wound.jpg",{type:"image/jpeg"}))},"image/jpeg",.92)};
 $("liveMk").onclick=()=>{live.mkOn=!live.mkOn;try{localStorage.setItem("pi-mk",live.mkOn?"1":"0")}catch(e){}mkPaint()};
 $("liveOv").addEventListener("pointerdown",e=>{const q=livePt(e);if(live.mkOn){const near=live.h&&live.h.some(h=>Math.hypot(h[0]-q[0],h[1]-q[1])<26);if(!near){e.preventDefault();mkTap(q[0],q[1]);return}}let best=-1,bd=34;live.h.forEach((h,i)=>{const d=Math.hypot(h[0]-q[0],h[1]-q[1]);if(d<bd){bd=d;best=i}});
@@ -6616,6 +6619,32 @@ var bmUI="";
 {const _bp=bwBtnPaint;bwBtnPaint=function(){const r=_bp.apply(this,arguments);try{const b=$("bwStart");if(st.braden._t&&!BRADEN.some(([k])=>st.braden[k]>0)){b.textContent=`คะแนนรวม ${st.braden._t} (กรอกเอง) · ประเมิน Braden ใหม่`;b.classList.add("ghost");b.classList.remove("primary");const e=$("bwEdit");if(e)e.hidden=true}}catch(e){}return r}}
 /* Braden: start goes straight to the item-by-item wizard (other entry methods removed) */
 $("bmTotal").hidden=true;$("bwStart").onclick=()=>{bmUI="";$("bmStep").onclick()};
+/* ===== Wound measure: no preset lines — user drags length then width lines themselves ===== */
+var LC_OFF=[-9999,-9999];live.vis=[false,false];
+function lcHideLines(){live.vis=[false,false];if(!live.h)live.h=[LC_OFF.slice(),LC_OFF.slice(),LC_OFF.slice(),LC_OFF.slice()];for(let i=0;i<4;i++)live.h[i]=LC_OFF.slice();live.L=0;live.W=0}
+LC_TIP_MEAS='① เทียบสเกล: แตะ "กระดาษอ้างอิง 2×2 cm" แล้วแตะกระดาษในภาพ หรือเลื่อน "ปรับสเกล" ให้ขีดตรงกับไม้บรรทัดจริง ② ใช้นิ้วลากเส้นตามแนวยาวที่สุดของแผล (เส้นชมพู) ③ ลากเส้นตามแนวกว้างที่สุด ตั้งฉากกับเส้นแรก (เส้นฟ้า) ④ ระบบคำนวณพื้นที่ให้ กด "ใช้ค่านี้"';
+{const _ll=liveLayout;liveLayout=function(){const keep=live.h;const r=_ll.apply(this,arguments);if(live.phase!=="meas"&&!keep){}return r}}
+{const _ph=lcPhase;lcPhase=function(p){if(p==="meas"||p==="aim")lcHideLines();const r=_ph.apply(this,arguments);try{$("liveRedraw").hidden=p!=="meas"}catch(e){}return r}}
+{const _ld=liveDraw;liveDraw=function(){const r=_ld.apply(this,arguments);if(live.phase!=="meas")return r;
+  const ov=$("liveOv");if(!ov.width)return r;const g=ov.getContext("2d"),dpr=window.devicePixelRatio||1,W=ov.width/dpr;
+  if(!live.vis[0]){$("liveL").textContent="–";live.L=0}if(!live.vis[1]){$("liveW").textContent="–";live.W=0}
+  if(!(live.vis[0]&&live.vis[1])){$("liveA").textContent="–";$("liveUse").textContent="ใช้ค่านี้"}
+  if(!live.drag){const t=!live.vis[0]?"ลากนิ้วตามแนวยาวที่สุดของแผล (เส้นชมพู)":!live.vis[1]?"ลากนิ้วตามแนวกว้างที่สุด ตั้งฉากกับเส้นแรก (เส้นฟ้า)":"";
+    if(t){g.font="700 14px system-ui,sans-serif";const tw=g.measureText(t).width+24,x=W/2,y=Math.max(70,ov.height/dpr*0.12);g.fillStyle=!live.vis[0]?"rgba(255,93,143,.92)":"rgba(63,184,255,.92)";
+      g.beginPath();g.roundRect?g.roundRect(x-tw/2,y-16,tw,30,15):g.rect(x-tw/2,y-16,tw,30);g.fill();g.fillStyle="#fff";g.textAlign="center";g.fillText(t,x,y+4)}}
+  return r}}
+/* drawing gesture: drag on an empty area creates the next line */
+$("liveCam").addEventListener("pointerdown",e=>{if(e.target!==$("liveOv")||live.phase!=="meas"||live.mkOn)return;const q=livePt(e);
+  const nearH=(live.h||[]).some((h,i)=>live.vis[i<2?0:1]&&Math.hypot(h[0]-q[0],h[1]-q[1])<34);if(nearH)return;
+  const nearRuler=Math.abs(q[1]-(live.ruler.y-12))<26&&q[0]>live.ruler.x-12;if(nearRuler)return;
+  const li=!live.vis[0]?0:!live.vis[1]?1:-1;if(li<0)return;
+  e.stopPropagation();e.preventDefault();const a=li*2;live.h[a]=q.slice();live.h[a+1]=q.slice();live.vis[li]=true;live.newLine=li;live.drag={k:"h",i:a+1};
+  try{$("liveOv").setPointerCapture(e.pointerId)}catch(x){}liveDraw()},true);
+["pointerup","pointercancel"].forEach(t=>$("liveCam").addEventListener(t,()=>{if(live.newLine==null)return;const li=live.newLine,a=li*2;live.newLine=null;
+  if(Math.hypot(live.h[a][0]-live.h[a+1][0],live.h[a][1]-live.h[a+1][1])<12){live.vis[li]=false;live.h[a]=LC_OFF.slice();live.h[a+1]=LC_OFF.slice()}
+  setTimeout(liveDraw,0)},true));
+$("liveRedraw").onclick=()=>{lcHideLines();liveDraw()};
+{const _use=$("liveUse").onclick;$("liveUse").onclick=function(){if(live.still&&live.phase==="meas"&&!(live.vis[0]&&live.vis[1])){liveWarn(!live.vis[0]?"ลากเส้นแนวยาวที่สุดของแผลก่อน":"ลากเส้นแนวกว้างที่สุดของแผลก่อน");return}return _use.apply(this,arguments)}}
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
