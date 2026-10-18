@@ -6299,7 +6299,7 @@ function rpRing(S){const R=46,C=2*Math.PI*R;let frac=S&&S.due&&S.span?Math.max(0
 function rpEveryTxt(m){return m<60?m+" นาที":(m/60)+" ชม."}
 function rpCardHTML(rp){const t=bradenTotal();
   if(!rp){const A=rpAdvise({g:rpAutoG(),nop:[]}),P=RP_PLANS[A.k];
-    return `<div class="rp-card rp-empty" style="--c:var(${P.c})"><div class="rp-ic" aria-hidden="true">&#9200;</div><div class="rp-tx"><b>แผนการเปลี่ยนท่ารายบุคคล</b><small>${t==null?"ประเมิน Braden ให้ครบก่อน แล้วตั้งแผนให้เหมาะกับโรคและข้อจำกัดของผู้ป่วย":`4 ขั้นตอน: ประเมินข้อจำกัด → ระบบเสนอแผน → พยาบาลตรวจสอบ → ยืนยันและเริ่มนาฬิกา`}</small></div><button type="button" class="btn primary rp-set" data-rp="set">ตั้งแผนเปลี่ยนท่า</button></div>`}
+    return `<div class="rp-card rp-empty" style="--c:var(${P.c})"><div class="rp-ic" aria-hidden="true">&#9200;</div><div class="rp-tx"><b>แผนการเปลี่ยนท่ารายบุคคล</b><small>${t==null?"ประเมิน Braden ให้ครบก่อน แล้วตั้งแผนให้เหมาะกับโรคและข้อจำกัดของผู้ป่วย":`3 ขั้นตอน: ประเมินข้อจำกัด → ระบบเสนอแผน → ยืนยันและเริ่มนาฬิกา`}</small></div><button type="button" class="btn primary rp-set" data-rp="set">ตั้งแผนเปลี่ยนท่า</button></div>`}
   const S=rpState(rp);if(!S)return "";const P=S.P,G=rpGroups(rp),A=rpAdvise(Object.assign({g:G},rp));
   const gl=G.map(k=>(RP_G.find(z=>z[0]===k)||[])[1]).filter(Boolean);
   const head=`<div class="rp-top"><span class="rp-plan">${P.n}<small>${rp.k==="hold"?P.th:"ทุก "+rpEveryTxt(rpEvery(rp))}</small></span>${gl.length?`<span class="rp-lim">${esc(gl.join(" · "))}</span>`:'<span class="rp-lim ok">Stable Patient</span>'}<button type="button" class="rp-edit" data-rp="set">ปรับแผน</button></div>`;
@@ -6354,7 +6354,7 @@ function rpOpen(){const cur=rpGet();const d=cur?JSON.parse(JSON.stringify(cur)):
 function rpClose(){$("rpModal").hidden=true;if($("riskModal").hidden&&$("bwModal").hidden)document.body.classList.remove("noscroll")}
 function rpApplyAdvice(){const d=rpUI.d,A=rpAdvise(d);d.k=A.k;d.every=A.every;d.pos=A.pos.slice();if((d.k==="mod"||d.k==="hold")&&!d.meth.length)d.meth=RP_METHODS.slice(0,3);return A}
 function rpEdPaint(){const d=rpUI.d,s=rpUI.step,B=$("rpBody");
-  $("rpKick").textContent=`ขั้นที่ ${s}/4 · ${RP_STEPS[s-1]}`;$("rpDots").innerHTML=RP_STEPS.map((x,i)=>`<i class="${i+1===s?"on":i+1<s?"done":""}"></i>`).join("");
+  const vs=s===4?3:s;$("rpKick").textContent=`ขั้นที่ ${vs}/3 · ${RP_STEPS[s-1]}`;$("rpDots").innerHTML=[1,2,3].map(i=>`<i class="${i===vs?"on":i<vs?"done":""}"></i>`).join("");
   const chip=(on,attr,txt,sub)=>`<button type="button" class="rp-chip" aria-pressed="${on}" ${attr}><b>${esc(txt)}</b>${sub?`<small>${esc(sub)}</small>`:""}</button>`;
   let h="";const t=bradenTotal();let R=null;try{R=compoundRisk(t,crData())}catch(e){}
   if(s===1){const ws=(wounds||[]).filter(w=>w.stage&&w.stage!=="none").length,stable=!d.g.length;
@@ -6398,9 +6398,10 @@ function rpEdPaint(){const d=rpUI.d,s=rpUI.step,B=$("rpBody");
       ${d.g.includes("postop")&&d.nop.length?`<dt>ห้ามรับแรงกด</dt><dd>${esc(d.nop.map(k=>k==="other"?(d.other||"อื่น ๆ"):(RP_NOP.find(z=>z[0]===k)||[])[1]).join(", "))}</dd>`:""}</dl></div>`;
     if(d.k!=="hold"){h+=`<div class="rp-sec"><div class="lbl">${d.k==="prone"?"ตำแหน่งศีรษะ/แขนตอนนี้":"ผู้ป่วยอยู่ท่าไหนตอนนี้"} (เริ่มนับเวลาจากตอนนี้)</div><div class="rp-chips">${L.map(p=>`<button type="button" class="rp-chip sm" aria-pressed="${p===rpUI.startPos}" data-sp="${esc(p)}"><b>${esc(p)}</b></button>`).join("")}</div></div>`;
       if(cur&&cur.lt)h+=`<button type="button" class="rp-md" aria-pressed="${!!rpUI.start}" id="rpRestart"><span class="bx" aria-hidden="true"></span>เริ่มนับเวลาใหม่จากตอนนี้ (ถ้าไม่เลือก จะนับต่อจากการเปลี่ยนท่าครั้งล่าสุด ${hhmm(cur.lt)} น.)</button>`;
+      if(d.g.includes("postop")||d.g.includes("neuro")||d.g.includes("supine"))h+=`<button type="button" class="rp-md" aria-pressed="${!!d.mdOk}" id="rpMd"><span class="bx" aria-hidden="true"></span>ตรวจสอบกับคำสั่งแพทย์แล้ว${d.g.includes("neuro")?" (ระดับศีรษะเตียง, เป้าหมาย ICP/CPP)":""}${d.g.includes("postop")?" (ท่าและตำแหน่งที่ห้ามกด)":""}${d.g.includes("supine")?" (ห้ามตะแคง/ระดับศีรษะเตียง)":""}</button>`;
       h+=`<p class="note" style="margin:0">รอบแรกครบกำหนด ${hhmm((rpUI.start||!cur||!cur.lt?Date.now():cur.lt)+(+d.every)*60000)} น. · ทบทวนแผนทุกเวร หรือเมื่ออาการเปลี่ยน</p>`}}
   B.innerHTML=h;B.scrollTop=0;
-  $("rpCancel").textContent=s===1?"ยกเลิก":"ย้อนกลับ";$("rpOk").textContent=s===4?(d.k==="hold"?"ยืนยันแผน":"ยืนยันแผนและเริ่มนาฬิกา"):s===2?"ตรวจสอบและปรับแผน":"ถัดไป";$("rpMsg").textContent="";
+  $("rpCancel").textContent=s===1?"ยกเลิก":"ย้อนกลับ";$("rpOk").textContent=s===4?(d.k==="hold"?"ยืนยันแผน":"ยืนยันแผนและเริ่มนาฬิกา"):"ถัดไป";$("rpMsg").textContent="";
   const q=(sel,fn)=>B.querySelectorAll(sel).forEach(b=>b.onclick=()=>{fn(b);rpEdPaint()});
   q("[data-stable]",()=>{d.g=[];d.prone=false;d.nop=[]});
   q("[data-g]",b=>{const k=b.dataset.g;d.g=d.g.includes(k)?d.g.filter(x=>x!==k):d.g.concat([k]);if(k==="resp"&&!d.g.includes("resp"))d.prone=false;if(k==="postop"&&!d.g.includes("postop"))d.nop=[]});
@@ -6416,14 +6417,15 @@ function rpEdPaint(){const d=rpUI.d,s=rpUI.step,B=$("rpBody");
   const md=$("rpMd");if(md)md.onclick=()=>{d.mdOk=!d.mdOk;rpEdPaint()};const rs=$("rpRestart");if(rs)rs.onclick=()=>{rpUI.start=!rpUI.start;rpEdPaint()};
   [["rpReason","reason"],["rpWith","with"],["rpOther","other"]].forEach(([id,k])=>{const e=$(id);if(e)e.oninput=()=>{d[k]=e.value}})}
 $("rpX").onclick=rpClose;$("rpModal").addEventListener("click",e=>{if(e.target.id==="rpModal")rpClose()});
-$("rpCancel").onclick=()=>{if(rpUI.step>1){rpUI.step--;rpEdPaint()}else rpClose()};
+$("rpCancel").onclick=()=>{if(rpUI.step===4){rpUI.step=2;rpEdPaint()}else if(rpUI.step>1){rpUI.step--;rpEdPaint()}else rpClose()};
 $("rpOk").onclick=()=>{const d=rpUI.d,s=rpUI.step,msg=m=>{$("rpMsg").textContent=m};
   if(s===1){if(d.g.includes("postop")&&!d.nop.length)return msg("เลือกตำแหน่งที่ห้ามรับแรงกดอย่างน้อย 1 ตำแหน่ง");if(d.nop.includes("other")&&!(d.other||"").trim())return msg("ระบุตำแหน่งอื่น ๆ");rpApplyAdvice();rpUI.step=2;return rpEdPaint()}
-  if(s===2){rpUI.step=3;return rpEdPaint()}
+  if(s===2){rpUI.step=4;rpUI.startPos=null;return rpEdPaint()}
   if(s===3){if(d.k==="hold"&&!(d.reason||"").trim()){msg("ใส่เหตุผลที่งดเปลี่ยนท่าก่อน");const e=$("rpReason");if(e)e.focus();return}
     if(d.k!=="hold"&&(!d.pos||d.pos.length<(d.k==="prone"?2:d.k==="mod"?1:2)))return msg(d.k==="mod"?"เลือกท่าอย่างน้อย 1 ท่า":"เลือกท่าหมุนเวียนอย่างน้อย 2 ท่า");
     if((d.g.includes("postop")||d.g.includes("neuro")||d.g.includes("supine"))&&!d.mdOk)return msg("ยืนยันว่าตรวจสอบกับคำสั่งแพทย์แล้ว");rpUI.step=4;rpUI.startPos=null;return rpEdPaint()}
-  // step 4: save + start clock
+  // step 4 (shown as 3/3): save + start clock
+  if((d.g.includes("postop")||d.g.includes("neuro")||d.g.includes("supine"))&&!d.mdOk)return msg("ยืนยันว่าตรวจสอบกับคำสั่งแพทย์แล้ว");
   const old=rpGet(),by=pvBy(),now=Date.now();const rp=Object.assign({},d,{at:now,by:by.by,ot:by.ot});if(d.k==="hold")rp.every=RP_PLANS.hold.every;
   rp.log=(old&&old.log)||[];rp.hist=((old&&old.hist)||[]).concat([{t:now,k:d.k,g:d.g.slice(),by:by.by}]).slice(-20);delete rp.defer;
   if(d.k!=="hold"){const L=rp.pos&&rp.pos.length?rp.pos:rpPosList(rp),i=Math.max(0,L.indexOf(rpUI.startPos));
