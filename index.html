@@ -1376,7 +1376,7 @@ h2 .h-en{flex-basis:100%;margin-top:0}
 .al-item .st{margin-left:auto;flex:none;font-size:.72rem;font-weight:600;color:var(--c);white-space:nowrap}
 .al-item.low{box-shadow:inset 4px 0 0 var(--line)}
 /* plan page */
-body[data-page="plan"] .pagetabs{display:none!important}
+
 body[data-page="plan"]{--pc:var(--teal);--pt:var(--teal-t)}
 .plan-h{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .plan-shift{flex:none;font-size:.76rem;font-weight:600;color:var(--teal);background:var(--teal-t);border-radius:999px;padding:3px 10px;margin-top:4px}
@@ -1563,7 +1563,7 @@ body[data-page="qa"]{--pc:var(--teal);--pt:var(--teal-t)}
 @media (max-width:520px){.qa-bar{grid-template-columns:1fr}.qa-g{grid-template-columns:1fr 1fr}.qa-k b{font-size:1.25rem}}
 .qa-zero{margin:18px 6px;text-align:center;color:var(--ok);font-weight:600;font-size:.85rem}
 /* ===== Patient Overview + iPad UX ===== */
-body[data-page="overview"] .pagetabs,body[data-page="overview"] #alerts{display:none!important}
+body[data-page="overview"] #alerts{display:none!important}
 body[data-page="overview"]{--pc:var(--teal);--pt:var(--teal-t)}
 .pv-grid{display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px}
 .pv-k{background:var(--surface);border-radius:20px;box-shadow:var(--shadow),inset 0 4px 0 var(--c);padding:14px 16px;display:flex;flex-direction:column;gap:4px;min-width:0}
@@ -1881,6 +1881,16 @@ body[data-page="wound"] #result{display:none!important}
 #loginGate label[hidden]{display:none!important}
 #nurseName[readonly]{background:var(--bg);color:var(--ink);cursor:default}
 label[for=nurseRole][hidden]{display:none!important}
+/* ===== navigation v2 ===== */
+nav.pagetabs.pagetabs.pagetabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+.pagetabs button[data-go="overview"]{--c:var(--teal);--ct:var(--teal-t)}
+.pagetabs button[data-go="plan"]{--c:var(--gold);--ct:#fff4dc}
+body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-page="qa"] .pagetabs{display:none!important}
+#bnav button{position:relative}
+.bn-badge{position:absolute;top:4px;left:calc(50% + 6px);min-width:18px;height:18px;border-radius:9px;background:var(--s1);color:#fff;font:700 .68rem/18px var(--font-body);font-style:normal;text-align:center;padding:0 5px}
+.bn-badge[hidden]{display:none}
+.al-more{font:inherit;font-size:.82rem;font-weight:600;color:var(--muted);background:none;border:1px dashed var(--line);border-radius:12px;padding:8px;cursor:pointer;width:100%}
+@media (max-width:520px){.pagetabs button{font-size:.74rem!important;padding:6px 2px!important}.pagetabs .ti{width:20px;height:20px}}
 </style>
 </head>
 <body>
@@ -1956,13 +1966,15 @@ label[for=nurseRole][hidden]{display:none!important}
   </section>
 
   <nav class="pagetabs" role="tablist" aria-label="หน้า">
+    <button role="tab" id="tab-overview" data-go="overview" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>สถานะ</button>
     <button role="tab" id="tab-prevent" data-go="prevent" aria-selected="true"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.5-7 10-4-1.5-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>ประเมินความเสี่ยง<small>Braden · พลิกตัว</small></button>
     <button role="tab" id="tab-wound" data-go="wound" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7l1.5-3h5L16 7"/><circle cx="12" cy="13.5" r="3.5"/></svg>ประเมินแผล<small>เมื่อเกิดแผล</small></button>
-    <button role="tab" id="tab-trend" data-go="trend" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/><circle cx="19" cy="6" r="1.5"/></svg>แนวโน้ม<small>Dashboard</small></button>
+    <button role="tab" id="tab-plan" data-go="plan" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>แผนการดูแล</button>
+    <button role="tab" id="tab-trend" hidden data-go="trend" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M5 16l4-5 4 3 6-8"/><circle cx="19" cy="6" r="1.5"/></svg>แนวโน้ม<small>Dashboard</small></button>
     <button role="tab" id="tab-record" data-go="record" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg>บันทึก<small>Nurse's Note</small></button>
-    <button role="tab" id="tab-discharge" data-go="discharge" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h5v16h-5"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h10"/></svg>จำหน่าย<small>Discharge</small></button>
-    <button role="tab" id="tab-ward" data-go="ward" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20V8l9-5 9 5v12"/><path d="M9 20v-6h6v6"/><path d="M12 8v4M10 10h4"/></svg>หอผู้ป่วย<small>Ward</small></button>
-    <button type="button" class="duebar" id="dueBar" hidden></button>
+    <button role="tab" id="tab-discharge" hidden data-go="discharge" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h5v16h-5"/><path d="M10 8l-4 4 4 4"/><path d="M6 12h10"/></svg>จำหน่าย<small>Discharge</small></button>
+    <button role="tab" id="tab-ward" hidden data-go="ward" aria-selected="false"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20V8l9-5 9 5v12"/><path d="M9 20v-6h6v6"/><path d="M12 8v4M10 10h4"/></svg>หอผู้ป่วย<small>Ward</small></button>
+    <button type="button" class="duebar" id="dueBar" hidden style="display:none"></button>
   </nav>
 
   <div class="alerts" id="alerts" aria-live="polite"></div>
@@ -1983,7 +1995,7 @@ label[for=nurseRole][hidden]{display:none!important}
   <div class="hm-grid">
     <button class="hm-tile t-pink" type="button" id="hmWound"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><path d="M8 22v-7H6.5L8 9h8l1.5 6H16v7"/><path d="M12 13v4"/></svg></span><b>ประเมินผิวหนัง<br>และแผล</b></button>
     <button class="hm-tile t-lav" type="button" id="hmRecord"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M9 10h6M9 14h6M9 18h3"/></svg></span><b>บันทึกผล<br>และติดตาม</b></button>
-    <button class="hm-tile t-peach" type="button" id="hmAlert"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><b>แจ้งเตือน<br>ความเสี่ยง</b><i class="hm-badge" id="hmAlertN" hidden></i></button>
+    <button class="hm-tile t-peach" type="button" id="hmAlert"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></span><b>งานที่<br>ต้องทำ</b><i class="hm-badge" id="hmAlertN" hidden></i></button>
     <button class="hm-tile t-blue" type="button" id="hmGuide"><span class="hm-ic"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5c3-1 6-1 9 1 3-2 6-2 9-1v14c-3-1-6-1-9 1-3-2-6-2-9-1z"/><path d="M12 6v14"/></svg></span><b>คู่มือ &amp; แนวทาง<br>การดูแล</b></button>
   </div>
   <section class="hm-today" id="hmToday">
@@ -2708,8 +2720,8 @@ label[for=nurseRole][hidden]{display:none!important}
   <nav class="bnav" id="bnav" aria-label="เมนูหลัก" hidden>
     <button type="button" data-b="home"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/></svg><span>หน้าแรก</span></button>
     <button type="button" data-b="patients"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg><span>ผู้ป่วย</span></button>
-    <button type="button" data-b="assess"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 13l2 2 4-4"/></svg><span>ประเมิน</span></button>
-    <button type="button" data-b="plan"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span>แผนการดูแล</span></button>
+    <button type="button" data-b="tasks"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><path d="M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg><span>งานที่ต้องทำ</span><i class="bn-badge" id="bnTaskN" hidden></i></button>
+    <button type="button" data-b="plan" hidden><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 5-3 8.5-7 10-4-1.5-7-5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span>แผนการดูแล</span></button>
     <button type="button" data-b="report" hidden><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20h18"/><path d="M6 16v-5"/><path d="M11 16V7"/><path d="M16 16v-8"/><path d="M21 16v-3"/></svg><span>รายงาน</span></button>
     <button type="button" data-b="more"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg><span>เพิ่มเติม</span></button>
   </nav>
@@ -3995,7 +4007,7 @@ function advise(title,body,color,icon){
   const bd=b.querySelector(".adv-b");bd.innerHTML="";
   if(Array.isArray(body)){const u=document.createElement("ul");body.forEach(x=>{const li=document.createElement("li");li.textContent=x;u.append(li)});bd.append(u)}else bd.textContent=body||"";
   b.hidden=false;b.classList.remove("show","out");void b.offsetWidth;b.classList.add("show");
-  clearTimeout(advTimer);advTimer=setTimeout(advClose,9000);
+  clearTimeout(advTimer);advTimer=setTimeout(advClose,5000);
 }
 function advClose(){const b=$("advice");if(!b||b.hidden)return;b.classList.add("out");clearTimeout(advTimer);setTimeout(()=>{if(b.classList.contains("out")){b.hidden=true;b.classList.remove("out","show")}},280)}
 $("advice").querySelector(".adv-x").onclick=advClose;
@@ -6559,7 +6571,7 @@ function rpCardHTML(rp){const t=bradenTotal();
   return `<div class="rp-card${S.over?" over":""}" style="--c:var(${P.c})">${head}${ban}
     <div class="rp-body">${rpRing(S)}<div class="rp-now"><small>${S.first?"เริ่มจัดท่า":S.over?"ถึงเวลาแล้ว · เลยมา "+rpFmtLeft(S.left):"ครั้งถัดไป "+hhmm(S.due)+" น."}</small><div class="rp-nx">${rpIcon(S.next,40)}<b>${esc(S.next)}</b></div>${S.cur?`<small>ตอนนี้: ${esc(S.cur)} · ตั้งแต่ ${hhmm(S.lt)} น.</small>`:""}${S.def?`<small class="rp-def">เลื่อน: ${esc(S.def.r)} (ถึง ${hhmm(S.def.until)} น.)</small>`:""}</div></div>
     <button type="button" class="btn primary rp-big${S.over?" pulse":""}" data-rp="go">${S.first?"จัดท่าแล้ว":rp.k==="mod"?"ขยับแล้ว":rp.k==="prone"?"สลับแล้ว":"เปลี่ยนท่าแล้ว"} → ${esc(S.next)}</button>
-    <div class="rp-alt">${pos.length>2?`<span>จัดท่าอื่น:</span>${pos.filter(p=>p!==S.next&&p!==S.cur).map(p=>`<button type="button" data-go="${esc(p)}">${rpIcon(p,18)}${esc(p)}</button>`).join("")}`:""}${S.first?"":'<button type="button" class="rp-defer" data-rp="defer">⏸ เลื่อน (ข้อจำกัดทางคลินิก)</button>'}</div>
+    <div class="rp-alt">${pos.length>2?`<span>จัดท่าอื่น:</span>${pos.filter(p=>p!==S.next&&p!==S.cur).map(p=>`<button type="button" data-gopos="${esc(p)}">${rpIcon(p,18)}${esc(p)}</button>`).join("")}`:""}${S.first?"":'<button type="button" class="rp-defer" data-rp="defer">⏸ เลื่อน (ข้อจำกัดทางคลินิก)</button>'}</div>
     ${chk}${rp.log&&rp.log.length?`<div class="rp-log">${rp.log.slice(-5).reverse().map(l=>`<span class="${l.def?"def":l.bad?"bad":""}">${hhmm(l.t)} ${esc(l.pos)}</span>`).join("")}</div>`:""}</div>`}
 function rpQuick(pos){const rp=Object.assign({},rpGet());if(!rp.k)return;const S=rpState(rp),now=Date.now(),by=pvBy(),L=rpPosList(rp);pos=pos||S.next;
   const i=L.indexOf(pos);rp.idx=i>=0?i:((+rp.idx||0)+1)%L.length;rp.lt=now;delete rp.defer;
@@ -6569,7 +6581,7 @@ function rpQuick(pos){const rp=Object.assign({},rpGet());if(!rp.k)return;const S
   rpSave(rp);const S2=rpState(rp);advise("บันทึกแล้ว",[`ตอนนี้: ${S2.cur}`,`ครั้งถัดไป ${hhmm(S2.due)} น. → ${S2.next}`,"แตะประเมินหลังเปลี่ยนท่าในการ์ดได้"],"--teal","✓")}
 function rpLastSet(fn){const rp=Object.assign({},rpGet());const lg=(rp.log||[]).slice();const l=Object.assign({},lg[lg.length-1]);fn(l);lg[lg.length-1]=l;rp.log=lg;rpSave(rp);return l}
 function rpBind(root){root.querySelectorAll("[data-rp]").forEach(b=>b.onclick=()=>{const a=b.dataset.rp;if(a==="set")rpOpen();else if(a==="go")rpQuick();else if(a==="relief")rtOpen("relief");else if(a==="defer")rtOpen("defer")});
-  root.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>rpQuick(b.dataset.go));
+  root.querySelectorAll("[data-gopos]").forEach(b=>b.onclick=()=>rpQuick(b.dataset.gopos));
   root.querySelectorAll("[data-pc]").forEach(b=>b.onclick=()=>{const rp=rpGet(),A=rpAdvise(Object.assign({g:rpGroups(rp)},rp)),x=A.post[+b.dataset.pc];rpLastSet(l=>{const c=(l.chk||[]).slice();l.chk=c.includes(x)?c.filter(z=>z!==x):c.concat([x])})});
   root.querySelectorAll("[data-pb]").forEach(b=>b.onclick=()=>{const l=rpLastSet(l=>{l.bad=l.bad?0:1});if(l.bad)advise("บันทึก: ผู้ป่วยไม่ทนต่อท่า",["กลับท่าเดิมหรือท่าที่ทนได้","พิจารณาปรับแผน (กด \"ปรับแผน\") และรายงานแพทย์"],"--s2","!")})}
 /* --- placement: right after the Braden section, and on the patient status page --- */
@@ -6704,6 +6716,31 @@ function alDismiss(key){try{const k=phShiftKey(),o=JSON.parse(localStorage.getIt
 function lgWhoPaint(){const ot=$("lgOT").value.trim(),w=$("lgWho");if(!w)return;if(!ot){w.textContent="";w.className="lg-who";return}
   if(otAllowed(ot)){w.textContent="ผู้ใช้งาน: "+otName(ot);w.className="lg-who ok"}else if(ot.length>=4){w.textContent="ไม่พบเลข OT นี้ในรายชื่อผู้มีสิทธิ์";w.className="lg-who no"}else{w.textContent="";w.className="lg-who"}}
 $("lgOT").addEventListener("input",()=>{$("lgErr").textContent="";lgWhoPaint()});
+/* ===== Simpler navigation + one place for tasks ===== */
+/* rules: 1) "งานที่ต้องทำ" = the single list of pending work (bottom nav + home tile, same list)
+          2) the strip at the top of a patient page shows only that patient's 2 most urgent items
+          3) pop-ups only confirm what the nurse just did — no surprise pop-ups */
+function tasksOpen(){lvBypass=false;go("home");setTimeout(()=>{const d=$("hmTodoD");if(d){d.open=true;try{todoPaint()}catch(e){}d.scrollIntoView({behavior:"smooth",block:"start"})}},120)}
+$("hmAlert").onclick=tasksOpen;
+function taskCount(){let n=0;try{n=alertItems().length;const k=planKey();ptList().forEach(x=>{const e=x.p.plan&&x.p.plan[k],C=planCounts(e);if(!e||!e._n||C.pend)n++})}catch(e){}return n}
+function taskBadge(){const n=taskCount();[["bnTaskN"],["hmAlertN"]].forEach(([id])=>{const b=$(id);if(!b)return;b.hidden=!n;b.textContent=n>99?"99+":String(n)})}
+{const _bp=bnavPaint;bnavPaint=function(){const r=_bp.apply(this,arguments);try{const pg=document.body.dataset.page,P=["overview","prevent","wound","plan","record","discharge"];
+  document.querySelectorAll("#bnav button").forEach(b=>{const on=(b.dataset.b==="patients"&&(pg==="patients"||P.includes(pg)))||(b.dataset.b==="home"&&pg==="home"&&!(($("hmTodoD")||{}).open&&window.__tasksView))||(b.dataset.b==="report"&&pg==="qa")||(b.dataset.b==="more"&&["history","trend","ward"].includes(pg));
+    if(on)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current")});taskBadge()}catch(e){}return r}}
+$("bnav").querySelector('[data-b="tasks"]').onclick=tasksOpen;
+{const _hp=homePaint;homePaint=function(){const r=_hp.apply(this,arguments);try{taskBadge()}catch(e){}return r}}
+setInterval(()=>{try{taskBadge()}catch(e){}},60000);
+/* "เพิ่มเติม": no duplicates of the tabs / bottom bar, nothing a non-admin cannot open */
+{const mb=$("bnav").querySelector('[data-b="more"]'),_mo=mb.onclick;mb.onclick=function(){const r=_mo.apply(this,arguments);try{const adm=isAdmin();
+  $("moreList").querySelectorAll("button").forEach(x=>{const t=x.textContent;if(/บันทึกการพยาบาล/.test(t)||/Nursing Quality/.test(t)||(!adm&&/แนวโน้มแผลและรายงาน|หอผู้ป่วยและระบบกลาง/.test(t)))x.remove()})}catch(e){}return r}}
+/* patient alert strip: only the 2 most urgent, the rest folded */
+{const _ra=renderAlerts;renderAlerts=function(){const r=_ra.apply(this,arguments);try{const box=$("alerts"),A=[...box.querySelectorAll(".alert")];box.querySelectorAll(".al-more").forEach(x=>x.remove());
+  const pr=a=>{const c=a.style.getPropertyValue("--c");return /crit|s4/.test(c)?0:/s1/.test(c)?1:/s2|gold/.test(c)?2:3};A.sort((a,b)=>pr(a)-pr(b)).forEach(a=>box.append(a));
+  if(A.length>2&&!box.dataset.all){A.slice(2).forEach(a=>a.hidden=true);const m=document.createElement("button");m.type="button";m.className="al-more";m.textContent=`ดูการแจ้งเตือนอีก ${A.length-2} รายการ`;m.onclick=()=>{box.dataset.all="1";renderAlerts()};box.append(m)}}catch(e){}return r}}
+{const _g=go;go=function(pg){try{$("alerts").dataset.all=""}catch(e){}return _g.apply(this,arguments)}}
+/* no surprise pop-ups: shift photo reminder and dressing-due list live in "งานที่ต้องทำ" instead */
+phRemind=function(){};
+ddPop=function(){};
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
