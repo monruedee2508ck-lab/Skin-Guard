@@ -1891,6 +1891,18 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
 .bn-badge[hidden]{display:none}
 .al-more{font:inherit;font-size:.82rem;font-weight:600;color:var(--muted);background:none;border:1px dashed var(--line);border-radius:12px;padding:8px;cursor:pointer;width:100%}
 @media (max-width:520px){.pagetabs button{font-size:.74rem!important;padding:6px 2px!important}.pagetabs .ti{width:20px;height:20px}}
+/* prone checklist */
+.pc-open{font:inherit;cursor:pointer;display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1.5px solid color-mix(in srgb,var(--indigo) 35%,var(--line));background:color-mix(in srgb,var(--indigo) 8%,var(--surface));color:var(--ink);border-radius:14px;padding:10px 12px;flex-wrap:wrap}
+.pc-open.ok{border-color:color-mix(in srgb,var(--ok) 40%,var(--line));background:color-mix(in srgb,var(--ok) 8%,var(--surface))}
+.pc-open b{display:block;font-size:.92rem}.pc-open small{display:block;font-size:.78rem;color:var(--muted)}
+.pc-open>span:nth-child(2){flex:1;min-width:0}
+.pc-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--indigo);color:#fff;font-weight:700;flex:none}.pc-open.ok .pc-ic{background:var(--ok)}
+.pc-bar{flex-basis:100%;height:6px;border-radius:99px;background:var(--line);overflow:hidden}.pc-bar i{display:block;height:100%;background:var(--indigo)}.pc-open.ok .pc-bar i{background:var(--ok)}
+.pc-g{display:flex;flex-direction:column;gap:6px}.pc-g h4{margin:6px 0 0;font-size:.9rem;color:var(--indigo)}
+.pc-i{font:inherit;cursor:pointer;display:flex;align-items:flex-start;gap:10px;text-align:left;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:9px 11px;font-size:.86rem;line-height:1.45}
+.pc-i .bx{margin-top:1px}.pc-i[aria-pressed=true]{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--surface))}
+.pc-i[aria-pressed=true]>.bx{background:var(--ok);border-color:var(--ok)}
+.pc-t small{display:block;font-size:.72rem;color:var(--muted);margin-top:2px}
 </style>
 </head>
 <body>
@@ -2620,6 +2632,13 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
         <button type="button" class="lc-shot" id="liveShot" aria-label="ถ่ายภาพ"><i></i></button>
         <button type="button" class="btn" id="liveUse">ใช้ค่าวัด</button>
       </div>
+    </div>
+  </div>
+  <div class="modal" id="pcModal" hidden role="dialog" aria-modal="true" aria-labelledby="pcKick">
+    <div class="sheet bw-sheet rp-sheet">
+      <div class="rm-top"><div class="rm-kick" id="pcKick">Nursing Checklist ขณะ Prone</div><button type="button" class="rm-x" id="pcX" aria-label="ปิด">&times;</button></div>
+      <div class="rm-body" id="pcBody"></div>
+      <div class="rm-foot"><button class="btn" id="pcAll" type="button">ครบทุกข้อ</button><span class="bw-sum" id="pcSum"></span><button class="btn primary" id="pcOk" type="button">เสร็จ</button></div>
     </div>
   </div>
   <div class="modal" id="rtModal" hidden role="dialog" aria-modal="true" aria-labelledby="rtKick">
@@ -6741,6 +6760,43 @@ setInterval(()=>{try{taskBadge()}catch(e){}},60000);
 /* no surprise pop-ups: shift photo reminder and dressing-due list live in "งานที่ต้องทำ" instead */
 phRemind=function(){};
 ddPop=function(){};
+/* ===== Nursing Checklist ขณะ Prone (ตามแบบฟอร์มของหน่วยงาน) ===== */
+var PRONE_CL=[
+ ["ศีรษะ/ใบหน้า",["ตำแหน่งท่อช่วยหายใจถูกต้อง ยึดตรึงเหมาะสม / ท่อช่วยหายใจไม่ถูกกด หรือหักพับ","ข้อต่อระหว่างท่อช่วยหายใจกับอุปกรณ์ต่าง ๆ ยึดแน่น ปลอดภัย","Cuff pressure เหมาะสม","ใบหูไม่พับงอ","เปลือกตาถูกปิดสนิทด้วย tape และไม่มีแรงกดที่ตา","ท่านอนเป็น Reverse Trendelenburg","จัดศีรษะผู้ป่วยให้มีการเปลี่ยนตำแหน่งทุก 2 ชั่วโมง","ตำแหน่ง NG tube ถูกต้อง ยึดตรึงเหมาะสม ไม่กดทับจมูกและใบหน้า"]],
+ ["คอ",["คอและหลังส่วนล่างไม่ hyper-extended","บริเวณคอด้านหน้าไม่ถูกกดทับ","ตำแหน่ง Central line ถูกต้อง"]],
+ ["อก",["Chest drain ยึดตรึงเหมาะสม เปิด chest wall suction ตามแผนการรักษา","บริเวณอกมีการรองด้วยหมอน ไม่มีตำแหน่งที่ถูกแรงกดโดยตรง"]],
+ ["ท้อง",["มีการรองด้วยหมอน ไม่มีตำแหน่งที่ถูกแรงกดโดยตรง"]],
+ ["สะโพก",["มีการรองด้วยหมอน ไม่มีตำแหน่งที่ถูกแรงกดโดยตรง","เพศชาย: ใช้หมอนนุ่มใบเล็กรองบริเวณ Anterior superior iliac spine ทั้งสองข้าง สะโพกยกลอย ไม่กดบริเวณ penis","Foley's cath ยึดตรึงบริเวณต้นขาด้านใน และไม่กดทับ"]],
+ ["แขน",["แขนด้านเดียวกับที่ใบหน้าตะแคง เหยียดอยู่ข้างลำตัว","แขนด้านตรงข้ามใบหน้ายกไว้ในท่า Swimmer's position","หัวไหล่ไม่บิด","ข้อศอกไม่ถูกกดทับกับที่นอนโดยตรง มีหมอนรองรับ","ข้อมืออยู่ในลักษณะธรรมชาติ","IV line / สาย / ท่อระบายต่าง ๆ ไม่อยู่ใต้แขนผู้ป่วย"]],
+ ["เข่า/ขา",["มีหมอนรองเข่า 2 ข้าง"]],
+ ["ข้อเท้า",["มีหมอนรองข้อเท้า 2 ข้าง ให้นิ้วเท้ายกลอย ไม่กดพื้นที่นอน"]],
+ ["Infusions/Monitoring",["Monitoring ทุกอย่างได้รับการติดกับตัวผู้ป่วย","Infusion ทุกชนิดได้รับการต่อเข้าตัวผู้ป่วยอย่างถูกต้อง","EKG leads ไม่กดทับด้านใต้ตัวผู้ป่วย","ตรวจสอบว่าผู้ป่วยได้รับ sedation และ analgesia ที่เพียงพอ เหมาะสม","ประเมิน ABG หลัง Prone อย่างน้อย 30 นาทีถึง 1 ชั่วโมง"]]];
+var PRONE_N=PRONE_CL.reduce((a,g)=>a+g[1].length,0);
+function proneOn(rp){rp=rp||rpGet();return !!rp&&(rp.k==="prone"||(rpGroups(rp).includes("resp")&&!!rp.prone))}
+function proneKey(){return phShiftKey()}
+function proneDone(rp){rp=rp||rpGet();const e=rp&&rp.pcl&&rp.pcl[proneKey()];return e?Object.keys(e.i||{}).length:0}
+function proneOpen(){const rp=rpGet();if(!rp)return;const k=proneKey(),e=(rp.pcl&&rp.pcl[k])||{i:{}};let n=0;const sc=$("pcModal").hidden?0:$("pcBody").scrollTop;
+  $("pcKick").textContent=`Nursing Checklist ขณะ Prone · ${SHIFT_TH[shiftNow()]}`;
+  $("pcBody").innerHTML=`<p class="note" style="margin:0">ตรวจทุกครั้งหลังจัดท่าคว่ำ และทุกเวร แตะข้อที่ตรวจแล้ว ระบบบันทึกเวลาและชื่อผู้ตรวจให้</p>`+PRONE_CL.map(([g,items])=>`<section class="pc-g"><h4>${esc(g)}</h4>${items.map(t=>{const i=n++,v=e.i[i];return `<button type="button" class="pc-i" aria-pressed="${!!v}" data-i="${i}"><span class="bx" aria-hidden="true"></span><span class="pc-t">${esc(t)}${v?`<small>${hhmm(v.t)} น.${v.by?" · "+esc(v.by):""}</small>`:""}</span></button>`}).join("")}</section>`).join("");
+  $("pcBody").querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{const r=Object.assign({},rpGet()),pc=Object.assign({},r.pcl||{}),cur=Object.assign({i:{}},pc[k]);cur.i=Object.assign({},cur.i);const i=b.dataset.i;
+    if(cur.i[i])delete cur.i[i];else cur.i[i]={t:Date.now(),by:pvBy().by};pc[k]=cur;Object.keys(pc).sort().slice(0,-9).forEach(x=>delete pc[x]);r.pcl=pc;rpSave(r);proneOpen()});
+  $("pcSum").textContent=`ตรวจแล้ว ${Object.keys(e.i).length}/${PRONE_N} ข้อ`;$("pcModal").hidden=false;$("pcBody").scrollTop=sc;document.body.classList.add("noscroll")}
+function proneClose(){$("pcModal").hidden=true;document.body.classList.remove("noscroll");try{update()}catch(e){}}
+$("pcX").onclick=proneClose;$("pcOk").onclick=proneClose;$("pcModal").addEventListener("click",e=>{if(e.target.id==="pcModal")proneClose()});
+$("pcAll").onclick=()=>{const r=Object.assign({},rpGet()),k=proneKey(),pc=Object.assign({},r.pcl||{}),by=pvBy().by,now=Date.now(),cur={i:{}};
+  for(let i=0;i<PRONE_N;i++)cur.i[i]=((pc[k]||{}).i||{})[i]||{t:now,by};pc[k]=cur;r.pcl=pc;rpSave(r);proneOpen()};
+/* button inside the repositioning card when the patient is prone */
+{const _c=rpCardHTML;rpCardHTML=function(rp){let h=_c.apply(this,arguments);if(rp&&proneOn(rp)){const d=proneDone(rp),ok=d>=PRONE_N;
+  const btn=`<button type="button" class="pc-open${ok?" ok":""}" data-pcl="1"><span class="pc-ic" aria-hidden="true">${ok?"✓":"☑"}</span><span><b>Nursing Checklist ขณะ Prone</b><small>${SHIFT_TH[shiftNow()]} · ตรวจแล้ว ${d}/${PRONE_N} ข้อ</small></span><span class="pc-bar"><i style="width:${Math.round(d/PRONE_N*100)}%"></i></span></button>`;
+  h=h.replace(/<\/div>\s*$/,btn+"</div>")}return h}}
+{const _b=rpBind;rpBind=function(root){const r=_b.apply(this,arguments);root.querySelectorAll("[data-pcl]").forEach(b=>b.onclick=proneOpen);return r}}
+/* tasks: prone checklist not complete this shift */
+{const _ai=alertItems;alertItems=function(){const out=_ai.apply(this,arguments);try{ptList().forEach(x=>{const rp=x.p.hn===realHN()?rpGet():x.p.rp;if(!proneOn(rp))return;const d=proneDone(rp);
+  if(d<PRONE_N)out.push({c:"--indigo",hn:x.p.hn,t:`Nursing Checklist ขณะ Prone ${SHIFT_TH[shiftNow()]} (${d}/${PRONE_N})`,d:`HN ${x.p.hn}${x.p.name?" · "+x.p.name:""}`,go:"overview"})})}catch(e){}return out}}
+/* nursing note */
+{const _bn=buildNote;buildNote=function(c){let t=_bn.apply(this,arguments);try{const rp=rpGet();if(proneOn(rp)){const k=proneKey(),e=(rp.pcl&&rp.pcl[k])||{i:{}};let n=0;const miss=[];
+  PRONE_CL.forEach(([g,items])=>items.forEach(it=>{if(!e.i[n])miss.push(g+": "+it);n++}));const d=PRONE_N-miss.length;
+  t+=`\nผู้ป่วยอยู่ในท่า Prone: ตรวจ Nursing Checklist ขณะ Prone ${d}/${PRONE_N} ข้อ (${SHIFT_TH[shiftNow()]})`+(d&&miss.length?`\n  ยังไม่ได้ตรวจ: ${miss.slice(0,6).join("; ")}${miss.length>6?` และอีก ${miss.length-6} ข้อ`:""}`:"")}}catch(x){}return t}}
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
@@ -6812,7 +6868,8 @@ $("expCsv").onclick=async()=>{
 (function(){
   curHN=$("hn").value.trim()||null;ptReady=true;
   const rec=curHN&&loadPatientRec(curHN);if(rec&&rec.bed&&!$("bed").value)$("bed").value=rec.bed;
-  savePatient();
+  if(rec&&rec.rp&&!st.rp)st.rp=rec.rp;
+  savePatient();try{rpPaintAll()}catch(e){}
 })();
 </script>
 
