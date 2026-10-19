@@ -1896,13 +1896,25 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
 .pc-open.ok{border-color:color-mix(in srgb,var(--ok) 40%,var(--line));background:color-mix(in srgb,var(--ok) 8%,var(--surface))}
 .pc-open b{display:block;font-size:.92rem}.pc-open small{display:block;font-size:.78rem;color:var(--muted)}
 .pc-open>span:nth-child(2){flex:1;min-width:0}
-.pc-ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--indigo);color:#fff;font-weight:700;flex:none}.pc-open.ok .pc-ic{background:var(--ok)}
-.pc-bar{flex-basis:100%;height:6px;border-radius:99px;background:var(--line);overflow:hidden}.pc-bar i{display:block;height:100%;background:var(--indigo)}.pc-open.ok .pc-bar i{background:var(--ok)}
-.pc-g{display:flex;flex-direction:column;gap:6px}.pc-g h4{margin:6px 0 0;font-size:.9rem;color:var(--indigo)}
-.pc-i{font:inherit;cursor:pointer;display:flex;align-items:flex-start;gap:10px;text-align:left;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:9px 11px;font-size:.86rem;line-height:1.45}
-.pc-i .bx{margin-top:1px}.pc-i[aria-pressed=true]{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--surface))}
+.pc-ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:var(--indigo);color:#fff;flex:none}.pc-ic svg{width:22px;height:22px}.pc-open.ok .pc-ic{background:var(--ok)}
+.pc-bar{flex-basis:100%;height:5px;border-radius:99px;background:var(--line);overflow:hidden}.pc-bar i{display:block;height:100%;background:var(--indigo)}.pc-open.ok .pc-bar i{background:var(--ok)}
+.pc-kic{width:18px;height:18px;vertical-align:-4px;margin-right:2px}
+#pcModal .rm-body{padding:10px 12px}
+.pc-grid{display:grid;gap:10px}@media(min-width:700px){.pc-grid{display:block;columns:2;column-gap:10px}.pc-grid>.pc-g{break-inside:avoid;margin-bottom:10px}}
+.pc-g{border:1px solid var(--line);border-radius:14px;padding:8px;background:var(--surface);display:flex;flex-direction:column;gap:4px}
+.pc-g.ok{border-color:color-mix(in srgb,var(--ok) 45%,var(--line))}
+.pc-g h4{display:flex;align-items:center;gap:8px;margin:0 0 2px;padding:2px 4px;font-size:.88rem;color:var(--ink)}
+.pc-g h4 em{margin-left:auto;font-style:normal;font-size:.72rem;font-weight:600;color:var(--muted);background:var(--line);border-radius:99px;padding:1px 8px}
+.pc-g.ok h4 em{background:var(--ok);color:#fff}
+.pc-gi{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:color-mix(in srgb,var(--indigo) 14%,transparent);color:var(--indigo);flex:none}.pc-gi svg{width:18px;height:18px}
+.pc-g.ok .pc-gi{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.pc-i{font:inherit;cursor:pointer;display:flex;align-items:center;gap:9px;text-align:left;border:0;background:transparent;color:var(--ink);border-radius:9px;padding:7px 6px;font-size:.84rem;line-height:1.35;min-height:38px}
+.pc-i:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.pc-i .bx{flex:none}.pc-t{flex:1;min-width:0}
+.pc-i[aria-pressed=true] .pc-t{color:var(--muted)}
 .pc-i[aria-pressed=true]>.bx{background:var(--ok);border-color:var(--ok)}
-.pc-t small{display:block;font-size:.72rem;color:var(--muted);margin-top:2px}
+.pc-i time{font-size:.7rem;color:var(--ok);font-variant-numeric:tabular-nums;flex:none}
+#pcSum{font-weight:700;font-variant-numeric:tabular-nums}
 </style>
 </head>
 <body>
@@ -6762,32 +6774,45 @@ phRemind=function(){};
 ddPop=function(){};
 /* ===== Nursing Checklist ขณะ Prone (ตามแบบฟอร์มของหน่วยงาน) ===== */
 var PRONE_CL=[
- ["ศีรษะ/ใบหน้า",["ตำแหน่งท่อช่วยหายใจถูกต้อง ยึดตรึงเหมาะสม / ท่อช่วยหายใจไม่ถูกกด หรือหักพับ","ข้อต่อระหว่างท่อช่วยหายใจกับอุปกรณ์ต่าง ๆ ยึดแน่น ปลอดภัย","Cuff pressure เหมาะสม","ใบหูไม่พับงอ","เปลือกตาถูกปิดสนิทด้วย tape และไม่มีแรงกดที่ตา","ท่านอนเป็น Reverse Trendelenburg","จัดศีรษะผู้ป่วยให้มีการเปลี่ยนตำแหน่งทุก 2 ชั่วโมง","ตำแหน่ง NG tube ถูกต้อง ยึดตรึงเหมาะสม ไม่กดทับจมูกและใบหน้า"]],
- ["คอ",["คอและหลังส่วนล่างไม่ hyper-extended","บริเวณคอด้านหน้าไม่ถูกกดทับ","ตำแหน่ง Central line ถูกต้อง"]],
- ["อก",["Chest drain ยึดตรึงเหมาะสม เปิด chest wall suction ตามแผนการรักษา","บริเวณอกมีการรองด้วยหมอน ไม่มีตำแหน่งที่ถูกแรงกดโดยตรง"]],
- ["ท้อง",["มีการรองด้วยหมอน ไม่มีตำแหน่งที่ถูกแรงกดโดยตรง"]],
- ["สะโพก",["มีการรองด้วยหมอน ไม่มีตำแหน่งที่ถูกแรงกดโดยตรง","เพศชาย: ใช้หมอนนุ่มใบเล็กรองบริเวณ Anterior superior iliac spine ทั้งสองข้าง สะโพกยกลอย ไม่กดบริเวณ penis","Foley's cath ยึดตรึงบริเวณต้นขาด้านใน และไม่กดทับ"]],
- ["แขน",["แขนด้านเดียวกับที่ใบหน้าตะแคง เหยียดอยู่ข้างลำตัว","แขนด้านตรงข้ามใบหน้ายกไว้ในท่า Swimmer's position","หัวไหล่ไม่บิด","ข้อศอกไม่ถูกกดทับกับที่นอนโดยตรง มีหมอนรองรับ","ข้อมืออยู่ในลักษณะธรรมชาติ","IV line / สาย / ท่อระบายต่าง ๆ ไม่อยู่ใต้แขนผู้ป่วย"]],
- ["เข่า/ขา",["มีหมอนรองเข่า 2 ข้าง"]],
- ["ข้อเท้า",["มีหมอนรองข้อเท้า 2 ข้าง ให้นิ้วเท้ายกลอย ไม่กดพื้นที่นอน"]],
- ["Infusions/Monitoring",["Monitoring ทุกอย่างได้รับการติดกับตัวผู้ป่วย","Infusion ทุกชนิดได้รับการต่อเข้าตัวผู้ป่วยอย่างถูกต้อง","EKG leads ไม่กดทับด้านใต้ตัวผู้ป่วย","ตรวจสอบว่าผู้ป่วยได้รับ sedation และ analgesia ที่เพียงพอ เหมาะสม","ประเมิน ABG หลัง Prone อย่างน้อย 30 นาทีถึง 1 ชั่วโมง"]]];
+ ["ศีรษะ/ใบหน้า",["ETT ตำแหน่งถูก ยึดดี ไม่ถูกกด/หักพับ","ข้อต่อ ETT กับอุปกรณ์ แน่น ปลอดภัย","Cuff pressure เหมาะสม","ใบหูไม่พับงอ","ปิดตาด้วย tape ไม่มีแรงกดที่ตา","ท่า Reverse Trendelenburg","เปลี่ยนตำแหน่งศีรษะทุก 2 ชม.","NG tube ยึดดี ไม่กดจมูก/ใบหน้า"]],
+ ["คอ",["คอ/หลังส่วนล่าง ไม่ hyperextend","คอด้านหน้าไม่ถูกกดทับ","Central line ตำแหน่งถูกต้อง"]],
+ ["อก",["Chest drain ยึดดี suction ตามแผน","หมอนรองอก ไม่มีจุดกดโดยตรง"]],
+ ["ท้อง",["หมอนรองท้อง ไม่มีจุดกดโดยตรง"]],
+ ["สะโพก",["หมอนรองสะโพก ไม่มีจุดกดโดยตรง","ชาย: หมอนเล็กรอง ASIS 2 ข้าง ไม่กด penis","Foley ยึดต้นขาด้านใน ไม่กดทับ"]],
+ ["แขน",["แขนฝั่งหน้าหัน เหยียดข้างลำตัว","แขนฝั่งตรงข้าม ยกท่า Swimmer","หัวไหล่ไม่บิด","ศอกมีหมอนรอง ไม่กดที่นอน","ข้อมืออยู่ท่าธรรมชาติ","สาย/IV/ท่อ ไม่อยู่ใต้แขน"]],
+ ["เข่า/ขา",["หมอนรองเข่า 2 ข้าง"]],
+ ["ข้อเท้า",["หมอนรองข้อเท้า นิ้วเท้าลอย"]],
+ ["Monitoring",["Monitoring ติดครบ","Infusion ต่อถูกต้องทุกสาย","EKG lead ไม่อยู่ใต้ตัว","Sedation/analgesia เพียงพอ","ABG หลัง Prone 30–60 นาที"]]];
+var PRONE_IC=[
+ '<circle cx="12" cy="10" r="6.5"/><path d="M9.5 9h.01M14.5 9h.01M10 12.6c1.2.8 2.8.8 4 0"/><path d="M9 16.5V21M15 16.5V21"/>',
+ '<circle cx="12" cy="6" r="3.2"/><path d="M10.3 9v4M13.7 9v4"/><path d="M5 21c.6-4 3.3-6.5 7-6.5s6.4 2.5 7 6.5"/>',
+ '<path d="M12 3.5v7"/><path d="M12 9c-1.8-2.2-6.5-1.6-6.5 4v4.5c0 1.6 1.6 2.4 3.2 1.8 2-.7 3.3-2.3 3.3-4.3z"/><path d="M12 9c1.8-2.2 6.5-1.6 6.5 4v4.5c0 1.6-1.6 2.4-3.2 1.8-2-.7-3.3-2.3-3.3-4.3z"/>',
+ '<rect x="5.5" y="3.5" width="13" height="17" rx="6"/><circle cx="12" cy="13" r="1.2"/><path d="M9 8h6"/>',
+ '<path d="M4.5 6c2.4 1.2 4.9 1.6 7.5 1.6s5.1-.4 7.5-1.6l-.9 7.2L15.3 19H8.7l-3.3-5.8z"/><circle cx="12" cy="13" r="1.6"/>',
+ '<path d="M3.5 19.5c3 .2 5.4-1 7-3.6l3.2-5.5c1.1-1.9 2.9-3 5-3.1"/><path d="M13.7 10.4l3.6 2.6"/><path d="M18.7 8.3c.9-.9 1.7-.8 1.8.3"/>',
+ '<path d="M9 3l1.6 8.5L8.5 21"/><path d="M15 3l-1.6 8.5 2.1 9.5"/><circle cx="12" cy="11.5" r="1.4"/>',
+ '<path d="M9 3v10.5c0 3.4 2 5.5 5.2 5.5h5.3c0-1.7-1.4-2.9-3.6-3.2L13 15.3V3"/><path d="M5 21h15"/>',
+ '<rect x="3" y="4" width="18" height="13" rx="2.5"/><path d="M6 11h3l2-3.2 2 6 2-2.8h3"/><path d="M9 21h6"/>'];
+var PRONE_SVG=(d,c)=>`<svg viewBox="0 0 24 24" class="${c||""}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+var PRONE_CLIP='<rect x="5.5" y="4" width="13" height="17" rx="2.5"/><path d="M9 4V2.8h6V4"/><path d="M8.8 11.5l2.1 2.1 4.3-4.3"/><path d="M9 17.5h6"/>';
 var PRONE_N=PRONE_CL.reduce((a,g)=>a+g[1].length,0);
 function proneOn(rp){rp=rp||rpGet();return !!rp&&(rp.k==="prone"||(rpGroups(rp).includes("resp")&&!!rp.prone))}
 function proneKey(){return phShiftKey()}
 function proneDone(rp){rp=rp||rpGet();const e=rp&&rp.pcl&&rp.pcl[proneKey()];return e?Object.keys(e.i||{}).length:0}
 function proneOpen(){const rp=rpGet();if(!rp)return;const k=proneKey(),e=(rp.pcl&&rp.pcl[k])||{i:{}};let n=0;const sc=$("pcModal").hidden?0:$("pcBody").scrollTop;
-  $("pcKick").textContent=`Nursing Checklist ขณะ Prone · ${SHIFT_TH[shiftNow()]}`;
-  $("pcBody").innerHTML=`<p class="note" style="margin:0">ตรวจทุกครั้งหลังจัดท่าคว่ำ และทุกเวร แตะข้อที่ตรวจแล้ว ระบบบันทึกเวลาและชื่อผู้ตรวจให้</p>`+PRONE_CL.map(([g,items])=>`<section class="pc-g"><h4>${esc(g)}</h4>${items.map(t=>{const i=n++,v=e.i[i];return `<button type="button" class="pc-i" aria-pressed="${!!v}" data-i="${i}"><span class="bx" aria-hidden="true"></span><span class="pc-t">${esc(t)}${v?`<small>${hhmm(v.t)} น.${v.by?" · "+esc(v.by):""}</small>`:""}</span></button>`}).join("")}</section>`).join("");
+  $("pcKick").innerHTML=`${PRONE_SVG(PRONE_CLIP,"pc-kic")} Checklist ขณะ Prone · ${SHIFT_TH[shiftNow()]}`;
+  $("pcBody").innerHTML=`<div class="pc-grid">`+PRONE_CL.map(([g,items],gi)=>{const s0=n;const rows=items.map(t=>{const i=n++,v=e.i[i];return `<button type="button" class="pc-i" aria-pressed="${!!v}" data-i="${i}"><span class="bx" aria-hidden="true"></span><span class="pc-t">${esc(t)}</span>${v?`<time>${hhmm(v.t)}</time>`:""}</button>`}).join("");const dn=items.filter((_,x)=>e.i[s0+x]).length;
+    return `<section class="pc-g${dn===items.length?" ok":""}"><h4><span class="pc-gi">${PRONE_SVG(PRONE_IC[gi])}</span>${esc(g)}<em>${dn}/${items.length}</em></h4>${rows}</section>`}).join("")+`</div>`;
   $("pcBody").querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{const r=Object.assign({},rpGet()),pc=Object.assign({},r.pcl||{}),cur=Object.assign({i:{}},pc[k]);cur.i=Object.assign({},cur.i);const i=b.dataset.i;
     if(cur.i[i])delete cur.i[i];else cur.i[i]={t:Date.now(),by:pvBy().by};pc[k]=cur;Object.keys(pc).sort().slice(0,-9).forEach(x=>delete pc[x]);r.pcl=pc;rpSave(r);proneOpen()});
-  $("pcSum").textContent=`ตรวจแล้ว ${Object.keys(e.i).length}/${PRONE_N} ข้อ`;$("pcModal").hidden=false;$("pcBody").scrollTop=sc;document.body.classList.add("noscroll")}
+  $("pcSum").textContent=`${Object.keys(e.i).length}/${PRONE_N}`;$("pcModal").hidden=false;$("pcBody").scrollTop=sc;document.body.classList.add("noscroll")}
 function proneClose(){$("pcModal").hidden=true;document.body.classList.remove("noscroll");try{update()}catch(e){}}
 $("pcX").onclick=proneClose;$("pcOk").onclick=proneClose;$("pcModal").addEventListener("click",e=>{if(e.target.id==="pcModal")proneClose()});
 $("pcAll").onclick=()=>{const r=Object.assign({},rpGet()),k=proneKey(),pc=Object.assign({},r.pcl||{}),by=pvBy().by,now=Date.now(),cur={i:{}};
   for(let i=0;i<PRONE_N;i++)cur.i[i]=((pc[k]||{}).i||{})[i]||{t:now,by};pc[k]=cur;r.pcl=pc;rpSave(r);proneOpen()};
 /* button inside the repositioning card when the patient is prone */
 {const _c=rpCardHTML;rpCardHTML=function(rp){let h=_c.apply(this,arguments);if(rp&&proneOn(rp)){const d=proneDone(rp),ok=d>=PRONE_N;
-  const btn=`<button type="button" class="pc-open${ok?" ok":""}" data-pcl="1"><span class="pc-ic" aria-hidden="true">${ok?"✓":"☑"}</span><span><b>Nursing Checklist ขณะ Prone</b><small>${SHIFT_TH[shiftNow()]} · ตรวจแล้ว ${d}/${PRONE_N} ข้อ</small></span><span class="pc-bar"><i style="width:${Math.round(d/PRONE_N*100)}%"></i></span></button>`;
+  const btn=`<button type="button" class="pc-open${ok?" ok":""}" data-pcl="1"><span class="pc-ic">${PRONE_SVG(PRONE_CLIP)}</span><span><b>Checklist ขณะ Prone</b><small>${SHIFT_TH[shiftNow()]} · ${ok?"ตรวจครบแล้ว":`ตรวจแล้ว ${d}/${PRONE_N}`}</small></span><span class="pc-bar"><i style="width:${Math.round(d/PRONE_N*100)}%"></i></span></button>`;
   h=h.replace(/<\/div>\s*$/,btn+"</div>")}return h}}
 {const _b=rpBind;rpBind=function(root){const r=_b.apply(this,arguments);root.querySelectorAll("[data-pcl]").forEach(b=>b.onclick=proneOpen);return r}}
 /* tasks: prone checklist not complete this shift */
