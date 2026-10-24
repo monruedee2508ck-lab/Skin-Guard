@@ -1915,6 +1915,35 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
 .pc-i[aria-pressed=true]>.bx{background:var(--ok);border-color:var(--ok)}
 .pc-i time{font-size:.7rem;color:var(--ok);font-variant-numeric:tabular-nums;flex:none}
 #pcSum{font-weight:700;font-variant-numeric:tabular-nums}
+/* abnormal skin / other wounds */
+.ab-sec:empty,#pvAb:empty{display:none}
+.ab-card{background:var(--surface);border-radius:18px;padding:12px 14px;box-shadow:var(--shadow),inset 0 0 0 1.5px color-mix(in srgb,var(--s2) 30%,transparent)}
+.ab-h{display:flex;align-items:center;gap:10px}.ab-h>div{flex:1;min-width:0}.ab-h b{display:block;font-size:.95rem}.ab-h small{display:block;font-size:.78rem;color:var(--muted)}
+.ab-ic{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--s2) 16%,transparent);color:var(--s2);flex:none}.ab-ic svg{width:21px;height:21px}
+.ab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}
+.ab-it{font:inherit;cursor:pointer;text-align:left;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:12px;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.ab-it img,.ab-noimg{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:color-mix(in srgb,var(--ink) 6%,transparent)}
+.ab-noimg{display:grid;place-items:center;font-size:.75rem;color:var(--muted)}
+.ab-tx{padding:6px 8px 8px;display:flex;flex-direction:column;gap:1px}.ab-tx b{font-size:.8rem;display:flex;align-items:center;gap:5px}.ab-tx b i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+.ab-tx small{font-size:.7rem;color:var(--muted);line-height:1.35}
+.ab-body{display:flex;flex-direction:column;gap:8px}
+.ab-ph{border-radius:14px;overflow:hidden;border:1.5px dashed var(--line);min-height:120px;display:grid;place-items:center;background:color-mix(in srgb,var(--ink) 3%,transparent)}
+.ab-ph img{display:block;width:100%;max-height:300px;object-fit:contain;background:#000}
+.ab-ph0{display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;padding:16px;color:var(--muted)}.ab-ph0 svg{width:34px;height:34px;color:var(--s2)}.ab-ph0 b{color:var(--ink);font-size:.9rem}.ab-ph0 small{font-size:.75rem}
+.ab-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ab-lbl{font-size:.82rem;font-weight:600;color:var(--muted);margin-top:4px}
+.ab-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ab-chips button{font:inherit;cursor:pointer;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:6px 11px;font-size:.82rem;display:inline-flex;align-items:center;gap:6px}
+.ab-type button i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.ab-chips button[aria-pressed=true]{border-color:var(--teal);background:color-mix(in srgb,var(--teal) 12%,var(--surface));font-weight:600}
+.ab-type button[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--surface))}
+.ab-body input[type=text],.ab-body textarea{font:inherit;width:100%;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface);color:var(--ink);font-size:.88rem}
+.ab-size{display:flex;align-items:center;gap:8px}.ab-size input{font:inherit;width:90px;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;background:var(--surface);color:var(--ink)}
+.ab-md{font:inherit;cursor:pointer;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:7px 11px;font-size:.86rem}
+.ab-md[aria-pressed=true]{border-color:var(--ok)}.ab-md[aria-pressed=true]>.bx{background:var(--ok);border-color:var(--ok)}
+.ab-msg{margin:0;color:var(--s1);font-size:.82rem;min-height:1em}
+.ab-link{font:inherit;cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 10px;width:100%;text-align:left;margin:10px 0 0;border:1.5px dashed color-mix(in srgb,var(--s2) 45%,var(--line));background:color-mix(in srgb,var(--s2) 6%,var(--surface));color:var(--ink);border-radius:12px;padding:9px 12px;font-size:.84rem}
+.ab-link b{color:var(--s2)}
 </style>
 </head>
 <body>
@@ -2184,6 +2213,7 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
     <div class="wb-list" id="wbList" role="tablist" aria-label="เลือกแผล"></div>
     <div class="wb-foot"><span class="note" id="wbHint">แตะแผลเพื่อเปิดหน้าต่างประเมินต่อหรือแก้ไข ข้อมูลของแต่ละแผลเก็บแยกกัน</span><button class="del" id="wbDel" type="button" hidden>ลบแผลนี้</button></div>
   </section>
+  <section id="woundAb" class="ab-sec"></section>
   <div class="result" id="result" aria-live="polite">
     <div>
       <div class="lbl" id="rLbl">ระดับแผล</div>
@@ -2814,6 +2844,25 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
     <span class="adv-i" aria-hidden="true">i</span>
     <div class="adv-c"><div class="adv-k">คำแนะนำ</div><b class="adv-t"></b><div class="adv-b"></div></div>
     <button type="button" class="adv-x" aria-label="ปิดคำแนะนำ">×</button>
+  </div>
+  <div class="modal" id="abModal" hidden role="dialog" aria-modal="true" aria-labelledby="abKick">
+    <div class="sheet bw-sheet rp-sheet">
+      <div class="rm-top"><div class="rm-kick" id="abKick">ผิวหนังผิดปกติ / แผลอื่น ๆ</div><button type="button" class="rm-x" id="abX" aria-label="ปิด">&times;</button></div>
+      <div class="rm-body ab-body" id="abBody">
+        <div class="ab-ph" id="abPh"></div>
+        <div class="ab-btns"><label class="btn primary filebtn" id="abCamL" for="abCam">ถ่ายภาพ<input id="abCam" class="vh" type="file" accept="image/*" capture="environment"></label><label class="btn filebtn alt" for="abLib">เลือกจากคลังภาพ<input id="abLib" class="vh" type="file" accept="image/*"></label></div>
+        <div class="ab-lbl">ชนิดความผิดปกติ</div><div class="ab-chips ab-type" id="abType"></div>
+        <div class="ab-lbl">ตำแหน่ง</div><div class="ab-chips" id="abLoc"></div>
+        <input id="abLocX" type="text" placeholder="ระบุเพิ่ม เช่น ต้นแขนด้านใน, รอบสาย IV" aria-label="ระบุตำแหน่งเพิ่มเติม">
+        <div class="ab-lbl">ขนาด (ถ้าวัดได้)</div>
+        <div class="ab-size"><input id="abL" type="number" inputmode="decimal" min="0" step="0.1" placeholder="ยาว" aria-label="ความยาว cm"><span>×</span><input id="abW" type="number" inputmode="decimal" min="0" step="0.1" placeholder="กว้าง" aria-label="ความกว้าง cm"><span>cm</span></div>
+        <div class="ab-lbl">ลักษณะที่พบ / การดูแล</div>
+        <textarea id="abNote" rows="2" placeholder="เช่น ผื่นแดงนูน ขอบชัด คัน · ทา Zinc paste"></textarea>
+        <button type="button" class="ab-md" id="abMd" aria-pressed="false"><span class="bx" aria-hidden="true"></span>รายงานแพทย์แล้ว</button>
+        <p class="ab-msg" id="abMsg" role="alert"></p>
+      </div>
+      <div class="rm-foot"><button class="btn" id="abCancel" type="button">ยกเลิก</button><button class="btn primary" id="abSave" type="button">บันทึก</button></div>
+    </div>
   </div>
   <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="ดูภาพผิวหนัง"></div>
   <div class="app-foot" aria-hidden="true"><svg viewBox="0 0 56 16" preserveAspectRatio="none"><path d="M1.0,4.0 L3.0,5.3 L5.0,5.6 L7.0,4.7 L9.0,3.3 L11.0,2.4 L13.0,2.7 L15.0,4.0 L17.0,5.3 L19.0,5.6 L21.0,4.7 L23.0,3.3 L25.0,2.4 L27.0,2.7 L29.0,4.0 L31.0,5.3 L33.0,5.6 L35.0,4.7 L37.0,3.3 L39.0,2.4 L41.0,2.7 L43.0,4.0 L45.0,5.3 L47.0,5.6 L49.0,4.7 L51.0,3.3 L53.0,2.4 L55.0,2.7" fill="none" stroke="#f3a08c" stroke-width="1.6" stroke-linecap="round" opacity=".75"/><path d="M1.0,10.1 L2.0,9.5 L3.0,8.1 L4.0,7.0 L5.0,7.1 L6.0,8.2 L7.0,9.5 L8.0,10.1 L9.0,9.5 L10.0,8.1 L11.0,7.0 L12.0,7.1 L13.0,8.2 L14.0,9.5 L15.0,10.1 L16.0,9.5 L17.0,8.1 L18.0,7.0 L19.0,7.1 L20.0,8.2 L21.0,9.5 L22.0,10.1 L23.0,9.5 L24.0,8.1 L25.0,7.0 L26.0,7.1 L27.0,8.2 L28.0,9.5 L29.0,10.1 L30.0,9.5 L31.0,8.1 L32.0,7.0 L33.0,7.1 L34.0,8.2 L35.0,9.5 L36.0,10.1 L37.0,9.5 L38.0,8.1 L39.0,7.0 L40.0,7.1 L41.0,8.2 L42.0,9.5 L43.0,10.1 L44.0,9.5 L45.0,8.1 L46.0,7.0 L47.0,7.1 L48.0,8.2 L49.0,9.5 L50.0,10.1 L51.0,9.5 L52.0,8.1 L53.0,7.0 L54.0,7.1 L55.0,8.2" fill="none" stroke="#e0606f" stroke-width="1.6" stroke-linecap="round" opacity=".6"/><path d="M1.0,14.0 L3.0,14.2 L5.0,13.9 L7.0,13.3 L9.0,12.6 L11.0,12.0 L13.0,11.8 L15.0,12.1 L17.0,12.7 L19.0,13.4 L21.0,14.0 L23.0,14.2 L25.0,13.9 L27.0,13.3 L29.0,12.6 L31.0,12.0 L33.0,11.8 L35.0,12.1 L37.0,12.7 L39.0,13.4 L41.0,14.0 L43.0,14.2 L45.0,13.9 L47.0,13.3 L49.0,12.6 L51.0,12.0 L53.0,11.8 L55.0,12.1" fill="none" stroke="#d9a441" stroke-width="1.6" stroke-linecap="round" opacity=".6"/></svg><span><b>Skin Guard v1.0</b> · SMART-SKIN CARE</span></div>
@@ -3880,7 +3929,7 @@ function skDel(id){skinMem=skinMem.filter(x=>x.id!==id);if(!skinDB)return Promis
 async function skReload(){
   if(!skinTried){skinTried=true;skinDB=await skOpen();
     if(!skinDB)$("skinStoreNote").textContent="เบราว์เซอร์นี้ไม่อนุญาตให้เก็บภาพถาวร ภาพจะอยู่จนกว่าจะปิดหน้านี้"}
-  skinCache=await skAll(skHN());skRender();update();
+  skinCache=skOnly(await skAll(skHN()));skRender();update();
 }
 function skKindNow(){if(skinKind)return skinKind;const d=skDay();return (skinCache||[]).some(r=>r.date<d)?"daily":"admit"}
 function skRender(){
@@ -4228,7 +4277,7 @@ async function syncPull(){const since=+localStorage.getItem("pi-sync-last")||0,j
   const busyUI=!$("bwModal").hidden||!$("stepModal").hidden||!$("riskModal").hidden||!$("liveCam").hidden;
   if(curChanged&&!busyUI){const h=curHN;ptReady=false;curHN=null;try{changePatient(h)}finally{ptReady=true}}
   if(histChanged){try{renderHist()}catch(e){}}
-  if(gotPhoto){try{skinCache=await skAll(skHN());skRender()}catch(e){}}
+  if(gotPhoto){try{skinCache=skOnly(await skAll(skHN()));skRender()}catch(e){}}
   try{update()}catch(e){}try{if(document.body.dataset.page==="ward")renderWard()}catch(e){}
   return (j.patients||[]).length+(j.history||[]).length}
 async function syncRun(){if(!syncCfg())return syncPaint();if(SYNC.busy){SYNC.again=true;return}if(!navigator.onLine){SYNC.status="offline";return syncPaint()}
@@ -6305,7 +6354,7 @@ async function photosExpire(){const today=phToday();let n=0;
   try{if(!skinTried){skinTried=true;skinDB=await skOpen()}const all=(skinDB?await phAllStore(skinDB):[]).concat(skinMem);
     for(const r of all){if(r&&r.date&&phExpire(r.date)<=today){await skDel(r.id);try{syncEnq("delphoto",r.id,{store:"skin"})}catch(e){}n++}}}catch(e){}
   try{const db=await wpReady();if(db)for(const r of await phAllStore(db)){if(r&&r.date&&phExpire(r.date)<=today){await wpDel(r.id);try{syncEnq("delphoto",r.id,{store:"wound"})}catch(e){}n++}}}catch(e){}
-  if(n){try{skinCache=await skAll(skHN());skRender()}catch(e){}}return n}
+  if(n){try{skinCache=skOnly(await skAll(skHN()));skRender()}catch(e){}}return n}
 setTimeout(()=>{photosExpire()},1500);setInterval(()=>{photosExpire()},3600e3);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")photosExpire()});
 /* ===== Individualized Repositioning Plan v2: 4-step decision support + per-patient turning clock ===== */
@@ -6633,7 +6682,7 @@ function rpPlanText(){const rp=st.rp;if(!rp||!rp.k||!RP_PLANS[rp.k])return "เ�
 var phShots={},phReady=false;
 function phShiftKey(){return phToday()+"|"+shiftNow()}
 async function phShiftRefresh(){try{if(!skinTried){skinTried=true;skinDB=await skOpen()}const all=(skinDB?await phAllStore(skinDB):[]).concat(skinMem||[]);const m={};
-  all.forEach(r=>{if(!r||!r.hn)return;const k=r.date+"|"+phShift(r.time);(m[r.hn]=m[r.hn]||{})[k]=Math.max((m[r.hn]||{})[k]||0,1);(m[r.hn].t=m[r.hn].t||{})[k]=r.time});phShots=m;phReady=true}catch(e){}
+  all.forEach(r=>{if(!r||!r.hn||r.cat==="abn")return;const k=r.date+"|"+phShift(r.time);(m[r.hn]=m[r.hn]||{})[k]=Math.max((m[r.hn]||{})[k]||0,1);(m[r.hn].t=m[r.hn].t||{})[k]=r.time});phShots=m;phReady=true}catch(e){}
   try{if(document.body.dataset.page==="home")homePaint()}catch(e){}try{renderAlerts()}catch(e){}try{phOvPaint()}catch(e){}phRemind()}
 function phHas(hn,k){return !!(phShots[hn]&&phShots[hn][k||phShiftKey()])}
 function phMissing(){return phReady?ptList().filter(x=>!phHas(x.p.hn)):[]}
@@ -6822,6 +6871,74 @@ $("pcAll").onclick=()=>{const r=Object.assign({},rpGet()),k=proneKey(),pc=Object
 {const _bn=buildNote;buildNote=function(c){let t=_bn.apply(this,arguments);try{const rp=rpGet();if(proneOn(rp)){const k=proneKey(),e=(rp.pcl&&rp.pcl[k])||{i:{}};let n=0;const miss=[];
   PRONE_CL.forEach(([g,items])=>items.forEach(it=>{if(!e.i[n])miss.push(g+": "+it);n++}));const d=PRONE_N-miss.length;
   t+=`\nผู้ป่วยอยู่ในท่า Prone: ตรวจ Nursing Checklist ขณะ Prone ${d}/${PRONE_N} ข้อ (${SHIFT_TH[shiftNow()]})`+(d&&miss.length?`\n  ยังไม่ได้ตรวจ: ${miss.slice(0,6).join("; ")}${miss.length>6?` และอีก ${miss.length-6} ข้อ`:""}`:"")}}catch(x){}return t}}
+/* ===== ผิวหนังผิดปกติ / แผลอื่น ๆ (ไม่ใช่แผลกดทับ) ===== */
+var ABN_T=[["rash","ผื่น / ผื่นแดง","--s2"],["bruise","รอยช้ำ / จ้ำเลือด","--sd"],["blister","ตุ่มน้ำ / พุพอง","--sky"],["iad","IAD ผิวอักเสบจากความชื้น","--si"],
+ ["tear","Skin tear ผิวฉีกขาด","--s3"],["abr","แผลถลอก","--s2"],["surg","แผลผ่าตัด / แผลเย็บ","--teal"],["burn","แผลไหม้","--s1"],
+ ["chronic","แผลเรื้อรัง (เบาหวาน/หลอดเลือด)","--s1"],["infect","บวม แดง ร้อน / สงสัยติดเชื้อ","--s1"],["iv","ผิวรอบสาย IV / ยารั่วซึม","--indigo"],["other","อื่น ๆ","--muted"]];
+var ABN_L=["ศีรษะ/ใบหน้า","คอ","หน้าอก","ท้อง","หลัง","ก้น/ก้นกบ","ขาหนีบ/ฝีเย็บ","แขนซ้าย","แขนขวา","มือซ้าย","มือขวา","ขาซ้าย","ขาขวา","เท้าซ้าย","เท้าขวา","อื่น ๆ"];
+var abCache=[],abD=null;
+function abT(k){return ABN_T.find(x=>x[0]===k)||ABN_T[ABN_T.length-1]}
+function skOnly(a){return (a||[]).filter(r=>r.cat!=="abn")}
+function abLocTxt(r){return (r.loc||"")+(r.locx?" ("+r.locx+")":"")}
+function abSizeTxt(r){return r.L>0&&r.W>0?`${+r.L}×${+r.W} cm`:r.L>0?`${+r.L} cm`:""}
+async function abReload(){try{if(!skinTried){skinTried=true;skinDB=await skOpen()}abCache=(await skAll(skHN())).filter(r=>r.cat==="abn")}catch(e){abCache=[]}abPaint()}
+function abOpen(){if(!$("hn").value.trim()){advise("เลือกผู้ป่วยก่อน",["กรอก HN และชื่อผู้ป่วย แล้วจึงบันทึกผิวหนังผิดปกติ"],"--s2","!");return}
+  abD={t:null,loc:null,img:null,md:false};$("abLocX").value="";$("abL").value="";$("abW").value="";$("abNote").value="";$("abMsg").textContent="";abForm();
+  $("abModal").hidden=false;document.body.classList.add("noscroll");$("abBody").scrollTop=0}
+function abClose(){$("abModal").hidden=true;abD=null;if([...document.querySelectorAll(".modal")].every(m=>m.hidden))document.body.classList.remove("noscroll")}
+function abForm(){if(!abD)return;$("abMsg").textContent="";
+  $("abPh").innerHTML=abD.img?`<img alt="ภาพที่ถ่าย" src="${abD.img}">`:`<span class="ab-ph0">${PRONE_SVG('<path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.7l1.3-2h5l1.3 2h1.7A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.3" r="3.4"/>')}<b>ถ่ายภาพบริเวณที่ผิดปกติ</b><small>วางไม้บรรทัดข้างรอยเพื่อเทียบขนาด · ไม่ให้เห็นใบหน้าหรือชื่อผู้ป่วย</small></span>`;
+  $("abCamL").firstChild.textContent=abD.img?"ถ่ายใหม่":"ถ่ายภาพ";
+  $("abType").innerHTML=ABN_T.map(([k,t,c])=>`<button type="button" data-k="${k}" style="--c:var(${c},#888)" aria-pressed="${abD.t===k}"><i></i>${esc(t)}</button>`).join("");
+  $("abType").querySelectorAll("button").forEach(b=>b.onclick=()=>{abD.t=b.dataset.k;abForm()});
+  $("abLoc").innerHTML=ABN_L.map(l=>`<button type="button" data-l="${esc(l)}" aria-pressed="${abD.loc===l}">${esc(l)}</button>`).join("");
+  $("abLoc").querySelectorAll("button").forEach(b=>b.onclick=()=>{abD.loc=b.dataset.l;abForm()});
+  $("abMd").setAttribute("aria-pressed",abD.md)}
+$("abMd").onclick=()=>{if(abD){abD.md=!abD.md;abForm()}};
+["abCam","abLib"].forEach(id=>$(id).addEventListener("change",async e=>{const f=e.target.files&&e.target.files[0];e.target.value="";if(!f||!abD)return;
+  try{const r=await skShrink(f,1000);abD.img=r.url;abForm()}catch(x){$("abMsg").textContent="เปิดภาพนี้ไม่ได้ ลองถ่ายใหม่อีกครั้ง"}}));
+$("abX").onclick=abClose;$("abCancel").onclick=abClose;
+$("abSave").onclick=async()=>{if(!abD)return;const m=$("abMsg");
+  if(!abD.t){m.textContent="เลือกชนิดความผิดปกติก่อน";return}if(!abD.loc){m.textContent="เลือกตำแหน่งก่อน";return}
+  if(!abD.img&&!$("abNote").value.trim()){m.textContent="ถ่ายภาพ หรือเขียนลักษณะที่พบอย่างน้อย 1 อย่าง";return}
+  const now=new Date(),by=pvBy(),L=parseFloat($("abL").value)||0,W=parseFloat($("abW").value)||0;
+  const rec={id:now.getTime()+"-ab"+Math.random().toString(36).slice(2,6),cat:"abn",hn:skHN(),date:phToday(),time:hhmm(now.getTime()).replace(/\s*น\.?$/,""),kind:"abn",site:"abn",
+    atype:abD.t,loc:abD.loc,locx:$("abLocX").value.trim(),L,W,note:$("abNote").value.trim(),md:abD.md,img:abD.img||"",by:by.by,ot:by.ot};
+  if(!/^\d{1,2}:\d{2}$/.test(rec.time))rec.time=String(now.getHours()).padStart(2,"0")+":"+String(now.getMinutes()).padStart(2,"0");
+  await skPut(rec);abCache.push(rec);if(rec.img&&realHN())try{syncEnq("photo",rec.id,{store:"skin"})}catch(e){}
+  abClose();abPaint();try{update()}catch(e){}
+  advise("บันทึกแล้ว",[`${abT(rec.atype)[1]} · ${abLocTxt(rec)}`,rec.md?"รายงานแพทย์แล้ว":"ติดตามและถ่ายภาพซ้ำในเวรถัดไป"],"--teal","✓")};
+function abCardHTML(full){const hn=$("hn").value.trim();if(!hn)return "";const list=abCache.slice().sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)),show=list.slice(0,full?12:4);
+  const ic=PRONE_SVG('<path d="M12 3.5c3 3.6 6 6.9 6 10.3a6 6 0 0 1-12 0c0-3.4 3-6.7 6-10.3z"/><path d="M9.3 14.2a2.8 2.8 0 0 0 2.7 2.6"/>');
+  return `<div class="ab-card"><div class="ab-h"><span class="ab-ic">${ic}</span><div><b>ผิวหนังผิดปกติ / แผลอื่น ๆ</b><small>${list.length?`บันทึกแล้ว ${list.length} รายการ`:"ผื่น รอยช้ำ ตุ่มน้ำ IAD skin tear แผลผ่าตัด ฯลฯ"}</small></div><button type="button" class="btn primary sm" data-ab="add">+ ถ่ายภาพ</button></div>`+
+  (show.length?`<div class="ab-grid">${show.map(r=>{const T=abT(r.atype);return `<button type="button" class="ab-it" data-ab="${esc(r.id)}" style="--c:var(${T[2]},#888)">${r.img?`<img alt="" src="${r.img}">`:`<span class="ab-noimg">ไม่มีภาพ</span>`}<span class="ab-tx"><b><i></i>${esc(T[1])}</b><small>${esc(abLocTxt(r))}${abSizeTxt(r)?" · "+abSizeTxt(r):""}</small><small>${thDate(r.date)} ${esc(r.time)} น.${r.md?" · รายงานแพทย์แล้ว":""}</small></span></button>`}).join("")}</div>`+(list.length>show.length?`<p class="note" style="margin:6px 0 0">และอีก ${list.length-show.length} รายการ ดูได้ที่แท็บประเมินแผล</p>`:""):"")+`</div>`}
+function abPaint(){[["woundAb",1],["pvAb",0]].forEach(([id,full])=>{const box=$(id);if(!box)return;box.innerHTML=abCardHTML(full);
+  box.querySelectorAll("[data-ab]").forEach(b=>b.onclick=()=>b.dataset.ab==="add"?abOpen():abView(b.dataset.ab))})}
+function abView(id){const r=abCache.find(x=>x.id===id);if(!r)return;const T=abT(r.atype);
+  const prev=abCache.filter(x=>x.id!==r.id&&x.atype===r.atype&&x.loc===r.loc&&(x.date+x.time)<(r.date+r.time)).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).pop();
+  const v=$("viewer");v.innerHTML="";const head=document.createElement("div");head.className="vh2";
+  head.innerHTML='<b></b><span style="display:flex;gap:8px"><button type="button" class="vclose ab-del">ลบ</button><button type="button" class="vclose">ปิด</button></span>';
+  head.querySelector("b").textContent=T[1]+" · "+abLocTxt(r)+(prev?" · เทียบกับครั้งก่อน":"");
+  const bs=head.querySelectorAll("button");bs[1].onclick=skClose;
+  bs[0].onclick=async()=>{const d=bs[0];if(!d.dataset.armed){d.dataset.armed="1";d.textContent="ยืนยันลบ";d.style.color="var(--s1)";return}
+    await skDel(r.id);try{if(r.img)syncEnq("delphoto",r.id,{store:"skin"})}catch(e){}abCache=abCache.filter(x=>x.id!==r.id);skClose();abPaint();try{update()}catch(e){}};
+  const grid=document.createElement("div");grid.className="vgrid";
+  (prev?[prev,r]:[r]).forEach((x,i)=>{const f=document.createElement("figure");f.innerHTML=x.img?`<img alt=""><figcaption><b></b><br><span></span></figcaption>`:`<figcaption><b></b><br><span></span></figcaption>`;if(x.img)f.querySelector("img").src=x.img;
+    f.querySelector("b").textContent=(prev?(i?"ล่าสุด: ":"ครั้งก่อน: "):"")+thDate(x.date)+" "+x.time+" น."+(x.by?" · "+x.by:"");
+    f.querySelector("span").textContent=[abSizeTxt(x),x.note,x.md?"รายงานแพทย์แล้ว":""].filter(Boolean).join(" · ");grid.append(f)});
+  v.append(head,grid);v.hidden=false;bs[1].focus()}
+/* keep skin-round gallery & per-shift photo tracking separate from abnormal findings */
+{const _r=skReload;skReload=async function(){const out=await _r.apply(this,arguments);try{abCache=(skinCache||[]).filter(r=>r.cat==="abn");skinCache=skOnly(skinCache);skRender()}catch(e){}abPaint();return out}}
+{const _r=skRender;skRender=function(){if(skinCache&&skinCache.some(r=>r.cat==="abn")){abCache=abCache.concat(skinCache.filter(r=>r.cat==="abn"&&!abCache.some(a=>a.id===r.id)));skinCache=skOnly(skinCache);setTimeout(abPaint,0)}return _r.apply(this,arguments)}}
+{const _v=phView;phView=function(store,rec){if(rec&&rec.cat==="abn")return {kind:"ผิวหนังผิดปกติ/แผลอื่น",site:abLocTxt(rec),what:[abT(rec.atype)[1],abSizeTxt(rec),rec.md?"รายงานแพทย์แล้ว":""].filter(Boolean).join(" · "),shift:phShiftTH(rec.time),expires:phExpire(rec.date),note:rec.note||""};return _v.apply(this,arguments)}}
+/* overview card */
+{const _pp=pvPaint;pvPaint=function(){const r=_pp.apply(this,arguments);try{const g=$("pvGrid");if(g&&realHN()){const d=document.createElement("section");d.id="pvAb";const a=$("pvPh")||$("pvRp")||g.querySelector(".pv2-hero");if(a)a.after(d);else g.prepend(d);abPaint()}}catch(e){}return r}}
+/* link from the skin-photo round */
+{const call=$("skinCall");if(call){const b=document.createElement("button");b.type="button";b.className="ab-link";b.innerHTML="<span>พบผื่น รอยช้ำ ตุ่มน้ำ หรือแผลอื่นที่ไม่ใช่แผลกดทับ?</span><b>บันทึกผิวหนังผิดปกติ →</b>";b.onclick=abOpen;$("skinDraft").before(b)}}
+/* nursing note */
+{const _bn=buildNote;buildNote=function(c){let t=_bn.apply(this,arguments);try{const d=phToday(),td=abCache.filter(r=>r.date===d);
+  if(td.length)t+="\nผิวหนังผิดปกติ/แผลอื่น: "+td.map(r=>[abT(r.atype)[1],abLocTxt(r),abSizeTxt(r),r.note,r.md?"รายงานแพทย์แล้ว":""].filter(Boolean).join(" ")).join("; ")}catch(e){}return t}}
+setTimeout(abReload,900);
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
