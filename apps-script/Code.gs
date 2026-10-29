@@ -135,7 +135,7 @@ function push(req) {
       }
       const view = rec._view || {}, thumb = view.thumb || '';
       const meta = Object.assign({}, rec); delete meta.img; delete meta._view;
-      const time = String(rec.time || ''), sh = shiftOf(time), exp = addDays(dstr(rec.date), KEEP_DAYS);
+      const time = String(rec.time || ''), sh = shiftOf(time), exp = rec.cat === 'abn' ? '' : addDays(dstr(rec.date), KEEP_DAYS); // ภาพผิวหนังผิดปกติ/แผลอื่น: เก็บจนจำหน่ายผู้ป่วย
       upsert(F, fi, it.key, ["'" + it.key, it.store || '', "'" + (rec.hn || ''), "'" + dstr(rec.date), rec.site || '', now, ot, '', fileId, JSON.stringify(meta), "'" + time, sh, view.kind || rec.kind || it.store || '', "'" + exp]);
       try { viewAdd(it.key, rec, view, thumb, sh, exp, ot, fileId); } catch (e) {}
     }
@@ -304,7 +304,7 @@ function cleanupPhotos() {
   let n = 0;
   rows.forEach((r, i) => {
     if (r[7] === 'y') return;
-    const d = dstr(r[3]), exp = addDays(d, KEEP_DAYS);
+    const keep = String(r[9] || '').indexOf('"cat":"abn"') >= 0, d = dstr(r[3]), exp = keep ? '' : addDays(d, KEEP_DAYS);
     if ((exp && exp <= t) || gone[String(r[2])]) { photoGone(F, i + 2, now, 'auto'); n++; }
   });
   // แถวในแท็บภาพรายเวรที่ไม่มีภาพแล้ว

@@ -6352,7 +6352,7 @@ function phView(store,rec){const sk=store==="skin";let site="",what="";
 function phAllStore(db){return new Promise(res=>{try{const q=db.transaction("p").objectStore("p").getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])}catch(e){res([])}})}
 async function photosExpire(){const today=phToday();let n=0;
   try{if(!skinTried){skinTried=true;skinDB=await skOpen()}const all=(skinDB?await phAllStore(skinDB):[]).concat(skinMem);
-    for(const r of all){if(r&&r.date&&phExpire(r.date)<=today){await skDel(r.id);try{syncEnq("delphoto",r.id,{store:"skin"})}catch(e){}n++}}}catch(e){}
+    for(const r of all){if(r&&r.cat!=="abn"&&r.date&&phExpire(r.date)<=today){await skDel(r.id);try{syncEnq("delphoto",r.id,{store:"skin"})}catch(e){}n++}}}catch(e){}
   try{const db=await wpReady();if(db)for(const r of await phAllStore(db)){if(r&&r.date&&phExpire(r.date)<=today){await wpDel(r.id);try{syncEnq("delphoto",r.id,{store:"wound"})}catch(e){}n++}}}catch(e){}
   if(n){try{skinCache=skOnly(await skAll(skHN()));skRender()}catch(e){}}return n}
 setTimeout(()=>{photosExpire()},1500);setInterval(()=>{photosExpire()},3600e3);
@@ -6910,7 +6910,7 @@ $("abSave").onclick=async()=>{if(!abD)return;const m=$("abMsg");
   advise("บันทึกแล้ว",[`${abT(rec.atype)[1]} · ${abLocTxt(rec)}`,rec.md?"รายงานแพทย์แล้ว":"ติดตามและถ่ายภาพซ้ำในเวรถัดไป"],"--teal","✓")};
 function abCardHTML(full){const hn=$("hn").value.trim();if(!hn)return "";const list=abCache.slice().sort((a,b)=>(b.date+b.time).localeCompare(a.date+a.time)),show=list.slice(0,full?12:4);
   const ic=PRONE_SVG('<path d="M12 3.5c3 3.6 6 6.9 6 10.3a6 6 0 0 1-12 0c0-3.4 3-6.7 6-10.3z"/><path d="M9.3 14.2a2.8 2.8 0 0 0 2.7 2.6"/>');
-  return `<div class="ab-card"><div class="ab-h"><span class="ab-ic">${ic}</span><div><b>ผิวหนังผิดปกติ / แผลอื่น ๆ</b><small>${list.length?`บันทึกแล้ว ${list.length} รายการ`:"ผื่น รอยช้ำ ตุ่มน้ำ IAD skin tear แผลผ่าตัด ฯลฯ"}</small></div><button type="button" class="btn primary sm" data-ab="add">+ ถ่ายภาพ</button></div>`+
+  return `<div class="ab-card"><div class="ab-h"><span class="ab-ic">${ic}</span><div><b>ผิวหนังผิดปกติ / แผลอื่น ๆ</b><small>${list.length?`บันทึกแล้ว ${list.length} รายการ · เก็บไว้จนจำหน่ายผู้ป่วย`:"ผื่น รอยช้ำ ตุ่มน้ำ IAD skin tear แผลผ่าตัด ฯลฯ"}</small></div><button type="button" class="btn primary sm" data-ab="add">+ ถ่ายภาพ</button></div>`+
   (show.length?`<div class="ab-grid">${show.map(r=>{const T=abT(r.atype);return `<button type="button" class="ab-it" data-ab="${esc(r.id)}" style="--c:var(${T[2]},#888)">${r.img?`<img alt="" src="${r.img}">`:`<span class="ab-noimg">ไม่มีภาพ</span>`}<span class="ab-tx"><b><i></i>${esc(T[1])}</b><small>${esc(abLocTxt(r))}${abSizeTxt(r)?" · "+abSizeTxt(r):""}</small><small>${thDate(r.date)} ${esc(r.time)} น.${r.md?" · รายงานแพทย์แล้ว":""}</small></span></button>`}).join("")}</div>`+(list.length>show.length?`<p class="note" style="margin:6px 0 0">และอีก ${list.length-show.length} รายการ ดูได้ที่แท็บประเมินแผล</p>`:""):"")+`</div>`}
 function abPaint(){[["woundAb",1],["pvAb",0]].forEach(([id,full])=>{const box=$(id);if(!box)return;box.innerHTML=abCardHTML(full);
   box.querySelectorAll("[data-ab]").forEach(b=>b.onclick=()=>b.dataset.ab==="add"?abOpen():abView(b.dataset.ab))})}
@@ -6930,7 +6930,7 @@ function abView(id){const r=abCache.find(x=>x.id===id);if(!r)return;const T=abT(
 /* keep skin-round gallery & per-shift photo tracking separate from abnormal findings */
 {const _r=skReload;skReload=async function(){const out=await _r.apply(this,arguments);try{abCache=(skinCache||[]).filter(r=>r.cat==="abn");skinCache=skOnly(skinCache);skRender()}catch(e){}abPaint();return out}}
 {const _r=skRender;skRender=function(){if(skinCache&&skinCache.some(r=>r.cat==="abn")){abCache=abCache.concat(skinCache.filter(r=>r.cat==="abn"&&!abCache.some(a=>a.id===r.id)));skinCache=skOnly(skinCache);setTimeout(abPaint,0)}return _r.apply(this,arguments)}}
-{const _v=phView;phView=function(store,rec){if(rec&&rec.cat==="abn")return {kind:"ผิวหนังผิดปกติ/แผลอื่น",site:abLocTxt(rec),what:[abT(rec.atype)[1],abSizeTxt(rec),rec.md?"รายงานแพทย์แล้ว":""].filter(Boolean).join(" · "),shift:phShiftTH(rec.time),expires:phExpire(rec.date),note:rec.note||""};return _v.apply(this,arguments)}}
+{const _v=phView;phView=function(store,rec){if(rec&&rec.cat==="abn")return {kind:"ผิวหนังผิดปกติ/แผลอื่น",site:abLocTxt(rec),what:[abT(rec.atype)[1],abSizeTxt(rec),rec.md?"รายงานแพทย์แล้ว":""].filter(Boolean).join(" · "),shift:phShiftTH(rec.time),expires:"",keep:"discharge",note:rec.note||""};return _v.apply(this,arguments)}}
 /* overview card */
 {const _pp=pvPaint;pvPaint=function(){const r=_pp.apply(this,arguments);try{const g=$("pvGrid");if(g&&realHN()){const d=document.createElement("section");d.id="pvAb";const a=$("pvPh")||$("pvRp")||g.querySelector(".pv2-hero");if(a)a.after(d);else g.prepend(d);abPaint()}}catch(e){}return r}}
 /* link from the skin-photo round */
