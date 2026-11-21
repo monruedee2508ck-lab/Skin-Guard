@@ -1963,6 +1963,23 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
 .b3-load{position:absolute;inset:0;display:grid;place-items:center;font-size:.9rem;color:var(--muted)}
 .b3.ready .b3-load{display:none}
 .lg-3d{flex-basis:100%;text-align:center}
+/* icon tiles */
+.tiles{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.tiles>button{flex:0 0 calc((100% - 16px)/3);box-sizing:border-box;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;
+ min-height:108px;padding:10px 4px 9px;border:1.5px solid var(--line);border-radius:16px;background:var(--surface);color:var(--ink);text-align:center;position:relative;transition:border-color .15s,background .15s,transform .1s}
+.tiles>button:active{transform:scale(.97)}
+.tiles .tl-ic{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--c,var(--teal));background:color-mix(in srgb,var(--c,var(--teal)) 13%,var(--surface))}
+.tiles .tl-t{font-size:.76rem;line-height:1.3;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tiles>button[aria-pressed=true]{border-color:var(--c,var(--teal));background:color-mix(in srgb,var(--c,var(--teal)) 10%,var(--surface))}
+.tiles>button[aria-pressed=true] .tl-ic{background:var(--c,var(--teal));color:#fff}
+.tiles>button[aria-pressed=true] .tl-t{font-weight:700}
+.tiles>button[aria-pressed=true]::after{content:"";position:absolute;top:7px;right:7px;width:16px;height:16px;border-radius:50%;background:var(--c,var(--teal)) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4.5 8.2l2.3 2.3 4.7-4.8' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/16px no-repeat}
+.dev-tiles>button{--c:var(--s1)}
+.devbox .dev-tiles>button{background:var(--surface)}
+.devbox .dev-tiles>button[aria-pressed=true]{background:color-mix(in srgb,var(--s1) 10%,var(--surface))}
+@media (min-width:720px){.tiles>button{flex-basis:calc((100% - 24px)/4)}}
+.ab-loc{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ab-loc button{justify-content:center;text-align:center;border-radius:12px;padding:8px 4px;font-size:.78rem;line-height:1.2;min-height:40px}
 </style>
 </head>
 <body>
@@ -2288,7 +2305,7 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
     <label class="chk" for="device"><input id="device" type="checkbox">Medical Device-Related Pressure Injury (MDRPI)</label>
     <div class="devbox" id="devBox" hidden>
       <div class="lbl skl">Medical device (select all that apply)</div>
-      <div class="advchips" id="devChips"></div>
+      <div class="tiles dev-tiles" id="devChips"></div>
       <input id="devOther" type="text" placeholder="ระบุอุปกรณ์อื่น" aria-label="ระบุอุปกรณ์อื่น" hidden>
     </div>
     <div class="origin">
@@ -2870,8 +2887,8 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
       <div class="rm-body ab-body" id="abBody">
         <div class="ab-ph" id="abPh"></div>
         <div class="ab-btns"><label class="btn primary filebtn" id="abCamL" for="abCam">ถ่ายภาพ<input id="abCam" class="vh" type="file" accept="image/*" capture="environment"></label><label class="btn filebtn alt" for="abLib">เลือกจากคลังภาพ<input id="abLib" class="vh" type="file" accept="image/*"></label></div>
-        <div class="ab-lbl">ชนิดความผิดปกติ</div><div class="ab-chips ab-type" id="abType"></div>
-        <div class="ab-lbl">ตำแหน่ง</div><div class="ab-chips" id="abLoc"></div>
+        <div class="ab-lbl">ชนิดความผิดปกติ</div><div class="tiles ab-type" id="abType"></div>
+        <div class="ab-lbl">ตำแหน่ง</div><div class="ab-chips ab-loc" id="abLoc"></div>
         <input id="abLocX" type="text" placeholder="ระบุเพิ่ม เช่น ต้นแขนด้านใน, รอบสาย IV" aria-label="ระบุตำแหน่งเพิ่มเติม">
         <div class="ab-lbl">ขนาด (ถ้าวัดได้)</div>
         <div class="ab-size"><input id="abL" type="number" inputmode="decimal" min="0" step="0.1" placeholder="ยาว" aria-label="ความยาว cm"><span>×</span><input id="abW" type="number" inputmode="decimal" min="0" step="0.1" placeholder="กว้าง" aria-label="ความกว้าง cm"><span>cm</span></div>
@@ -3729,12 +3746,11 @@ function liveLayout(){const ov=$("liveOv"),r=ov.getBoundingClientRect(),dpr=wind
 function liveDraw(){const ov=$("liveOv");if(!ov.width)return;const g=ov.getContext("2d"),dpr=window.devicePixelRatio||1,W=ov.width/dpr,H=ov.height/dpr,p=live.ppc;
   g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
   if(live.grid){g.strokeStyle="rgba(255,255,255,.28)";g.lineWidth=1;g.beginPath();for(let x=live.ruler.x%p;x<W;x+=p){g.moveTo(x,0);g.lineTo(x,H)}for(let y=live.ruler.y%p;y<H;y+=p){g.moveTo(0,y);g.lineTo(W,y)}g.stroke()}
-  // ruler
-  const rx=live.ruler.x,ry=live.ruler.y,len=Math.max(5,Math.floor((W-rx-16)/p)),rw=len*p;
+  if(live.rulerOn){const rx=live.ruler.x,ry=live.ruler.y,len=Math.max(5,Math.floor((W-rx-16)/p)),rw=len*p;
   g.fillStyle="rgba(255,236,170,.88)";g.fillRect(rx-8,ry-30,rw+16,36);g.strokeStyle="#7a5a12";g.lineWidth=1;g.strokeRect(rx-8,ry-30,rw+16,36);
   g.fillStyle="#3b2a05";g.font="600 11px system-ui,sans-serif";g.textAlign="center";
   for(let i=0;i<=len*10;i++){const x=rx+i*p/10,t=i%10===0?18:i%5===0?12:7;if(p/10<2.2&&i%5)continue;g.fillRect(x-.5,ry-30,1,t);if(i%10===0)g.fillText(String(i/10),x,ry-2)}
-  g.textAlign="left";g.fillText("cm",rx+rw+10>W-20?rx:rx+rw-14,ry-34<10?ry+16:ry-34);
+  g.textAlign="left";g.fillText("cm",rx+rw+10>W-20?rx:rx+rw-14,ry-34<10?ry+16:ry-34)}
   // measure lines
   const seg=(a,b,c,lab)=>{const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy)||1,nx=-dy/len,ny=dx/len,cap=8;
     g.setLineDash([]);g.lineCap="round";
@@ -3794,7 +3810,7 @@ function camPaint(){const w=curW(),box=$("camSize");if(!box)return;const on=!!(w
   const L=parseFloat(w.L),W=parseFloat(w.W);const ci=w.camInfo||{};$("camSizeTxt").textContent=`ยาว ${L} × กว้าง ${W} cm · พื้นที่ ${(L*W).toFixed(1)} cm²`+(ci.n>1?` · เฉลี่ย ${ci.n} ครั้ง`:"")+(ci.tilt!=null?` · กล้องเอียง ${ci.tilt}°`:"");
   if(document.activeElement!==$("camDep"))$("camDep").value=parseFloat(w.D)>0?w.D:"";if(document.activeElement!==$("camUnd"))$("camUnd").value=parseFloat(w.U)>0?w.U:""}
 [["camDep","dep"],["camUnd","und"]].forEach(([a,b])=>$(a).addEventListener("input",()=>{$(b).value=$(a).value===""?(b==="dep"?0:""):$(a).value;$(b).dispatchEvent(new Event("input",{bubbles:true}))}));
-$("liveOpen").onclick=liveOpen;$("liveClose").onclick=liveClose;
+$("liveOpen").onclick=()=>liveOpen();$("liveClose").onclick=()=>liveClose();
 $("liveScale").addEventListener("input",()=>{live.ppc=+$("liveScale").value;live.scaled=true;$("liveTip").hidden=true;$("liveScaleV").textContent=`${live.ppc.toFixed(0)} px = 1 cm`;try{localStorage.setItem("pi-live-ppc",String(live.ppc))}catch(e){}liveDraw()});
 $("liveGrid").onclick=()=>{live.grid=!live.grid;$("liveGrid").setAttribute("aria-pressed",live.grid);liveDraw()};
 $("liveUse").onclick=()=>{if(!liveGuard("use","ยังไม่ได้เทียบสเกลกับไม้บรรทัดจริงในภาพนี้ ถ้าระยะถ่ายเปลี่ยน ค่าจะคลาดเคลื่อน · กดอีกครั้งเพื่อใช้สเกลเดิม"))return;const r=liveApplySize();
@@ -3823,7 +3839,7 @@ $("liveShot").onclick=()=>{if(!liveGuard("shot","ยังไม่ได้เ�
   if(f.file)go(f.file);else c.toBlob(b=>{if(b)go(new File([b],"wound.jpg",{type:"image/jpeg"}))},"image/jpeg",.92)};
 $("liveMk").onclick=()=>{live.mkOn=!live.mkOn;try{localStorage.setItem("pi-mk",live.mkOn?"1":"0")}catch(e){}mkPaint()};
 $("liveOv").addEventListener("pointerdown",e=>{const q=livePt(e);if(live.mkOn){const near=live.h&&live.h.some(h=>Math.hypot(h[0]-q[0],h[1]-q[1])<26);if(!near){e.preventDefault();mkTap(q[0],q[1]);return}}let best=-1,bd=34;live.h.forEach((h,i)=>{const d=Math.hypot(h[0]-q[0],h[1]-q[1]);if(d<bd){bd=d;best=i}});
-  if(best>=0)live.drag={k:"h",i:best};else if(Math.abs(q[1]-(live.ruler.y-12))<26&&q[0]>live.ruler.x-12)live.drag={k:"r",dx:q[0]-live.ruler.x,dy:q[1]-live.ruler.y};else return;
+  if(best>=0)live.drag={k:"h",i:best};else if(live.rulerOn&&Math.abs(q[1]-(live.ruler.y-12))<26&&q[0]>live.ruler.x-12)live.drag={k:"r",dx:q[0]-live.ruler.x,dy:q[1]-live.ruler.y};else return;
   $("liveOv").setPointerCapture(e.pointerId);e.preventDefault();liveDraw()});
 $("liveOv").addEventListener("pointermove",e=>{if(!live.drag)return;const q=livePt(e);if(live.drag.k==="h")live.h[live.drag.i]=q;else{live.ruler={x:q[0]-live.drag.dx,y:q[1]-live.drag.dy};live.scaled=true;$("liveTip").hidden=true}liveDraw()});
 ["pointerup","pointercancel"].forEach(t=>$("liveOv").addEventListener(t,()=>{live.drag=null;liveDraw()}));
@@ -5261,7 +5277,7 @@ function devCare(w){return w&&DEV_CARE?(w.devices||[]).map(k=>DEV_CARE[k]).filte
 function renderDevices(w){
   if(!DEVICES)return;const box=$("devBox");box.hidden=!$("device").checked;if(box.hidden)return;
   const ch=$("devChips");ch.innerHTML="";const cur=w.devices||[];
-  DEVICES.forEach(([k,t])=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.setAttribute("aria-pressed",cur.includes(k));
+  DEVICES.forEach(([k,t])=>{const b=document.createElement("button");b.type="button";b.innerHTML=`<span class="tl-ic">${sgIco(SG_ICO_DEV,k)}</span><span class="tl-t">${sgLbl("d:"+k,t)}</span>`;b.setAttribute("aria-pressed",cur.includes(k));
     b.onclick=()=>{const v=(w.devices||[]).slice(),i=v.indexOf(k);if(i>=0)v.splice(i,1);else v.push(k);w.devices=v;update()};ch.append(b)});
   const o=$("devOther");o.hidden=!cur.includes("other");if(document.activeElement!==o)o.value=w.deviceOther||"";
 }
@@ -6750,7 +6766,7 @@ $("bmTotal").hidden=true;$("bwStart").onclick=()=>{bmUI="";$("bmStep").onclick()
 /* ===== Wound measure: no preset lines — user drags length then width lines themselves ===== */
 var LC_OFF=[-9999,-9999];live.vis=[false,false];
 function lcHideLines(){live.vis=[false,false];if(!live.h)live.h=[LC_OFF.slice(),LC_OFF.slice(),LC_OFF.slice(),LC_OFF.slice()];for(let i=0;i<4;i++)live.h[i]=LC_OFF.slice();live.L=0;live.W=0}
-LC_TIP_MEAS='① เทียบสเกล: แตะ "กระดาษอ้างอิง 2×2 cm" แล้วแตะกระดาษในภาพ หรือเลื่อน "ปรับสเกล" ให้ขีดตรงกับไม้บรรทัดจริง ② ใช้นิ้วลากเส้นตามแนวยาวที่สุดของแผล (เส้นชมพู) ③ ลากเส้นตามแนวกว้างที่สุด ตั้งฉากกับเส้นแรก (เส้นฟ้า) ④ ระบบคำนวณพื้นที่ให้ กด "ใช้ค่านี้"';
+LC_TIP_MEAS='① เทียบสเกล: แตะ "กระดาษอ้างอิง 2×2 cm" แล้วแตะกระดาษในภาพ หรือเลื่อน "ปรับสเกล" (ไม้บรรทัดบนจอจะแสดงขณะเลื่อน) ให้ขีดตรงกับไม้บรรทัดจริง ② ใช้นิ้วลากเส้นตามแนวยาวที่สุดของแผล (เส้นชมพู) ③ ลากเส้นตามแนวกว้างที่สุด ตั้งฉากกับเส้นแรก (เส้นฟ้า) ④ ระบบคำนวณพื้นที่ให้ กด "ใช้ค่านี้"';
 {const _ll=liveLayout;liveLayout=function(){const keep=live.h;const r=_ll.apply(this,arguments);if(live.phase!=="meas"&&!keep){}return r}}
 {const _ph=lcPhase;lcPhase=function(p){if(p==="meas"||p==="aim")lcHideLines();const r=_ph.apply(this,arguments);try{$("liveRedraw").hidden=p!=="meas"}catch(e){}return r}}
 {const _ld=liveDraw;liveDraw=function(){const r=_ld.apply(this,arguments);if(live.phase!=="meas")return r;
@@ -6764,7 +6780,7 @@ LC_TIP_MEAS='① เทียบสเกล: แตะ "กระดาษอ�
 /* drawing gesture: drag on an empty area creates the next line */
 $("liveCam").addEventListener("pointerdown",e=>{if(e.target!==$("liveOv")||live.phase!=="meas"||live.mkOn)return;const q=livePt(e);
   const nearH=(live.h||[]).some((h,i)=>live.vis[i<2?0:1]&&Math.hypot(h[0]-q[0],h[1]-q[1])<34);if(nearH)return;
-  const nearRuler=Math.abs(q[1]-(live.ruler.y-12))<26&&q[0]>live.ruler.x-12;if(nearRuler)return;
+  const nearRuler=live.rulerOn&&Math.abs(q[1]-(live.ruler.y-12))<26&&q[0]>live.ruler.x-12;if(nearRuler)return;
   const li=!live.vis[0]?0:!live.vis[1]?1:-1;if(li<0)return;
   e.stopPropagation();e.preventDefault();const a=li*2;live.h[a]=q.slice();live.h[a+1]=q.slice();live.vis[li]=true;live.newLine=li;live.drag={k:"h",i:a+1};
   try{$("liveOv").setPointerCapture(e.pointerId)}catch(x){}liveDraw()},true);
@@ -6908,7 +6924,7 @@ function abClose(){$("abModal").hidden=true;abD=null;if([...document.querySelect
 function abForm(){if(!abD)return;$("abMsg").textContent="";
   $("abPh").innerHTML=abD.img?`<img alt="ภาพที่ถ่าย" src="${abD.img}">`:`<span class="ab-ph0">${PRONE_SVG('<path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.7l1.3-2h5l1.3 2h1.7A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.3" r="3.4"/>')}<b>ถ่ายภาพบริเวณที่ผิดปกติ</b><small>วางไม้บรรทัดข้างรอยเพื่อเทียบขนาด · ไม่ให้เห็นใบหน้าหรือชื่อผู้ป่วย</small></span>`;
   $("abCamL").firstChild.textContent=abD.img?"ถ่ายใหม่":"ถ่ายภาพ";
-  $("abType").innerHTML=ABN_T.map(([k,t,c])=>`<button type="button" data-k="${k}" style="--c:var(${c},#888)" aria-pressed="${abD.t===k}"><i></i>${esc(t)}</button>`).join("");
+  $("abType").innerHTML=ABN_T.map(([k,t,c])=>`<button type="button" data-k="${k}" style="--c:var(${c},#888)" aria-pressed="${abD.t===k}"><span class="tl-ic">${sgIco(SG_ICO_ABN,k)}</span><span class="tl-t">${sgLbl(k,t)}</span></button>`).join("");
   $("abType").querySelectorAll("button").forEach(b=>b.onclick=()=>{abD.t=b.dataset.k;abForm()});
   $("abLoc").innerHTML=ABN_L.map(l=>`<button type="button" data-l="${esc(l)}" aria-pressed="${abD.loc===l}">${esc(l)}</button>`).join("");
   $("abLoc").querySelectorAll("button").forEach(b=>b.onclick=()=>{abD.loc=b.dataset.l;abForm()});
@@ -7176,6 +7192,19 @@ function b3Mount(){if(!window.B3||!B3.ok())return;
     if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){io.disconnect();go()}});io.observe(host)}else go()})}
 {const _rm=renderMap;renderMap=function(){const r=_rm.apply(this,arguments);try{const sx=b3Sex();Object.values(b3v).forEach(v=>{if(!v.m)return;if(v.sex!==sx)v.setSex(sx);else v.draw(false)})}catch(e){}return r}}
 b3Mount();
+/* ===== Live camera: on-screen ruler hidden; shown only while adjusting scale ===== */
+live.rulerOn=false;
+function lcRulerPeek(){live.rulerOn=true;clearTimeout(live.rulerT);live.rulerT=setTimeout(()=>{if(live.drag&&live.drag.k==="r")return lcRulerPeek();live.rulerOn=false;try{liveDraw()}catch(e){}},2500);try{liveDraw()}catch(e){}}
+["input","pointerdown"].forEach(t=>$("liveScale").addEventListener(t,lcRulerPeek));
+$("liveOv").addEventListener("pointermove",()=>{if(live.drag&&live.drag.k==="r")lcRulerPeek()});
+{const _ph2=lcPhase;lcPhase=function(p){live.rulerOn=false;clearTimeout(live.rulerT);return _ph2.apply(this,arguments)}}
+/* ===== Icon tiles: abnormal-skin types and medical devices ===== */
+var SG_ICO_ABN={"rash": "<path d=\"M3 18c3-1.5 6-1.5 9 0s6 1.5 9 0\"/><circle cx=\"7\" cy=\"9\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"12.5\" cy=\"6.5\" r=\"1.3\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"16.5\" cy=\"10.5\" r=\"1.7\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"10\" cy=\"12.5\" r=\"1.2\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"5.5\" cy=\"14\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"19\" cy=\"6\" r=\"1\" fill=\"currentColor\" stroke=\"none\"/>", "bruise": "<path d=\"M6.5 6.5c3-3 9-2.5 11 1s1.5 9-2.5 10.5-9.5 1-11-3 0-6 2.5-8.5z\"/><path d=\"M10 10c1.5-1 4-.6 4.6 1s-.6 3.3-2.3 3.6-3.6-.4-3.6-2 .3-1.8 1.3-2.6z\" fill=\"currentColor\" fill-opacity=\".35\"/>", "blister": "<path d=\"M2.5 18h19\"/><path d=\"M5.5 18a6.5 6.5 0 0 1 13 0\"/><path d=\"M9 13.2a3 3 0 0 1 2.4-1.6\"/><circle cx=\"17.5\" cy=\"7\" r=\"2\"/><path d=\"M16.8 6.4a.9.9 0 0 1 .8-.5\"/>", "iad": "<path d=\"M9 3.5c2.2 3 3.6 4.8 3.6 6.6a3.6 3.6 0 0 1-7.2 0c0-1.8 1.4-3.6 3.6-6.6z\"/><path d=\"M16.5 7c1.4 1.9 2.3 3 2.3 4.2a2.3 2.3 0 0 1-4.6 0c0-1.2.9-2.3 2.3-4.2z\"/><path d=\"M3 18.5c2-1.3 4-1.3 6 0s4 1.3 6 0 4-1.3 6 0\"/>", "tear": "<path d=\"M3 15h5l2-2.5 2 3 2-3 2 2.5h5\"/><path d=\"M10 12.5 12 6l2 6.5\"/><path d=\"M3 19h18\"/>", "abr": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"4\"/><path d=\"M7 15l4-6M10.5 16l4.5-7M14.5 16l3-4.5\"/>", "surg": "<path d=\"M3 12h18\"/><path d=\"M6 8.5v7M10 8.5v7M14 8.5v7M18 8.5v7\"/>", "burn": "<path d=\"M12 21c-4 0-6.5-2.6-6.5-6 0-3.6 2.6-5.6 3.6-9 1.8 1.4 2.9 3.2 2.9 5.2 1-1 1.6-2.2 1.8-3.6 2.4 2 4.7 4.6 4.7 7.6 0 3.3-2.5 5.8-6.5 5.8z\"/><path d=\"M12 21c-1.7 0-2.8-1.1-2.8-2.6 0-1.6 1.3-2.5 2.8-4.4 1.5 1.9 2.8 2.8 2.8 4.4 0 1.5-1.1 2.6-2.8 2.6z\"/>", "chronic": "<circle cx=\"12\" cy=\"12\" r=\"3.2\"/><path d=\"M20 12a8 8 0 1 1-2.3-5.7\"/><path d=\"M18 3v3.6h-3.6\"/>", "infect": "<path d=\"M14 14.5V5a2 2 0 0 0-4 0v9.5a4 4 0 1 0 4 0z\"/><circle cx=\"12\" cy=\"17.5\" r=\"1.6\" fill=\"currentColor\" stroke=\"none\"/><path d=\"M12 16V9\"/><path d=\"M17.5 6h2.5M17.5 9.5h2.5\"/>", "iv": "<path d=\"M8 3h8v9a2.5 2.5 0 0 1-2.5 2.5h-3A2.5 2.5 0 0 1 8 12z\"/><path d=\"M8 7h4M8 10h3\"/><path d=\"M12 14.5V18c0 1.7 1.3 3 3 3h3\"/><circle cx=\"12\" cy=\"16.6\" r=\".9\" fill=\"currentColor\" stroke=\"none\"/>", "other": "<circle cx=\"6\" cy=\"12\" r=\"1.7\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"1.7\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"18\" cy=\"12\" r=\"1.7\" fill=\"currentColor\" stroke=\"none\"/>"};
+var SG_ICO_DEV={"ett": "<rect x=\"5\" y=\"2.5\" width=\"5\" height=\"3.5\" rx=\"1\"/><path d=\"M7.5 6v6a7 7 0 0 0 7 7h2.5\"/><ellipse cx=\"16\" cy=\"19\" rx=\"1.6\" ry=\"2.6\"/>", "trach": "<path d=\"M3.5 7.5h17\"/><rect x=\"3.5\" y=\"5.5\" width=\"17\" height=\"4\" rx=\"2\"/><path d=\"M12 9.5v3.5a5 5 0 0 0 5 5h1.5\"/><path d=\"M10 9.5v3.5a7 7 0 0 0 7 7h1.5\"/>", "ng": "<path d=\"M9 3c-1 2.6-1.5 4.5-3.5 7.4l2.3.8c.5.2.6.8.2 1.2L6.5 14\"/><path d=\"M8.4 10.8c3-.4 4.6.8 4.6 3V21\"/><circle cx=\"13\" cy=\"21\" r=\".1\"/><path d=\"M15.5 4h3a2 2 0 0 1 2 2v2\"/>", "foley": "<circle cx=\"12\" cy=\"4.8\" r=\"2.3\"/><path d=\"M12 7.1V12\"/><path d=\"M12 12c0 2-2 2.4-2 4\"/><rect x=\"6.5\" y=\"14.5\" width=\"11\" height=\"7\" rx=\"2\"/><path d=\"M9 18h6\"/>", "niv": "<path d=\"M12 4c3.6 0 6 3.8 6 8.2 0 3.6-2.6 6.3-6 6.3s-6-2.7-6-6.3C6 7.8 8.4 4 12 4z\"/><path d=\"M6.2 9.5 2.5 8M17.8 9.5l3.7-1.5M6.6 15.2 3 17M17.4 15.2 21 17\"/><path d=\"M12 18.5V21\"/>", "o2": "<path d=\"M4 20V11a8 8 0 0 1 16 0v9\"/><path d=\"M9 11.5h6\"/><path d=\"M10 11.5V9.5M14 11.5V9.5\"/>", "spo2": "<path d=\"M7 21V9a3.5 3.5 0 0 1 7 0v12\"/><rect x=\"5\" y=\"9.5\" width=\"11\" height=\"7\" rx=\"2.5\"/><path d=\"M16 13h1.5l1.2-2.5 1.6 5 1.2-2.5H22\"/>", "ccollar": "<ellipse cx=\"12\" cy=\"7\" rx=\"7.5\" ry=\"2.6\"/><path d=\"M4.5 7v9.5c0 1.5 3.4 2.6 7.5 2.6s7.5-1.1 7.5-2.6V7\"/><path d=\"M9 11.5v3M12 12v3M15 11.5v3\"/>", "splint": "<rect x=\"3.2\" y=\"9\" width=\"17.6\" height=\"6\" rx=\"3\" transform=\"rotate(-30 12 12)\"/><path d=\"M8.3 9.3l2.8 4.9M11.5 7.6l2.8 4.9M14.7 5.8l2.8 4.9\" />", "line": "<path d=\"M3.5 20.5 10 14\"/><path d=\"M8.5 12.5l3 3\"/><path d=\"M7 15.5 4.5 13M11.5 11l2.5-2.5 1.5 1.5-2.5 2.5\"/><path d=\"M14 8.5l5.5-5\"/><path d=\"M17.5 3.5l3 3\"/>", "drain": "<path d=\"M4 3.5v5a4 4 0 0 0 4 4h4\"/><path d=\"M12 9.5h5.5a3 3 0 0 1 3 3v5a3.5 3.5 0 0 1-3.5 3.5h-2a3.5 3.5 0 0 1-3.5-3.5v-5a3 3 0 0 1 .5-3z\"/><path d=\"M14.5 16h3\"/>", "restraint": "<rect x=\"3\" y=\"8\" width=\"18\" height=\"8\" rx=\"4\"/><rect x=\"9\" y=\"6.5\" width=\"6\" height=\"11\" rx=\"1.5\"/><path d=\"M11 10v4M13 10v4\"/>", "stock": "<path d=\"M8.5 2.5h7v10.2l3.2 3.1a3.1 3.1 0 0 1-2.2 5.2H10a3 3 0 0 1-3-3v-5.5c0-1.1.6-2 1.5-2.6z\"/><path d=\"M8.5 6h7M8.5 9.5h7\"/>", "other": "<circle cx=\"6\" cy=\"12\" r=\"1.7\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"1.7\" fill=\"currentColor\" stroke=\"none\"/><circle cx=\"18\" cy=\"12\" r=\"1.7\" fill=\"currentColor\" stroke=\"none\"/>"};
+var SG_LBL={iad:"IAD ผิวอักเสบ<br>จากความชื้น",tear:"Skin tear<br>ผิวฉีกขาด",chronic:"แผลเรื้อรัง<br>เบาหวาน/หลอดเลือด",infect:"บวม แดง ร้อน<br>สงสัยติดเชื้อ",iv:"ผิวรอบสาย IV<br>ยารั่วซึม",
+ "d:trach":"Tracheostomy<br>tube","d:ng":"NG/OG<br>tube","d:foley":"Foley<br>catheter","d:niv":"NIV/CPAP<br>mask","d:o2":"O2 cannula<br>HFNC","d:spo2":"SpO2<br>probe","d:splint":"Splint<br>Cast","d:line":"สาย IV<br>A-line","d:drain":"สายระบาย<br>(Drain)","d:restraint":"ผ้าผูกยึด","d:stock":"ถุงน่อง<br>อุปกรณ์รัด"};
+function sgLbl(k,t){return SG_LBL[k]||esc(t).replace(" / ","<br>")}
+function sgIco(set,k){const p=(set[k]||set.other||"");return `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`}
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
