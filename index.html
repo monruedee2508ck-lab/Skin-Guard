@@ -1958,8 +1958,7 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
 .b3-seg button,.b3-zoom button,.b3-views button{font:inherit;font-size:.84rem;border:0;background:transparent;color:var(--muted);padding:6px 14px;border-radius:9px;cursor:pointer;min-width:40px;min-height:34px}
 .b3-seg button[aria-pressed=true]{background:var(--pc);color:var(--surface);font-weight:600}
 .b3-zoom button{font-size:1.05rem;font-weight:600;padding:4px 12px;color:var(--ink)}
-.b3-views{position:absolute;left:50%;bottom:30px;transform:translateX(-50%)}
-.b3-views button{color:var(--ink)}
+.b3-top{flex-wrap:wrap}
 .b3-tip{position:absolute;left:0;right:0;bottom:8px;text-align:center;font-size:.72rem;color:var(--muted);pointer-events:none}
 .b3-load{position:absolute;inset:0;display:grid;place-items:center;font-size:.9rem;color:var(--muted)}
 .b3.ready .b3-load{display:none}
@@ -6963,62 +6962,94 @@ setTimeout(abReload,900);
 var B3=(function(){
 "use strict";
 /* ---------- body definition ---------- */
-function E(c,r,k,n){return {t:"e",c,r,k,n}}
-function C(a,b,r1,r2,k,n){return {t:"c",a,b,r1,r2,k,n}}
+function E(c,r,k,n,o){return Object.assign({t:"e",c,r,k,n,ti:"m",g:n},o||{})}
+function C(a,b,r1,r2,k,n,o){return Object.assign({t:"c",a,b,r1,r2,k,n,ti:"m",g:n},o||{})}
+const T={ti:"t"},Bn={ti:"b"},Fa={ti:"f"};
 function mir(list){const out=[];list.forEach(p=>{out.push(p);const m=JSON.parse(JSON.stringify(p));
-  if(m.t==="e"){if(m.c[0]===0)return;m.c[0]=-m.c[0]}else{if(m.a[0]===0&&m.b[0]===0)return;m.a[0]=-m.a[0];m.b[0]=-m.b[0]}out.push(m)});return out}
+  if(m.t==="e"){if(m.c[0]===0)return;m.c[0]=-m.c[0]}else{if(m.a[0]===0&&m.b[0]===0)return;m.a[0]=-m.a[0];m.b[0]=-m.b[0]}if(m.d)m.d[0]=-m.d[0];out.push(m)});return out}
 function bodyDef(sex){
-  const F=sex==="f";
-  const L=[];
-  // head & face
-  const hs=F?.965:1,H=(c,r,k,n,sub)=>{const e=E([c[0]*hs,1.6+(c[1]-1.6)*hs,c[2]*hs],r.map(v=>v*hs),k,n);if(sub)e.s=1;return e};
-  L.push(H([0,1.655,-.004],[.071,.09,.09],0,"head"));
-  L.push(H([0,1.60,.03],F?[.048,.056,.058]:[.052,.06,.06],.045,"face"));
-  L.push(H([0,1.548,.05],F?[.02,.016,.02]:[.024,.018,.022],.03,"face"));
-  L.push(H([.039,1.617,.062],[.02,.014,.016],.035,"face"));
-  L.push(H([0,1.661,.075],[.05,.012,.016],.03,"face"));
-  L.push(C([0,1.645,.088],[0,1.613,.101],.006,.0095,.012,"nose"));
-  L.push(H([.009,1.608,.094],[.008,.006,.007],.01,"nose"));
-  L.push(H([0,1.585,.083],[.016,.0055,.007],.008,"face"));
-  L.push(H([0,1.575,.081],[.014,.006,.007],.008,"face"));
-  L.push(H([.031,1.639,.088],[.016,.008,.009],.016,"face",1));
-  L.push(H([.031,1.637,.075],[.0105,.0095,.0105],.006,"face"));
-  L.push(H([.073,1.628,-.004],[.009,.026,.017],.008,"ear"));
-  // neck & shoulders
-  L.push(C([0,1.465,-.012],[0,1.588,-.006],F?.047:.054,F?.041:.047,.035,"neck"));
-  L.push(C([0,1.505,-.04],[F?.135:.152,1.445,-.024],.045,.032,.04,"trap"));
-  // torso
-  L.push(E([0,1.318,-.006],F?[.148,.15,.098]:[.166,.15,.104],.05,"chest"));
-  L.push(E([0,1.30,-.042],F?[.152,.15,.085]:[.176,.16,.09],.05,"chest"));
-  if(F){L.push(E([.074,1.292,.07],[.064,.064,.058],.04,"breast"))}
-  else L.push(E([.072,1.335,.05],[.078,.05,.042],.045,"chest"));
-  L.push(E([0,1.118,.004],F?[.118,.15,.088]:[.134,.16,.098],.08,"abd"));
-  L.push(E([0,.958,-.006],F?[.172,.11,.108]:[.154,.104,.104],.08,"pelvis"));
-  L.push(E([F?.079:.072,.905,-.056],F?[.096,.106,.084]:[.087,.098,.074],.04,"glute"));
-  // arms (A-pose)
-  const sx=F?.166:.186,ex=F?.236:.257,wx=F?.262:.285,af=F?.86:1,mf=F?.78:1;
-  L.push(E([sx,1.40,-.006],[.06*mf,.068*af,.06*mf],.04,"delt"));
-  L.push(C([sx+.008,1.386,-.006],[ex,1.13,-.02],.046*af,.035*af,.025,"uarm"));
-  L.push(E([(sx+ex)/2+.006,1.268,.014],[.034*mf,.068*af,.034*mf],.02,"uarm"));
-  L.push(E([ex,1.13,-.034],[.029*af,.03*af,.026*af],.03,"elbow"));
-  L.push(C([ex,1.13,-.02],[wx,.885,.014],.036*af,.023*af,.03,"farm"));
-  L.push(E([(ex+wx)/2-.002,1.05,.0],[.03*af,.07*af,.032*af],.03,"farm"));
-  L.push(E([wx+.004,.845,.02],[.016*af,.04*af,.034*af],.025,"hand"));
-  L.push(C([wx+.006,.83,.02],[wx+.012,.745,.024],.016*af,.011*af,.02,"hand"));
-  L.push(C([wx+.004,.83,.004],[wx+.009,.752,.0],.013*af,.009*af,.012,"hand"));
-  L.push(C([wx+.004,.83,.036],[wx+.008,.758,.044],.013*af,.009*af,.012,"hand"));
-  L.push(C([wx-.002,.855,.05],[wx-.008,.81,.062],.011*af,.009*af,.012,"hand"));
-  // legs
-  const hx=F?.095:.092,lf=F?1.02:1;
-  L.push(C([hx,.92,-.006],[.098,.53,.004],.083*lf,.058,.05,"thigh"));
-  L.push(E([.099,.72,.034],[.064*lf,.14,.054],.03,"thigh"));
-  L.push(E([.098,.507,.036],[.026,.03,.014],.03,"knee"));
-  L.push(C([.098,.52,0],[.098,.095,-.012],.047,.028,.045,"shin"));
-  L.push(E([.101,.375,-.03],[.042,.095,.043],.04,"calf"));
-  L.push(E([.098,.072,-.014],[.029,.028,.031],.025,"ankle"));
-  L.push(C([.098,.034,-.035],[.108,.024,.10],.031,.026,.03,"foot"));
-  L.push(C([.108,.024,.10],[.113,.016,.155],.026,.016,.02,"foot"));
-  L.push(E([.098,.038,-.044],[.028,.033,.03],.02,"heel"));
+  const F=sex==="f",L=[];
+  // ---- head & face (8-head proportion: head ≈ 1/8 of height)
+  const hs=F?.965:1,H=(c,r,k,n,o)=>E([c[0]*hs,1.6+(c[1]-1.6)*hs,c[2]*hs],r.map(v=>v*hs),k,n,o);
+  L.push(H([0,1.655,-.004],[.071,.09,.09],0,"head",{g:"head"}));
+  L.push(H([0,1.60,.03],F?[.048,.056,.058]:[.052,.06,.06],.045,"face",{g:"head"}));
+  L.push(H([0,1.548,.05],F?[.02,.016,.02]:[.024,.018,.022],.03,"face",{g:"head"}));
+  L.push(H([.039,1.617,.062],[.02,.014,.016],.035,"face",{g:"cheek"}));
+  L.push(H([0,1.661,.075],[.05,.012,.016],.03,"face",{g:"brow"}));
+  L.push(C([0,1.645,.088],[0,1.613,.101],.006,.0095,.012,"nose",{g:"nose",ti:"t"}));
+  L.push(H([.009,1.608,.094],[.008,.006,.007],.01,"nose",{g:"nose",ti:"t"}));
+  L.push(H([0,1.585,.083],[.016,.0055,.007],.008,"face",{g:"lip"}));
+  L.push(H([0,1.575,.081],[.014,.006,.007],.008,"face",{g:"lip"}));
+  L.push(Object.assign(H([.031,1.639,.088],[.016,.008,.009],.016,"face"),{s:1}));
+  L.push(H([.031,1.637,.075],[.0105,.0095,.0105],.006,"face",{g:"eye",ti:"e"}));
+  L.push(H([.073,1.628,-.004],[.009,.026,.017],.008,"ear",{g:"ear",ti:"t"}));
+  // ---- neck
+  L.push(C([0,1.465,-.014],[0,1.588,-.008],F?.045:.051,F?.04:.046,.035,"neck",{g:"neck",d:[0,1,0]}));
+  L.push(C([.052,1.598,-.02],[.017,1.458,.045],F?.013:.016,F?.010:.012,.02,"neck",{g:"scm",d:[-.25,-1,.45]}));
+  L.push(C([0,1.53,-.05],[F?.13:.152,1.452,-.03],F?.032:.042,.022,.04,"trap",{g:"trap",d:[1,-.5,0]}));
+  L.push(C([.024,1.462,.041],[F?.132:.146,1.47,.012],.0065,.006,.016,"chest",{g:"clav",ti:"b"}));
+  // ---- torso core
+  L.push(E([0,1.30,-.01],F?[.132,.148,.09]:[.150,.155,.098],.05,"chest",{g:"core",d:[0,1,0]}));
+  L.push(E([0,1.29,-.045],F?[.136,.148,.078]:[.162,.16,.084],.05,"chest",{g:"core",d:[0,1,0]}));
+  L.push(E([0,1.12,0],F?[.106,.15,.084]:[.128,.16,.092],.08,"abd",{g:"core",d:[0,1,0]}));
+  L.push(E([0,.958,-.006],F?[.178,.112,.108]:[.152,.104,.102],.08,"pelvis",{g:"core",d:[1,0,0]}));
+  // chest muscles
+  L.push(E([.07,1.342,F?.042:.05],F?[.064,.042,.03]:[.08,.052,.042],.035,"chest",{g:"pec",d:[1,.25,0]}));
+  L.push(C([0,1.43,.071],[0,1.27,.081],.007,.006,.02,"chest",{g:"stern",ti:"t"}));
+  if(F){L.push(E([.074,1.282,.078],[.062,.062,.058],.04,"breast",{g:"breast",ti:"f"}));L.push(E([.075,1.262,.09],[.05,.046,.05],.03,"breast",{g:"breast",ti:"f"}))}
+  // abdominals
+  [[1.205,.03],[1.135,.03],[1.065,.029]].forEach(([y,r],i)=>L.push(E([.034,y,F?.06:.08],[F?.029:.032,r,F?.016:.022],F?.03:.024,"abd",{g:"abs"+i,d:[0,1,0]})));
+  L.push(C([.03,1.03,F?.074:.083],[.024,.935,F?.07:.078],F?.025:.028,.022,.022,"abd",{g:"abs3",d:[0,1,0]}));
+  L.push(E([F?.098:.112,1.10,.028],F?[.044,.10,.056]:[.058,.11,.066],.04,"abd",{g:"obl",d:[.5,-1,.6]}));
+  L.push(E([F?.11:.12,1.25,.02],[.035,.06,.05],.035,"chest",{g:"serr",d:[1,-.6,0]}));
+  // back
+  L.push(E([F?.09:.11,1.24,-.062],F?[.06,.11,.04]:[.08,.13,.05],.04,"chest",{g:"lat",d:[-.4,1,0]}));
+  L.push(C([.032,1.42,-.098],[.033,1.0,-.096],.026,.028,.03,"abd",{g:"erec",d:[0,1,0]}));
+  L.push(E([.10,1.37,-.112],[.052,.062,.02],.03,"chest",{g:"scap",d:[1,.3,0]}));
+  L.push(C([.055,1.405,-.122],[F?.15:.16,1.43,-.092],.008,.007,.016,"chest",{g:"scapsp",ti:"b"}));
+  L.push(E([0,1.03,-.10],[.055,.07,.016],.03,"abd",{g:"lumb",ti:"t"}));
+  L.push(E([0,.95,-.104],[.036,.055,.018],.025,"pelvis",{g:"sacr",ti:"b"}));
+  L.push(C([.085,1.005,.065],[F?.16:.145,.995,-.03],.009,.009,.018,"pelvis",{g:"iliac",ti:"b"}));
+  L.push(E([F?.079:.072,.905,-.056],F?[.096,.106,.084]:[.087,.098,.074],.04,"glute",{g:"glute",d:[1,-.6,0]}));
+  // ---- arms (relaxed A-pose)
+  const sx=F?.156:.183,ex=F?.226:.25,wx=F?.252:.276,af=F?.84:1,mf=F?.7:1;
+  L.push(E([sx,1.40,-.006],[.058*mf,.066*af,.058*mf],.04,"delt",{g:"delt",d:[0,1,0]}));
+  L.push(C([sx+.008,1.386,-.006],[ex,1.13,-.02],.044*af,.034*af,.025,"uarm",{g:"uarm",d:[.25,-1,0]}));
+  L.push(E([(sx+ex)/2+.006,1.268,.016],[.032*mf,.07*af,.032*mf],.02,"uarm",{g:"bic",d:[.25,-1,0]}));
+  L.push(E([(sx+ex)/2+.004,1.27,-.036],[.034*mf,.075*af,.03*mf],.02,"uarm",{g:"tri",d:[.25,-1,0]}));
+  L.push(E([ex,1.13,-.045],[.017,.02,.013],.02,"elbow",{g:"olec",ti:"b"}));
+  L.push(C([ex,1.13,-.02],[wx,.885,.014],.035*af,.022*af,.03,"farm",{g:"farm",d:[.1,-1,.06]}));
+  L.push(E([(ex+wx)/2-.004,1.06,.012],[.026*af,.07*af,.026*af],.03,"farm",{g:"flex",d:[.1,-1,.06]}));
+  L.push(E([(ex+wx)/2+.008,1.05,-.014],[.024*af,.07*af,.024*af],.03,"farm",{g:"ext",d:[.1,-1,.06]}));
+  L.push(C([wx-.005,.94,.012],[wx,.875,.016],.021*af,.019*af,.02,"farm",{g:"wrist",ti:"t"}));
+  L.push(E([wx+.004,.845,.02],[.016*af,.04*af,.034*af],.025,"hand",{g:"hand",ti:"t"}));
+  L.push(C([wx+.006,.83,.02],[wx+.012,.745,.024],.016*af,.011*af,.02,"hand",{g:"hand",ti:"t"}));
+  L.push(C([wx+.004,.83,.004],[wx+.009,.752,.0],.013*af,.009*af,.012,"hand",{g:"hand",ti:"t"}));
+  L.push(C([wx+.004,.83,.036],[wx+.008,.758,.044],.013*af,.009*af,.012,"hand",{g:"hand",ti:"t"}));
+  L.push(C([wx-.002,.855,.05],[wx-.008,.81,.062],.011*af,.009*af,.012,"hand",{g:"thumb",ti:"t"}));
+  // ---- legs
+  const hx=F?.096:.092,lf=F?1.07:1;
+  L.push(C([hx,.92,-.006],[.098,.53,.004],.08*lf,.056,.05,"thigh",{g:"thigh",d:[0,1,0]}));
+  L.push(E([.099,.72,.046],[.038*lf,.15,.03],.03,"thigh",{g:"rf",d:[0,1,.05]}));
+  L.push(E([.136,.70,.004],[.038*lf,.14,.05],.03,"thigh",{g:"vl",d:[0,1,0]}));
+  L.push(E([.072,.585,.026],[.034*lf,.065,.03],.03,"thigh",{g:"vm",d:[.3,1,0]}));
+  L.push(E([.055,.78,.0],[.04*lf,.10,.05],.035,"thigh",{g:"add",d:[.4,1,0]}));
+  L.push(E([.098,.70,-.042],[.05*lf,.15,.04],.03,"thigh",{g:"ham",d:[0,1,0]}));
+  L.push(C([.15,.86,0],[.141,.54,.002],.011,.011,.016,"thigh",{g:"itb",ti:"t"}));
+  L.push(E([.098,.507,.038],[.024,.028,.012],.03,"knee",{g:"pat",ti:"b"}));
+  L.push(C([.098,.49,.034],[.098,.44,.03],.012,.011,.016,"knee",{g:"pten",ti:"t"}));
+  L.push(C([.098,.52,0],[.098,.095,-.012],.046,.027,.045,"shin",{g:"shin",d:[0,1,0]}));
+  L.push(E([.084,.40,-.036],[.03,.085,.034],.03,"calf",{g:"gm",d:[0,1,0]}));
+  L.push(E([.116,.405,-.03],[.028,.08,.032],.03,"calf",{g:"gl",d:[0,1,0]}));
+  L.push(E([.112,.33,.026],[.021,.11,.019],.03,"shin",{g:"tib",d:[0,1,0]}));
+  L.push(C([.09,.46,.034],[.093,.14,.02],.008,.007,.02,"shin",{g:"tibia",ti:"t"}));
+  L.push(C([.098,.21,-.036],[.098,.05,-.05],.014,.012,.02,"ankle",{g:"ach",ti:"t"}));
+  L.push(E([.098,.072,-.014],[.029,.028,.031],.025,"ankle",{g:"ankle",ti:"t"}));
+  L.push(E([.124,.072,-.012],[.011,.013,.012],.012,"ankle",{g:"malL",ti:"b"}));
+  L.push(E([.074,.077,-.008],[.011,.013,.012],.012,"ankle",{g:"malM",ti:"b"}));
+  L.push(C([.098,.034,-.035],[.108,.024,.10],.031,.026,.03,"foot",{g:"foot",ti:"t"}));
+  L.push(C([.108,.024,.10],[.113,.016,.155],.026,.016,.02,"foot",{g:"foot",ti:"t"}));
+  L.push(E([.098,.038,-.044],[.028,.033,.03],.02,"heel",{g:"heel",ti:"t"}));
   let P=mir(L);
   if(F){const s=.95;P.forEach(p=>{if(p.t==="e"){p.c=p.c.map(v=>v*s);p.r=p.r.map(v=>v*s)}else{p.a=p.a.map(v=>v*s);p.b=p.b.map(v=>v*s);p.r1*=s;p.r2*=s}p.k*=s})}
   P.forEach(prep);return P;
@@ -7039,22 +7070,27 @@ function sdP(p,x,y,z){
   return (Math.sqrt(x2*p.a2*p.il2)+yy*p.rr)*p.il2-p.r1;
 }
 function makeSDF(P){
-  return function(x,y,z){let d=1e9;
-    for(let i=0;i<P.length;i++){const p=P[i],c=p.cen,dx=x-c[0],dy=y-c[1],dz=z-c[2];
+  const bx0=-.42,by0=-.06,bz0=-.26,cs=.05,NX=17,NY=39,NZ=11,M=.05,lists=new Array(NX*NY*NZ);
+  for(let k=0;k<NZ;k++)for(let j=0;j<NY;j++)for(let i=0;i<NX;i++){const lo=[bx0+i*cs,by0+j*cs,bz0+k*cs],L=[];
+    P.forEach(p=>{const c=p.cen;let dd=0;for(let a=0;a<3;a++){const v=Math.max(lo[a]-c[a],0,c[a]-(lo[a]+cs));dd+=v*v}if(Math.sqrt(dd)-p.R-p.k<M)L.push(p)});lists[i+NX*(j+NY*k)]=L}
+  return function(x,y,z){const i=Math.floor((x-bx0)/cs),j=Math.floor((y-by0)/cs),k=Math.floor((z-bz0)/cs);
+    if(i<0||j<0||k<0||i>=NX||j>=NY||k>=NZ)return Math.max(.1,-y);
+    const Lp=lists[i+NX*(j+NY*k)];if(!Lp.length)return Math.max(M,-y);let d=1e9;
+    for(let q=0;q<Lp.length;q++){const p=Lp[q],c=p.cen,dx=x-c[0],dy=y-c[1],dz=z-c[2];
       const lb=Math.sqrt(dx*dx+dy*dy+dz*dz)-p.R;if(p.s?lb>p.k+.002:lb>d+p.k+.002)continue;
       const b=sdP(p,x,y,z);
       if(p.s){const h=Math.min(1,Math.max(0,.5-.5*(d+b)/p.k));d=d*(1-h)+(-b)*h+p.k*h*(1-h);continue}
       if(p.k>0){const h=Math.max(p.k-Math.abs(d-b),0)/p.k;d=Math.min(d,b)-h*h*p.k*.25}else d=Math.min(d,b)}
-    return Math.max(d,-y)};
+    if(d>M)d=Math.max(d,M);return Math.max(d,-y)};
 }
 function nearestPart(P,x,y,z){let best=null,bd=1e9;P.forEach(p=>{if(p.s)return;const d=sdP(p,x,y,z);if(d<bd){bd=d;best=p}});return best?best.n:""}
 /* ---------- mesh (surface nets) ---------- */
 function buildMesh(sex){
-  const P=bodyDef(sex),f=makeSDF(P),h=.0085;
+  const P=bodyDef(sex),f=makeSDF(P),h=.0075;
   const x0=-.36,y0=-.012,z0=-.17,nx=Math.ceil(.72/h)+1,ny=Math.ceil(1.80/h)+1,nz=Math.ceil(.36/h)+1;
   const B=4,cx=Math.ceil(nx/B)+1,cy=Math.ceil(ny/B)+1,cz=Math.ceil(nz/B)+1,cv=new Float32Array(cx*cy*cz);
   for(let k=0;k<cz;k++)for(let j=0;j<cy;j++)for(let i=0;i<cx;i++)cv[i+cx*(j+cy*k)]=f(x0+i*B*h,y0+j*B*h,z0+k*B*h);
-  const lim=B*h*1.8,near=new Uint8Array(cx*cy*cz);
+  const lim=B*h*1.45,near=new Uint8Array(cx*cy*cz);
   for(let k=0;k<cz-1;k++)for(let j=0;j<cy-1;j++)for(let i=0;i<cx-1;i++){let mn=1e9,mx=-1e9;
     for(let c=0;c<8;c++){const v=cv[(i+(c&1))+cx*((j+(c>>1&1))+cy*(k+(c>>2&1)))];if(v<mn)mn=v;if(v>mx)mx=v}
     near[i+cx*(j+cy*k)]=(mn<lim&&mx>-lim)?1:0}
@@ -7078,14 +7114,24 @@ function buildMesh(sex){
     if(k<nz-1&&s0!==(v[i+nx*(j+ny*(k+1))]<0))quad(I(i-1,j-1,k),I(i,j-1,k),I(i,j,k),I(i-1,j,k),s0)}
   const nv=pos.length/3,nor=new Float32Array(nv*3),ao=new Float32Array(nv),e=.002;
   for(let q=0;q<nv;q++){const x=pos[3*q],y=pos[3*q+1],z=pos[3*q+2];
-    let gx=f(x+e,y,z)-f(x-e,y,z),gy=f(x,y+e,z)-f(x,y-e,z),gz=f(x,y,z+e)-f(x,y,z-e);const l=Math.hypot(gx,gy,gz)||1;gx/=l;gy/=l;gz/=l;
+    const a1=f(x+e,y-e,z-e),a2=f(x-e,y-e,z+e),a3=f(x-e,y+e,z-e),a4=f(x+e,y+e,z+e);let gx=a1-a2-a3+a4,gy=-a1-a2+a3+a4,gz=-a1+a2-a3+a4;const l=Math.hypot(gx,gy,gz)||1;gx/=l;gy/=l;gz/=l;
     nor[3*q]=gx;nor[3*q+1]=gy;nor[3*q+2]=gz;
     let occ=0;[[.012,.5],[.03,.3],[.07,.2]].forEach(([dd,w])=>{occ+=w*Math.max(0,dd-f(x+gx*dd,y+gy*dd,z+gz*dd))/dd});ao[q]=Math.max(.25,1-occ*1.15)}
+  const TC={m:[.74,.26,.21],t:[.92,.85,.74],b:[.97,.94,.87],f:[.93,.77,.36],e:[.95,.95,.93]},NOSEAM={head:1,face:1,nose:1,ear:1};
+  const col=new Float32Array(nv*3),fib=new Float32Array(nv*3),aux=new Float32Array(nv*3),PP=P.filter(p=>!p.s);
+  for(let q=0;q<nv;q++){const x=pos[3*q],y=pos[3*q+1],z=pos[3*q+2];let p1=null,d1=1e9;
+    for(const p of PP){const c=p.cen,dx=x-c[0],dy=y-c[1],dz=z-c[2];if(Math.sqrt(dx*dx+dy*dy+dz*dz)-p.R>d1)continue;const d=sdP(p,x,y,z);if(d<d1){d1=d;p1=p}}
+    let p2=null,d2=1e9;for(const p of PP){if(p.g===p1.g)continue;const c=p.cen,dx=x-c[0],dy=y-c[1],dz=z-c[2];if(Math.sqrt(dx*dx+dy*dy+dz*dz)-p.R>d2)continue;const d=sdP(p,x,y,z);if(d<d2){d2=d;p2=p}}
+    const gap=p2?d2-d1:1,w=.5+.5*Math.min(1,gap/.006),c1=TC[p1.ti]||TC.m,c2=p2?(TC[p2.ti]||TC.m):c1;
+    for(let a=0;a<3;a++)col[3*q+a]=c1[a]*w+c2[a]*(1-w);
+    let dv=p1.d||(p1.t==="c"?p1.ba:[0,1,0]);const dl=Math.hypot(dv[0],dv[1],dv[2])||1;fib[3*q]=dv[0]/dl;fib[3*q+1]=dv[1]/dl;fib[3*q+2]=dv[2]/dl;
+    const isM=t=>t==="m",seamOK=p2&&(isM(p1.ti)||isM(p2.ti))&&!NOSEAM[p1.n]&&!NOSEAM[p2.n];
+    aux[3*q]=ao[q];aux[3*q+1]=seamOK?Math.min(1,gap/.003):1;aux[3*q+2]=(isM(p1.ti)?w:0)+(p2&&isM(p2.ti)?1-w:0)}
   // fix winding against normals
   for(let t=0;t<tri.length;t+=3){const a=tri[t],b=tri[t+1],c=tri[t+2];
     const ux=pos[3*b]-pos[3*a],uy=pos[3*b+1]-pos[3*a+1],uz=pos[3*b+2]-pos[3*a+2],wx=pos[3*c]-pos[3*a],wy=pos[3*c+1]-pos[3*a+1],wz=pos[3*c+2]-pos[3*a+2];
     const cxx=uy*wz-uz*wy,cyy=uz*wx-ux*wz,czz=ux*wy-uy*wx;if(cxx*nor[3*a]+cyy*nor[3*a+1]+czz*nor[3*a+2]<0){tri[t+1]=c;tri[t+2]=b}}
-  return {P,f,pos:new Float32Array(pos),nor,ao,idx:new Uint32Array(tri),top:F_TOP(sex)};
+  return {P,f,pos:new Float32Array(pos),nor,ao,col,fib,aux,idx:new Uint32Array(tri),top:F_TOP(sex)};
 }
 function F_TOP(sex){return sex==="f"?1.66:1.75}
 /* ---------- landmarks (bony prominences) mapped to the app's site list ---------- */
@@ -7122,19 +7168,22 @@ function rotX(a){const c=Math.cos(a),s=Math.sin(a);return new Float32Array([1,0,
 function tr(x,y,z){return new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,x,y,z,1])}
 function xf(m,p,w){const x=p[0],y=p[1],z=p[2];return [m[0]*x+m[4]*y+m[8]*z+m[12]*w,m[1]*x+m[5]*y+m[9]*z+m[13]*w,m[2]*x+m[6]*y+m[10]*z+m[14]*w,m[3]*x+m[7]*y+m[11]*z+m[15]*w]}
 /* ---------- GL ---------- */
-const VS=`attribute vec3 aP;attribute vec3 aN;attribute float aO;uniform mat4 uMV;uniform mat4 uPr;varying vec3 vN;varying vec3 vV;varying float vO;varying vec3 vP;
-void main(){vec4 mv=uMV*vec4(aP,1.);vV=-mv.xyz;vN=(uMV*vec4(aN,0.)).xyz;vO=aO;vP=aP;gl_Position=uPr*mv;}`;
-const FS=`precision mediump float;varying vec3 vN;varying vec3 vV;varying float vO;varying vec3 vP;uniform vec3 uC;
-void main(){vec3 n=normalize(vN),v=normalize(vV);
+const VS=`attribute vec3 aP;attribute vec3 aN;attribute vec3 aC;attribute vec3 aF;attribute vec3 aX;uniform mat4 uMV;uniform mat4 uPr;
+varying vec3 vN;varying vec3 vV;varying vec3 vP;varying vec3 vNm;varying vec3 vC;varying vec3 vF;varying vec3 vX;
+void main(){vec4 mv=uMV*vec4(aP,1.);vV=-mv.xyz;vN=(uMV*vec4(aN,0.)).xyz;vNm=aN;vP=aP;vC=aC;vF=aF;vX=aX;gl_Position=uPr*mv;}`;
+const FS=`precision mediump float;varying vec3 vN;varying vec3 vV;varying vec3 vP;varying vec3 vNm;varying vec3 vC;varying vec3 vF;varying vec3 vX;uniform vec3 uC;uniform float uM;
+void main(){vec3 n=normalize(vN),v=normalize(vV);float ao=vX.x,seam=smoothstep(0.,1.,vX.y),mus=vX.z;
  vec3 L1=normalize(vec3(-.45,.65,.62)),L2=normalize(vec3(.75,.15,.45)),L3=normalize(vec3(.2,.35,-.9));
  float nl=dot(n,L1),d1=clamp((nl+.22)/1.22,0.,1.),d2=clamp((dot(n,L2)+.3)/1.3,0.,1.),d3=max(dot(n,L3),0.);
- float hemi=.55+.45*n.y,nv=max(dot(n,v),0.),rim=pow(1.-nv,2.6);
- vec3 h=normalize(L1+v);float sp=pow(max(dot(n,h),0.),30.)*.16*(.35+.65*vO);
+ float hemi=.55+.45*n.y,nv=max(dot(n,v),0.),rim=pow(1.-nv,2.6);vec3 h=normalize(L1+v);float nh=max(dot(n,h),0.);
  float sss=smoothstep(-.25,.25,nl)*(1.-smoothstep(.15,.55,nl));
- vec3 base=uC*(.95+.06*sin(vP.y*40.)*0.);
- vec3 col=base*(.26*hemi*vO+.80*d1*mix(.75,1.,vO)+.22*d2*vO)+vec3(.55,.12,.06)*.09*sss*vO+sp*vec3(1.,.96,.92)+rim*(.10+.22*d3)*vec3(.95,.97,1.);
- col*=mix(.82,1.,vO);
- gl_FragColor=vec4(pow(col,vec3(.95)),1.);}`;
+ vec3 base;float spec;
+ if(uM>.5){vec3 t=normalize(cross(normalize(vF),normalize(vNm))+vec3(1e-4));float s1=sin(dot(vP,t)*820.),s2=sin(dot(vP,t)*230.+s1*.6);
+   float fib=1.-mus*(.09*(s1*.5+.5)+.07*(s2*.5+.5));base=vC*fib*mix(.6,1.,seam);
+   base=mix(base,base*vec3(1.08,.92,.9),mus*.25*(1.-nl));spec=pow(nh,40.)*(.10+.28*mus)+pow(nh,8.)*.05*mus;}
+ else{base=uC*mix(.93,1.,seam*.5+.5);spec=pow(nh,30.)*.14;}
+ vec3 col=base*(.26*hemi*ao+.80*d1*mix(.75,1.,ao)+.22*d2*ao)+vec3(.55,.12,.06)*.09*sss*ao*(1.-uM*.5)+spec*(.35+.65*ao)*vec3(1.,.96,.92)+rim*(.10+.22*d3)*vec3(.95,.97,1.);
+ col*=mix(.82,1.,ao);gl_FragColor=vec4(pow(col,vec3(.95)),1.);}`;
 function sh(gl,t,s){const o=gl.createShader(t);gl.shaderSource(o,s);gl.compileShader(o);if(!gl.getShaderParameter(o,gl.COMPILE_STATUS))throw new Error(gl.getShaderInfoLog(o));return o}
 function glOk(){try{const c=document.createElement("canvas");return !!(window.WebGLRenderingContext&&(c.getContext("webgl")||c.getContext("experimental-webgl")))}catch(e){return false}}
 /* ---------- viewer ---------- */
@@ -7143,17 +7192,19 @@ function Viewer(host,opt){
   host.classList.add("b3");
   host.innerHTML=`<canvas class="b3-gl" aria-hidden="true"></canvas><canvas class="b3-ov" aria-hidden="true"></canvas>
    <div class="b3-top"><div class="b3-seg" role="group" aria-label="เพศของผู้ป่วย"><button type="button" data-sx="m">ชาย</button><button type="button" data-sx="f">หญิง</button></div>
+   <div class="b3-seg b3-mode" role="group" aria-label="รูปแบบการแสดง"><button type="button" data-md="mus">กล้ามเนื้อ</button><button type="button" data-md="skin">ผิว</button></div>
    <div class="b3-zoom"><button type="button" data-z="-1" aria-label="ซูมออก">−</button><button type="button" data-z="1" aria-label="ซูมเข้า">+</button></div></div>
-   <div class="b3-views" role="group" aria-label="มุมมอง"><button type="button" data-v="0">หน้า</button><button type="button" data-v="${Math.PI/2}">ขวา</button><button type="button" data-v="${Math.PI}">หลัง</button><button type="button" data-v="${-Math.PI/2}">ซ้าย</button></div>
    <div class="b3-tip">ลากเพื่อหมุน · แตะเพื่อปักหมุด</div><div class="b3-load">กำลังสร้างหุ่น 3 มิติ…</div>`;
   V.host=host;V.cv=host.querySelector(".b3-gl");V.ov=host.querySelector(".b3-ov");
   const gl=V.gl=V.cv.getContext("webgl",{antialias:true,alpha:true,premultipliedAlpha:true})||V.cv.getContext("experimental-webgl");
   V.u32=!!gl.getExtension("OES_element_index_uint");
   const pr=gl.createProgram();gl.attachShader(pr,sh(gl,gl.VERTEX_SHADER,VS));gl.attachShader(pr,sh(gl,gl.FRAGMENT_SHADER,FS));gl.linkProgram(pr);V.pr=pr;
-  V.loc={aP:gl.getAttribLocation(pr,"aP"),aN:gl.getAttribLocation(pr,"aN"),aO:gl.getAttribLocation(pr,"aO"),uMV:gl.getUniformLocation(pr,"uMV"),uPr:gl.getUniformLocation(pr,"uPr"),uC:gl.getUniformLocation(pr,"uC")};
+  V.loc={aP:gl.getAttribLocation(pr,"aP"),aN:gl.getAttribLocation(pr,"aN"),aC:gl.getAttribLocation(pr,"aC"),aF:gl.getAttribLocation(pr,"aF"),aX:gl.getAttribLocation(pr,"aX"),uMV:gl.getUniformLocation(pr,"uMV"),uPr:gl.getUniformLocation(pr,"uPr"),uC:gl.getUniformLocation(pr,"uC"),uM:gl.getUniformLocation(pr,"uM")};
   V.buf={};
   host.querySelectorAll("[data-sx]").forEach(b=>b.onclick=()=>{V.setSex(b.dataset.sx);V.opt.onSex&&V.opt.onSex(b.dataset.sx)});
   host.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>V.turn(+b.dataset.v));
+  host.querySelectorAll("[data-md]").forEach(b=>b.onclick=()=>{V.setMode(b.dataset.md);try{localStorage.setItem("pi-b3mode",b.dataset.md)}catch(e){}V.opt.onMode&&V.opt.onMode(b.dataset.md)});
+  let md="mus";try{md=localStorage.getItem("pi-b3mode")||"mus"}catch(e){}V.setMode(md);
   host.querySelectorAll("[data-z]").forEach(b=>b.onclick=()=>V.zoom(+b.dataset.z>0?.8:1.25));
   // pointer
   const pts=new Map();let st=null,pinch=null;
@@ -7182,24 +7233,25 @@ Viewer.prototype.anim=function(){const V=this;if(V._raf)return;const step=()=>{V
 Viewer.prototype.setSex=function(sx){const V=this;sx=sx==="f"?"f":"m";V.host.querySelectorAll("[data-sx]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.sx===sx));
   if(V.sex===sx&&V.m)return;V.sex=sx;const go=()=>{V.m=model(sx);V.upload();V.host.classList.add("ready");V.draw(false)};
   if(cache[sx])go();else{V.host.classList.remove("ready");setTimeout(go,30)}};
+Viewer.prototype.setMode=function(md){this.mode=md==="skin"?"skin":"mus";this.host.querySelectorAll("[data-md]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.md===this.mode));this.draw(false)};
 Viewer.prototype.upload=function(){const V=this,gl=V.gl,m=V.m;if(V.bufSex===V.sex)return;V.bufSex=V.sex;
   const mk=(d,t)=>{const b=gl.createBuffer();gl.bindBuffer(t||gl.ARRAY_BUFFER,b);gl.bufferData(t||gl.ARRAY_BUFFER,d,gl.STATIC_DRAW);return b};
   Object.values(V.buf).forEach(b=>gl.deleteBuffer(b));
-  if(V.u32){V.buf={p:mk(m.pos),n:mk(m.nor),o:mk(m.ao),i:mk(m.idx,gl.ELEMENT_ARRAY_BUFFER)};V.count=m.idx.length}
-  else{const n=m.idx.length,p=new Float32Array(n*3),q=new Float32Array(n*3),o=new Float32Array(n);for(let i=0;i<n;i++){const k=m.idx[i];p.set(m.pos.subarray(3*k,3*k+3),3*i);q.set(m.nor.subarray(3*k,3*k+3),3*i);o[i]=m.ao[k]}
-    V.buf={p:mk(p),n:mk(q),o:mk(o)};V.count=n}};
+  if(V.u32){V.buf={p:mk(m.pos),n:mk(m.nor),c:mk(m.col),f:mk(m.fib),x:mk(m.aux),i:mk(m.idx,gl.ELEMENT_ARRAY_BUFFER)};V.count=m.idx.length}
+  else{const n=m.idx.length,ex=a=>{const o=new Float32Array(n*3);for(let i=0;i<n;i++){const k=m.idx[i];o.set(a.subarray(3*k,3*k+3),3*i)}return o};
+    V.buf={p:mk(ex(m.pos)),n:mk(ex(m.nor)),c:mk(ex(m.col)),f:mk(ex(m.fib)),x:mk(ex(m.aux))};V.count=n}};
 Viewer.prototype.resize=function(){const V=this,r=V.host.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);if(!r.width)return;
   const w=Math.round(r.width*dpr),h=Math.round(r.height*dpr);if(V.cv.width!==w||V.cv.height!==h){V.cv.width=w;V.cv.height=h;V.ov.width=w;V.ov.height=h}V.dpr=dpr;V.W=r.width;V.H=r.height;V.draw(false)};
-Viewer.prototype.mats=function(){const V=this,top=V.m?V.m.top:1.75,cy=top*.44;
+Viewer.prototype.mats=function(){const V=this,top=V.m?V.m.top:1.75,cy=top*.49;
   const M=mul(rotX(V.pitch),mul(rotY(V.yaw),tr(0,-cy,0))),Vw=tr(0,-V.pan,-V.dist),MV=mul(Vw,M);
-  const fov=2*Math.atan(top*.60/3.9),as=V.W/V.H;let fy=fov;if(as<.52)fy=2*Math.atan(Math.tan(fov/2)*.52/as);
+  const fov=2*Math.atan(top*.62/3.9),as=V.W/V.H;let fy=fov;if(as<.52)fy=2*Math.atan(Math.tan(fov/2)*.52/as);
   return {MV,P:persp(fy,as,.05,20),cy,fy,as}};
 Viewer.prototype.draw=function(moving){const V=this;if(!V.m||!V.W)return;const gl=V.gl,L=V.loc,{MV,P}=V.mats();V._mv={MV,P};
   gl.viewport(0,0,V.cv.width,V.cv.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);gl.enable(gl.CULL_FACE);
   gl.useProgram(V.pr);gl.uniformMatrix4fv(L.uMV,false,MV);gl.uniformMatrix4fv(L.uPr,false,P);
-  gl.uniform3fv(L.uC,V.sex==="f"?[.90,.74,.65]:[.86,.70,.60]);
+  gl.uniform3fv(L.uC,V.sex==="f"?[.92,.75,.64]:[.88,.70,.58]);gl.uniform1f(L.uM,V.mode==="mus"?1:0);
   const at=(b,l,n)=>{gl.bindBuffer(gl.ARRAY_BUFFER,b);gl.enableVertexAttribArray(l);gl.vertexAttribPointer(l,n,gl.FLOAT,false,0,0)};
-  at(V.buf.p,L.aP,3);at(V.buf.n,L.aN,3);at(V.buf.o,L.aO,1);
+  at(V.buf.p,L.aP,3);at(V.buf.n,L.aN,3);at(V.buf.c,L.aC,3);at(V.buf.f,L.aF,3);at(V.buf.x,L.aX,3);
   if(V.u32){gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,V.buf.i);gl.drawElements(gl.TRIANGLES,V.count,gl.UNSIGNED_INT,0)}else gl.drawArrays(gl.TRIANGLES,0,V.count);
   V.overlay(moving)};
 Viewer.prototype.toScreen=function(p){const {MV,P}=this._mv,v=xf(MV,p,1),c=xf(P,v,1);return {x:(c[0]/c[3]*.5+.5)*this.W,y:(.5-c[1]/c[3]*.5)*this.H,z:-v[2],v}};
