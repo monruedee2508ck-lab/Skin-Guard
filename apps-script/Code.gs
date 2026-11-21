@@ -6,7 +6,7 @@
  */
 const KEY = 'CHANGE-ME-TO-A-LONG-SECRET';
 const PHOTO_FOLDER = 'SkinGuard-Photos';
-const KEEP_DAYS = 7;            // ลบภาพอัตโนมัติเมื่อครบ 7 วันนับจากวันที่ถ่าย
+const KEEP_DAYS = 0;            // 0 = ไม่ลบตามอายุภาพ: ลบเมื่อผู้ป่วยจำหน่าย/ย้ายออกเท่านั้น
 const VIEW_TAB = 'ภาพรายเวร';    // แท็บสำหรับเปิดดูภาพ วันที่ เวลา และเวร
 const TZ = 'Asia/Bangkok';
 
@@ -54,7 +54,7 @@ function setup() {
   const f = folder();
   viewSheet(); dailySheet(); woundSheet(); KPI_TABS.forEach(kpiSheet);
   ensureCleanupTrigger();
-  Logger.log('ตั้งเวลาลบภาพอัตโนมัติทุกวัน 01:00 น. (ภาพครบ ' + KEEP_DAYS + ' วัน หรือผู้ป่วยจำหน่ายแล้ว)');
+  Logger.log('ตั้งเวลาตรวจลบภาพทุกวัน 01:00 น. (ลบเฉพาะภาพของผู้ป่วยที่จำหน่าย/ย้ายออกแล้ว)');
   Logger.log('พร้อมใช้งาน: สร้างแท็บ ' + Object.keys(SHEETS).join(', ') + ' และโฟลเดอร์ภาพ ' + f.getName() + ' แล้ว');
   Logger.log('สเปรดชีต: ' + ss.getName() + ' ' + ss.getUrl());
   Logger.log('ขั้นต่อไป: Deploy > New deployment > Web app > Execute as: Me > Who has access: Anyone');
@@ -135,7 +135,7 @@ function push(req) {
       }
       const view = rec._view || {}, thumb = view.thumb || '';
       const meta = Object.assign({}, rec); delete meta.img; delete meta._view;
-      const time = String(rec.time || ''), sh = shiftOf(time), exp = rec.cat === 'abn' ? '' : addDays(dstr(rec.date), KEEP_DAYS); // ภาพผิวหนังผิดปกติ/แผลอื่น: เก็บจนจำหน่ายผู้ป่วย
+      const time = String(rec.time || ''), sh = shiftOf(time), exp = KEEP_DAYS > 0 && rec.cat !== 'abn' ? addDays(dstr(rec.date), KEEP_DAYS) : ''; // ภาพผิวหนังผิดปกติ/แผลอื่น: เก็บจนจำหน่ายผู้ป่วย
       upsert(F, fi, it.key, ["'" + it.key, it.store || '', "'" + (rec.hn || ''), "'" + dstr(rec.date), rec.site || '', now, ot, '', fileId, JSON.stringify(meta), "'" + time, sh, view.kind || rec.kind || it.store || '', "'" + exp]);
       try { viewAdd(it.key, rec, view, thumb, sh, exp, ot, fileId); } catch (e) {}
     }
@@ -304,14 +304,14 @@ function cleanupPhotos() {
   let n = 0;
   rows.forEach((r, i) => {
     if (r[7] === 'y') return;
-    const keep = String(r[9] || '').indexOf('"cat":"abn"') >= 0, d = dstr(r[3]), exp = keep ? '' : addDays(d, KEEP_DAYS);
+    const keep = String(r[9] || '').indexOf('"cat":"abn"') >= 0, d = dstr(r[3]), exp = keep || !(KEEP_DAYS > 0) ? '' : addDays(d, KEEP_DAYS);
     if ((exp && exp <= t) || gone[String(r[2])]) { photoGone(F, i + 2, now, 'auto'); n++; }
   });
   // แถวในแท็บภาพรายเวรที่ไม่มีภาพแล้ว
   const V = book().getSheetByName(VIEW_TAB);
   if (V && V.getLastRow() > 1) {
     const vr = V.getRange(2, 1, V.getLastRow() - 1, VIEW_HEAD.length).getValues();
-    for (let i = vr.length - 1; i >= 0; i--) { const exp = dstr(vr[i][11]); if ((exp && exp <= t) || gone[String(vr[i][3])]) V.deleteRow(i + 2); }
+    for (let i = vr.length - 1; i >= 0; i--) { const exp = dstr(vr[i][11]); if ((KEEP_DAYS > 0 && exp && exp <= t) || gone[String(vr[i][3])]) V.deleteRow(i + 2); }
   }
   if (n) sheet('log').appendRow([new Date(now), 'auto', 'cleanupPhotos', n + ' ภาพ']);
   return n;
