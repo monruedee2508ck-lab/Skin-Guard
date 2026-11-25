@@ -1980,6 +1980,36 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
 @media (min-width:720px){.tiles>button{flex-basis:calc((100% - 24px)/4)}}
 .ab-loc{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .ab-loc button{justify-content:center;text-align:center;border-radius:12px;padding:8px 4px;font-size:.78rem;line-height:1.2;min-height:40px}
+/* history photo thumbs + progress viewer */
+.hp-th{display:flex;align-items:center;gap:6px;margin-top:6px;padding:3px 9px 3px 3px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--teal);font:inherit;font-size:.76rem;font-weight:600;cursor:pointer;white-space:nowrap}
+.hp-th img{width:40px;height:40px;object-fit:cover;border-radius:7px;display:block;background:#000}
+.hp-th:active{transform:scale(.97)}
+.viewer .hp-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:.86rem;color:rgba(255,255,255,.8)}
+.viewer .hp-seg{display:inline-flex;background:rgba(255,255,255,.12);border-radius:99px;padding:3px}
+.viewer .hp-seg button{font:inherit;font-size:.82rem;border:0;border-radius:99px;background:none;color:#fff;padding:6px 14px;cursor:pointer}
+.viewer .hp-seg button[aria-pressed=true]{background:#fff;color:#0b1f1d;font-weight:600}
+.viewer .hp-seg button:disabled{opacity:.4;cursor:default}
+.viewer .hp-stage{display:flex;align-items:center;gap:8px}
+.viewer .hp-main{flex:1;min-width:0}
+.viewer .hp-main.two{grid-template-columns:1fr 1fr;gap:10px}
+.viewer .hp-main.two img{max-height:52vh}
+.viewer .hp-nav{flex:none;width:40px;height:56px;border:0;border-radius:12px;background:rgba(255,255,255,.14);color:#fff;font-size:1.8rem;line-height:1;cursor:pointer}
+.viewer .hp-nav:disabled{opacity:.25;cursor:default}
+.viewer .hp-lab{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.02em;background:rgba(255,255,255,.16);border-radius:99px;padding:2px 9px;margin-bottom:3px}
+.viewer .hp-meta{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:3px}
+.viewer .hp-meta .pill{font-size:.74rem}
+.viewer .hp-sum{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;background:rgba(255,255,255,.08);border-radius:12px;padding:10px 14px;font-size:.86rem}
+.viewer .hp-sum>span:first-child{width:100%;color:rgba(255,255,255,.7);font-size:.8rem}
+.viewer .hp-d{font-weight:700;margin-left:4px}.viewer .hp-d.good{color:#5ee0a8}.viewer .hp-d.bad{color:#ff8a8a}.viewer .hp-d.same{color:rgba(255,255,255,.7)}
+.viewer .hp-strip{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scroll-snap-type:x mandatory}
+.viewer .hp-strip button{flex:none;scroll-snap-align:center;border:2px solid transparent;border-radius:12px;background:rgba(255,255,255,.08);padding:3px;color:#fff;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px}
+.viewer .hp-strip button[aria-pressed=true]{border-color:#fff}
+.viewer .hp-strip img{width:64px;height:64px;object-fit:cover;border-radius:9px;max-height:none}
+.viewer .hp-strip small{font-size:.7rem;color:rgba(255,255,255,.8)}
+.viewer .hp-one{margin:0;font-size:.86rem;color:rgba(255,255,255,.7)}
+.viewer.hp-on{background:#071211}
+.viewer .hp-main.two figcaption{font-size:.78rem}
+@media (max-width:560px){.viewer .hp-main.two{gap:6px}.viewer .hp-main.two img{max-height:40vh;object-fit:contain}.viewer .hp-main.two .hp-meta{gap:3px 8px}.viewer .hp-nav{width:30px;height:48px;font-size:1.5rem}.viewer .hp-stage{gap:5px}}
 </style>
 </head>
 <body>
@@ -7203,6 +7233,53 @@ function sgData(){return sgData.d||(sgData.d={abn:{"rash": "<path d=\"M3 18c3-1.
  "d:trach":"Tracheostomy<br>tube","d:ng":"NG/OG<br>tube","d:foley":"Foley<br>catheter","d:niv":"NIV/CPAP<br>mask","d:o2":"O2 cannula<br>HFNC","d:spo2":"SpO2<br>probe","d:splint":"Splint<br>Cast","d:line":"สาย IV<br>A-line","d:drain":"สายระบาย<br>(Drain)","d:restraint":"ผ้าผูกยึด","d:stock":"ถุงน่อง<br>อุปกรณ์รัด"}})}
 function sgLbl(k,t){return sgData().lbl[k]||esc(t).replace(" / ","<br>")}
 function sgIco(set,k){set=sgData()[set];const p=(set[k]||set.other||"");return `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`}
+/* ===== History: tap a photo to follow wound progress ===== */
+var hpMap={},hpSeq=0,hpState=null;
+async function hpDecorate(){
+  const box=$("hist");if(!box)return;const my=++hpSeq;
+  const ids=[...box.querySelectorAll("button.del:not(.view)[data-id]")].map(b=>b.dataset.id);
+  const hns=[...new Set(hist.filter(h=>ids.includes(String(h.id))).map(h=>h.hn).filter(Boolean))];
+  const m={};for(const hn of hns){try{(await wpAll(hn)).forEach(p=>{if(p&&p.img)m[String(p.id)]=p})}catch(e){}}
+  if(my!==hpSeq)return;hpMap=m;let n=0;
+  box.querySelectorAll("tbody tr").forEach(tr=>{const b=tr.querySelector("button.del:not(.view)[data-id]");if(!b)return;const p=m[String(b.dataset.id)];if(!p)return;n++;
+    const td=tr.querySelector("td");if(!td||td.querySelector(".hp-th"))return;
+    const t=document.createElement("button");t.type="button";t.className="hp-th";t.setAttribute("aria-label","ดูภาพแผลและความก้าวหน้า");
+    t.innerHTML='<img alt=""><span>ภาพ</span>';t.querySelector("img").src=p.img;t.onclick=()=>hpOpen(String(p.id));td.append(t)});
+  const hs=$("histSum");if(hs&&n&&!/ภาพ/.test(hs.textContent))hs.textContent+=` · ${n} ภาพ`;
+}
+{const _rh=renderHist;renderHist=function(){const r=_rh.apply(this,arguments);try{hpDecorate()}catch(e){}return r}}
+function hpSeries(p){return Object.values(hpMap).filter(x=>x.hn===p.hn&&x.site===p.site&&(x.side||"")===(p.side||"")).sort((a,b)=>((a.date||"")+(a.time||"")+a.id).localeCompare((b.date||"")+(b.time||"")+b.id))}
+function hpOpen(id){const p=hpMap[id];if(!p)return;const ser=hpSeries(p);hpState={ser,i:Math.max(0,ser.findIndex(x=>String(x.id)===String(id))),cmp:false};hpPaint();$("viewer").classList.add("hp-on");$("viewer").hidden=false;const c=$("viewer").querySelector(".vclose");if(c)c.focus()}
+function hpDays(a,b){return Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/864e5)}
+function hpFig(x,lab){const S=STAGES[x.stage],d0=hpState.ser[0].date;
+  return `<figure><img alt="ภาพแผล ${esc(thDateLong(x.date))}" src="${x.img}"><figcaption>${lab?`<span class="hp-lab">${lab}</span>`:""}<b>${esc(thDateLong(x.date))}${x.time?" · "+esc(x.time)+" น.":""}</b>
+   <span class="hp-meta">${S?`<span class="pill" style="--c:var(${S.c})">${esc(S.name.split(" (")[0])}</span>`:""}${x.push!=null?`<span>PUSH <b>${x.push}</b></span>`:""}${x.a?`<span>พื้นที่ <b>${(+x.a).toFixed(1)}</b> cm²</span>`:""}<span>วันที่ ${hpDays(d0,x.date)+1} ของการติดตาม</span></span></figcaption></figure>`}
+function hpDelta(a,b,unit,dp){if(a==null||b==null||a===""||b==="")return "";const d=+b-+a;if(!isFinite(d))return "";
+  const cls=d<0?"good":d>0?"bad":"same",arr=d<0?"▼":d>0?"▲":"●";return `<span class="hp-d ${cls}">${arr} ${Math.abs(d).toFixed(dp)}${unit}</span>`}
+function hpPaint(){const st=hpState;if(!st)return;const ser=st.ser,n=ser.length,x=ser[st.i],f=ser[0],v=$("viewer");
+  const name=`${esc(x.hn||"")} · ${esc(siteShort(x.site))}${x.side?" "+esc(x.side):""}`;
+  const cmp=st.cmp&&n>1&&st.i>0;
+  let sum="";if(n>1&&st.i>0){const pc=f.a&&x.a?Math.round((x.a-f.a)/f.a*100):null;
+    sum=`<div class="hp-sum"><span>เทียบกับภาพแรก (${esc(thDateLong(f.date))}, ${hpDays(f.date,x.date)} วัน)</span>${hpDelta(f.push,x.push,"",0)?`<span>PUSH ${f.push} → ${x.push} ${hpDelta(f.push,x.push,"",0)}</span>`:""}${f.a&&x.a?`<span>พื้นที่ ${(+f.a).toFixed(1)} → ${(+x.a).toFixed(1)} cm² ${hpDelta(f.a,x.a," cm²",1)}${pc!=null?` <small>(${pc>0?"+":""}${pc}%)</small>`:""}</span>`:""}</div>`}
+  v.innerHTML=`<div class="vh2"><b>${name}</b><button type="button" class="vclose">ปิด</button></div>
+   <div class="hp-bar"><span>ภาพที่ ${st.i+1} จาก ${n}</span>${n>1?`<div class="hp-seg" role="group" aria-label="รูปแบบการดู"><button type="button" data-m="0" aria-pressed="${!cmp}">ทีละภาพ</button><button type="button" data-m="1" aria-pressed="${cmp}" ${st.i===0?"disabled":""}>เทียบกับภาพแรก</button></div>`:""}</div>
+   <div class="hp-stage">${n>1?`<button type="button" class="hp-nav prev" aria-label="ภาพก่อนหน้า" ${st.i===0?"disabled":""}>‹</button>`:""}
+    <div class="vgrid hp-main${cmp?" two":""}">${cmp?hpFig(f,"ภาพแรก")+hpFig(x,"ภาพนี้"):hpFig(x,"")}</div>
+    ${n>1?`<button type="button" class="hp-nav next" aria-label="ภาพถัดไป" ${st.i===n-1?"disabled":""}>›</button>`:""}</div>
+   ${sum}
+   ${n>1?`<div class="hp-strip">${ser.map((s,k)=>`<button type="button" data-k="${k}" aria-pressed="${k===st.i}" aria-label="${esc(thDateLong(s.date))}"><img alt="" src="${s.img}"><small>${(s.date||"").slice(8,10)}/${(s.date||"").slice(5,7)}${s.push!=null?" · "+s.push:""}</small></button>`).join("")}</div>`
+     :`<p class="hp-one">มีภาพเดียวของแผลนี้ ถ่ายภาพแผลและกด "ลงชื่อและบันทึก" ในครั้งถัดไปเพื่อดูความก้าวหน้า</p>`}`;
+  v.querySelector(".vclose").onclick=()=>{hpState=null;v.classList.remove("hp-on");skClose()};
+  const go=k=>{if(k<0||k>=n)return;st.i=k;hpPaint()};
+  v.querySelectorAll(".hp-strip button").forEach(b=>b.onclick=()=>go(+b.dataset.k));
+  const pv=v.querySelector(".hp-nav.prev"),nx=v.querySelector(".hp-nav.next");if(pv)pv.onclick=()=>go(st.i-1);if(nx)nx.onclick=()=>go(st.i+1);
+  v.querySelectorAll(".hp-seg button").forEach(b=>b.onclick=()=>{st.cmp=b.dataset.m==="1";hpPaint()});
+  const cur=v.querySelector('.hp-strip button[aria-pressed="true"]');if(cur)try{cur.scrollIntoView({block:"nearest",inline:"center"})}catch(e){}
+  const m=v.querySelector(".hp-main");let sx=null;m.addEventListener("touchstart",e=>{sx=e.touches[0].clientX},{passive:true});
+  m.addEventListener("touchend",e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;sx=null;if(Math.abs(dx)>50)go(st.i+(dx<0?1:-1))},{passive:true});
+}
+setTimeout(()=>{try{hpDecorate()}catch(e){}},0);
+document.addEventListener("keydown",e=>{if(!hpState||$("viewer").hidden)return;if(e.key==="ArrowLeft"){hpState.i=Math.max(0,hpState.i-1);hpPaint()}else if(e.key==="ArrowRight"){hpState.i=Math.min(hpState.ser.length-1,hpState.i+1);hpPaint()}else if(e.key==="Escape"){hpState=null;$("viewer").classList.remove("hp-on")}});
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
