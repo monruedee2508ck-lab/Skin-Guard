@@ -2015,6 +2015,21 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
 .lg-sync-h{margin:0;font-weight:700;color:#f2c14e;font-size:.92rem}
 .lg-sync-n{margin:0;font-size:.78rem;line-height:1.5;color:rgba(220,235,240,.78)}
 .lg-btn:disabled{opacity:.6;cursor:progress}
+/* QR setup */
+.lg-qr{display:flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:700;font-size:.95rem;border:0;border-radius:12px;padding:12px;background:#f2c14e;color:#1b2340;cursor:pointer}
+.lg-qr:active{transform:scale(.98)}
+.qr-ov{position:fixed;inset:0;z-index:2147483000;background:#000;display:flex;align-items:center;justify-content:center}
+.qr-ov video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.qr-frame{position:relative;width:min(70vw,320px);aspect-ratio:1;border-radius:22px;box-shadow:0 0 0 100vmax rgba(0,0,0,.55);border:3px solid #f2c14e}
+.qr-ui{position:absolute;left:0;right:0;bottom:calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 20px;text-align:center;color:#fff}
+.qr-ui p{margin:0;font-size:.95rem;text-shadow:0 1px 3px #000}
+.qr-btn{font:inherit;font-weight:600;border:0;border-radius:99px;padding:11px 28px;background:rgba(255,255,255,.2);color:#fff;cursor:pointer}
+.qr-btn.dark{background:var(--ink,#123);color:#fff}
+.qr-ov.light{background:rgba(6,14,30,.72);padding:16px}
+.qr-card{background:#fff;color:#14213d;border-radius:20px;padding:20px;max-width:380px;width:100%;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center}
+.qr-card b{font-size:1.1rem}.qr-card p{margin:0;font-size:.86rem;line-height:1.5;color:#3d4a63}
+.qr-img{width:min(72vw,280px);aspect-ratio:1;display:grid;place-items:center}.qr-img svg,.qr-img img{width:100%;height:100%}
+.qr-card .qr-warn{color:#b3261e;font-size:.78rem}
 </style>
 </head>
 <body>
@@ -2046,7 +2061,8 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
         <label for="lgName" hidden>ชื่อ-สกุล<input id="lgName" type="text" autocomplete="off" tabindex="-1"></label><p class="lg-who" id="lgWho" aria-live="polite"></p>
         <div class="lg-sync" id="lgSync" hidden>
           <p class="lg-sync-h">เชื่อมระบบกลางของหน่วยงาน</p>
-          <p class="lg-sync-n">เครื่องนี้ยังไม่ได้เชื่อม ใส่ Web app URL และรหัสลับชุดเดียวกับเครื่องอื่นในหอผู้ป่วย หรือเปิด "ลิงก์ตั้งค่า" ที่หัวหน้าหอส่งให้ ทำครั้งเดียวต่อเครื่อง ต้องมีอินเทอร์เน็ต</p>
+          <button type="button" class="lg-qr" id="lgQr"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><path d="M4 12h16"/></svg>สแกน QR ตั้งค่า</button>
+          <p class="lg-sync-n">เครื่องนี้ยังไม่ได้เชื่อม ใส่ Web app URL และรหัสลับชุดเดียวกับเครื่องอื่นในหอผู้ป่วย หรือสแกน QR ตั้งค่าจากเครื่องที่เชื่อมแล้ว ทำครั้งเดียวต่อเครื่อง ต้องมีอินเทอร์เน็ต</p>
           <label for="lgSyncUrl">Web app URL<input id="lgSyncUrl" type="url" autocomplete="off" placeholder="https://script.google.com/macros/s/…/exec"></label>
           <label for="lgSyncKey">รหัสลับ (KEY)<input id="lgSyncKey" type="password" autocomplete="off" placeholder="รหัสเดียวกับใน Apps Script"></label>
         </div>
@@ -2539,7 +2555,7 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
     <label for="syncUrl">Web app URL<input id="syncUrl" type="url" placeholder="https://script.google.com/macros/s/…/exec" autocomplete="off"></label>
     <label for="syncKey">รหัสลับ (KEY)<input id="syncKey" type="password" placeholder="รหัสเดียวกับใน Apps Script" autocomplete="off"></label>
     <div class="row"><button class="btn primary" id="syncSave" type="button">บันทึกและเชื่อมต่อ</button><button class="btn" id="syncNow" type="button">ซิงก์ตอนนี้</button></div>
-    <div class="row"><button class="btn ghost" id="syncLink" type="button">คัดลอกลิงก์ตั้งค่าให้เครื่องอื่น</button><button class="btn ghost" id="syncOff" type="button">ยกเลิกการเชื่อมต่อ</button></div>
+    <div class="row"><button class="btn ghost" id="syncQrShow" type="button">แสดง QR ตั้งค่าให้เครื่องอื่น</button><button class="btn ghost" id="syncLink" type="button">คัดลอกลิงก์ตั้งค่าให้เครื่องอื่น</button><button class="btn ghost" id="syncOff" type="button">ยกเลิกการเชื่อมต่อ</button></div>
     <p class="sync-msg" id="syncMsg" aria-live="polite"></p>
   </section>
   <section class="card" id="admCard">
@@ -2941,6 +2957,11 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
       <div class="rm-foot"><button class="btn" id="abCancel" type="button">ยกเลิก</button><button class="btn primary" id="abSave" type="button">บันทึก</button></div>
     </div>
   </div>
+  <div class="qr-ov" id="qrScan" hidden role="dialog" aria-modal="true" aria-label="สแกน QR ตั้งค่า"><video id="qrVid" playsinline muted></video><div class="qr-frame" aria-hidden="true"></div>
+    <div class="qr-ui"><p id="qrMsg">เล็ง QR ตั้งค่า Skin Guard ให้อยู่ในกรอบ</p><button type="button" class="qr-btn" id="qrCancel">ยกเลิก</button></div></div>
+  <div class="qr-ov light" id="qrShow" hidden role="dialog" aria-modal="true" aria-label="QR ตั้งค่า"><div class="qr-card"><b>QR ตั้งค่าระบบกลาง</b>
+    <p>เครื่องใหม่: เปิด Skin Guard → กด "สแกน QR ตั้งค่า" ที่หน้า login แล้วสแกนภาพนี้</p><div class="qr-img" id="qrImg"></div>
+    <p class="qr-warn">QR นี้มีรหัสลับของหน่วยงาน แสดงให้เฉพาะเครื่องของหอผู้ป่วย ห้ามถ่ายภาพส่งออกนอกหน่วยงาน</p><button type="button" class="qr-btn dark" id="qrShowClose">ปิด</button></div></div>
   <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="ดูภาพผิวหนัง"></div>
   <div class="app-foot" aria-hidden="true"><svg viewBox="0 0 56 16" preserveAspectRatio="none"><path d="M1.0,4.0 L3.0,5.3 L5.0,5.6 L7.0,4.7 L9.0,3.3 L11.0,2.4 L13.0,2.7 L15.0,4.0 L17.0,5.3 L19.0,5.6 L21.0,4.7 L23.0,3.3 L25.0,2.4 L27.0,2.7 L29.0,4.0 L31.0,5.3 L33.0,5.6 L35.0,4.7 L37.0,3.3 L39.0,2.4 L41.0,2.7 L43.0,4.0 L45.0,5.3 L47.0,5.6 L49.0,4.7 L51.0,3.3 L53.0,2.4 L55.0,2.7" fill="none" stroke="#f3a08c" stroke-width="1.6" stroke-linecap="round" opacity=".75"/><path d="M1.0,10.1 L2.0,9.5 L3.0,8.1 L4.0,7.0 L5.0,7.1 L6.0,8.2 L7.0,9.5 L8.0,10.1 L9.0,9.5 L10.0,8.1 L11.0,7.0 L12.0,7.1 L13.0,8.2 L14.0,9.5 L15.0,10.1 L16.0,9.5 L17.0,8.1 L18.0,7.0 L19.0,7.1 L20.0,8.2 L21.0,9.5 L22.0,10.1 L23.0,9.5 L24.0,8.1 L25.0,7.0 L26.0,7.1 L27.0,8.2 L28.0,9.5 L29.0,10.1 L30.0,9.5 L31.0,8.1 L32.0,7.0 L33.0,7.1 L34.0,8.2 L35.0,9.5 L36.0,10.1 L37.0,9.5 L38.0,8.1 L39.0,7.0 L40.0,7.1 L41.0,8.2 L42.0,9.5 L43.0,10.1 L44.0,9.5 L45.0,8.1 L46.0,7.0 L47.0,7.1 L48.0,8.2 L49.0,9.5 L50.0,10.1 L51.0,9.5 L52.0,8.1 L53.0,7.0 L54.0,7.1 L55.0,8.2" fill="none" stroke="#e0606f" stroke-width="1.6" stroke-linecap="round" opacity=".6"/><path d="M1.0,14.0 L3.0,14.2 L5.0,13.9 L7.0,13.3 L9.0,12.6 L11.0,12.0 L13.0,11.8 L15.0,12.1 L17.0,12.7 L19.0,13.4 L21.0,14.0 L23.0,14.2 L25.0,13.9 L27.0,13.3 L29.0,12.6 L31.0,12.0 L33.0,11.8 L35.0,12.1 L37.0,12.7 L39.0,13.4 L41.0,14.0 L43.0,14.2 L45.0,13.9 L47.0,13.3 L49.0,12.6 L51.0,12.0 L53.0,11.8 L55.0,12.1" fill="none" stroke="#d9a441" stroke-width="1.6" stroke-linecap="round" opacity=".6"/></svg><span><b>Skin Guard v1.0</b> · SMART-SKIN CARE</span></div>
   <p class="note">เครื่องมือนี้ช่วยประเมินตามเกณฑ์ NPIAP (2016) และ PUSH Tool 3.0 ไม่ใช้แทนการตัดสินใจทางคลินิกของพยาบาลหรือแพทย์ แผลที่เยื่อบุ (mucosal) ไม่จัดระดับด้วยระบบนี้</p>
@@ -7318,6 +7339,45 @@ document.addEventListener("submit",async e=>{if(e.target!==$("lgForm")||!syncReq
   setTimeout(()=>{try{advise("เชื่อมต่อระบบกลางแล้ว","เครื่องนี้จะดึงข้อมูลผู้ป่วย ประวัติ และภาพจากระบบกลาง และซิงก์อัตโนมัติ")}catch(x){}},1500)},true);
 {const so=$("syncOff");if(so)so.addEventListener("click",()=>setTimeout(()=>{if(syncRequired()&&!syncCfg()){try{doLogout()}catch(e){}}},50))}
 otPaint();
+/* ===== QR: show setup QR on a connected device; scan it at login ===== */
+function sgLoad(urls){return new Promise((res,rej)=>{let i=0;const nx=()=>{if(i>=urls.length)return rej(new Error("load"));const el=document.createElement("script");el.src=urls[i++];el.onload=()=>res();el.onerror=()=>{el.remove();nx()};document.head.append(el)};nx()})}
+function syncSetupLink(c){const enc=encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify({url:c.url,key:c.key})))));return location.origin+location.pathname+"#sync="+enc}
+$("syncQrShow").onclick=async()=>{const c=syncCfg(),m=$("syncMsg");if(!c){m.textContent="ต้องเชื่อมต่อในเครื่องนี้ก่อน";return}
+  m.textContent="กำลังสร้าง QR…";
+  try{if(typeof qrcode!=="function")await sgLoad(["https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js","https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"]);
+    const q=qrcode(0,"M");q.addData(syncSetupLink(c));q.make();$("qrImg").innerHTML=q.createSvgTag({cellSize:6,margin:4,scalable:true});m.textContent="";$("qrShow").hidden=false}
+  catch(e){m.textContent="สร้าง QR ไม่สำเร็จ ต้องต่ออินเทอร์เน็ต หรือใช้ปุ่มคัดลอกลิงก์ตั้งค่าแทน"}};
+$("qrShowClose").onclick=()=>{$("qrShow").hidden=true;$("qrImg").innerHTML=""};
+var qrSt=null;
+async function qrDecoder(){
+  if("BarcodeDetector" in window){try{const f=await BarcodeDetector.getSupportedFormats();if(f.includes("qr_code")){const d=new BarcodeDetector({formats:["qr_code"]});return async v=>{const r=await d.detect(v);return r&&r[0]&&r[0].rawValue||null}}}catch(e){}}
+  if(typeof jsQR!=="function")await sgLoad(["https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js","https://unpkg.com/jsqr@1.4.0/dist/jsQR.js"]);
+  const cv=document.createElement("canvas"),g=cv.getContext("2d",{willReadFrequently:true});
+  return async v=>{const w=v.videoWidth,h=v.videoHeight;if(!w||!h)return null;const k=Math.min(1,720/Math.max(w,h));cv.width=w*k|0;cv.height=h*k|0;g.drawImage(v,0,0,cv.width,cv.height);
+    const r=jsQR(g.getImageData(0,0,cv.width,cv.height).data,cv.width,cv.height,{inversionAttempts:"attemptBoth"});return r&&r.data||null}}
+function qrStop(){if(!qrSt)return;qrSt.stop=true;try{qrSt.stream&&qrSt.stream.getTracks().forEach(t=>t.stop())}catch(e){}$("qrVid").srcObject=null;$("qrScan").hidden=true;qrSt=null}
+$("qrCancel").onclick=qrStop;
+function qrParse(txt){txt=String(txt||"").trim();let cfg=null;const m=txt.match(/#sync=([^&\s]+)/);
+  if(m){try{cfg=JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(m[1])))))}catch(e){}}
+  else if(/^\{/.test(txt)){try{cfg=JSON.parse(txt)}catch(e){}}
+  else if(/^https:\/\/script\.google(usercontent)?\.com\//.test(txt))cfg={url:txt};
+  return cfg&&cfg.url?cfg:null}
+function qrApply(txt){const cfg=qrParse(txt),err=$("lgErr");if(!cfg){err.textContent="QR นี้ไม่ใช่ QR ตั้งค่า Skin Guard";return}
+  $("lgSyncUrl").value=cfg.url;if(cfg.key)$("lgSyncKey").value=cfg.key;err.textContent="";
+  if(!cfg.key){err.textContent="ได้ URL แล้ว ใส่รหัสลับ (KEY) ต่อ";$("lgSyncKey").focus();return}
+  const ot=$("lgOT").value.trim();if(!ot){err.textContent="อ่าน QR สำเร็จ ใส่เลข OT แล้วกดเข้าสู่ระบบ";$("lgOT").focus();return}
+  $("lgForm").dispatchEvent(new Event("submit",{cancelable:true,bubbles:true}))}
+$("lgQr").onclick=async()=>{const err=$("lgErr");err.textContent="";
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){err.textContent="เครื่องนี้เปิดกล้องไม่ได้ ใส่ URL และรหัสลับเอง";return}
+  qrSt={stop:false};$("qrMsg").textContent="กำลังเปิดกล้อง…";$("qrScan").hidden=false;let dec;
+  try{dec=await qrDecoder()}catch(e){qrStop();err.textContent="โหลดตัวอ่าน QR ไม่สำเร็จ ตรวจอินเทอร์เน็ต หรือใส่ URL และรหัสลับเอง";return}
+  try{const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}},audio:false});
+    if(!qrSt){st.getTracks().forEach(t=>t.stop());return}qrSt.stream=st;const v=$("qrVid");v.srcObject=st;await v.play()}
+  catch(e){qrStop();err.textContent="เปิดกล้องไม่ได้ อนุญาตให้ใช้กล้อง หรือใส่ URL และรหัสลับเอง";return}
+  $("qrMsg").textContent="เล็ง QR ตั้งค่า Skin Guard ให้อยู่ในกรอบ";const me=qrSt;
+  const tick=async()=>{if(!qrSt||me.stop)return;let t=null;try{t=await dec($("qrVid"))}catch(e){}
+    if(t&&qrSt===me){if(qrParse(t)){qrStop();qrApply(t);return}$("qrMsg").textContent="QR นี้ไม่ใช่ QR ตั้งค่า Skin Guard ลองใหม่"}
+    setTimeout(tick,180)};tick()};
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
