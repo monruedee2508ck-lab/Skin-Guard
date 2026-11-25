@@ -5705,10 +5705,11 @@ document.querySelectorAll("#bnav button").forEach(b=>b.onclick=()=>{const k=b.da
     ["survey","&#11088;","ประเมินความพึงพอใจการใช้งาน","Nurse Satisfaction / Usability · ไม่ระบุชื่อ","--gold"],
     ["trend","&#128200;","แนวโน้มแผลและรายงาน",adm?"ตัวชี้วัดคุณภาพ แนวโน้มแผล ส่งออก Excel/PDF":"เฉพาะผู้ดูแลระบบ","--teal"],
     ["ward","&#127973;","หอผู้ป่วยและระบบกลาง",adm?"ภาพรวมหอ ระบบกลาง บัญชีผู้ดูแล":"เฉพาะผู้ดูแลระบบ","--gold"],
+    ["syncqr","&#128247;","เปลี่ยนระบบกลาง (สแกน QR)","ใช้เมื่อหน่วยงานย้ายบัญชีเก็บข้อมูล","--indigo"],
     ["admin","&#128273;",adm?"ออกจากโหมดผู้ดูแล":"เข้าโหมดผู้ดูแล (Admin)","","--crit"],
     ["logout","&#8617;","ออกจากระบบ","","--s1"]];
   L.innerHTML="";items.forEach(([k2,ic,t,sub,c])=>{const x=document.createElement("button");x.type="button";if(k2==="logout")x.className="danger";x.style.setProperty("--c",`var(${c})`);x.innerHTML=`<i>${ic}</i><span>${t}${sub?`<small>${sub}</small>`:""}</span>`;
-    x.onclick=()=>{sheetClose("moreModal");if(k2==="guide")return $("hmGuide").onclick();if(k2==="handover")return hoOpen();if(k2==="survey")return svOpen();if(k2==="admin")return $("admLock").onclick();if(k2==="logout")return doLogout();go(k2)};L.append(x)});
+    x.onclick=()=>{sheetClose("moreModal");if(k2==="guide")return $("hmGuide").onclick();if(k2==="handover")return hoOpen();if(k2==="survey")return svOpen();if(k2==="admin")return $("admLock").onclick();if(k2==="syncqr")return syncSwitchByQr();if(k2==="logout")return doLogout();go(k2)};L.append(x)});
   sheetOpen("moreModal")});
 $("moreClose").onclick=()=>sheetClose("moreModal");
 setTimeout(()=>{try{ptBarPaint();bnavPaint();if(document.body.dataset.page==="home")homePaint();if(document.body.dataset.page==="patients")plPaint()}catch(e){}},200);
@@ -7367,17 +7368,35 @@ function qrApply(txt){const cfg=qrParse(txt),err=$("lgErr");if(!cfg){err.textCon
   if(!cfg.key){err.textContent="ได้ URL แล้ว ใส่รหัสลับ (KEY) ต่อ";$("lgSyncKey").focus();return}
   const ot=$("lgOT").value.trim();if(!ot){err.textContent="อ่าน QR สำเร็จ ใส่เลข OT แล้วกดเข้าสู่ระบบ";$("lgOT").focus();return}
   $("lgForm").dispatchEvent(new Event("submit",{cancelable:true,bubbles:true}))}
-$("lgQr").onclick=async()=>{const err=$("lgErr");err.textContent="";
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){err.textContent="เครื่องนี้เปิดกล้องไม่ได้ ใส่ URL และรหัสลับเอง";return}
+async function qrScanStart(onText,fail){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){fail("เครื่องนี้เปิดกล้องไม่ได้");return}
   qrSt={stop:false};$("qrMsg").textContent="กำลังเปิดกล้อง…";$("qrScan").hidden=false;let dec;
-  try{dec=await qrDecoder()}catch(e){qrStop();err.textContent="โหลดตัวอ่าน QR ไม่สำเร็จ ตรวจอินเทอร์เน็ต หรือใส่ URL และรหัสลับเอง";return}
+  try{dec=await qrDecoder()}catch(e){qrStop();fail("โหลดตัวอ่าน QR ไม่สำเร็จ ตรวจอินเทอร์เน็ต");return}
   try{const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"},width:{ideal:1280},height:{ideal:720}},audio:false});
     if(!qrSt){st.getTracks().forEach(t=>t.stop());return}qrSt.stream=st;const v=$("qrVid");v.srcObject=st;await v.play()}
-  catch(e){qrStop();err.textContent="เปิดกล้องไม่ได้ อนุญาตให้ใช้กล้อง หรือใส่ URL และรหัสลับเอง";return}
+  catch(e){qrStop();fail("เปิดกล้องไม่ได้ อนุญาตให้ใช้กล้องก่อน");return}
   $("qrMsg").textContent="เล็ง QR ตั้งค่า Skin Guard ให้อยู่ในกรอบ";const me=qrSt;
   const tick=async()=>{if(!qrSt||me.stop)return;let t=null;try{t=await dec($("qrVid"))}catch(e){}
-    if(t&&qrSt===me){if(qrParse(t)){qrStop();qrApply(t);return}$("qrMsg").textContent="QR นี้ไม่ใช่ QR ตั้งค่า Skin Guard ลองใหม่"}
-    setTimeout(tick,180)};tick()};
+    if(t&&qrSt===me){if(qrParse(t)){qrStop();onText(t);return}$("qrMsg").textContent="QR นี้ไม่ใช่ QR ตั้งค่า Skin Guard ลองใหม่"}
+    setTimeout(tick,180)};tick()}
+$("lgQr").onclick=()=>{$("lgErr").textContent="";qrScanStart(qrApply,m=>{$("lgErr").textContent=m+" หรือใส่ URL และรหัสลับเอง"})};
+/* ===== Switching to a new central account: re-upload everything, let every device rescan ===== */
+try{const c=syncCfg();if(c&&!localStorage.getItem("pi-sync-seeded"))localStorage.setItem("pi-sync-seeded",c.url)}catch(e){}
+async function syncPhotosAll(){for(const p of allPatients()){if(syncSkipHN(p.hn))continue;
+  try{(await skAll(p.hn)).forEach(r=>{if(r&&r.img)syncEnq("photo",r.id,{store:"skin"})})}catch(e){}
+  try{(await wpAll(p.hn)).forEach(r=>{if(r&&r.img)syncEnq("photo",r.id,{store:"wound"})})}catch(e){}}try{syncSoon(500)}catch(e){}}
+{const _ssa=syncSeedAll;syncSeedAll=function(){const c=syncCfg();let prev="";try{prev=localStorage.getItem("pi-sync-seeded")||""}catch(e){}
+  if(c&&prev!==c.url){try{localStorage.removeItem("pi-sync-hids");localStorage.removeItem("pi-sync-last");localStorage.setItem("pi-sync-seeded",c.url)}catch(e){}syncPhotosAll()}
+  return _ssa.apply(this,arguments)}}
+async function syncSwitchByQr(){qrScanStart(async t=>{const cfg=qrParse(t);
+  if(!cfg||!cfg.key){advise("QR ไม่ครบ","ต้องใช้ QR ตั้งค่าจากหน้าหอผู้ป่วยและระบบกลาง (มีทั้ง URL และรหัสลับ)");return}
+  const old=localStorage.getItem("pi-sync");if(old&&JSON.parse(old).url===cfg.url&&JSON.parse(old).key===cfg.key){advise("เชื่อมระบบนี้อยู่แล้ว","เครื่องนี้ใช้ระบบกลางชุดนี้อยู่แล้ว");return}
+  try{localStorage.setItem("pi-sync",JSON.stringify({url:cfg.url,key:cfg.key,on:true}))}catch(e){}
+  try{await syncCall({action:"ping"})}catch(e){try{old?localStorage.setItem("pi-sync",old):localStorage.removeItem("pi-sync")}catch(x){}
+    const em=String(e&&e.message||e);advise("เชื่อมต่อไม่สำเร็จ",(/unauthorized/.test(em)?"รหัสลับไม่ถูกต้อง":em)+" · ยังใช้ระบบเดิมต่อไป");return}
+  try{syncFill();syncSeedAll();syncPaint();syncSoon(500)}catch(e){}
+  advise("ย้ายไประบบกลางใหม่แล้ว","เครื่องนี้กำลังส่งผู้ป่วย ประวัติ และภาพที่มีในเครื่องขึ้นระบบใหม่ และจะซิงก์กับระบบใหม่ต่อจากนี้")},
+  m=>advise("สแกนไม่ได้",m))}
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
