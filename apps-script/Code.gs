@@ -6,7 +6,7 @@
  */
 const KEY = 'CHANGE-ME-TO-A-LONG-SECRET';
 const PHOTO_FOLDER = 'SkinGuard-Photos';
-const KEEP_DAYS = 0;            // 0 = ไม่ลบตามอายุภาพ: ลบเมื่อผู้ป่วยจำหน่าย/ย้ายออกเท่านั้น
+const KEEP_DAYS = 7;            // ภาพผิวหนังประจำเวรที่ "ผิวปกติ" ลบเมื่อครบ 7 วัน · ภาพอื่นทั้งหมดเก็บจนผู้ป่วยจำหน่าย/ย้ายออก (0 = ไม่ลบตามอายุ)
 const VIEW_TAB = 'ภาพรายเวร';    // แท็บสำหรับเปิดดูภาพ วันที่ เวลา และเวร
 const TZ = 'Asia/Bangkok';
 
@@ -135,7 +135,7 @@ function push(req) {
       }
       const view = rec._view || {}, thumb = view.thumb || '';
       const meta = Object.assign({}, rec); delete meta.img; delete meta._view;
-      const time = String(rec.time || ''), sh = shiftOf(time), exp = KEEP_DAYS > 0 && rec.cat !== 'abn' ? addDays(dstr(rec.date), KEEP_DAYS) : ''; // ภาพผิวหนังผิดปกติ/แผลอื่น: เก็บจนจำหน่ายผู้ป่วย
+      const time = String(rec.time || ''), sh = shiftOf(time), exp = KEEP_DAYS > 0 && isNormalDaily(it.store, rec) ? addDays(dstr(rec.date), KEEP_DAYS) : ''; // ภาพผิวหนังผิดปกติ/แผลอื่น: เก็บจนจำหน่ายผู้ป่วย
       upsert(F, fi, it.key, ["'" + it.key, it.store || '', "'" + (rec.hn || ''), "'" + dstr(rec.date), rec.site || '', now, ot, '', fileId, JSON.stringify(meta), "'" + time, sh, view.kind || rec.kind || it.store || '', "'" + exp]);
       try { viewAdd(it.key, rec, view, thumb, sh, exp, ot, fileId); } catch (e) {}
     }
@@ -295,6 +295,9 @@ function photoGone(F, r, now, ot) {
   try { viewRemove(row[0]); } catch (e) {}
 }
 /** ลบภาพที่ครบ KEEP_DAYS วัน และภาพของผู้ป่วยที่จำหน่ายแล้ว (ทำงานอัตโนมัติทุกวัน และทุกครั้งที่มีการส่งข้อมูล ไม่เกินชั่วโมงละครั้ง) */
+/** ภาพที่ลบตามอายุได้: เฉพาะภาพผิวหนังประจำเวร (daily) ที่ประเมินว่า "ผิวปกติ" (ok) */
+function isNormalDaily(store, rec) { return String(store) === 'skin' && rec && rec.cat !== 'abn' && rec.kind === 'daily' && rec.status === 'ok'; }
+
 function cleanupPhotos() {
   const F = sheet('photos'), last = F.getLastRow();
   if (last < 2) return 0;
@@ -304,7 +307,8 @@ function cleanupPhotos() {
   let n = 0;
   rows.forEach((r, i) => {
     if (r[7] === 'y') return;
-    const keep = String(r[9] || '').indexOf('"cat":"abn"') >= 0, d = dstr(r[3]), exp = keep || !(KEEP_DAYS > 0) ? '' : addDays(d, KEEP_DAYS);
+    let meta = {}; try { meta = JSON.parse(String(r[9] || '{}')); } catch (e) {}
+    const d = dstr(r[3]), exp = KEEP_DAYS > 0 && isNormalDaily(r[1], meta) ? addDays(d, KEEP_DAYS) : '';
     if ((exp && exp <= t) || gone[String(r[2])]) { photoGone(F, i + 2, now, 'auto'); n++; }
   });
   // แถวในแท็บภาพรายเวรที่ไม่มีภาพแล้ว

@@ -4054,7 +4054,8 @@ function skRender(){
   days.forEach(day=>{
     const rows=list.filter(r=>r.date===day),admit=rows.some(r=>r.kind==="admit");
     const sec=document.createElement("div");sec.className="skday";
-    const h=document.createElement("h4");h.textContent=thDate(day)+(day===d?" (วันนี้)":"");{const xe=document.createElement("small");xe.className="skexp";xe.textContent="เก็บจนผู้ป่วยย้ายออก";h.append(xe)}
+    const h=document.createElement("h4");h.textContent=thDate(day)+(day===d?" (วันนี้)":"");{const xe=document.createElement("small");xe.className="skexp";const nOk=rows.filter(phNormal).length,nAll=rows.length;
+      xe.textContent=!nOk?"เก็บจนผู้ป่วยจำหน่าย/ย้ายออก":nOk===nAll?`ผิวปกติ · ลบอัตโนมัติ ${thDate(phExpire(day))}`:`ภาพผิวปกติลบ ${thDate(phExpire(day))} · ภาพผิดปกติเก็บจนจำหน่าย`;h.append(xe)}
     const kp=document.createElement("span");kp.className="kpill"+(admit?"":" daily");kp.textContent=admit?"แรกรับ":"ประจำวัน";h.append(kp);
     const grid=document.createElement("div");grid.className="skgrid";
     rows.forEach(r=>{const S=skSt(r.status);const f=document.createElement("figure");
@@ -6442,22 +6443,22 @@ $("skNow").onclick=()=>{skNowFill();if(skinDraft)skDraftRender()};
 var PH_KEEP_DAYS=7;
 function phShift(t){const h=parseInt(String(t||"").slice(0,2),10);if(isNaN(h))return "";return h>=8&&h<16?"m":h>=16?"a":"n"}
 function phShiftTH(t){const k=phShift(t);return k?SHIFT_TH[k]:""}
-function phExpire(d){return "";try{const x=new Date(String(d).slice(0,10)+"T00:00:00Z");x.setUTCDate(x.getUTCDate()+PH_KEEP_DAYS);return x.toISOString().slice(0,10)}catch(e){return ""}}
+function phNormal(r){return !!r&&r.cat!=="abn"&&r.kind==="daily"&&r.status==="ok"}
+function phExpire(d){try{const x=new Date(String(d).slice(0,10)+"T00:00:00Z");x.setUTCDate(x.getUTCDate()+(PH_KEEP_DAYS||7));return x.toISOString().slice(0,10)}catch(e){return ""}}
 function phToday(){return new Date(Date.now()+7*3600e3).toISOString().slice(0,10)}
 function phThumb(url,max){return new Promise(res=>{try{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.7))};im.onerror=()=>res("");im.src=url}catch(e){res("")}})}
 function phView(store,rec){const sk=store==="skin";let site="",what="";
   if(sk){site=skSite(rec.site)[1];what=skSt(rec.status).t}
   else{site=(rec.site||"")+(rec.side?" "+rec.side:"");const S=(typeof STAGES!=="undefined"&&STAGES[rec.stage])||null;what=[S?stageShort(rec.stage):"",rec.a>0?(+rec.a).toFixed(1)+" cm²":"",rec.push!=null?"PUSH "+rec.push:""].filter(Boolean).join(" · ")}
-  return {kind:sk?(rec.kind==="admit"?"ภาพผิวหนังแรกรับ":"ภาพผิวหนังประจำวัน"):"ภาพแผล",site,what,shift:phShiftTH(rec.time),expires:phExpire(rec.date),note:rec.note||""}}
+  return {kind:sk?(rec.kind==="admit"?"ภาพผิวหนังแรกรับ":"ภาพผิวหนังประจำวัน"):"ภาพแผล",site,what,shift:phShiftTH(rec.time),expires:sk&&phNormal(rec)&&rec.date?phExpire(rec.date):"",note:rec.note||""}}
 /* push: add readable fields + small thumbnail for the Google Sheet */
 {const _call=syncCall;syncCall=async function(req){try{if(req&&req.action==="push"&&req.items)for(const it of req.items){if(it.type==="photo"&&it.data&&it.data.img&&!it.data._view){
   const d=Object.assign({},it.data);d._view=phView(it.store,d);d._view.thumb=await phThumb(d.img,220);it.data=d}}}catch(e){}return _call.apply(this,arguments)}}
 /* local auto-delete: photos older than 7 days */
 function phAllStore(db){return new Promise(res=>{try{const q=db.transaction("p").objectStore("p").getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])}catch(e){res([])}})}
-async function photosExpire(){return 0;/* ภาพทุกชนิดเก็บไว้จนผู้ป่วยจำหน่าย/ย้ายออก */const today=phToday();let n=0;
+async function photosExpire(){/* ภาพผิวหนังประจำเวรที่ "ผิวปกติ" ลบเมื่อครบ 7 วัน · ภาพอื่นทั้งหมดเก็บจนผู้ป่วยจำหน่าย/ย้ายออก */const today=phToday();let n=0;
   try{if(!skinTried){skinTried=true;skinDB=await skOpen()}const all=(skinDB?await phAllStore(skinDB):[]).concat(skinMem);
-    for(const r of all){if(r&&r.cat!=="abn"&&r.date&&phExpire(r.date)<=today){await skDel(r.id);try{syncEnq("delphoto",r.id,{store:"skin"})}catch(e){}n++}}}catch(e){}
-  try{const db=await wpReady();if(db)for(const r of await phAllStore(db)){if(r&&r.date&&phExpire(r.date)<=today){await wpDel(r.id);try{syncEnq("delphoto",r.id,{store:"wound"})}catch(e){}n++}}}catch(e){}
+    for(const r of all){if(phNormal(r)&&r.date&&phExpire(r.date)<=today){await skDel(r.id);try{syncEnq("delphoto",r.id,{store:"skin"})}catch(e){}n++}}}catch(e){}
   if(n){try{skinCache=skOnly(await skAll(skHN()));skRender()}catch(e){}}return n}
 setTimeout(()=>{photosExpire()},1500);setInterval(()=>{photosExpire()},3600e3);
 document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")photosExpire()});
