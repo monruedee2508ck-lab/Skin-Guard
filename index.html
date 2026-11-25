@@ -2030,6 +2030,12 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
 .qr-card b{font-size:1.1rem}.qr-card p{margin:0;font-size:.86rem;line-height:1.5;color:#3d4a63}
 .qr-img{width:min(72vw,280px);aspect-ratio:1;display:grid;place-items:center}.qr-img svg,.qr-img img{width:100%;height:100%}
 .qr-card .qr-warn{color:#b3261e;font-size:.78rem}
+/* patient name: prefix / first / last */
+.nm3{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr) minmax(0,1.2fr);gap:10px}
+.nm3 label{min-width:0}.nm3 select,.nm3 input{width:100%;box-sizing:border-box}
+.nm-req{color:var(--crit,#c0392b);margin-left:2px}
+.admit .nm3{grid-column:auto}
+@media (max-width:560px){.nm3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.nm3 label:first-child{grid-column:1/-1}}
 </style>
 </head>
 <body>
@@ -2580,7 +2586,7 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
     <div class="admit">
       <input id="admBed" type="hidden">
       <label for="admHN">HN ผู้ป่วยใหม่<input id="admHN" type="text" inputmode="numeric" placeholder="เช่น 6701234"></label>
-      <label for="admName">ชื่อ-สกุลผู้ป่วย<input id="admName" type="text" autocomplete="off" placeholder="เช่น นายสมชาย ใจดี"></label>
+      <input id="admName" type="hidden"><div class="nm3"><label for="admPre">คำนำหน้า<select id="admPre"><option value="">ไม่ระบุ</option><option>นาย</option><option>นาง</option><option>นางสาว</option><option>เด็กชาย</option><option>เด็กหญิง</option><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select></label><label for="admFirst">ชื่อ<input id="admFirst" type="text" autocomplete="off" placeholder="เช่น สมชาย"></label><label for="admLast">นามสกุล<input id="admLast" type="text" autocomplete="off" placeholder="เช่น ใจดี"></label></div>
       <button class="btn primary" id="admBtn" type="button">รับผู้ป่วยใหม่</button>
     </div>
     <div class="wgrid" id="wardList"></div>
@@ -2859,7 +2865,7 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
         <p class="pg-sub" id="pgSub"></p>
         <div class="pg-g">
           <label for="pgHN">HN<input id="pgHN" type="text" inputmode="numeric" placeholder="เช่น 6701234" required></label>
-          <label for="pgName">ชื่อ-สกุลผู้ป่วย<input id="pgName" type="text" placeholder="เช่น นายสมชาย ใจดี" required></label>
+          <input id="pgName" type="hidden"><div class="nm3"><label for="pgPre">คำนำหน้า<select id="pgPre"><option value="">ไม่ระบุ</option><option>นาย</option><option>นาง</option><option>นางสาว</option><option>เด็กชาย</option><option>เด็กหญิง</option><option>Mr.</option><option>Mrs.</option><option>Ms.</option></select></label><label for="pgFirst"><span>ชื่อ<b class="nm-req">*</b></span><input id="pgFirst" type="text" autocomplete="off" placeholder="เช่น สมชาย"></label><label for="pgLast"><span>นามสกุล<b class="nm-req">*</b></span><input id="pgLast" type="text" autocomplete="off" placeholder="เช่น ใจดี"></label></div>
         </div>
         <label for="pgDate">วันที่ประเมิน<input id="pgDate" type="date"></label>
         <div class="pg-list" id="pgList" hidden><span class="lbl">ผู้ป่วยในหอ แตะเพื่อเลือก</span><div class="pg-chips" id="pgChips"></div></div>
@@ -7415,6 +7421,25 @@ setTimeout(()=>{try{update()}catch(e){}},1800);
 /* ===== After a successful sign & save, return to the home page ===== */
 {const _sv3=$("save").onclick;$("save").onclick=function(){const real=()=>hist.filter(h=>!h.ex).length,n=real();const r=_sv3.apply(this,arguments);
   if(real()>n){setTimeout(()=>{try{go("home");window.scrollTo({top:0,behavior:"smooth"});toast("บันทึกเรียบร้อยแล้ว")}catch(e){}},900)}return r}}
+/* ===== Patient name entered as prefix + first name + last name ===== */
+var NM_PRE=["นางสาว","เด็กหญิง","เด็กชาย","Mrs.","Miss","Mr.","Ms.","นาง","นาย","ด.ญ.","ด.ช."];
+function nmSplit(full){full=String(full||"").trim().replace(/\s+/g," ");let pre="";for(const p of NM_PRE){if(full.startsWith(p)){pre=p;full=full.slice(p.length).trim();break}}
+  const i=full.indexOf(" ");return {pre,first:i<0?full:full.slice(0,i),last:i<0?"":full.slice(i+1)}}
+function nmJoin(pre,first,last){first=String(first||"").trim().replace(/\s+/g," ");last=String(last||"").trim().replace(/\s+/g," ");if(!first&&!last)return "";
+  return (pre?pre+(/^[A-Za-z]/.test(pre)?" ":""):"")+first+(last?" "+last:"")}
+function nmBind(p){const el=$(p+"Name"),pre=$(p+"Pre"),fi=$(p+"First"),la=$(p+"Last");if(!el||!pre||!fi||!la)return;
+  const desc=Object.getOwnPropertyDescriptor(HTMLInputElement.prototype,"value");
+  Object.defineProperty(el,"value",{configurable:true,get(){return nmJoin(pre.value,fi.value,la.value)},
+    set(v){const n=nmSplit(v);if(n.pre&&![...pre.options].some(o=>o.value===n.pre)){const o=document.createElement("option");o.textContent=n.pre;pre.append(o)}pre.value=n.pre;fi.value=n.first;la.value=n.last;desc.set.call(el,v)}});
+  {const v0=desc.get.call(el);if(v0)el.value=v0}
+  el.focus=()=>{(fi.value.trim()&&!la.value.trim()?la:fi).focus()};
+  [pre,fi,la].forEach(x=>x.addEventListener("input",()=>{const e=$(p==="pg"?"pgErr":"x");if(e)e.textContent=""}));
+  fi.addEventListener("keydown",e=>{if(e.key===" "&&fi.value.trim()&&!la.value){e.preventDefault();la.focus()}});
+  fi.addEventListener("blur",()=>{const v=fi.value.trim();if(!v)return;const n=nmSplit(v);if(n.pre&&!pre.value){pre.value=n.pre}if(n.pre||n.last){fi.value=n.first;if(n.last&&!la.value)la.value=n.last}})}
+nmBind("pg");nmBind("adm");
+document.addEventListener("submit",e=>{if(e.target!==$("pgForm"))return;const hn=$("pgHN").value.trim();if(!hn||hn==="ตัวอย่าง")return;
+  if(!$("pgFirst").value.trim()){e.preventDefault();e.stopImmediatePropagation();$("pgErr").textContent="ใส่ชื่อผู้ป่วย";$("pgFirst").focus();return}
+  if(!$("pgLast").value.trim()){e.preventDefault();e.stopImmediatePropagation();$("pgErr").textContent="ใส่นามสกุลผู้ป่วย";$("pgLast").focus()}},true);
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
