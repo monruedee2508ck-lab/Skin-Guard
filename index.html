@@ -2010,6 +2010,11 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
 .viewer.hp-on{background:#071211}
 .viewer .hp-main.two figcaption{font-size:.78rem}
 @media (max-width:560px){.viewer .hp-main.two{gap:6px}.viewer .hp-main.two img{max-height:40vh;object-fit:contain}.viewer .hp-main.two .hp-meta{gap:3px 8px}.viewer .hp-nav{width:30px;height:48px;font-size:1.5rem}.viewer .hp-stage{gap:5px}}
+/* login: required central sync */
+.lg-sync{display:flex;flex-direction:column;gap:10px;padding:12px 14px;border-radius:14px;border:1px dashed rgba(242,193,78,.55);background:rgba(242,193,78,.08)}
+.lg-sync-h{margin:0;font-weight:700;color:#f2c14e;font-size:.92rem}
+.lg-sync-n{margin:0;font-size:.78rem;line-height:1.5;color:rgba(220,235,240,.78)}
+.lg-btn:disabled{opacity:.6;cursor:progress}
 </style>
 </head>
 <body>
@@ -2039,6 +2044,12 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
       <form class="lg-card" id="lgForm" autocomplete="off">
         <label for="lgOT">เลข OT<input id="lgOT" type="text" inputmode="numeric" autocomplete="username" maxlength="12" placeholder="เช่น 12345" required></label>
         <label for="lgName" hidden>ชื่อ-สกุล<input id="lgName" type="text" autocomplete="off" tabindex="-1"></label><p class="lg-who" id="lgWho" aria-live="polite"></p>
+        <div class="lg-sync" id="lgSync" hidden>
+          <p class="lg-sync-h">เชื่อมระบบกลางของหน่วยงาน</p>
+          <p class="lg-sync-n">เครื่องนี้ยังไม่ได้เชื่อม ใส่ Web app URL และรหัสลับชุดเดียวกับเครื่องอื่นในหอผู้ป่วย หรือเปิด "ลิงก์ตั้งค่า" ที่หัวหน้าหอส่งให้ ทำครั้งเดียวต่อเครื่อง ต้องมีอินเทอร์เน็ต</p>
+          <label for="lgSyncUrl">Web app URL<input id="lgSyncUrl" type="url" autocomplete="off" placeholder="https://script.google.com/macros/s/…/exec"></label>
+          <label for="lgSyncKey">รหัสลับ (KEY)<input id="lgSyncKey" type="password" autocomplete="off" placeholder="รหัสเดียวกับใน Apps Script"></label>
+        </div>
         <p class="lg-err" id="lgErr" aria-live="polite"></p>
         <button class="lg-btn" type="submit">เข้าสู่ระบบ</button>
         <p class="lg-note">เลข OT ใช้ระบุผู้ประเมินและผู้บันทึก</p>
@@ -7280,6 +7291,33 @@ function hpPaint(){const st=hpState;if(!st)return;const ser=st.ser,n=ser.length,
 }
 setTimeout(()=>{try{hpDecorate()}catch(e){}},0);
 document.addEventListener("keydown",e=>{if(!hpState||$("viewer").hidden)return;if(e.key==="ArrowLeft"){hpState.i=Math.max(0,hpState.i-1);hpPaint()}else if(e.key==="ArrowRight"){hpState.i=Math.min(hpState.ser.length-1,hpState.i+1);hpPaint()}else if(e.key==="Escape"){hpState=null;$("viewer").classList.remove("hp-on")}});
+/* ===== Login requires the unit's central sync (same URL + KEY on every device) ===== */
+function syncRequired(){try{return location.protocol!=="file:"&&!/(^|\.)(claude\.ai|claudeusercontent\.com|anthropic\.com)$/.test(location.hostname)}catch(e){return false}}
+function lgSyncPaint(){const b=$("lgSync");if(!b)return;const need=syncRequired()&&!syncCfg();b.hidden=!need;
+  if(need){let c=null;try{c=JSON.parse(localStorage.getItem("pi-sync")||"null")}catch(e){}if(c&&c.url&&!$("lgSyncUrl").value)$("lgSyncUrl").value=c.url}}
+{const _og=otGet;otGet=function(){if(syncRequired()&&!syncCfg())return null;return _og.apply(this,arguments)}}
+{const _op=otPaint;otPaint=function(){const r=_op.apply(this,arguments);try{lgSyncPaint()}catch(e){}return r}}
+document.addEventListener("submit",async e=>{if(e.target!==$("lgForm")||!syncRequired()||syncCfg())return;
+  e.preventDefault();e.stopImmediatePropagation();
+  const ot=$("lgOT").value.trim().replace(/\s+/g,""),err=$("lgErr"),btn=$("lgForm").querySelector(".lg-btn");
+  if(!/^[0-9A-Za-z\-]{3,12}$/.test(ot)){err.textContent="ใส่เลข OT 3–12 หลัก (ตัวเลขหรือตัวอักษร)";$("lgOT").focus();return}
+  if(!otAllowed(ot)){err.textContent="เลข OT นี้ไม่มีสิทธิ์เข้าใช้ระบบ ติดต่อหัวหน้าหอผู้ป่วยเพื่อเพิ่มสิทธิ์";$("lgOT").focus();return}
+  const url=$("lgSyncUrl").value.trim(),key=$("lgSyncKey").value.trim();
+  if(!/^https:\/\/script\.google(usercontent)?\.com\//.test(url)&&!/^https?:\/\/(localhost|127\.0\.0\.1)/.test(url)){err.textContent="ใส่ Web app URL ของหน่วยงาน (ขึ้นต้นด้วย https://script.google.com/…)";$("lgSyncUrl").focus();return}
+  if(key.length<8){err.textContent="ใส่รหัสลับ (KEY) ของหน่วยงาน";$("lgSyncKey").focus();return}
+  if(!navigator.onLine){err.textContent="ต้องต่ออินเทอร์เน็ตเพื่อเชื่อมระบบกลางครั้งแรก";return}
+  const old=btn.textContent;btn.disabled=true;btn.textContent="กำลังเชื่อมต่อระบบกลาง…";err.textContent="";
+  try{localStorage.setItem("pi-sync",JSON.stringify({url,key,on:true}))}catch(x){}
+  try{await syncCall({action:"ping"})}
+  catch(x){try{localStorage.removeItem("pi-sync")}catch(y){}const em=String(x&&x.message||x);
+    err.textContent="เชื่อมต่อไม่สำเร็จ: "+(/unauthorized/.test(em)?"รหัสลับ (KEY) ไม่ถูกต้อง":/key_not_set/.test(em)?"ยังไม่ได้ตั้ง KEY ใน Apps Script":em)+" ตรวจ URL และ KEY อีกครั้ง";
+    btn.disabled=false;btn.textContent=old;return}
+  btn.disabled=false;btn.textContent=old;$("lgSyncKey").value="";
+  try{syncFill();syncSeedAll();syncPaint();syncSoon(800)}catch(x){}
+  $("lgForm").dispatchEvent(new Event("submit",{cancelable:true,bubbles:true}));
+  setTimeout(()=>{try{advise("เชื่อมต่อระบบกลางแล้ว","เครื่องนี้จะดึงข้อมูลผู้ป่วย ประวัติ และภาพจากระบบกลาง และซิงก์อัตโนมัติ")}catch(x){}},1500)},true);
+{const so=$("syncOff");if(so)so.addEventListener("click",()=>setTimeout(()=>{if(syncRequired()&&!syncCfg()){try{doLogout()}catch(e){}}},50))}
+otPaint();
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
