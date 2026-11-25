@@ -3423,7 +3423,7 @@ function go(pg,scroll){
   if(pg==="qa")setTimeout(()=>{try{qaPaint()}catch(e){console.error(e)}},0);
   if(pg==="ward"){setTimeout(renderWard,0);setTimeout(()=>{try{admListRender()}catch(e){}},0)}
   PAGES.forEach(x=>{$("page-"+x).hidden=x!==pg;const tb=$("tab-"+x);if(tb)tb.setAttribute("aria-selected",x===pg)});
-  try{bnavPaint();if(pg==="home")homePaint();if(pg==="patients")plPaint();if(pg==="history"){$("histFold").open=true;renderHist()}}catch(e){}
+  try{bnavPaint();if(pg==="home")homePaint();if(pg==="patients")plPaint();if(pg==="history"){$("histFold").open=true;renderHist();try{if(syncCfg())syncSoon(300)}catch(e){}}}catch(e){}
   try{localStorage.setItem("pi-page",pg)}catch(e){}
   try{history.replaceState(null,"","#"+pg)}catch(e){}
   if(scroll!==false)window.scrollTo({top:0,behavior:"smooth"});
@@ -4332,16 +4332,16 @@ async function syncPull(){const since=+localStorage.getItem("pi-sync-last")||0,j
     try{localStorage.setItem("pi-sync-hids",JSON.stringify([...ids]))}catch(e){}
     if(histChanged){hist=hist.filter(h=>!h.ex);try{localStorage.setItem("pi-hist",JSON.stringify(hist))}catch(e){}}}
   (j.turns||[]).forEach(r=>{const hn=String(r.hn),t=+r.t||0,k="pi-turn-"+hn;if(pend.has("turn|"+hn))return;if(t>(+localStorage.getItem(k)||0))try{localStorage.setItem(k,String(t))}catch(e){}});
-  let gotPhoto=false;
+  let gotPhoto=false,gotWound=false;
   for(const r of (j.photos||[])){const id=String(r.id),store=String(r.store||"");if(pend.has("photo|"+id))continue;
-    if(r.deleted==="y"){if(store==="skin"){await skDel(id);gotPhoto=true}else if(store==="wound"){await wpDel(id)}continue}
+    if(r.deleted==="y"){if(store==="skin"){await skDel(id);gotPhoto=true}else if(store==="wound"){await wpDel(id);gotWound=true}continue}
     if(await idbGet(store,id))continue;
-    try{const g=await syncCall({action:"photo",id});if(g.rec&&g.rec.img){if(g.store==="skin")await skPut(g.rec);else await wpPut(g.rec);gotPhoto=true}}catch(e){}}
+    try{const g=await syncCall({action:"photo",id});if(g.rec&&g.rec.img){if(g.store==="skin"){await skPut(g.rec);gotPhoto=true}else{await wpPut(g.rec);gotWound=true}}}catch(e){}}
   try{localStorage.setItem("pi-sync-last",String(j.time||Date.now()))}catch(e){}
   // refresh UI
   const busyUI=!$("bwModal").hidden||!$("stepModal").hidden||!$("riskModal").hidden||!$("liveCam").hidden;
   if(curChanged&&!busyUI){const h=curHN;ptReady=false;curHN=null;try{changePatient(h)}finally{ptReady=true}}
-  if(histChanged){try{renderHist()}catch(e){}}
+  if(histChanged||gotWound){try{renderHist()}catch(e){}}
   if(gotPhoto){try{skinCache=skOnly(await skAll(skHN()));skRender()}catch(e){}}
   try{update()}catch(e){}try{if(document.body.dataset.page==="ward")renderWard()}catch(e){}
   return (j.patients||[]).length+(j.history||[]).length}
