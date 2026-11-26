@@ -16,6 +16,7 @@ const SHEETS = {
   turns:    ['hn', 'updated', 'ot', 't'],
   photos:   ['id', 'store', 'hn', 'date', 'site', 'updated', 'ot', 'deleted', 'fileId', 'meta', 'time', 'shift', 'kind', 'expires'],
   log:      ['time', 'ot', 'action', 'key'],
+  pins:     ['ot', 'salt', 'hash', 'updated'],
   admins:   ['email', 'name', 'salt', 'hash', 'status', 'created', 'approvedBy', 'token', 'tokenExp']
 };
 
@@ -74,6 +75,8 @@ function doPost(e) {
     if (req.action === 'push') { const r = push(req); try { maybeCleanup(); } catch (e) {} return out(r); }
     if (req.action === 'pull') return out(pull(req));
     if (req.action === 'photo') return out(getPhoto(req.id));
+    if (req.action === 'pinget') return out(pinGet(req));
+    if (req.action === 'pinset') return out(pinSet(req));
     if (req.action === 'adminRegister') return out(adminRegister(req));
     if (req.action === 'adminLogin') return out(adminLogin(req));
     if (req.action === 'adminList') return out(adminList(req));
@@ -429,4 +432,32 @@ function adminDeleteSelected() {
     sheet('log').appendRow([new Date(now), 'admin', 'adminDeleteSelected', n + ' ภาพ' + (who ? ' · ' + who : '')]);
     ui.alert('ลบแล้ว ' + n + ' ภาพ');
   } finally { lock.releaseLock(); }
+}
+
+/* ===== PIN 4 หลักของผู้ใช้ (เก็บเฉพาะค่าแฮช ไม่เก็บ PIN จริง) =====
+ * รีเซ็ต PIN ให้ผู้ใช้ที่ลืม: เปิดแท็บ "pins" แล้วลบแถวของเลข OT นั้น ผู้ใช้จะตั้ง PIN ใหม่ตอนเข้าระบบครั้งถัดไป */
+function pinRow(P, ot) {
+  const last = P.getLastRow(); if (last < 2) return 0;
+  const v = P.getRange(2, 1, last - 1, 1).getValues();
+  for (let i = 0; i < v.length; i++) if (String(v[i][0]).replace(/^'/, '') === ot) return i + 2;
+  return 0;
+}
+function pinGet(req) {
+  const ot = String(req.ot || '').trim(); if (!ot) return { ok: false, error: 'no_ot' };
+  const P = sheet('pins'), r = pinRow(P, ot);
+  if (!r) return { ok: true, pin: null };
+  const row = P.getRange(r, 1, 1, 4).getValues()[0];
+  return { ok: true, pin: { salt: String(row[1]), hash: String(row[2]), updated: row[3] } };
+}
+function pinSet(req) {
+  const ot = String(req.ot || '').trim(), salt = String(req.salt || ''), hash = String(req.hash || '');
+  if (!ot || !salt || hash.length < 20) return { ok: false, error: 'bad_pin' };
+  const P = sheet('pins'), r = pinRow(P, ot), now = Date.now();
+  if (r) {
+    const cur = String(P.getRange(r, 3).getValue());
+    if (!req.prev || String(req.prev) !== cur) return { ok: true, exists: true };
+    P.getRange(r, 1, 1, 4).setValues([["'" + ot, salt, hash, now]]);
+  } else P.appendRow(["'" + ot, salt, hash, now]);
+  sheet('log').appendRow([new Date(now), ot, r ? 'pinChange' : 'pinSet', '']);
+  return { ok: true };
 }

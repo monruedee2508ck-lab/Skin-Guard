@@ -2061,6 +2061,21 @@ body.role-na .rn-only>*:not(h2):not(.rn-tag):not(#riskOpen){opacity:.45;pointer-
 body.role-na .rn-tag{display:inline-flex;align-items:center;gap:6px;margin:0 0 8px;font-size:.78rem;font-weight:700;color:#8a5a00;background:#fff3d6;border:1px solid #f2c14e;border-radius:99px;padding:4px 12px}
 .na-badge{display:none}
 body.role-na .na-badge{display:inline-block;margin-left:4px;white-space:nowrap;font-size:.62rem;font-weight:700;color:#8a5a00;background:#fff3d6;border-radius:99px;padding:1px 8px;vertical-align:1px}
+/* PIN */
+.pin-ov{position:fixed;inset:0;z-index:2147483100;background:linear-gradient(160deg,#0e3a4f,#1b2b5e);display:flex;align-items:center;justify-content:center;padding:16px}
+.pin-card{width:100%;max-width:340px;display:flex;flex-direction:column;align-items:center;gap:10px;color:#fff;text-align:center}
+.pin-lock{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.12);color:#f2c14e}
+.pin-card b{font-size:1.25rem}.pin-card p{margin:0;font-size:.9rem;color:rgba(230,240,250,.8);line-height:1.5}
+.pin-dots{display:flex;gap:18px;margin:10px 0 2px}.pin-dots i{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.7)}
+.pin-dots i.on{background:#fff;border-color:#fff}.pin-dots.shake{animation:pinshake .35s}
+@keyframes pinshake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.pin-err{min-height:1.3em;color:#ffb4a8!important;font-weight:600}
+.pin-pad{display:grid;grid-template-columns:repeat(3,72px);gap:14px 22px;margin-top:4px}
+.pin-pad button{width:72px;height:72px;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:#fff;font:inherit;font-size:1.6rem;font-weight:500;cursor:pointer}
+.pin-pad button:active{background:rgba(255,255,255,.32)}.pin-pad button.fn{background:none;font-size:.95rem}
+.pin-pad button:disabled{opacity:.35}
+.pin-cancel{margin-top:6px;font:inherit;font-size:.95rem;background:none;border:0;color:#f2c14e;font-weight:600;cursor:pointer;padding:8px 16px}
+.pin-help{font-size:.75rem!important;opacity:.7}
 </style>
 </head>
 <body>
@@ -2123,6 +2138,7 @@ body.role-na .na-badge{display:inline-block;margin-left:4px;white-space:nowrap;f
     <div class="user-menu" id="userMenu" role="menu" hidden>
       <div class="um-head"><span class="av lg" id="umAv">?</span><div><b id="umName"></b><small id="umSub"></small></div></div>
       <button type="button" class="um-item" id="admLock" role="menuitem"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path id="admShackle" d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span id="admLbl">เข้าโหมดผู้ดูแล (Admin)</span></button>
+      <button type="button" class="um-item" id="pinChange" role="menuitem"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>เปลี่ยน PIN</button>
       <button type="button" class="um-item danger" id="otChip" role="menuitem"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l-5-5 5-5"/><path d="M5 12h12"/></svg><span>ออกจากระบบ</span></button>
     </div>
   </header>
@@ -3001,6 +3017,15 @@ body.role-na .na-badge{display:inline-block;margin-left:4px;white-space:nowrap;f
   <div class="qr-ov light" id="qrShow" hidden role="dialog" aria-modal="true" aria-label="QR ตั้งค่า"><div class="qr-card"><b>QR ตั้งค่าระบบกลาง</b>
     <p>เครื่องใหม่: เปิด Skin Guard → กด "สแกน QR ตั้งค่า" ที่หน้า login แล้วสแกนภาพนี้</p><div class="qr-img" id="qrImg"></div>
     <p class="qr-warn">QR นี้มีรหัสลับของหน่วยงาน แสดงให้เฉพาะเครื่องของหอผู้ป่วย ห้ามถ่ายภาพส่งออกนอกหน่วยงาน</p><button type="button" class="qr-btn dark" id="qrShowClose">ปิด</button></div></div>
+  <div class="pin-ov" id="pinOv" hidden role="dialog" aria-modal="true" aria-labelledby="pinT"><div class="pin-card">
+    <div class="pin-lock" aria-hidden="true"><svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+    <b id="pinT">ใส่ PIN</b><p id="pinS"></p>
+    <div class="pin-dots" id="pinDots" aria-live="polite"><i></i><i></i><i></i><i></i></div>
+    <p class="pin-err" id="pinErr" role="alert"></p>
+    <div class="pin-pad" id="pinPad"></div>
+    <button type="button" class="pin-cancel" id="pinCancel">ยกเลิก</button>
+    <p class="pin-help">ลืม PIN? ติดต่อหัวหน้าหอหรือผู้ดูแลระบบเพื่อรีเซ็ต</p>
+  </div></div>
   <div class="viewer" id="viewer" hidden role="dialog" aria-modal="true" aria-label="ดูภาพผิวหนัง"></div>
   <div class="app-foot" aria-hidden="true"><svg viewBox="0 0 56 16" preserveAspectRatio="none"><path d="M1.0,4.0 L3.0,5.3 L5.0,5.6 L7.0,4.7 L9.0,3.3 L11.0,2.4 L13.0,2.7 L15.0,4.0 L17.0,5.3 L19.0,5.6 L21.0,4.7 L23.0,3.3 L25.0,2.4 L27.0,2.7 L29.0,4.0 L31.0,5.3 L33.0,5.6 L35.0,4.7 L37.0,3.3 L39.0,2.4 L41.0,2.7 L43.0,4.0 L45.0,5.3 L47.0,5.6 L49.0,4.7 L51.0,3.3 L53.0,2.4 L55.0,2.7" fill="none" stroke="#f3a08c" stroke-width="1.6" stroke-linecap="round" opacity=".75"/><path d="M1.0,10.1 L2.0,9.5 L3.0,8.1 L4.0,7.0 L5.0,7.1 L6.0,8.2 L7.0,9.5 L8.0,10.1 L9.0,9.5 L10.0,8.1 L11.0,7.0 L12.0,7.1 L13.0,8.2 L14.0,9.5 L15.0,10.1 L16.0,9.5 L17.0,8.1 L18.0,7.0 L19.0,7.1 L20.0,8.2 L21.0,9.5 L22.0,10.1 L23.0,9.5 L24.0,8.1 L25.0,7.0 L26.0,7.1 L27.0,8.2 L28.0,9.5 L29.0,10.1 L30.0,9.5 L31.0,8.1 L32.0,7.0 L33.0,7.1 L34.0,8.2 L35.0,9.5 L36.0,10.1 L37.0,9.5 L38.0,8.1 L39.0,7.0 L40.0,7.1 L41.0,8.2 L42.0,9.5 L43.0,10.1 L44.0,9.5 L45.0,8.1 L46.0,7.0 L47.0,7.1 L48.0,8.2 L49.0,9.5 L50.0,10.1 L51.0,9.5 L52.0,8.1 L53.0,7.0 L54.0,7.1 L55.0,8.2" fill="none" stroke="#e0606f" stroke-width="1.6" stroke-linecap="round" opacity=".6"/><path d="M1.0,14.0 L3.0,14.2 L5.0,13.9 L7.0,13.3 L9.0,12.6 L11.0,12.0 L13.0,11.8 L15.0,12.1 L17.0,12.7 L19.0,13.4 L21.0,14.0 L23.0,14.2 L25.0,13.9 L27.0,13.3 L29.0,12.6 L31.0,12.0 L33.0,11.8 L35.0,12.1 L37.0,12.7 L39.0,13.4 L41.0,14.0 L43.0,14.2 L45.0,13.9 L47.0,13.3 L49.0,12.6 L51.0,12.0 L53.0,11.8 L55.0,12.1" fill="none" stroke="#d9a441" stroke-width="1.6" stroke-linecap="round" opacity=".6"/></svg><span><b>Skin Guard v1.0</b> · SMART-SKIN CARE</span></div>
   <p class="note">เครื่องมือนี้ช่วยประเมินตามเกณฑ์ NPIAP (2016) และ PUSH Tool 3.0 ไม่ใช้แทนการตัดสินใจทางคลินิกของพยาบาลหรือแพทย์ แผลที่เยื่อบุ (mucosal) ไม่จัดระดับด้วยระบบนี้</p>
@@ -7537,6 +7562,66 @@ document.addEventListener("click",e=>{if(!isNA())return;const b=e.target.closest
   return _ss.apply(this,arguments)};$("skinSave").onclick=skSave}
 {const _op=otPaint;otPaint=function(){const r=_op.apply(this,arguments);try{naApply()}catch(e){}return r}}
 naMark();naApply();
+/* ===== Personal 4-digit PIN (login + auto-lock) ===== */
+var PIN_IDLE=10*60e3,PIN_MAXTRY=5,PIN_COOL=5*60e3,pinBusy=false,pinOkOT="",pinLast=Date.now();
+function pinNorm(ot){return String(ot||"").trim().replace(/\s+/g,"").replace(/^0+(?=\d)/,"")}
+async function pinHash(pin,salt){const e=new TextEncoder(),k=await crypto.subtle.importKey("raw",e.encode(String(pin)),"PBKDF2",false,["deriveBits"]);
+  const b=await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:e.encode("SkinGuard-PIN|"+salt),iterations:120000},k,256);return btoa(String.fromCharCode(...new Uint8Array(b)))}
+function pinSalt(ot){const a=crypto.getRandomValues(new Uint8Array(12));return ot+"|"+btoa(String.fromCharCode(...a))}
+function pinCache(ot,v){const k="pi-pin:"+ot;try{if(v===undefined)return JSON.parse(localStorage.getItem(k)||"null");if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+function pinTries(ot,v){const k="pi-pintry:"+ot;try{if(v===undefined)return JSON.parse(localStorage.getItem(k)||'{"n":0,"t":0}');if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,JSON.stringify(v))}catch(e){return {n:0,t:0}}}
+async function pinStatus(ot){const c=pinCache(ot);
+  if(syncCfg()&&navigator.onLine){try{const r=await syncCall({action:"pinget",ot});if(r&&r.pin&&r.pin.hash){const v={salt:r.pin.salt,hash:r.pin.hash,src:"server"};pinCache(ot,v);return {have:v}}
+      pinCache(ot,null);return {none:true,server:true}}
+    catch(e){if(/unknown_action/.test(String(e&&e.message||e)))return c?{have:c}:{none:true,server:false};return c?{have:c}:{offline:true}}}
+  if(c)return {have:c};return syncCfg()?{offline:true}:{none:true,server:false}}
+/* keypad UI → resolves 4 digits or null */
+function pinAsk(title,sub,cancelLabel){return new Promise(res=>{let v="";const ov=$("pinOv"),dots=$("pinDots").children;$("pinT").textContent=title;$("pinS").textContent=sub||"";$("pinErr").textContent=pinAsk.err||"";pinAsk.err="";
+  $("pinCancel").textContent=cancelLabel||"ยกเลิก";
+  const paint=()=>{[...dots].forEach((d,i)=>d.classList.toggle("on",i<v.length))};
+  const done=x=>{document.removeEventListener("keydown",kd,true);ov.hidden=true;res(x)};
+  const press=k=>{if(k==="del"){v=v.slice(0,-1);paint();return}if(v.length>=4)return;v+=k;paint();if(v.length===4)setTimeout(()=>done(v),120)};
+  const kd=e=>{if(/^[0-9]$/.test(e.key)){e.preventDefault();press(e.key)}else if(e.key==="Backspace"){e.preventDefault();press("del")}};
+  $("pinPad").innerHTML=["1","2","3","4","5","6","7","8","9","","0","del"].map(k=>k===""?"<span></span>":`<button type="button" class="${k==="del"?"fn":""}" data-k="${k}" aria-label="${k==="del"?"ลบ":k}">${k==="del"?"ลบ":k}</button>`).join("");
+  $("pinPad").querySelectorAll("button").forEach(b=>b.onclick=()=>press(b.dataset.k));
+  $("pinCancel").onclick=()=>done(null);document.addEventListener("keydown",kd,true);paint();ov.hidden=false})}
+function pinShake(msg){pinAsk.err=msg;const d=$("pinDots");d.classList.remove("shake");void d.offsetWidth;d.classList.add("shake")}
+/* verify existing PIN (with attempt limit); returns true/false */
+async function pinVerify(ot,rec,title,sub,cancelLabel){for(;;){const tr=pinTries(ot);
+    if(tr.n>=PIN_MAXTRY&&Date.now()-tr.t<PIN_COOL){const m=Math.ceil((PIN_COOL-(Date.now()-tr.t))/60000);pinShake(`ใส่ผิดเกิน ${PIN_MAXTRY} ครั้ง รออีก ${m} นาที`);const x=await pinAsk(title,sub,cancelLabel);if(x===null)return false;continue}
+    if(tr.n>=PIN_MAXTRY)pinTries(ot,null);
+    const p=await pinAsk(title,sub,cancelLabel);if(p===null)return false;
+    if(await pinHash(p,rec.salt)===rec.hash){pinTries(ot,null);return true}
+    const t2=pinTries(ot);t2.n=(t2.n||0)+1;t2.t=Date.now();pinTries(ot,t2);pinShake(t2.n>=PIN_MAXTRY?`ใส่ผิดเกิน ${PIN_MAXTRY} ครั้ง รอ 5 นาที`:`PIN ไม่ถูกต้อง (เหลือ ${PIN_MAXTRY-t2.n} ครั้ง)`)}}
+/* set a new PIN (twice); returns true/false */
+async function pinCreate(ot,title,prev,server){for(;;){const a=await pinAsk(title||"ตั้ง PIN 4 หลัก","ใช้ PIN นี้ทุกครั้งที่เข้าระบบและปลดล็อกหน้าจอ · ห้ามใช้ 0000 หรือ 1234");if(a===null)return false;
+    if(/^(\d)\1{3}$/.test(a)||["1234","4321","0123","9876"].includes(a)){pinShake("PIN ง่ายเกินไป ลองใหม่");continue}
+    const b=await pinAsk("ยืนยัน PIN อีกครั้ง","ใส่ PIN เดิมอีกครั้ง");if(b===null)return false;if(a!==b){pinShake("PIN ไม่ตรงกัน ตั้งใหม่อีกครั้ง");continue}
+    const salt=pinSalt(ot),hash=await pinHash(a,salt);
+    if(server){try{const r=await syncCall({action:"pinset",ot,salt,hash,prev:prev||""});if(r&&r.exists){const st=await pinStatus(ot);if(st.have)return pinVerify(ot,st.have,"ใส่ PIN","มี PIN ของเลข OT นี้อยู่แล้ว")}}
+      catch(e){if(!/unknown_action/.test(String(e&&e.message||e))){pinShake("บันทึก PIN ไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วลองใหม่");continue}server=false}}
+    pinCache(ot,{salt,hash,src:server?"server":"local"});pinTries(ot,null);toast("ตั้ง PIN เรียบร้อย");return true}}
+async function pinGate(ot,mode){const st=await pinStatus(ot),nm=otName(ot)||("OT "+ot);
+  if(st.offline){advise("ต้องต่ออินเทอร์เน็ต","เครื่องนี้ยังไม่เคยเข้าระบบด้วยเลข OT นี้ ต่ออินเทอร์เน็ตเพื่อตรวจ PIN ครั้งแรก","--s2","!");return false}
+  if(st.have)return pinVerify(ot,st.have,mode==="lock"?"หน้าจอถูกล็อก":"ใส่ PIN",nm,mode==="lock"?"ออกจากระบบ":"ยกเลิก");
+  return pinCreate(ot,"ตั้ง PIN 4 หลัก (ครั้งแรก)",null,!!st.server)}
+/* login: PIN after the OT (and central-sync) checks */
+document.addEventListener("submit",async e=>{if(e.target!==$("lgForm"))return;if(syncRequired()&&!syncCfg())return;
+  const ot=pinNorm($("lgOT").value);if(!ot||!otAllowed(ot))return;if(pinOkOT===ot){pinOkOT="";return}
+  e.preventDefault();e.stopImmediatePropagation();if(pinBusy)return;pinBusy=true;
+  try{if(await pinGate(ot,"login")){pinOkOT=ot;pinLast=Date.now();$("lgForm").dispatchEvent(new Event("submit",{cancelable:true,bubbles:true}))}}finally{pinBusy=false}},true);
+/* auto-lock after inactivity */
+["pointerdown","keydown","touchstart","wheel"].forEach(t=>document.addEventListener(t,()=>{if($("pinOv").hidden)pinLast=Date.now()},{passive:true,capture:true}));
+async function pinLockNow(){const u=otGet();if(!u||pinBusy)return;pinBusy=true;try{const ok=await pinGate(pinNorm(u.ot),"lock");if(ok)pinLast=Date.now();else{try{doLogout()}catch(e){}}}finally{pinBusy=false}}
+function pinIdleCheck(){if(otGet()&&!pinBusy&&$("pinOv").hidden&&Date.now()-pinLast>PIN_IDLE)pinLockNow()}
+setInterval(pinIdleCheck,15e3);document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")pinIdleCheck()});
+/* change PIN from the user menu */
+$("pinChange").onclick=async()=>{try{userMenu(false)}catch(e){}const u=otGet();if(!u||pinBusy)return;const ot=pinNorm(u.ot);pinBusy=true;
+  try{const st=await pinStatus(ot);if(st.offline){advise("ต้องต่ออินเทอร์เน็ต","เปลี่ยน PIN ต้องต่ออินเทอร์เน็ต","--s2","!");return}
+    if(st.have&&!(await pinVerify(ot,st.have,"ใส่ PIN เดิม",otName(ot))))return;
+    await pinCreate(ot,"ตั้ง PIN ใหม่",st.have?st.have.hash:"",!!(st.have?st.have.src==="server":st.server))}finally{pinBusy=false;pinLast=Date.now()}};
+/* sessions that were open before PIN existed: ask once now */
+setTimeout(()=>{const u=otGet();if(u&&!pinCache(pinNorm(u.ot)))pinLockNow()},2500);
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
