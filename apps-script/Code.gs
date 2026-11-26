@@ -138,7 +138,7 @@ function push(req) {
       }
       const view = rec._view || {}, thumb = view.thumb || '';
       const meta = Object.assign({}, rec); delete meta.img; delete meta._view;
-      const time = String(rec.time || ''), sh = shiftOf(time), exp = KEEP_DAYS > 0 && isNormalDaily(it.store, rec) ? addDays(dstr(rec.date), KEEP_DAYS) : ''; // ภาพผิวหนังผิดปกติ/แผลอื่น: เก็บจนจำหน่ายผู้ป่วย
+      const time = String(rec.time || ''), sh = shiftOf(time), exp = rec.cat === 'dc' ? addMonths(dstr(rec.date), DC_KEEP_MONTHS) : KEEP_DAYS > 0 && isNormalDaily(it.store, rec) ? addDays(dstr(rec.date), KEEP_DAYS) : ''; // ภาพผิวหนังผิดปกติ/แผลอื่น: เก็บจนจำหน่ายผู้ป่วย
       upsert(F, fi, it.key, ["'" + it.key, it.store || '', "'" + (rec.hn || ''), "'" + dstr(rec.date), rec.site || '', now, ot, '', fileId, JSON.stringify(meta), "'" + time, sh, view.kind || rec.kind || it.store || '', "'" + exp]);
       try { viewAdd(it.key, rec, view, thumb, sh, exp, ot, fileId); } catch (e) {}
     }
@@ -147,7 +147,7 @@ function push(req) {
     else if (it.type === 'wound') { woundWrite(it.key, it.data || {}, ot); }
     else if (it.type === 'delphoto') {
       const r = fi[String(it.key)];
-      if (r && String(F.getRange(r, 10).getValue()).indexOf('"cat":"dc"') >= 0) { /* ภาพก่อนจำหน่าย: ลบจากแอปไม่ได้ */ }
+      if (r && String(F.getRange(r, 10).getValue()).indexOf('"cat":"dc"') >= 0) { /* ภาพก่อนจำหน่าย: ลบอัตโนมัติเมื่อครบ 3 เดือน หรือแอดมินลบจากเมนู */ }
       else if (r) photoGone(F, r, now, ot);
       else upsert(F, fi, it.key, ["'" + it.key, it.store || '', '', '', '', now, ot, 'y', '', '', '', '', '', '']);
     }
@@ -248,6 +248,13 @@ function dstr(d) {
   if (d instanceof Date) return Utilities.formatDate(d, TZ, 'yyyy-MM-dd');
   const m = String(d || '').match(/\d{4}-\d{2}-\d{2}/); return m ? m[0] : '';
 }
+/** ภาพก่อนจำหน่าย/ย้ายออก: ลบอัตโนมัติเมื่อครบ 3 เดือนหลังวันที่จำหน่าย (แอดมินลบเองก่อนได้จากเมนู Skin Guard) */
+const DC_KEEP_MONTHS = 3;
+function addMonths(d, n) {
+  if (!d) return '';
+  const x = new Date(d + 'T00:00:00Z'), day = x.getUTCDate(); x.setUTCDate(1); x.setUTCMonth(x.getUTCMonth() + n);
+  const dim = new Date(Date.UTC(x.getUTCFullYear(), x.getUTCMonth() + 1, 0)).getUTCDate(); x.setUTCDate(Math.min(day, dim)); return x.toISOString().slice(0, 10);
+}
 function addDays(d, n) {
   if (!d) return '';
   const x = new Date(d + 'T00:00:00Z'); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10);
@@ -312,7 +319,7 @@ function cleanupPhotos() {
   rows.forEach((r, i) => {
     if (r[7] === 'y') return;
     let meta = {}; try { meta = JSON.parse(String(r[9] || '{}')); } catch (e) {}
-    if (meta.cat === 'dc') return; // ภาพก่อนจำหน่าย: เก็บถาวร ลบได้โดยแอดมินเท่านั้น (เมนู Skin Guard ในชีต)
+    if (meta.cat === 'dc') { const e = addMonths(dstr(r[3]), DC_KEEP_MONTHS); if (e && e <= t) { photoGone(F, i + 2, now, 'auto'); n++; } return; } // ภาพก่อนจำหน่าย: เก็บ 3 เดือนหลังจำหน่าย ไม่ลบพร้อมผู้ป่วย
     const d = dstr(r[3]), exp = KEEP_DAYS > 0 && isNormalDaily(r[1], meta) ? addDays(d, KEEP_DAYS) : '';
     if ((exp && exp <= t) || gone[String(r[2])]) { photoGone(F, i + 2, now, 'auto'); n++; }
   });
@@ -320,7 +327,7 @@ function cleanupPhotos() {
   const V = book().getSheetByName(VIEW_TAB);
   if (V && V.getLastRow() > 1) {
     const vr = V.getRange(2, 1, V.getLastRow() - 1, VIEW_HEAD.length).getValues();
-    for (let i = vr.length - 1; i >= 0; i--) { if (/^ภาพก่อนจำหน่าย/.test(String(vr[i][4]))) continue; const exp = dstr(vr[i][11]); if ((KEEP_DAYS > 0 && exp && exp <= t) || gone[String(vr[i][3])]) V.deleteRow(i + 2); }
+    for (let i = vr.length - 1; i >= 0; i--) { if (/^ภาพก่อนจำหน่าย/.test(String(vr[i][4]))) { const e = dstr(vr[i][11]); if (e && e <= t) V.deleteRow(i + 2); continue; } const exp = dstr(vr[i][11]); if ((KEEP_DAYS > 0 && exp && exp <= t) || gone[String(vr[i][3])]) V.deleteRow(i + 2); }
   }
   if (n) sheet('log').appendRow([new Date(now), 'auto', 'cleanupPhotos', n + ' ภาพ']);
   return n;

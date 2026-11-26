@@ -2704,7 +2704,7 @@ body.role-na .na-badge{display:inline-block;margin-left:4px;white-space:nowrap;f
     <div class="dc-sum" id="dcSum"></div>
     <div class="dc-ph" id="dcPh">
       <div class="dc-ph-h"><b>ภาพผิวหนังก่อนจำหน่าย</b><span class="dc-req">จำเป็น</span></div>
-      <p class="dc-ph-n">ถ่ายผิวหนังบริเวณเสี่ยงและแผลทุกตำแหน่งเพื่อเป็นหลักฐาน · ภาพนี้<b>เก็บถาวร</b>ในระบบกลาง ลบได้โดยผู้ดูแลระบบเท่านั้น</p>
+      <p class="dc-ph-n">ถ่ายผิวหนังบริเวณเสี่ยงและแผลทุกตำแหน่งเพื่อเป็นหลักฐาน · ภาพนี้<b>เก็บไว้ 3 เดือนหลังจำหน่าย/ย้ายออก</b> แล้วลบอัตโนมัติ</p>
       <div class="dc-sites" id="dcSites" role="group" aria-label="ตำแหน่งที่ถ่าย"></div>
       <div class="dc-shots" id="dcShots"></div>
       <div class="dc-ph-b"><button type="button" class="btn primary" id="dcCam">ถ่ายภาพ</button><button type="button" class="btn ghost" id="dcLib">เลือกจากคลังภาพ</button></div>
@@ -2714,7 +2714,7 @@ body.role-na .na-badge{display:inline-block;margin-left:4px;white-space:nowrap;f
       <textarea id="dcNote" rows="2" placeholder="เช่น ย้ายไปหอศัลยกรรมชาย 2 ส่งต่อแผนการดูแลแผลให้หอปลายทางแล้ว"></textarea>
     </label>
     <button class="btn dc-btn" id="dcBtn" type="button"><span>จำหน่ายผู้ป่วย</span></button>
-    <p class="note" style="margin:0">ผลประเมินและบันทึกที่ลงชื่อแล้วยังเก็บอยู่ในประวัติ ผู้ป่วยจะถูกนำออกจากรายชื่อผู้ป่วย และ<b>ภาพถ่ายผิวหนังและภาพแผลทั้งหมดของผู้ป่วยรายนี้จะถูกลบ</b> ทั้งในเครื่องนี้และในระบบกลาง เพื่อคุ้มครองข้อมูลส่วนบุคคล <b>ยกเว้นภาพก่อนจำหน่าย</b> ซึ่งเก็บถาวรเป็นหลักฐานจนกว่าผู้ดูแลระบบจะลบ</p>
+    <p class="note" style="margin:0">ผลประเมินและบันทึกที่ลงชื่อแล้วยังเก็บอยู่ในประวัติ ผู้ป่วยจะถูกนำออกจากรายชื่อผู้ป่วย และ<b>ภาพถ่ายผิวหนังและภาพแผลทั้งหมดของผู้ป่วยรายนี้จะถูกลบ</b> ทั้งในเครื่องนี้และในระบบกลาง เพื่อคุ้มครองข้อมูลส่วนบุคคล <b>ยกเว้นภาพก่อนจำหน่าย</b> ซึ่งเก็บเป็นหลักฐาน 3 เดือนหลังจำหน่าย/ย้ายออก แล้วลบอัตโนมัติ</p>
   </section>
   </div>
 
@@ -6509,7 +6509,7 @@ function phView(store,rec){const sk=store==="skin";let site="",what="";
   if(sk&&rec.cat==="dc"){site=rec.place||"";what="จำหน่าย: "+(rec.dcLabel||"")}
   else if(sk){site=skSite(rec.site)[1];what=skSt(rec.status).t}
   else{site=(rec.site||"")+(rec.side?" "+rec.side:"");const S=(typeof STAGES!=="undefined"&&STAGES[rec.stage])||null;what=[S?stageShort(rec.stage):"",rec.a>0?(+rec.a).toFixed(1)+" cm²":"",rec.push!=null?"PUSH "+rec.push:""].filter(Boolean).join(" · ")}
-  return {kind:sk?(rec.cat==="dc"?"ภาพก่อนจำหน่าย (เก็บถาวร)":rec.kind==="admit"?"ภาพผิวหนังแรกรับ":"ภาพผิวหนังประจำวัน"):"ภาพแผล",site,what,shift:phShiftTH(rec.time),expires:sk&&phNormal(rec)&&rec.date?phExpire(rec.date):"",note:rec.note||""}}
+  return {kind:sk?(rec.cat==="dc"?"ภาพก่อนจำหน่าย (เก็บ 3 เดือน)":rec.kind==="admit"?"ภาพผิวหนังแรกรับ":"ภาพผิวหนังประจำวัน"):"ภาพแผล",site,what,shift:phShiftTH(rec.time),expires:sk&&rec.cat==="dc"&&rec.date?dcExpire(rec.date):sk&&phNormal(rec)&&rec.date?phExpire(rec.date):"",note:rec.note||""}}
 /* push: add readable fields + small thumbnail for the Google Sheet */
 {const _call=syncCall;syncCall=async function(req){try{if(req&&req.action==="push"&&req.items)for(const it of req.items){if(it.type==="photo"&&it.data&&it.data.img&&!it.data._view){
   const d=Object.assign({},it.data);d._view=phView(it.store,d);d._view.thumb=await phThumb(d.img,220);it.data=d}}}catch(e){}return _call.apply(this,arguments)}}
@@ -7526,9 +7526,11 @@ $("dcCam").onclick=()=>$("dcFileCam").click();$("dcLib").onclick=()=>$("dcFileLi
       try{await skPut(pr)}catch(e){}try{syncEnq("photo",pr.id,{store:"skin"})}catch(e){}});
     dcDraft=[];dcDraftHN="";try{dcPhPaint();renderHist()}catch(e){}}
   return r}}
-/* keep on this device until uploaded; prune local copies 30 days after upload (the central copy stays) */
-async function dcPrune(){if(!syncCfg())return;let q=[];try{q=syncQ()}catch(e){}const pend=new Set(q.map(i=>String(i.key)));const lim=new Date(Date.now()-30*864e5).toISOString().slice(0,10);
-  try{if(!skinTried){skinTried=true;skinDB=await skOpen()}const all=skinDB?await phAllStore(skinDB):[];for(const r of all)if(r&&r.cat==="dc"&&r.date&&r.date<lim&&!pend.has(String(r.id)))await skDel(r.id)}catch(e){}}
+/* 3 months after discharge: delete everywhere (local copies may go earlier, 30 days after upload) */
+var DC_KEEP_MONTHS=3;
+function dcExpire(d){try{const x=new Date(String(d).slice(0,10)+"T00:00:00Z"),day=x.getUTCDate();x.setUTCDate(1);x.setUTCMonth(x.getUTCMonth()+(DC_KEEP_MONTHS||3));const dim=new Date(Date.UTC(x.getUTCFullYear(),x.getUTCMonth()+1,0)).getUTCDate();x.setUTCDate(Math.min(day,dim));return x.toISOString().slice(0,10)}catch(e){return ""}}
+async function dcPrune(){let q=[];try{q=syncQ()}catch(e){}const pend=new Set(q.map(i=>String(i.key)));const lim=new Date(Date.now()-30*864e5).toISOString().slice(0,10);
+  try{if(!skinTried){skinTried=true;skinDB=await skOpen()}const all=skinDB?await phAllStore(skinDB):[];for(const r of all)if(r&&r.cat==="dc"&&r.date&&((syncCfg()&&r.date<lim&&!pend.has(String(r.id)))||dcExpire(r.date)<=phToday()))await skDel(r.id)}catch(e){}}
 setTimeout(dcPrune,5000);
 /* history: discharge rows show their evidence photos */
 async function dcHistDecorate(){const box=$("hist");if(!box)return;const rows=[...box.querySelectorAll("tbody tr")];const want={};
@@ -7539,7 +7541,7 @@ async function dcHistDecorate(){const box=$("hist");if(!box)return;const rows=[.
     const t=document.createElement("button");t.type="button";t.className="hp-th dc";t.innerHTML=`<img alt=""><span>ภาพก่อนจำหน่าย ${list.length}</span>`;t.querySelector("img").src=list[0].img;
     t.onclick=()=>{hpState={ser:list.map(r=>Object.assign({},r,{site:"ภาพก่อนจำหน่าย",side:"",stage:null,push:null,a:0})),i:0,cmp:false,dc:true};hpPaint();$("viewer").classList.add("hp-on");$("viewer").hidden=false};td.append(t)}}
 {const _hd=hpDecorate;hpDecorate=async function(){const r=await _hd.apply(this,arguments);try{await dcHistDecorate()}catch(e){}return r}}
-{const _hf=hpFig;hpFig=function(x,lab){let h=_hf.apply(this,arguments);if(hpState&&hpState.dc)h=h.replace(/<span>วันที่ \d+ ของการติดตาม<\/span>/,`<span>${esc(x.place||"")} · ${esc(x.dcLabel||"จำหน่าย")} · เก็บถาวร</span>`);return h}}
+{const _hf=hpFig;hpFig=function(x,lab){let h=_hf.apply(this,arguments);if(hpState&&hpState.dc)h=h.replace(/<span>วันที่ \d+ ของการติดตาม<\/span>/,`<span>${esc(x.place||"")} · ${esc(x.dcLabel||"จำหน่าย")} · ลบอัตโนมัติ ${esc(thDate(dcExpire(x.date)))}</span>`);return h}}
 dcPhPaint();
 /* ===== Nursing assistant (ผู้ช่วยพยาบาล) scope ===== */
 var OT_NA=new Set(["13kokbxopy9", "1g9256kw3ik", "fd62tck9ex", "1oakyxfdhel", "152m213mhic", "1709xppt08h", "yuyez5ctuy", "410rwv5vl8", "4gjwb4og47", "obkw79gdai", "1gguw1nrq6t"]);
