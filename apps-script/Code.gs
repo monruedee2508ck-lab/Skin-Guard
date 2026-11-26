@@ -144,7 +144,8 @@ function push(req) {
     else if (it.type === 'wound') { woundWrite(it.key, it.data || {}, ot); }
     else if (it.type === 'delphoto') {
       const r = fi[String(it.key)];
-      if (r) photoGone(F, r, now, ot);
+      if (r && String(F.getRange(r, 10).getValue()).indexOf('"cat":"dc"') >= 0) { /* ภาพก่อนจำหน่าย: ลบจากแอปไม่ได้ */ }
+      else if (r) photoGone(F, r, now, ot);
       else upsert(F, fi, it.key, ["'" + it.key, it.store || '', '', '', '', now, ot, 'y', '', '', '', '', '', '']);
     }
     else return;
@@ -308,6 +309,7 @@ function cleanupPhotos() {
   rows.forEach((r, i) => {
     if (r[7] === 'y') return;
     let meta = {}; try { meta = JSON.parse(String(r[9] || '{}')); } catch (e) {}
+    if (meta.cat === 'dc') return; // ภาพก่อนจำหน่าย: เก็บถาวร ลบได้โดยแอดมินเท่านั้น (เมนู Skin Guard ในชีต)
     const d = dstr(r[3]), exp = KEEP_DAYS > 0 && isNormalDaily(r[1], meta) ? addDays(d, KEEP_DAYS) : '';
     if ((exp && exp <= t) || gone[String(r[2])]) { photoGone(F, i + 2, now, 'auto'); n++; }
   });
@@ -315,7 +317,7 @@ function cleanupPhotos() {
   const V = book().getSheetByName(VIEW_TAB);
   if (V && V.getLastRow() > 1) {
     const vr = V.getRange(2, 1, V.getLastRow() - 1, VIEW_HEAD.length).getValues();
-    for (let i = vr.length - 1; i >= 0; i--) { const exp = dstr(vr[i][11]); if ((KEEP_DAYS > 0 && exp && exp <= t) || gone[String(vr[i][3])]) V.deleteRow(i + 2); }
+    for (let i = vr.length - 1; i >= 0; i--) { if (/^ภาพก่อนจำหน่าย/.test(String(vr[i][4]))) continue; const exp = dstr(vr[i][11]); if ((KEEP_DAYS > 0 && exp && exp <= t) || gone[String(vr[i][3])]) V.deleteRow(i + 2); }
   }
   if (n) sheet('log').appendRow([new Date(now), 'auto', 'cleanupPhotos', n + ' ภาพ']);
   return n;
@@ -399,4 +401,32 @@ function woundWrite(key, d, ot) {
   if (sh.getLastRow() > 1) { const c = sh.getRange(2, WOUND_HEAD.length, sh.getLastRow() - 1, 1).createTextFinder(String(key)).matchEntireCell(true).findNext(); if (c) r = c.getRow(); }
   if (r) sh.getRange(r, 1, 1, row.length).setValues([row]); else sh.appendRow(row);
   if (sh.getLastRow() > 2) sh.getRange(2, 1, sh.getLastRow() - 1, WOUND_HEAD.length).sort([{ column: 1, ascending: false }, { column: 3, ascending: true }, { column: 5, ascending: true }]);
+}
+
+/* ===== ภาพก่อนจำหน่าย: แอดมินลบเองจากชีต =====
+ * เปิด Google Sheet → เมนู "Skin Guard" → "ลบภาพที่เลือก (แอดมิน)"
+ * เลือกแถวในแท็บ "ภาพรายเวร" หรือแท็บ "photos" ก่อน แล้วกดเมนู ระบบจะถามยืนยัน แล้วย้ายไฟล์ภาพไปถังขยะของ Drive */
+function onOpen() {
+  SpreadsheetApp.getUi().createMenu('Skin Guard').addItem('ลบภาพที่เลือก (แอดมิน)', 'adminDeleteSelected').addToUi();
+}
+function adminDeleteSelected() {
+  const ui = SpreadsheetApp.getUi(), sh = SpreadsheetApp.getActiveSheet(), rg = sh.getActiveRange();
+  if (!rg) { ui.alert('เลือกแถวของภาพที่ต้องการลบก่อน'); return; }
+  const name = sh.getName(), F = sheet('photos');
+  let idCol = 0;
+  if (name === VIEW_TAB) idCol = VIEW_HEAD.length; else if (name === 'photos') idCol = 1;
+  else { ui.alert('เลือกแถวในแท็บ "' + VIEW_TAB + '" หรือ "photos" ก่อน'); return; }
+  const ids = sh.getRange(rg.getRow(), idCol, rg.getNumRows(), 1).getValues().map(r => String(r[0]).replace(/^'/, '')).filter(x => x && x !== 'id');
+  if (!ids.length) { ui.alert('ไม่พบภาพในแถวที่เลือก'); return; }
+  if (ui.alert('ลบภาพ ' + ids.length + ' ภาพ', 'ไฟล์ภาพจะถูกย้ายไปถังขยะของ Google Drive และกู้คืนได้ภายใน 30 วัน\nยืนยันการลบ?', ui.ButtonSet.YES_NO) !== ui.Button.YES) return;
+  const lock = LockService.getScriptLock(); lock.waitLock(20000);
+  try {
+    const last = F.getLastRow(); if (last < 2) return;
+    const keys = F.getRange(2, 1, last - 1, 1).getValues().map(r => String(r[0]).replace(/^'/, '')), now = Date.now();
+    let who = ''; try { who = Session.getActiveUser().getEmail(); } catch (e) {}
+    let n = 0;
+    ids.forEach(id => { const i = keys.indexOf(id); if (i >= 0) { photoGone(F, i + 2, now, 'admin'); n++; } });
+    sheet('log').appendRow([new Date(now), 'admin', 'adminDeleteSelected', n + ' ภาพ' + (who ? ' · ' + who : '')]);
+    ui.alert('ลบแล้ว ' + n + ' ภาพ');
+  } finally { lock.releaseLock(); }
 }

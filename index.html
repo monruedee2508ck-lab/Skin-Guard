@@ -2036,6 +2036,24 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
 .nm-req{color:var(--crit,#c0392b);margin-left:2px}
 .admit .nm3{grid-column:auto}
 @media (max-width:560px){.nm3{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.nm3 label:first-child{grid-column:1/-1}}
+/* discharge evidence photos */
+.dc-ph{display:flex;flex-direction:column;gap:9px;border:1.5px dashed color-mix(in srgb,var(--s1,#c0392b) 45%,transparent);border-radius:14px;padding:12px 14px;background:color-mix(in srgb,var(--s1,#c0392b) 4%,var(--surface))}
+.dc-ph.ok{border-style:solid;border-color:color-mix(in srgb,var(--ok,#1a9b6c) 55%,transparent);background:color-mix(in srgb,var(--ok,#1a9b6c) 5%,var(--surface))}
+.dc-ph-h{display:flex;align-items:center;gap:8px}.dc-ph-h b{font-size:.98rem}
+.dc-req{font-size:.72rem;font-weight:700;color:#fff;background:var(--s1,#c0392b);border-radius:99px;padding:2px 9px}
+.dc-ph.ok .dc-req{background:var(--ok,#1a9b6c)}
+.dc-ph-n{margin:0;font-size:.8rem;line-height:1.5;color:var(--muted)}
+.dc-sites{display:flex;flex-wrap:wrap;gap:6px}
+.dc-sites button{font:inherit;font-size:.8rem;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:6px 12px;cursor:pointer}
+.dc-sites button[aria-pressed=true]{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:600}
+.dc-shots{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.dc-shots:empty{display:none}
+.dc-shots figure{margin:0;position:relative;border-radius:10px;overflow:hidden;background:#000;aspect-ratio:1}
+.dc-shots img{width:100%;height:100%;object-fit:cover;display:block}
+.dc-shots figcaption{position:absolute;left:0;right:0;bottom:0;padding:3px 6px;font-size:.7rem;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.75))}
+.dc-shots button{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:1rem;line-height:1;cursor:pointer}
+.dc-ph-b{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.hp-th.dc{color:var(--s1,#c0392b)}
 </style>
 </head>
 <body>
@@ -2661,11 +2679,19 @@ body[data-page="trend"] .pagetabs,body[data-page="ward"] .pagetabs,body[data-pag
       <label for="dcTime">เวลา<input id="dcTime" type="time"></label>
     </div>
     <div class="dc-sum" id="dcSum"></div>
+    <div class="dc-ph" id="dcPh">
+      <div class="dc-ph-h"><b>ภาพผิวหนังก่อนจำหน่าย</b><span class="dc-req">จำเป็น</span></div>
+      <p class="dc-ph-n">ถ่ายผิวหนังบริเวณเสี่ยงและแผลทุกตำแหน่งเพื่อเป็นหลักฐาน · ภาพนี้<b>เก็บถาวร</b>ในระบบกลาง ลบได้โดยผู้ดูแลระบบเท่านั้น</p>
+      <div class="dc-sites" id="dcSites" role="group" aria-label="ตำแหน่งที่ถ่าย"></div>
+      <div class="dc-shots" id="dcShots"></div>
+      <div class="dc-ph-b"><button type="button" class="btn primary" id="dcCam">ถ่ายภาพ</button><button type="button" class="btn ghost" id="dcLib">เลือกจากคลังภาพ</button></div>
+      <input type="file" id="dcFileCam" accept="image/*" capture="environment" hidden><input type="file" id="dcFileLib" accept="image/*" multiple hidden>
+    </div>
     <label for="dcNote">หมายเหตุ
       <textarea id="dcNote" rows="2" placeholder="เช่น ย้ายไปหอศัลยกรรมชาย 2 ส่งต่อแผนการดูแลแผลให้หอปลายทางแล้ว"></textarea>
     </label>
     <button class="btn dc-btn" id="dcBtn" type="button"><span>จำหน่ายผู้ป่วย</span></button>
-    <p class="note" style="margin:0">ผลประเมินและบันทึกที่ลงชื่อแล้วยังเก็บอยู่ในประวัติ ผู้ป่วยจะถูกนำออกจากรายชื่อผู้ป่วย และ<b>ภาพถ่ายผิวหนังและภาพแผลทั้งหมดของผู้ป่วยรายนี้จะถูกลบ</b> ทั้งในเครื่องนี้และในระบบกลาง เพื่อคุ้มครองข้อมูลส่วนบุคคล</p>
+    <p class="note" style="margin:0">ผลประเมินและบันทึกที่ลงชื่อแล้วยังเก็บอยู่ในประวัติ ผู้ป่วยจะถูกนำออกจากรายชื่อผู้ป่วย และ<b>ภาพถ่ายผิวหนังและภาพแผลทั้งหมดของผู้ป่วยรายนี้จะถูกลบ</b> ทั้งในเครื่องนี้และในระบบกลาง เพื่อคุ้มครองข้อมูลส่วนบุคคล <b>ยกเว้นภาพก่อนจำหน่าย</b> ซึ่งเก็บถาวรเป็นหลักฐานจนกว่าผู้ดูแลระบบจะลบ</p>
   </section>
   </div>
 
@@ -4372,7 +4398,7 @@ async function syncPull(){const since=+localStorage.getItem("pi-sync-last")||0,j
     if(histChanged){hist=hist.filter(h=>!h.ex);try{localStorage.setItem("pi-hist",JSON.stringify(hist))}catch(e){}}}
   (j.turns||[]).forEach(r=>{const hn=String(r.hn),t=+r.t||0,k="pi-turn-"+hn;if(pend.has("turn|"+hn))return;if(t>(+localStorage.getItem(k)||0))try{localStorage.setItem(k,String(t))}catch(e){}});
   let gotPhoto=false,gotWound=false;
-  for(const r of (j.photos||[])){const id=String(r.id),store=String(r.store||"");if(pend.has("photo|"+id))continue;
+  for(const r of (j.photos||[])){const id=String(r.id),store=String(r.store||"");if(pend.has("photo|"+id))continue;if(/^ภาพก่อนจำหน่าย/.test(String(r.kind||"")))continue;
     if(r.deleted==="y"){if(store==="skin"){await skDel(id);gotPhoto=true}else if(store==="wound"){await wpDel(id);gotWound=true}continue}
     if(await idbGet(store,id))continue;
     try{const g=await syncCall({action:"photo",id});if(g.rec&&g.rec.img){if(g.store==="skin"){await skPut(g.rec);gotPhoto=true}else{await wpPut(g.rec);gotWound=true}}}catch(e){}}
@@ -5759,7 +5785,7 @@ $("dcBtn").onclick=()=>{const hn=$("hn").value.trim();if(!hn)return;
 async function wpDel(id){const db=await wpReady();if(!db)return;return new Promise(res=>{try{const t=db.transaction("p","readwrite");t.objectStore("p").delete(id);t.oncomplete=()=>res();t.onerror=()=>res();t.onabort=()=>res()}catch(e){res()}})}
 async function photosPurge(hn,enq){hn=String(hn||"");if(!hn)return 0;let n=0;
   try{if(!skinTried){skinTried=true;skinDB=await skOpen()}}catch(e){}
-  try{for(const r of await skAll(hn)){await skDel(r.id);if(enq)try{syncEnq("delphoto",r.id,{store:"skin"})}catch(e){}n++}}catch(e){}
+  try{for(const r of await skAll(hn)){if(r&&r.cat==="dc")continue;await skDel(r.id);if(enq)try{syncEnq("delphoto",r.id,{store:"skin"})}catch(e){}n++}}catch(e){}
   try{for(const r of await wpAll(hn)){await wpDel(r.id);if(enq)try{syncEnq("delphoto",r.id,{store:"wound"})}catch(e){}n++}}catch(e){}
   return n}
 
@@ -6448,9 +6474,10 @@ function phExpire(d){try{const x=new Date(String(d).slice(0,10)+"T00:00:00Z");x.
 function phToday(){return new Date(Date.now()+7*3600e3).toISOString().slice(0,10)}
 function phThumb(url,max){return new Promise(res=>{try{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);res(c.toDataURL("image/jpeg",.7))};im.onerror=()=>res("");im.src=url}catch(e){res("")}})}
 function phView(store,rec){const sk=store==="skin";let site="",what="";
-  if(sk){site=skSite(rec.site)[1];what=skSt(rec.status).t}
+  if(sk&&rec.cat==="dc"){site=rec.place||"";what="จำหน่าย: "+(rec.dcLabel||"")}
+  else if(sk){site=skSite(rec.site)[1];what=skSt(rec.status).t}
   else{site=(rec.site||"")+(rec.side?" "+rec.side:"");const S=(typeof STAGES!=="undefined"&&STAGES[rec.stage])||null;what=[S?stageShort(rec.stage):"",rec.a>0?(+rec.a).toFixed(1)+" cm²":"",rec.push!=null?"PUSH "+rec.push:""].filter(Boolean).join(" · ")}
-  return {kind:sk?(rec.kind==="admit"?"ภาพผิวหนังแรกรับ":"ภาพผิวหนังประจำวัน"):"ภาพแผล",site,what,shift:phShiftTH(rec.time),expires:sk&&phNormal(rec)&&rec.date?phExpire(rec.date):"",note:rec.note||""}}
+  return {kind:sk?(rec.cat==="dc"?"ภาพก่อนจำหน่าย (เก็บถาวร)":rec.kind==="admit"?"ภาพผิวหนังแรกรับ":"ภาพผิวหนังประจำวัน"):"ภาพแผล",site,what,shift:phShiftTH(rec.time),expires:sk&&phNormal(rec)&&rec.date?phExpire(rec.date):"",note:rec.note||""}}
 /* push: add readable fields + small thumbnail for the Google Sheet */
 {const _call=syncCall;syncCall=async function(req){try{if(req&&req.action==="push"&&req.items)for(const it of req.items){if(it.type==="photo"&&it.data&&it.data.img&&!it.data._view){
   const d=Object.assign({},it.data);d._view=phView(it.store,d);d._view.thumb=await phThumb(d.img,220);it.data=d}}}catch(e){}return _call.apply(this,arguments)}}
@@ -6983,7 +7010,7 @@ var ABN_T=[["rash","ผื่น / ผื่นแดง","--s2"],["bruise","ร
 var ABN_L=["ศีรษะ/ใบหน้า","คอ","หน้าอก","ท้อง","หลัง","ก้น/ก้นกบ","ขาหนีบ/ฝีเย็บ","แขนซ้าย","แขนขวา","มือซ้าย","มือขวา","ขาซ้าย","ขาขวา","เท้าซ้าย","เท้าขวา","อื่น ๆ"];
 var abCache=[],abD=null;
 function abT(k){return ABN_T.find(x=>x[0]===k)||ABN_T[ABN_T.length-1]}
-function skOnly(a){return (a||[]).filter(r=>r.cat!=="abn")}
+function skOnly(a){return (a||[]).filter(r=>r.cat!=="abn"&&r.cat!=="dc")}
 function abLocTxt(r){return (r.loc||"")+(r.locx?" ("+r.locx+")":"")}
 function abSizeTxt(r){return r.L>0&&r.W>0?`${+r.L}×${+r.W} cm`:r.L>0?`${+r.L} cm`:""}
 async function abReload(){try{if(!skinTried){skinTried=true;skinDB=await skOpen()}abCache=(await skAll(skHN())).filter(r=>r.cat==="abn")}catch(e){abCache=[]}abPaint()}
@@ -7441,6 +7468,47 @@ nmBind("pg");nmBind("adm");
 document.addEventListener("submit",e=>{if(e.target!==$("pgForm"))return;const hn=$("pgHN").value.trim();if(!hn||hn==="ตัวอย่าง")return;
   if(!$("pgFirst").value.trim()){e.preventDefault();e.stopImmediatePropagation();$("pgErr").textContent="ใส่ชื่อผู้ป่วย";$("pgFirst").focus();return}
   if(!$("pgLast").value.trim()){e.preventDefault();e.stopImmediatePropagation();$("pgErr").textContent="ใส่นามสกุลผู้ป่วย";$("pgLast").focus()}},true);
+/* ===== Discharge: evidence photos required, kept permanently (admin deletes) ===== */
+var DC_SITES=["ก้นกบ","สะโพกซ้าย","สะโพกขวา","ส้นเท้าซ้าย","ส้นเท้าขวา","หลัง/สะบัก","ศีรษะ/หู","แผล","ผิวทั่วร่างกาย","อื่น ๆ"];
+var dcDraft=[],dcSite="ก้นกบ",dcDraftHN="";
+function dcShrink(file){return new Promise((res,rej)=>{const u=URL.createObjectURL(file),im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),c=document.createElement("canvas");
+  c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);res(c.toDataURL("image/jpeg",.82))};im.onerror=()=>{URL.revokeObjectURL(u);rej(new Error("img"))};im.src=u})}
+function dcPhPaint(){const hn=$("hn").value.trim();if(hn!==dcDraftHN){dcDraft=[];dcDraftHN=hn}
+  $("dcSites").innerHTML=DC_SITES.map(t=>`<button type="button" aria-pressed="${t===dcSite}">${esc(t)}</button>`).join("");
+  $("dcSites").querySelectorAll("button").forEach(b=>b.onclick=()=>{dcSite=b.textContent;dcPhPaint()});
+  $("dcShots").innerHTML=dcDraft.map((p,i)=>`<figure><img alt="ภาพ ${esc(p.place)}" src="${p.img}"><figcaption>${esc(p.place)}</figcaption><button type="button" data-i="${i}" aria-label="ลบภาพนี้">×</button></figure>`).join("");
+  $("dcShots").querySelectorAll("button").forEach(b=>b.onclick=()=>{dcDraft.splice(+b.dataset.i,1);dcPhPaint()});
+  $("dcPh").classList.toggle("ok",dcDraft.length>0);$("dcPh").querySelector(".dc-req").textContent=dcDraft.length?`ถ่ายแล้ว ${dcDraft.length} ภาพ`:"จำเป็น";
+  $("dcCam").disabled=$("dcLib").disabled=!hn}
+async function dcAddFiles(files){for(const f of [...(files||[])]){try{dcDraft.push({place:dcSite,img:await dcShrink(f),t:Date.now()})}catch(e){toast("เปิดภาพไม่ได้")}}dcPhPaint()}
+$("dcCam").onclick=()=>$("dcFileCam").click();$("dcLib").onclick=()=>$("dcFileLib").click();
+["dcFileCam","dcFileLib"].forEach(id=>$(id).addEventListener("change",e=>{dcAddFiles(e.target.files);e.target.value=""}));
+{const _dp=dcPaint;dcPaint=function(){const r=_dp.apply(this,arguments);try{dcPhPaint()}catch(e){}return r}}
+{const _dc=$("dcBtn").onclick;$("dcBtn").onclick=function(){const hn=$("hn").value.trim();if(!hn)return;
+  if(!dcDraft.length||dcDraftHN!==hn){advise("ถ่ายภาพก่อนจำหน่าย","ต้องถ่ายภาพผิวหนังผู้ป่วยก่อนจำหน่ายอย่างน้อย 1 ภาพ เพื่อเป็นหลักฐาน","--s1","!");try{$("dcPh").scrollIntoView({behavior:"smooth",block:"center"})}catch(e){}return}
+  const shots=dcDraft.slice(),n0=hist.length;const r=_dc.apply(this,arguments);
+  const rec=hist.length>0?hist.at(-1):null;
+  if(rec&&rec.type==="discharge"&&rec.hn===hn&&!rec.dc.photos){rec.dc.photos=shots.length;saveHist(hist);
+    const ot=rec.ot||"",tm=rec.dc.time||"";
+    shots.forEach(async(p,i)=>{const pr={id:`dc-${rec.id}-${i+1}`,hn,cat:"dc",kind:"discharge",site:"dc",place:p.place,date:rec.date,time:tm,dcId:String(rec.id),dcKind:rec.dc.kind,dcLabel:rec.dc.label,nurse:rec.nurse,ot,img:p.img};
+      try{await skPut(pr)}catch(e){}try{syncEnq("photo",pr.id,{store:"skin"})}catch(e){}});
+    dcDraft=[];dcDraftHN="";try{dcPhPaint();renderHist()}catch(e){}}
+  return r}}
+/* keep on this device until uploaded; prune local copies 30 days after upload (the central copy stays) */
+async function dcPrune(){if(!syncCfg())return;let q=[];try{q=syncQ()}catch(e){}const pend=new Set(q.map(i=>String(i.key)));const lim=new Date(Date.now()-30*864e5).toISOString().slice(0,10);
+  try{if(!skinTried){skinTried=true;skinDB=await skOpen()}const all=skinDB?await phAllStore(skinDB):[];for(const r of all)if(r&&r.cat==="dc"&&r.date&&r.date<lim&&!pend.has(String(r.id)))await skDel(r.id)}catch(e){}}
+setTimeout(dcPrune,5000);
+/* history: discharge rows show their evidence photos */
+async function dcHistDecorate(){const box=$("hist");if(!box)return;const rows=[...box.querySelectorAll("tbody tr")];const want={};
+  rows.forEach(tr=>{const b=tr.querySelector("button.del:not(.view)[data-id]");if(!b)return;const h=hist.find(x=>String(x.id)===b.dataset.id);if(h&&h.type==="discharge")want[b.dataset.id]={tr,h}});
+  const ids=Object.keys(want);if(!ids.length)return;const byHN={};
+  for(const id of ids){const hn=want[id].h.hn;if(!byHN[hn]){try{byHN[hn]=(await skAll(hn)).filter(r=>r.cat==="dc")}catch(e){byHN[hn]=[]}}
+    const list=byHN[hn].filter(r=>r.dcId===id);const td=want[id].tr.querySelector("td");if(!list.length||!td||td.querySelector(".hp-th"))continue;
+    const t=document.createElement("button");t.type="button";t.className="hp-th dc";t.innerHTML=`<img alt=""><span>ภาพก่อนจำหน่าย ${list.length}</span>`;t.querySelector("img").src=list[0].img;
+    t.onclick=()=>{hpState={ser:list.map(r=>Object.assign({},r,{site:"ภาพก่อนจำหน่าย",side:"",stage:null,push:null,a:0})),i:0,cmp:false,dc:true};hpPaint();$("viewer").classList.add("hp-on");$("viewer").hidden=false};td.append(t)}}
+{const _hd=hpDecorate;hpDecorate=async function(){const r=await _hd.apply(this,arguments);try{await dcHistDecorate()}catch(e){}return r}}
+{const _hf=hpFig;hpFig=function(x,lab){let h=_hf.apply(this,arguments);if(hpState&&hpState.dc)h=h.replace(/<span>วันที่ \d+ ของการติดตาม<\/span>/,`<span>${esc(x.place||"")} · ${esc(x.dcLabel||"จำหน่าย")} · เก็บถาวร</span>`);return h}}
+dcPhPaint();
 $("bed").addEventListener("change",()=>{savePatient();if(document.body.dataset.page==="ward")renderWard()});
 function allPatients(){const out=[];try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(PT)){const r=JSON.parse(localStorage.getItem(k)||"null");if(r)out.push(r)}}}catch(e){}
   return out.sort((a,b)=>String(a.hn).localeCompare(String(b.hn),"th",{numeric:true}))}
